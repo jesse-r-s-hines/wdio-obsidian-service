@@ -5,12 +5,15 @@
     "type": "module",
     "main": "./dist/index.js",
     "types": "./dist/index.d.ts",
-    "files": ["dist"],
+    "files": [
+        "dist"
+    ],
     "bin": {
         "obsidian-plugin-testing-library": "dist/cli.js"
     },
     "scripts": {
         "build": "tsup",
+        "lint": "npx eslint src",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "repository": {
@@ -24,9 +27,12 @@
     },
     "homepage": "https://github.com/jesse-r-s-hines/obsidian-plugin-testing-library#readme",
     "devDependencies": {
+        "@eslint/js": "^9.17.0",
+        "eslint": "^9.17.0",
         "ts-node": "^10.9.2",
         "tsup": "^8.3.5",
-        "typescript": "^5.7.2"
+        "typescript": "^5.7.2",
+        "typescript-eslint": "^8.19.0"
     },
     "dependencies": {
         "commander": "^13.0.0"
