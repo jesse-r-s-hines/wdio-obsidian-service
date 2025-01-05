@@ -1,3 +1,3 @@
-export function add(a: number, b: number) {
-    return a + b
-}
+import { ObsidianLauncherService, ObsidianWorkerService } from "./wdio-obsidian-service.js";
+
+export { ObsidianWorkerService, ObsidianLauncherService }
