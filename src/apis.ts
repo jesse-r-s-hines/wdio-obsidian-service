@@ -1,33 +1,77 @@
+import _ from "lodash"
+
+
+/**
+ * GitHub API stores pagination information in in "Link" header. The header will look like this
+ * ```
+ * <https://api.github.com/repositories/1300192/issues?page=2>; rel="prev", <https://api.github.com/repositories/1300192/issues?page=4>; rel="next"
+ * ```
+ */
+function parseLinkHeader(linkHeader: string): Record<string, Record<string, string>> {
+    function parseLinkData(linkData: string) {
+        return Object.fromEntries(
+            linkData.split(";").flatMap(x => {
+                const partMatch = x.trim().match(/^([^=]+?)\s*=\s*"?([^"]+)"?$/);
+                return partMatch ? [[partMatch[1], partMatch[2]]] : [];
+            })
+        )
+    }
+
+    const linkDatas = linkHeader
+        .split(/,\s*(?=<)/)
+        .flatMap(link => {
+            const linkMatch = link.trim().match(/^<([^>]*)>(.*)$/);
+            if (linkMatch) {
+                return [{
+                    url: linkMatch[1],
+                    ...parseLinkData(linkMatch[2]),
+                } as Record<string, string>];
+            } else {
+                return [];
+            }
+        })
+        .filter(l => l.rel)
+    return Object.fromEntries(linkDatas.map(l => [l.rel, l]));
+};
+
+
+function createURL(url: string, base: string, params: Record<string, any> = {}) {
+    params =_.pickBy(params, x => x !== undefined);
+    const urlObj = new URL(url, base);
+    const searchParams = new URLSearchParams({...Object.fromEntries(urlObj.searchParams), ...params});
+    if (searchParams.size > 0) {
+        urlObj.search = '?' + searchParams;
+    }
+    return urlObj.toString();
+}
+
+
 export async function fetchGitHubAPI(url: string, params: Record<string, any> = {}) {
-    url = `${new URL(url, "https://api.github.com")}?${new URLSearchParams(params)}`;
+    url = createURL(url, "https://api.github.com", params)
     const token = process.env.GITHUB_TOKEN;
     const headers: Record<string, string> = token ? {Authorization: "Bearer " + token} : {};
-    const response = await fetch(url, {headers});
+    const response = await fetch(url, { headers });
     if (!response.ok) {
         throw new Error(`GitHub API error: ${await response.text()}`);
     }
-    return await response.json();
+    return await response;
 }
 
 
 export async function fetchGitHubAPIPaginated(url: string, params: Record<string, any> = {}) {
     const results = [];
-    let page = 1;
-    while (true) {
-        const response = await fetchGitHubAPI(url, {
-            per_page: 100, page: page,
-            ...params,
-        })
-        results.push(...response);
-        page += 1;
-        if (response.length <= 0) break;
+    let next: string|undefined = createURL(url, "https://api.github.com", { per_page: 100, ...params });
+    while (next) {
+        const response = await fetchGitHubAPI(next);
+        results.push(...await response.json());
+        next = parseLinkHeader(response.headers.get('link') ?? '').next?.url;
     }
     return results;
 }
 
 
 export async function fetchObsidianAPI(url: string) {
-    url = new URL(url, "https://releases.obsidian.md").toString()
+    url = createURL(url, "https://releases.obsidian.md");
 
     const username = process.env.OBSIDIAN_USERNAME;
     const password = process.env.OBSIDIAN_PASSWORD;

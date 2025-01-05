@@ -1,3 +1,4 @@
+
 /**
  * Script that collects information for all Obsidian versions in a single file. The file can then be used to easily
  * lookup download URLs for a given Obsidian version, and check Obsidian to Electron/Chrome version mappings.
@@ -14,40 +15,38 @@ import { fetchGitHubAPIPaginated } from "../src/apis.js";
 import { ObsidianVersionInfo, ObsidianVersionInfos } from "../src/types.js"
 
 
-/** Get basic version info */
-function getVersionInfo(fileRelease: any, githubRelease: any, isBeta: boolean): ObsidianVersionInfo {
-    const version = fileRelease.latestVersion;
-
-    let result: ObsidianVersionInfo = {
-        version: version,
+function parseFileRelease(fileRelease: any, isBeta: boolean): Partial<ObsidianVersionInfo> {
+    return {
+        version: fileRelease.latestVersion,
         minInstallerVersion: fileRelease.minimumVersion,
-        maxInstallerVersion: "", // We'll set this later
+        maxInstallerVersion: "", // Will be set later
         isBeta: isBeta,
-        downloads: {},
-    }
+        downloads: {
+            asar: fileRelease.downloadUrl,
+        },
+    };
+}
 
-    if (githubRelease) {
-        const assets: string[] = githubRelease.assets.map((a: any) => a.browser_download_url);
-        result.githubRelease = githubRelease.html_url;
-        result.downloads = {
+function parseGithubRelease(gitHubRelease: any): Partial<ObsidianVersionInfo> {
+    const version = gitHubRelease.name;
+    const assets: string[] = gitHubRelease.assets.map((a: any) => a.browser_download_url);
+
+    return {
+        version: version,
+        gitHubRelease: gitHubRelease.html_url,
+        downloads: {
             appImage: assets.find(u => u.match(`${version}.AppImage$`)),
             appImageArm: assets.find(u => u.match(`${version}-arm64.AppImage$`)),
             apk: assets.find(u => u.match(`${version}.apk$`)),
             asar: assets.find(u => u.match(`${version}.asar.gz$`)),
             dmg: assets.find(u => u.match(`${version}(-universal)?.dmg$`)),
             exe: assets.find(u => u.match(`${version}.exe$`)),
-        };
-    } else {
-        result.downloads = {
-            asar: fileRelease.downloadUrl,
-        };
+        },
     }
-
-    return result;
 }
 
 
-async function extractDependencyVersionInfo(appImageUrl: string): Promise<Record<string, string>> {
+async function getDependencyVersions(version: string, appImageUrl: string): Promise<Partial<ObsidianVersionInfo>> {
     const tmpDir = await fsAsync.mkdtemp(path.join(os.tmpdir(), `optl-fetch-versions-`));
     const appImage = path.join(tmpDir, appImageUrl.split("/").at(-1)!)
     console.log(`${appImage}: Extracting electron & chrome versions...`)
@@ -68,16 +67,20 @@ async function extractDependencyVersionInfo(appImageUrl: string): Promise<Record
     let dependencyVersions: any;
     try {
         // Wait for the logs showing that Obsidian is ready, and pull the chosen DevTool Protocol port from it
-        const port = await new Promise<number>((resolve, reject) => {
-            const timer = setTimeout(() => reject('Starting obsidian timed out'), 10 * 1000);
+        const portPromise = new Promise<number>((resolve, reject) => {
+            procExit.then(() => reject("Processed ended without opening a port"))
             proc.stderr.on('data', data => {
                 const port = data.toString().match(/ws:\/\/[\w\.]+?:(\d+)/)?.[1];
                 if (port) {
-                    clearTimeout(timer);
                     resolve(Number(port));
                 }
             });
         })
+        if (!(await withTimeout(portPromise, 10 * 1000))) {
+            throw new Error("Timed out waiting for Chrome DevTools protocol port");
+        }
+        const port = await portPromise;
+
         const client = await CDP({port: port});
         const response = await client.Runtime.evaluate({ expression: "JSON.stringify(process.versions)" });
         dependencyVersions = JSON.parse(response.result.value);
@@ -97,72 +100,75 @@ async function extractDependencyVersionInfo(appImageUrl: string): Promise<Record
         throw Error(`Failed to extract electron and chrome versions for ${appImage}`)
     }
 
-    return dependencyVersions;
+    return {
+        version: version,
+        electronVersion: dependencyVersions.electron,
+        chromeVersion: dependencyVersions.chrome,
+    };
 }
 
 
 async function getAllObsidianVersionInfos(maxInstances: number, original?: ObsidianVersionInfos): Promise<ObsidianVersionInfos> {
     const repo = 'obsidianmd/obsidian-releases';
 
-    let commitHistory = await fetchGitHubAPIPaginated(`repos/${repo}/commits`, { path: "desktop-releases.json" });
+    let commitHistory = await fetchGitHubAPIPaginated(`repos/${repo}/commits`, {
+        path: "desktop-releases.json",
+        since: original?.latest.date,
+    });
     commitHistory.reverse();
     if (original) {
-        commitHistory = commitHistory.slice(commitHistory.findIndex(c => c.sha == original.latestSha) + 1);
+        commitHistory = _.takeRightWhile(commitHistory, c => c.sha != original.latest.sha);
     }
 
     const fileHistory = await pool(8, commitHistory, commit =>
         fetch(`https://raw.githubusercontent.com/${repo}/${commit.sha}/desktop-releases.json`).then(r => r.json())
-    )
-
-    const githubReleases = _.keyBy(
-        await fetchGitHubAPIPaginated(`repos/${repo}/releases`, {}),
-        r => r.name,
     );
 
-    const versionInfoMap = _.keyBy(original?.versions ?? [], v => v.version);
+    const githubReleases = await fetchGitHubAPIPaginated(`repos/${repo}/releases`);
+
+    const versionMap: _.Dictionary<Partial<ObsidianVersionInfo>> = _.keyBy(original?.versions ?? [], v => v.version);
+
     for (const {beta, ...current} of fileHistory) {
-        if (beta) {
-            beta.isBeta = true;
-            if (!versionInfoMap[beta.latestVersion] || versionInfoMap[beta.latestVersion].isBeta) {
-                versionInfoMap[beta.latestVersion] = {
-                    ...versionInfoMap[beta.latestVersion],
-                    ...getVersionInfo(beta, githubReleases[beta.latestVersion], true),
-                }
-            }
+        if (beta && (!versionMap[beta.latestVersion] || versionMap[beta.latestVersion].isBeta)) {
+            versionMap[beta.latestVersion] = _.merge({}, versionMap[beta.latestVersion],
+                parseFileRelease(beta, true),
+            );
         }
-        current.isBeta = false;
-        versionInfoMap[current.latestVersion] = {
-            ...versionInfoMap[current.latestVersion],
-            ...getVersionInfo(current, githubReleases[current.latestVersion], false),
+        versionMap[current.latestVersion] = _.merge({}, versionMap[current.latestVersion],
+            parseFileRelease(current, false),
+        )
+    }
+
+    for (const release of githubReleases) {
+        if (versionMap.hasOwnProperty(release.name)) {
+            versionMap[release.name] = _.merge({}, versionMap[release.name], parseGithubRelease(release));
         }
     }
 
-    const versionInfos = await pool(maxInstances,
-        Object.values(versionInfoMap),
-        async (versionInfo) => {
-            if (versionInfo.downloads.appImage && (!versionInfo.electronVersion || !versionInfo.chromeVersion)) {
-                const dependencyVersions = await extractDependencyVersionInfo(versionInfo.downloads.appImage);
-                versionInfo = {
-                    ...versionInfo,
-                    electronVersion: dependencyVersions.electron,
-                    chromeVersion: dependencyVersions.chrome,
-                }
-            }
-            return versionInfo
-        },
+    const dependencyVersions = await pool(maxInstances,
+        Object.values(versionMap).filter(v => v.downloads?.appImage && !v.chromeVersion),
+        (v) => getDependencyVersions(v.version!, v.downloads!.appImage!),
     )
-
-    versionInfos.sort((a, b) => compareVersions(a.version, b.version));
-    let maxInstallerVersion = "0.0.0"
-    for (const versionInfo of versionInfos) {
-        if (versionInfo.downloads.appImage) {
-            maxInstallerVersion = versionInfo.version;
-        }
-        versionInfo.maxInstallerVersion = maxInstallerVersion;
+    for (const deps of dependencyVersions) {
+        versionMap[deps.version!] = _.merge({}, versionMap[deps.version!], deps);
     }
+
+    let maxInstallerVersion = "0.0.0"
+    for (const version of Object.keys(versionMap).sort(compareVersions)) {
+        if (versionMap[version].downloads!.appImage) {
+            maxInstallerVersion = version;
+        }
+        versionMap[version].maxInstallerVersion = maxInstallerVersion;
+    }
+
+    const versionInfos = Object.values(versionMap) as ObsidianVersionInfo[];
+    versionInfos.sort((a, b) => compareVersions(a.version, b.version));
 
     return {
-        latestSha: commitHistory.at(-1)?.sha ?? original?.latestSha,
+        latest: {
+            date: commitHistory.at(-1)?.commit.committer.date ?? original?.latest.date,
+            sha: commitHistory.at(-1)?.sha ?? original?.latest.sha,
+        },
         versions: versionInfos,
     }
 }

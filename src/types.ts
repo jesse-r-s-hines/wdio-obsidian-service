@@ -2,7 +2,7 @@
  * Type of the obsidian-versions.json file.
  */
 export type ObsidianVersionInfos = {
-    latestSha: string,
+    latest: { date: string, sha: string },
     versions: ObsidianVersionInfo[],
 }
 
@@ -12,7 +12,7 @@ export type ObsidianVersionInfo = {
     minInstallerVersion: string,
     maxInstallerVersion: string,
     isBeta: boolean,
-    githubRelease?: string,
+    gitHubRelease?: string,
     downloads: {
         appImage?: string,
         appImageArm?: string,
