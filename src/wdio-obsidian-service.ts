@@ -13,7 +13,21 @@ import { fetchObsidianAPI } from "./apis.js"
 import _ from "lodash"
 
 
-interface ObsidianOptions {
+interface ObsidianServiceOptions {
+    /**
+     * Directory to cache downloaded Obsidian versions. Defaults to `./.optl`
+     */
+    cacheDir?: string,
+
+    /**
+     * Override the `obsidian-versions.json` used by the service. Can be a URL or a file path.
+     * This is only really useful for this package's own internal tests.
+     */
+    obsidianVersionsFile?: string,
+}
+
+
+interface ObsidianCapabilityOptions {
     /**
      * Version of the Obsidian Installer to download.
      * 
@@ -24,23 +38,20 @@ interface ObsidianOptions {
      * the same Obsidian version may be running on different versions of Electron, which could cause obscure differences
      * in plugin behavior if you are using newer JavaScript features and the like in your plugin. You can specify the
      * installerVersion you want to test with separately here. By default, it is set to the same as `version`.
+     * 
+     * If passed "latest", it will use the maximum installer version compatible with the selected Obsidian version. If
+     * passed "earliest" it will use the oldest installer version compatible with the selected Obsidian version.
      */
     installerVersion?: string,
 
     /** Path to local plugin to install. */
-    plugin?: string,
+    plugins?: string[],
 
     /**
      * The path to the vault to open. The vault will be copied first, so any changes made in your tests won't affect the
      * original. Defaults to an empty vault.
      */
     vault?: string,
-
-    /**
-     * Extra command-line args to pass to obsidian.
-     * See the Electron and Chromium CLI arguments for more info.
-     */
-    args?: string[],
 
     /** Path to the Obsidian binary to use. If omitted it will download Obsidian automatically.*/
     binaryPath?: string,
@@ -53,7 +64,7 @@ interface ObsidianOptions {
 declare global {
     namespace WebdriverIO {
         interface Capabilities {
-            'wdio:obsidianOptions'?: ObsidianOptions,
+            'wdio:obsidianOptions'?: ObsidianCapabilityOptions,
         }
     }
 }
@@ -91,17 +102,25 @@ export class ObsidianLauncherService implements Services.ServiceInstance {
     private cache: string
 
     constructor (
-        public options: never,
+        public options: ObsidianServiceOptions,
         public capabilities: WebdriverIO.Capabilities,
         public config: Options.Testrunner
     ) {
-        this.cache = path.resolve(".optl/downloads");
+        this.cache = options.cacheDir ?? path.resolve("./.optl");
     }
 
     /** Get information about all available Obsidian versions. */
-    private async getVersionInfos(): Promise<ObsidianVersionInfo[]> {
+    private async getObsidianVersions(): Promise<ObsidianVersionInfo[]> {
         const packageDir = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
-        const fileContents = await fsAsync.readFile(path.join(packageDir, "obsidian-versions.json"), 'utf-8');
+        const defaultUrl =  path.join(packageDir, "obsidian-versions.json"); // TODO
+        const urlOrPath = this.options.obsidianVersionsFile ?? defaultUrl;
+
+        let fileContents: string
+        if (urlOrPath.startsWith("/") || urlOrPath.startsWith('.')) {
+            fileContents = await fsAsync.readFile(urlOrPath, 'utf-8')
+        } else {
+            fileContents = await fetch(urlOrPath).then(r => r.text())
+        }
         return JSON.parse(fileContents).versions;
     }
 
@@ -160,27 +179,33 @@ export class ObsidianLauncherService implements Services.ServiceInstance {
             }
         });
 
-        const versionInfos = await this.getVersionInfos();
+        const versions = await this.getObsidianVersions();
 
         for (const cap of obsidianCapabilities) {
             const obsidianOptions = cap['wdio:obsidianOptions'] ?? {};
 
-            let appVersion = cap.browserVersion ?? 'latest';
+            let appVersion = cap.browserVersion ?? "latest";
             if (appVersion == "latest") {
-                appVersion = versionInfos.filter(v => !v.isBeta).at(-1)!.version;
+                appVersion = versions.filter(v => !v.isBeta).at(-1)!.version;
+            } else if (appVersion == "latest-beta") {
+                appVersion = versions.at(-1)!.version;
             }
-            const appVersionInfo = versionInfos.find(v => v.version == appVersion);
+            const appVersionInfo = versions.find(v => v.version == appVersion);
             if (!appVersionInfo) {
                 throw Error(`No Obsidian version ${appVersion} found`);
             }
-            let installerVersion = obsidianOptions.installerVersion ?? 'latest';
+
+            let installerVersion = obsidianOptions.installerVersion ?? "latest";
             if (installerVersion == "latest") {
-                installerVersion = versionInfos.find(v => v.version == appVersionInfo.maxInstallerVersion)!.version;
+                installerVersion = appVersionInfo.maxInstallerVersion;
+            } else if (installerVersion == "earliest") {
+                installerVersion = appVersionInfo.minInstallerVersion;
             }
-            const installerVersionInfo = versionInfos.find(v => v.version == installerVersion);
+            const installerVersionInfo = versions.find(v => v.version == installerVersion);
             if (!installerVersionInfo || !installerVersionInfo.chromeVersion) {
                 throw Error(`No Obsidian installer for version ${installerVersion} found`);
             }
+
             const chromeVersion = installerVersionInfo.chromeVersion;
 
             let installerPath = obsidianOptions.binaryPath;
@@ -197,7 +222,7 @@ export class ObsidianLauncherService implements Services.ServiceInstance {
             cap['wdio:obsidianOptions'] = {
                 binaryPath: installerPath,
                 asarPath: asarPath,
-                plugin: ".",
+                plugins: ["."],
                 ...obsidianOptions,
                 installerVersion,
             };
@@ -205,10 +230,6 @@ export class ObsidianLauncherService implements Services.ServiceInstance {
                 binary: installerPath,
                 windowTypes: ["app", "webview"],
                 ...cap['goog:chromeOptions'],
-                args: [
-                    ...(obsidianOptions.args ?? []),
-                    ...(cap['goog:chromeOptions']?.args ?? []),
-                ],
             }
             cap["wdio:enforceWebDriverClassic"] = true;
         }
@@ -219,7 +240,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
     private tmpDir: string
 
     constructor (
-        public options: never,
+        public options: ObsidianServiceOptions,
         public capabilities: WebdriverIO.Capabilities,
         public config: Options.Testrunner
     ) {
@@ -270,7 +291,10 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
         } else {
             await fsAsync.mkdir(vaultCopy);
         }
-        await installPlugin(obsidianOptions.plugin!, vaultCopy);
+        for (const plugin of obsidianOptions.plugins!) {
+            await installPlugin(plugin, vaultCopy);
+        }
+
 
         capabilities['goog:chromeOptions'] = {
             ...capabilities['goog:chromeOptions'],
@@ -299,3 +323,6 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
         }
     }
 }
+
+export default ObsidianWorkerService;
+export const launcher = ObsidianLauncherService;
