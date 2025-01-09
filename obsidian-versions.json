@@ -1,7 +1,7 @@
 {
     "latest": {
-        "date": "2024-12-18T20:24:08Z",
-        "sha": "d2b878f3505a5195c884f7151ff9e52208b66436"
+        "date": "2025-01-07T16:38:01Z",
+        "sha": "cd138350cc11ed41a602efeeb9ded0691e6905b2"
     },
     "versions": [
         {
@@ -97,7 +97,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.6.4",
             "electronVersion": "8.2.5",
-            "chromeVersion": "80.0.3987.165"
+            "chromeVersion": "80.0.3987.165",
+            "nodeVersion": "12.13.0"
         },
         {
             "version": "0.6.5",
@@ -112,7 +113,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.6.5",
             "electronVersion": "8.2.5",
-            "chromeVersion": "80.0.3987.165"
+            "chromeVersion": "80.0.3987.165",
+            "nodeVersion": "12.13.0"
         },
         {
             "version": "0.6.6",
@@ -137,7 +139,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.6.7",
             "electronVersion": "8.2.5",
-            "chromeVersion": "80.0.3987.165"
+            "chromeVersion": "80.0.3987.165",
+            "nodeVersion": "12.13.0"
         },
         {
             "version": "0.7.0",
@@ -182,7 +185,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.7.3",
             "electronVersion": "8.2.5",
-            "chromeVersion": "80.0.3987.165"
+            "chromeVersion": "80.0.3987.165",
+            "nodeVersion": "12.13.0"
         },
         {
             "version": "0.7.4",
@@ -197,7 +201,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.7.4",
             "electronVersion": "8.2.5",
-            "chromeVersion": "80.0.3987.165"
+            "chromeVersion": "80.0.3987.165",
+            "nodeVersion": "12.13.0"
         },
         {
             "version": "0.7.5",
@@ -222,7 +227,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.7.6",
             "electronVersion": "8.2.5",
-            "chromeVersion": "80.0.3987.165"
+            "chromeVersion": "80.0.3987.165",
+            "nodeVersion": "12.13.0"
         },
         {
             "version": "0.8.0",
@@ -237,7 +243,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.8.0",
             "electronVersion": "8.2.5",
-            "chromeVersion": "80.0.3987.165"
+            "chromeVersion": "80.0.3987.165",
+            "nodeVersion": "12.13.0"
         },
         {
             "version": "0.8.1",
@@ -252,7 +259,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.8.1",
             "electronVersion": "8.2.5",
-            "chromeVersion": "80.0.3987.165"
+            "chromeVersion": "80.0.3987.165",
+            "nodeVersion": "12.13.0"
         },
         {
             "version": "0.8.2",
@@ -267,7 +275,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.8.2",
             "electronVersion": "8.2.5",
-            "chromeVersion": "80.0.3987.165"
+            "chromeVersion": "80.0.3987.165",
+            "nodeVersion": "12.13.0"
         },
         {
             "version": "0.8.3",
@@ -292,7 +301,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.8.4",
             "electronVersion": "8.2.5",
-            "chromeVersion": "80.0.3987.165"
+            "chromeVersion": "80.0.3987.165",
+            "nodeVersion": "12.13.0"
         },
         {
             "version": "0.8.5",
@@ -347,7 +357,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.8.9",
             "electronVersion": "8.2.5",
-            "chromeVersion": "80.0.3987.165"
+            "chromeVersion": "80.0.3987.165",
+            "nodeVersion": "12.13.0"
         },
         {
             "version": "0.8.10",
@@ -382,7 +393,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.8.12",
             "electronVersion": "10.1.1",
-            "chromeVersion": "85.0.4183.93"
+            "chromeVersion": "85.0.4183.93",
+            "nodeVersion": "12.16.3"
         },
         {
             "version": "0.8.13",
@@ -407,7 +419,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.8.14",
             "electronVersion": "10.1.1",
-            "chromeVersion": "85.0.4183.93"
+            "chromeVersion": "85.0.4183.93",
+            "nodeVersion": "12.16.3"
         },
         {
             "version": "0.8.15",
@@ -422,7 +435,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.8.15",
             "electronVersion": "10.1.1",
-            "chromeVersion": "85.0.4183.93"
+            "chromeVersion": "85.0.4183.93",
+            "nodeVersion": "12.16.3"
         },
         {
             "version": "0.9.0",
@@ -447,7 +461,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.9.1",
             "electronVersion": "10.1.1",
-            "chromeVersion": "85.0.4183.93"
+            "chromeVersion": "85.0.4183.93",
+            "nodeVersion": "12.16.3"
         },
         {
             "version": "0.9.2",
@@ -462,7 +477,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.9.2",
             "electronVersion": "10.1.1",
-            "chromeVersion": "85.0.4183.93"
+            "chromeVersion": "85.0.4183.93",
+            "nodeVersion": "12.16.3"
         },
         {
             "version": "0.9.3",
@@ -477,7 +493,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.9.3",
             "electronVersion": "10.1.1",
-            "chromeVersion": "85.0.4183.93"
+            "chromeVersion": "85.0.4183.93",
+            "nodeVersion": "12.16.3"
         },
         {
             "version": "0.9.4",
@@ -492,7 +509,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.9.4",
             "electronVersion": "10.1.1",
-            "chromeVersion": "85.0.4183.93"
+            "chromeVersion": "85.0.4183.93",
+            "nodeVersion": "12.16.3"
         },
         {
             "version": "0.9.5",
@@ -517,7 +535,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.9.6",
             "electronVersion": "10.1.1",
-            "chromeVersion": "85.0.4183.93"
+            "chromeVersion": "85.0.4183.93",
+            "nodeVersion": "12.16.3"
         },
         {
             "version": "0.9.7",
@@ -562,7 +581,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.9.10",
             "electronVersion": "10.1.5",
-            "chromeVersion": "85.0.4183.121"
+            "chromeVersion": "85.0.4183.121",
+            "nodeVersion": "12.16.3"
         },
         {
             "version": "0.9.11",
@@ -577,7 +597,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.9.11",
             "electronVersion": "10.1.5",
-            "chromeVersion": "85.0.4183.121"
+            "chromeVersion": "85.0.4183.121",
+            "nodeVersion": "12.16.3"
         },
         {
             "version": "0.9.12",
@@ -622,7 +643,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.9.15",
             "electronVersion": "10.1.5",
-            "chromeVersion": "85.0.4183.121"
+            "chromeVersion": "85.0.4183.121",
+            "nodeVersion": "12.16.3"
         },
         {
             "version": "0.9.16",
@@ -648,7 +670,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.9.17",
             "electronVersion": "11.0.3",
-            "chromeVersion": "87.0.4280.67"
+            "chromeVersion": "87.0.4280.67",
+            "nodeVersion": "12.18.3"
         },
         {
             "version": "0.9.18",
@@ -683,7 +706,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.9.20",
             "electronVersion": "11.0.3",
-            "chromeVersion": "87.0.4280.67"
+            "chromeVersion": "87.0.4280.67",
+            "nodeVersion": "12.18.3"
         },
         {
             "version": "0.9.21",
@@ -708,7 +732,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.9.22",
             "electronVersion": "11.1.0",
-            "chromeVersion": "87.0.4280.88"
+            "chromeVersion": "87.0.4280.88",
+            "nodeVersion": "12.18.3"
         },
         {
             "version": "0.10.0",
@@ -733,7 +758,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.10.1",
             "electronVersion": "11.1.0",
-            "chromeVersion": "87.0.4280.88"
+            "chromeVersion": "87.0.4280.88",
+            "nodeVersion": "12.18.3"
         },
         {
             "version": "0.10.2",
@@ -788,7 +814,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.10.6",
             "electronVersion": "11.1.0",
-            "chromeVersion": "87.0.4280.88"
+            "chromeVersion": "87.0.4280.88",
+            "nodeVersion": "12.18.3"
         },
         {
             "version": "0.10.7",
@@ -803,7 +830,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.10.7",
             "electronVersion": "11.1.0",
-            "chromeVersion": "87.0.4280.88"
+            "chromeVersion": "87.0.4280.88",
+            "nodeVersion": "12.18.3"
         },
         {
             "version": "0.10.8",
@@ -818,7 +846,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.10.8",
             "electronVersion": "11.1.0",
-            "chromeVersion": "87.0.4280.88"
+            "chromeVersion": "87.0.4280.88",
+            "nodeVersion": "12.18.3"
         },
         {
             "version": "0.10.9",
@@ -833,7 +862,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.10.9",
             "electronVersion": "11.1.0",
-            "chromeVersion": "87.0.4280.88"
+            "chromeVersion": "87.0.4280.88",
+            "nodeVersion": "12.18.3"
         },
         {
             "version": "0.10.10",
@@ -858,7 +888,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.10.11",
             "electronVersion": "11.2.1",
-            "chromeVersion": "87.0.4280.141"
+            "chromeVersion": "87.0.4280.141",
+            "nodeVersion": "12.18.3"
         },
         {
             "version": "0.10.12",
@@ -883,7 +914,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.10.13",
             "electronVersion": "11.2.1",
-            "chromeVersion": "87.0.4280.141"
+            "chromeVersion": "87.0.4280.141",
+            "nodeVersion": "12.18.3"
         },
         {
             "version": "0.11.0",
@@ -898,7 +930,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.11.0",
             "electronVersion": "11.2.3",
-            "chromeVersion": "87.0.4280.141"
+            "chromeVersion": "87.0.4280.141",
+            "nodeVersion": "12.18.3"
         },
         {
             "version": "0.11.1",
@@ -933,7 +966,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.11.3",
             "electronVersion": "11.3.0",
-            "chromeVersion": "87.0.4280.141"
+            "chromeVersion": "87.0.4280.141",
+            "nodeVersion": "12.18.3"
         },
         {
             "version": "0.11.4",
@@ -958,7 +992,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.11.5",
             "electronVersion": "11.3.0",
-            "chromeVersion": "87.0.4280.141"
+            "chromeVersion": "87.0.4280.141",
+            "nodeVersion": "12.18.3"
         },
         {
             "version": "0.11.6",
@@ -1003,7 +1038,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.11.9",
             "electronVersion": "11.3.0",
-            "chromeVersion": "87.0.4280.141"
+            "chromeVersion": "87.0.4280.141",
+            "nodeVersion": "12.18.3"
         },
         {
             "version": "0.11.10",
@@ -1048,7 +1084,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.11.13",
             "electronVersion": "11.3.0",
-            "chromeVersion": "87.0.4280.141"
+            "chromeVersion": "87.0.4280.141",
+            "nodeVersion": "12.18.3"
         },
         {
             "version": "0.12.0",
@@ -1093,7 +1130,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.12.3",
             "electronVersion": "12.0.6",
-            "chromeVersion": "89.0.4389.128"
+            "chromeVersion": "89.0.4389.128",
+            "nodeVersion": "14.16.0"
         },
         {
             "version": "0.12.4",
@@ -1108,7 +1146,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.12.4",
             "electronVersion": "12.0.6",
-            "chromeVersion": "89.0.4389.128"
+            "chromeVersion": "89.0.4389.128",
+            "nodeVersion": "14.16.0"
         },
         {
             "version": "0.12.5",
@@ -1123,7 +1162,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.12.5",
             "electronVersion": "12.0.11",
-            "chromeVersion": "89.0.4389.128"
+            "chromeVersion": "89.0.4389.128",
+            "nodeVersion": "14.16.0"
         },
         {
             "version": "0.12.6",
@@ -1178,7 +1218,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.12.10",
             "electronVersion": "12.0.14",
-            "chromeVersion": "89.0.4389.128"
+            "chromeVersion": "89.0.4389.128",
+            "nodeVersion": "14.16.0"
         },
         {
             "version": "0.12.11",
@@ -1203,7 +1244,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.12.12",
             "electronVersion": "12.0.14",
-            "chromeVersion": "89.0.4389.128"
+            "chromeVersion": "89.0.4389.128",
+            "nodeVersion": "14.16.0"
         },
         {
             "version": "0.12.13",
@@ -1239,7 +1281,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.12.15",
             "electronVersion": "12.0.18",
-            "chromeVersion": "89.0.4389.128"
+            "chromeVersion": "89.0.4389.128",
+            "nodeVersion": "14.16.0"
         },
         {
             "version": "0.12.16",
@@ -1284,7 +1327,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.12.19",
             "electronVersion": "13.5.2",
-            "chromeVersion": "91.0.4472.164"
+            "chromeVersion": "91.0.4472.164",
+            "nodeVersion": "14.16.0"
         },
         {
             "version": "0.13.0",
@@ -1425,7 +1469,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.13.14",
             "electronVersion": "13.6.2",
-            "chromeVersion": "91.0.4472.164"
+            "chromeVersion": "91.0.4472.164",
+            "nodeVersion": "14.16.0"
         },
         {
             "version": "0.13.15",
@@ -1476,7 +1521,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.13.19",
             "electronVersion": "13.6.2",
-            "chromeVersion": "91.0.4472.164"
+            "chromeVersion": "91.0.4472.164",
+            "nodeVersion": "14.16.0"
         },
         {
             "version": "0.13.20",
@@ -1518,7 +1564,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.13.23",
             "electronVersion": "13.6.2",
-            "chromeVersion": "91.0.4472.164"
+            "chromeVersion": "91.0.4472.164",
+            "nodeVersion": "14.16.0"
         },
         {
             "version": "0.13.24",
@@ -1533,7 +1580,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.13.24",
             "electronVersion": "16.0.8",
-            "chromeVersion": "96.0.4664.110"
+            "chromeVersion": "96.0.4664.110",
+            "nodeVersion": "16.9.1"
         },
         {
             "version": "0.13.25",
@@ -1594,7 +1642,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.13.30",
             "electronVersion": "16.0.10",
-            "chromeVersion": "96.0.4664.174"
+            "chromeVersion": "96.0.4664.174",
+            "nodeVersion": "16.9.1"
         },
         {
             "version": "0.13.31",
@@ -1610,7 +1659,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.13.31",
             "electronVersion": "17.1.1",
-            "chromeVersion": "98.0.4758.109"
+            "chromeVersion": "98.0.4758.109",
+            "nodeVersion": "16.13.0"
         },
         {
             "version": "0.13.32",
@@ -1662,7 +1712,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.14.2",
             "electronVersion": "17.1.1",
-            "chromeVersion": "98.0.4758.109"
+            "chromeVersion": "98.0.4758.109",
+            "nodeVersion": "16.13.0"
         },
         {
             "version": "0.14.3",
@@ -1696,7 +1747,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.14.5",
             "electronVersion": "18.0.3",
-            "chromeVersion": "100.0.4896.75"
+            "chromeVersion": "100.0.4896.75",
+            "nodeVersion": "16.13.2"
         },
         {
             "version": "0.14.6",
@@ -1712,7 +1764,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.14.6",
             "electronVersion": "18.0.4",
-            "chromeVersion": "100.0.4896.75"
+            "chromeVersion": "100.0.4896.75",
+            "nodeVersion": "16.13.2"
         },
         {
             "version": "0.14.7",
@@ -1800,7 +1853,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.14.15",
             "electronVersion": "18.3.0",
-            "chromeVersion": "100.0.4896.160"
+            "chromeVersion": "100.0.4896.160",
+            "nodeVersion": "16.13.2"
         },
         {
             "version": "0.15.0",
@@ -1870,7 +1924,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.15.6",
             "electronVersion": "18.3.5",
-            "chromeVersion": "100.0.4896.160"
+            "chromeVersion": "100.0.4896.160",
+            "nodeVersion": "16.13.2"
         },
         {
             "version": "0.15.7",
@@ -1895,7 +1950,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.15.8",
             "electronVersion": "18.3.5",
-            "chromeVersion": "100.0.4896.160"
+            "chromeVersion": "100.0.4896.160",
+            "nodeVersion": "16.13.2"
         },
         {
             "version": "0.15.9",
@@ -1911,7 +1967,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.15.9",
             "electronVersion": "18.3.5",
-            "chromeVersion": "100.0.4896.160"
+            "chromeVersion": "100.0.4896.160",
+            "nodeVersion": "16.13.2"
         },
         {
             "version": "0.16.0",
@@ -1981,7 +2038,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.0.0",
             "electronVersion": "18.3.5",
-            "chromeVersion": "100.0.4896.160"
+            "chromeVersion": "100.0.4896.160",
+            "nodeVersion": "16.13.2"
         },
         {
             "version": "1.0.1",
@@ -2015,7 +2073,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.0.3",
             "electronVersion": "18.3.5",
-            "chromeVersion": "100.0.4896.160"
+            "chromeVersion": "100.0.4896.160",
+            "nodeVersion": "16.13.2"
         },
         {
             "version": "1.1.0",
@@ -2103,7 +2162,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.1.8",
             "electronVersion": "18.3.15",
-            "chromeVersion": "100.0.4896.160"
+            "chromeVersion": "100.0.4896.160",
+            "nodeVersion": "16.13.2"
         },
         {
             "version": "1.1.9",
@@ -2119,7 +2179,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.1.9",
             "electronVersion": "21.3.3",
-            "chromeVersion": "106.0.5249.199"
+            "chromeVersion": "106.0.5249.199",
+            "nodeVersion": "16.16.0"
         },
         {
             "version": "1.1.10",
@@ -2180,7 +2241,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.1.15",
             "electronVersion": "21.4.1",
-            "chromeVersion": "106.0.5249.199"
+            "chromeVersion": "106.0.5249.199",
+            "nodeVersion": "16.16.0"
         },
         {
             "version": "1.1.16",
@@ -2196,7 +2258,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.1.16",
             "electronVersion": "21.4.1",
-            "chromeVersion": "106.0.5249.199"
+            "chromeVersion": "106.0.5249.199",
+            "nodeVersion": "16.16.0"
         },
         {
             "version": "1.2.0",
@@ -2275,7 +2338,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.2.7",
             "electronVersion": "24.1.2",
-            "chromeVersion": "112.0.5615.87"
+            "chromeVersion": "112.0.5615.87",
+            "nodeVersion": "18.14.0"
         },
         {
             "version": "1.2.8",
@@ -2291,7 +2355,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.2.8",
             "electronVersion": "24.1.2",
-            "chromeVersion": "112.0.5615.87"
+            "chromeVersion": "112.0.5615.87",
+            "nodeVersion": "18.14.0"
         },
         {
             "version": "1.3.0",
@@ -2334,7 +2399,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.3.3",
             "electronVersion": "24.3.1",
-            "chromeVersion": "112.0.5615.183"
+            "chromeVersion": "112.0.5615.183",
+            "nodeVersion": "18.14.0"
         },
         {
             "version": "1.3.4",
@@ -2350,7 +2416,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.3.4",
             "electronVersion": "24.3.1",
-            "chromeVersion": "112.0.5615.183"
+            "chromeVersion": "112.0.5615.183",
+            "nodeVersion": "18.14.0"
         },
         {
             "version": "1.3.5",
@@ -2366,7 +2433,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.3.5",
             "electronVersion": "24.3.1",
-            "chromeVersion": "112.0.5615.183"
+            "chromeVersion": "112.0.5615.183",
+            "nodeVersion": "18.14.0"
         },
         {
             "version": "1.3.6",
@@ -2391,7 +2459,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.3.7",
             "electronVersion": "24.3.1",
-            "chromeVersion": "112.0.5615.183"
+            "chromeVersion": "112.0.5615.183",
+            "nodeVersion": "18.14.0"
         },
         {
             "version": "1.4.0",
@@ -2452,7 +2521,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.4.5",
             "electronVersion": "25.8.0",
-            "chromeVersion": "114.0.5735.289"
+            "chromeVersion": "114.0.5735.289",
+            "nodeVersion": "18.15.0"
         },
         {
             "version": "1.4.6",
@@ -2504,7 +2574,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.4.10",
             "electronVersion": "25.8.0",
-            "chromeVersion": "114.0.5735.289"
+            "chromeVersion": "114.0.5735.289",
+            "nodeVersion": "18.15.0"
         },
         {
             "version": "1.4.11",
@@ -2520,7 +2591,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.4.11",
             "electronVersion": "25.8.0",
-            "chromeVersion": "114.0.5735.289"
+            "chromeVersion": "114.0.5735.289",
+            "nodeVersion": "18.15.0"
         },
         {
             "version": "1.4.12",
@@ -2536,7 +2608,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.4.12",
             "electronVersion": "25.8.0",
-            "chromeVersion": "114.0.5735.289"
+            "chromeVersion": "114.0.5735.289",
+            "nodeVersion": "18.15.0"
         },
         {
             "version": "1.4.13",
@@ -2552,7 +2625,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.4.13",
             "electronVersion": "25.8.1",
-            "chromeVersion": "114.0.5735.289"
+            "chromeVersion": "114.0.5735.289",
+            "nodeVersion": "18.15.0"
         },
         {
             "version": "1.4.14",
@@ -2568,7 +2642,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.4.14",
             "electronVersion": "25.8.1",
-            "chromeVersion": "114.0.5735.289"
+            "chromeVersion": "114.0.5735.289",
+            "nodeVersion": "18.15.0"
         },
         {
             "version": "1.4.15",
@@ -2593,7 +2668,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.4.16",
             "electronVersion": "25.8.1",
-            "chromeVersion": "114.0.5735.289"
+            "chromeVersion": "114.0.5735.289",
+            "nodeVersion": "18.15.0"
         },
         {
             "version": "1.5.0",
@@ -2636,7 +2712,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.5.3",
             "electronVersion": "25.8.1",
-            "chromeVersion": "114.0.5735.289"
+            "chromeVersion": "114.0.5735.289",
+            "nodeVersion": "18.15.0"
         },
         {
             "version": "1.5.4",
@@ -2689,7 +2766,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.5.8",
             "electronVersion": "28.2.3",
-            "chromeVersion": "120.0.6099.283"
+            "chromeVersion": "120.0.6099.283",
+            "nodeVersion": "18.18.2"
         },
         {
             "version": "1.5.9",
@@ -2724,7 +2802,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.5.11",
             "electronVersion": "28.2.3",
-            "chromeVersion": "120.0.6099.283"
+            "chromeVersion": "120.0.6099.283",
+            "nodeVersion": "18.18.2"
         },
         {
             "version": "1.5.12",
@@ -2741,7 +2820,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.5.12",
             "electronVersion": "28.2.3",
-            "chromeVersion": "120.0.6099.283"
+            "chromeVersion": "120.0.6099.283",
+            "nodeVersion": "18.18.2"
         },
         {
             "version": "1.6.0",
@@ -2776,7 +2856,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.6.2",
             "electronVersion": "28.3.3",
-            "chromeVersion": "120.0.6099.291"
+            "chromeVersion": "120.0.6099.291",
+            "nodeVersion": "18.18.2"
         },
         {
             "version": "1.6.3",
@@ -2793,7 +2874,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.6.3",
             "electronVersion": "28.3.3",
-            "chromeVersion": "120.0.6099.291"
+            "chromeVersion": "120.0.6099.291",
+            "nodeVersion": "18.18.2"
         },
         {
             "version": "1.6.4",
@@ -2819,7 +2901,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.6.5",
             "electronVersion": "30.1.2",
-            "chromeVersion": "124.0.6367.243"
+            "chromeVersion": "124.0.6367.243",
+            "nodeVersion": "20.14.0"
         },
         {
             "version": "1.6.6",
@@ -2845,7 +2928,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.6.7",
             "electronVersion": "30.1.2",
-            "chromeVersion": "124.0.6367.243"
+            "chromeVersion": "124.0.6367.243",
+            "nodeVersion": "20.14.0"
         },
         {
             "version": "1.7.0",
@@ -2898,7 +2982,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.7.4",
             "electronVersion": "31.6.0",
-            "chromeVersion": "126.0.6478.234"
+            "chromeVersion": "126.0.6478.234",
+            "nodeVersion": "20.17.0"
         },
         {
             "version": "1.7.5",
@@ -2915,7 +3000,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.7.5",
             "electronVersion": "32.2.2",
-            "chromeVersion": "128.0.6613.186"
+            "chromeVersion": "128.0.6613.186",
+            "nodeVersion": "20.18.0"
         },
         {
             "version": "1.7.6",
@@ -2932,7 +3018,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.7.6",
             "electronVersion": "32.2.3",
-            "chromeVersion": "128.0.6613.186"
+            "chromeVersion": "128.0.6613.186",
+            "nodeVersion": "20.18.0"
         },
         {
             "version": "1.7.7",
@@ -2949,7 +3036,8 @@
             },
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.7.7",
             "electronVersion": "32.2.5",
-            "chromeVersion": "128.0.6613.186"
+            "chromeVersion": "128.0.6613.186",
+            "nodeVersion": "20.18.0"
         },
         {
             "version": "1.8.0",
@@ -2958,6 +3046,15 @@
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.8.0.asar.gz"
+            }
+        },
+        {
+            "version": "1.8.1",
+            "minInstallerVersion": "0.14.5",
+            "maxInstallerVersion": "1.7.7",
+            "isBeta": true,
+            "downloads": {
+                "asar": "https://releases.obsidian.md/release/obsidian-1.8.1.asar.gz"
             }
         }
     ]

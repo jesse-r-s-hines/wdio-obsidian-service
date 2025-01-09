@@ -104,6 +104,7 @@ async function getDependencyVersions(version: string, appImageUrl: string): Prom
         version: version,
         electronVersion: dependencyVersions.electron,
         chromeVersion: dependencyVersions.chrome,
+        nodeVersion: dependencyVersions.node,
     };
 }
 

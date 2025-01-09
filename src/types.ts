@@ -23,4 +23,5 @@ export type ObsidianVersionInfo = {
     },
     electronVersion?: string,
     chromeVersion?: string,
+    nodeVersion?: string,
 }
