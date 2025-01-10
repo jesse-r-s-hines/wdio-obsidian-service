@@ -7,6 +7,7 @@
 import * as fsAsync from "fs/promises"
 import * as path from "path"
 import * as os from "os"
+import fetch from 'node-fetch';
 import CDP from 'chrome-remote-interface'
 import * as child_process from "child_process"
 import _ from "lodash"
@@ -121,7 +122,7 @@ async function getAllObsidianVersionInfos(maxInstances: number, original?: Obsid
         commitHistory = _.takeRightWhile(commitHistory, c => c.sha != original.latest.sha);
     }
 
-    const fileHistory = await pool(8, commitHistory, commit =>
+    const fileHistory: any[] = await pool(8, commitHistory, commit =>
         fetch(`https://raw.githubusercontent.com/${repo}/${commit.sha}/desktop-releases.json`).then(r => r.json())
     );
 

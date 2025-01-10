@@ -1,4 +1,5 @@
 import _ from "lodash"
+import fetch from "node-fetch";
 
 
 /**
@@ -39,7 +40,7 @@ function createURL(url: string, base: string, params: Record<string, any> = {}) 
     params =_.pickBy(params, x => x !== undefined);
     const urlObj = new URL(url, base);
     const searchParams = new URLSearchParams({...Object.fromEntries(urlObj.searchParams), ...params});
-    if (searchParams.size > 0) {
+    if ([...searchParams].length > 0) {
         urlObj.search = '?' + searchParams;
     }
     return urlObj.toString();
@@ -63,7 +64,7 @@ export async function fetchGitHubAPIPaginated(url: string, params: Record<string
     let next: string|undefined = createURL(url, "https://api.github.com", { per_page: 100, ...params });
     while (next) {
         const response = await fetchGitHubAPI(next);
-        results.push(...await response.json());
+        results.push(...await response.json() as any);
         next = parseLinkHeader(response.headers.get('link') ?? '').next?.url;
     }
     return results;

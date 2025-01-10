@@ -5,6 +5,7 @@ import * as fs from "fs"
 import * as fsAsync from "fs/promises"
 import * as zlib from "zlib"
 import * as crypto from "crypto";
+import fetch from "node-fetch";
 import { pipeline } from "stream/promises";
 import type { Capabilities, Options, Services } from '@wdio/types'
 import type { ObsidianVersionInfo } from "./types.js";
