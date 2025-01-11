@@ -4,7 +4,6 @@ import * as zlib from "zlib"
 import * as path from "path"
 import * as os from "os";
 import fetch from "node-fetch"
-import { fileURLToPath } from "url"
 import { pipeline } from "stream/promises";
 import { fileExists } from "./utils.js";
 import { ObsidianVersionInfo } from "./types.js";

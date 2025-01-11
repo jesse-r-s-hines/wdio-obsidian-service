@@ -1,0 +1,5 @@
+{
+    "$schema": "https://json.schemastore.org/mocharc.json",
+    "spec": "test/**/*.spec.ts",
+    "require": "tsx"
+}
