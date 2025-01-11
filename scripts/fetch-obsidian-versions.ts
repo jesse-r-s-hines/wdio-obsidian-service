@@ -77,10 +77,13 @@ async function getDependencyVersions(version: string, appImageUrl: string): Prom
                 }
             });
         })
-        if (!(await withTimeout(portPromise, 10 * 1000))) {
+
+        let port: number;
+        try {
+            port = await withTimeout(portPromise, 10 * 1000);
+        } catch {
             throw new Error("Timed out waiting for Chrome DevTools protocol port");
         }
-        const port = await portPromise;
 
         const client = await CDP({port: port});
         const response = await client.Runtime.evaluate({ expression: "JSON.stringify(process.versions)" });
@@ -88,7 +91,9 @@ async function getDependencyVersions(version: string, appImageUrl: string): Prom
         await client.close();
     } finally {
         proc.kill("SIGTERM");
-        if (!(await withTimeout(procExit, 4000))) {
+        try {
+            await withTimeout(procExit, 4000);
+        } catch {
             console.log(`${appImage}: Stuck process ${proc.pid}, using SIGKILL`);
             proc.kill("SIGKILL");
         }

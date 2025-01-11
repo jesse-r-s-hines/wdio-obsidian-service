@@ -21,11 +21,15 @@ export async function sleep(ms: number): Promise<void> {
 }
 
 /**
- * Awaits a promise or times out if it takes too long.
- * Returns true if the promise completed before the timeout.
+ * Await a promise or reject if it takes longer than timeout.
  */
-export async function withTimeout<T>(promise: Promise<T>, timeout: number): Promise<boolean> {
-    return Promise.race([promise.then(() => true), sleep(timeout).then(() => false)])
+export async function withTimeout<T>(promise: Promise<T>, timeout: number): Promise<T> {
+    let timer: NodeJS.Timeout;
+    const result = Promise.race([
+        promise,
+        new Promise<T>((resolve, reject) => timer = setTimeout(() => reject(Error("Promise timed out")), timeout))
+    ])
+    return result.finally(() => clearTimeout(timer));
 }
 
 /**

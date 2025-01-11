@@ -8,7 +8,7 @@ import fetch from "node-fetch";
  * <https://api.github.com/repositories/1300192/issues?page=2>; rel="prev", <https://api.github.com/repositories/1300192/issues?page=4>; rel="next"
  * ```
  */
-function parseLinkHeader(linkHeader: string): Record<string, Record<string, string>> {
+export function parseLinkHeader(linkHeader: string): Record<string, Record<string, string>> {
     function parseLinkData(linkData: string) {
         return Object.fromEntries(
             linkData.split(";").flatMap(x => {

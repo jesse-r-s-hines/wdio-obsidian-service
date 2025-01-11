@@ -5,6 +5,7 @@ import * as path from "path"
 import * as os from "os";
 import fetch from "node-fetch"
 import { pipeline } from "stream/promises";
+import { fileURLToPath } from "url";
 import { fileExists } from "./utils.js";
 import { ObsidianVersionInfo } from "./types.js";
 import { fetchObsidianAPI } from "./apis.js";
@@ -67,7 +68,7 @@ export class ObsidianLauncher {
      */
     constructor(cacheDir?: string, obsidianVersionsFile?: string) {
         this.cacheDir = path.resolve(cacheDir ?? process.env.OPTL_CACHE ?? "./.optl");
-        const packageDir = path.dirname(__dirname);
+        const packageDir = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
         const defaultVersionsURL =  path.join(packageDir, "obsidian-versions.json"); // TODO
         this.obsidianVersionsFile = obsidianVersionsFile ?? defaultVersionsURL;
     }
