@@ -9,6 +9,7 @@ export default defineConfig({
     splitting: false,
     sourcemap: true,
     clean: true,
+    shims: true,
     env: {
         npm_package_version: packageJson.version,
     },

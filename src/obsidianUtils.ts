@@ -68,7 +68,7 @@ export class ObsidianLauncher {
      */
     constructor(cacheDir?: string, obsidianVersionsFile?: string) {
         this.cacheDir = path.resolve(cacheDir ?? process.env.OPTL_CACHE ?? "./.optl");
-        const packageDir = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
+        const packageDir = path.dirname(__dirname);
         const defaultVersionsURL =  path.join(packageDir, "obsidian-versions.json"); // TODO
         this.obsidianVersionsFile = obsidianVersionsFile ?? defaultVersionsURL;
     }
