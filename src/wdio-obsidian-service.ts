@@ -1,16 +1,12 @@
-import { fileURLToPath } from "url"
 import * as path from "path"
 import * as os from "os"
 import * as fs from "fs"
 import * as fsAsync from "fs/promises"
 import * as zlib from "zlib"
-import * as crypto from "crypto";
 import fetch from "node-fetch";
-import { pipeline } from "stream/promises";
 import type { Capabilities, Options, Services } from '@wdio/types'
-import type { ObsidianVersionInfo } from "./types.js";
 import { fileExists } from "./utils.js";
-import { fetchObsidianAPI } from "./apis.js"
+import { ObsidianLauncher } from "./obsidianUtils.js"
 import _ from "lodash"
 
 
@@ -38,10 +34,11 @@ interface ObsidianCapabilityOptions {
      * fast as it only needs to download a few MiB of JS instead of all of  Electron. But, it means different users with
      * the same Obsidian version may be running on different versions of Electron, which could cause obscure differences
      * in plugin behavior if you are using newer JavaScript features and the like in your plugin. You can specify the
-     * installerVersion you want to test with separately here. By default, it is set to the same as `version`.
+     * installerVersion you want to test with separately here.
      * 
      * If passed "latest", it will use the maximum installer version compatible with the selected Obsidian version. If
-     * passed "earliest" it will use the oldest installer version compatible with the selected Obsidian version.
+     * passed "earliest" it will use the oldest installer version compatible with the selected Obsidian version. The 
+     * default is "earliest".
      */
     installerVersion?: string,
 
@@ -58,7 +55,7 @@ interface ObsidianCapabilityOptions {
     binaryPath?: string,
 
     /** Path to the app asar to load into obsidian. If omitted it will be downloaded automatically. */
-    asarPath?: string,
+    appPath?: string,
 }
 
 
@@ -71,99 +68,18 @@ declare global {
 }
 
 
-/** Installs a plugin into a vault by copying the files over */
-async function installPlugin(plugin: string, vault: string) {
-    const pluginId = JSON.parse(await fsAsync.readFile(path.join(plugin, 'manifest.json'), 'utf8')).id;
-    const obsidianDir = path.join(vault, '.obsidian')
-    const pluginDir = path.join(obsidianDir, 'plugins', pluginId);
-
-    await fsAsync.mkdir(pluginDir, { recursive: true });
-    await fsAsync.copyFile(path.join(plugin, 'manifest.json'), path.join(pluginDir, 'manifest.json'))
-    await fsAsync.copyFile(path.join(plugin, 'main.js'), path.join(pluginDir, 'main.js'))
-    if (await fileExists(path.join(plugin, 'styles.css'))) {
-        await fsAsync.copyFile(path.join(plugin, 'styles.css'), path.join(pluginDir, 'styles.css'))
-    }
-
-    let communityPlugins = [];
-    if (await fileExists(path.join(obsidianDir, 'community-plugins.json'))) {
-        communityPlugins = JSON.parse(await fsAsync.readFile(path.join(obsidianDir, 'community-plugins.json'), 'utf-8'));
-    }
-    if (!communityPlugins.includes(pluginId)) {
-        communityPlugins = [...communityPlugins, pluginId];
-        await fsAsync.writeFile(
-            path.join(obsidianDir, 'community-plugins.json'),
-            JSON.stringify(communityPlugins, undefined, 2),
-        );
-    }
-}
-
-
 
 export class ObsidianLauncherService implements Services.ServiceInstance {
-    private cache: string
+    private obsidianLauncher: ObsidianLauncher
 
     constructor (
         public options: ObsidianServiceOptions,
         public capabilities: WebdriverIO.Capabilities,
         public config: Options.Testrunner
     ) {
-        this.cache = options.cacheDir ?? path.resolve("./.optl");
+        this.obsidianLauncher = new ObsidianLauncher(options.cacheDir, options.obsidianVersionsFile);
     }
 
-    /** Get information about all available Obsidian versions. */
-    private async getObsidianVersions(): Promise<ObsidianVersionInfo[]> {
-        const packageDir = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
-        const defaultUrl =  path.join(packageDir, "obsidian-versions.json"); // TODO
-        const urlOrPath = this.options.obsidianVersionsFile ?? defaultUrl;
-
-        let fileContents: string
-        if (urlOrPath.startsWith("/") || urlOrPath.startsWith('.')) {
-            fileContents = await fsAsync.readFile(urlOrPath, 'utf-8')
-        } else {
-            fileContents = await fetch(urlOrPath).then(r => r.text())
-        }
-        return JSON.parse(fileContents).versions;
-    }
-
-    private async downloadObsidianInstaller(url: string) {
-        const installerPath = path.join(this.cache, url.split("/").at(-1)!);
-
-        if (!(await fileExists(this.cache))) {
-            await fsAsync.mkdir(this.cache, { recursive: true });
-        }
-
-        if (!(await fileExists(installerPath))) {
-            console.log("Downloading Obsidian installer...")
-            await fsAsync.writeFile(installerPath, (await fetch(url)).body as any);
-            await fsAsync.chmod(installerPath, 0o755);
-        }
-
-        return installerPath;
-    }
-
-    private async downloadObsidianAsar(url: string) {
-        const appPath = path.join(this.cache, url.split("/").at(-1)!);
-
-        if (!(await fileExists(this.cache))) {
-            await fsAsync.mkdir(this.cache, { recursive: true });
-        }
-
-        if (!(await fileExists(appPath))) {
-            console.log("Downloading Obsidian app...")
-            const isInsidersBuild = new URL(url).hostname.endsWith('.obsidian.md');
-            const response = isInsidersBuild ? await fetchObsidianAPI(url) : await fetch(url);
-
-            await fsAsync.writeFile(appPath + ".gz", response.body as any);
-            await pipeline(
-                fs.createReadStream(appPath + ".gz"),
-                zlib.createGunzip(),
-                fs.createWriteStream(appPath),
-            );
-            await fsAsync.rm(appPath + ".gz");
-        }
-
-        return appPath;
-    }
 
     async onPrepare(config: Options.Testrunner, capabilities: Capabilities.TestrunnerCapabilities) {
         if (!Array.isArray(capabilities)) {
@@ -180,49 +96,32 @@ export class ObsidianLauncherService implements Services.ServiceInstance {
             }
         });
 
-        const versions = await this.getObsidianVersions();
+        await this.obsidianLauncher.downloadVersions();
 
         for (const cap of obsidianCapabilities) {
             const obsidianOptions = cap['wdio:obsidianOptions'] ?? {};
 
-            let appVersion = cap.browserVersion ?? "latest";
-            if (appVersion == "latest") {
-                appVersion = versions.filter(v => !v.isBeta).at(-1)!.version;
-            } else if (appVersion == "latest-beta") {
-                appVersion = versions.at(-1)!.version;
-            }
-            const appVersionInfo = versions.find(v => v.version == appVersion);
-            if (!appVersionInfo) {
-                throw Error(`No Obsidian version ${appVersion} found`);
-            }
+            const appVersion = cap.browserVersion ?? "latest";
+            const installerVersion = obsidianOptions.installerVersion ?? "earliest";
 
-            let installerVersion = obsidianOptions.installerVersion ?? "latest";
-            if (installerVersion == "latest") {
-                installerVersion = appVersionInfo.maxInstallerVersion;
-            } else if (installerVersion == "earliest") {
-                installerVersion = appVersionInfo.minInstallerVersion;
-            }
-            const installerVersionInfo = versions.find(v => v.version == installerVersion);
-            if (!installerVersionInfo || !installerVersionInfo.chromeVersion) {
-                throw Error(`No Obsidian installer for version ${installerVersion} found`);
-            }
-
-            const chromeVersion = installerVersionInfo.chromeVersion;
+            const {
+                appVersionInfo, installerVersionInfo,
+            } = await this.obsidianLauncher.resolveVersions(appVersion, installerVersion);
 
             let installerPath = obsidianOptions.binaryPath;
             if (!installerPath) {
-                installerPath = await this.downloadObsidianInstaller(installerVersionInfo.downloads.appImage!);
+                installerPath = await this.obsidianLauncher.downloadInstaller(installerVersionInfo.version);
             }
-            let asarPath = obsidianOptions.asarPath;
-            if (!asarPath) {
-                asarPath = await this.downloadObsidianAsar(appVersionInfo.downloads.asar!);
+            let appPath = obsidianOptions.appPath;
+            if (!appPath) {
+                appPath = await this.obsidianLauncher.downloadApp(appVersionInfo.version);
             }
 
             cap.browserName = "chrome";
-            cap.browserVersion = chromeVersion;
+            cap.browserVersion = installerVersionInfo.chromeVersion;
             cap['wdio:obsidianOptions'] = {
                 binaryPath: installerPath,
-                asarPath: asarPath,
+                appPath: appPath,
                 plugins: ["."],
                 ...obsidianOptions,
                 installerVersion,
@@ -238,15 +137,15 @@ export class ObsidianLauncherService implements Services.ServiceInstance {
 }
 
 export class ObsidianWorkerService implements Services.ServiceInstance {
-    private tmpDir: string
+    private obsidianLauncher: ObsidianLauncher
+    private tmpDir: string|undefined
 
     constructor (
         public options: ObsidianServiceOptions,
         public capabilities: WebdriverIO.Capabilities,
         public config: Options.Testrunner
     ) {
-        const suffix = crypto.randomUUID().replace(/-/g, '').slice(0, 10);
-        this.tmpDir = path.join(os.tmpdir(), `optl-${suffix}`);
+        this.obsidianLauncher = new ObsidianLauncher(options.cacheDir, options.obsidianVersionsFile);
     }
 
     /**
@@ -258,52 +157,20 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
      * @param {string} cid worker id (e.g. 0-0)
      */
     async beforeSession(config: Options.Testrunner, capabilities: WebdriverIO.Capabilities) {
-        if (!capabilities['wdio:obsidianOptions']) {
-            return // We assigned obsidianOptions in onPrepare
-        }
-        const obsidianOptions = capabilities['wdio:obsidianOptions']
+        const obsidianOptions = capabilities['wdio:obsidianOptions'];
 
-        const configDir = path.join(this.tmpDir, 'obsidian-config');
-        const vaultCopy = path.join(this.tmpDir, 'vault');
-
-        // We've sandboxed the obsidian config/user data directory for the tests.
-        // Here we setup the initial `obsidian.json` file so that obsidian automatically opens the vault we want.
-        await fsAsync.mkdir(configDir, { recursive: true });
-        const obsidianConfigFile = {
-            updateDisabled: true,
-            vaults: {
-                "1234567890abcdef": {
-                    path: path.resolve(vaultCopy),
-                    ts: new Date().getTime(),
-                    open: true,
-                },
-            },
+        if (!obsidianOptions) {
+            return;
         }
-        await fsAsync.writeFile(path.join(configDir, 'obsidian.json'), JSON.stringify(obsidianConfigFile));
-        await fsAsync.copyFile(
-            path.join(obsidianOptions.asarPath!),
-            path.join(configDir, path.basename(obsidianOptions.asarPath!))
+
+        this.tmpDir = await this.obsidianLauncher.setup(
+            obsidianOptions.appPath!, obsidianOptions.vault, obsidianOptions.plugins!,
         );
 
-        // Copy the vault folder so it isn't modified, and add the plugin to it.
-        if (obsidianOptions.vault) {
-            await fsAsync.cp(obsidianOptions.vault!, vaultCopy, { recursive: true });
-            await fsAsync.rm(path.join(vaultCopy, '.obsidian/plugins'), { recursive: true, force: true });
-        } else {
-            await fsAsync.mkdir(vaultCopy);
-        }
-        for (const plugin of obsidianOptions.plugins!) {
-            await installPlugin(plugin, vaultCopy);
-        }
-
-
-        capabilities['goog:chromeOptions'] = {
-            ...capabilities['goog:chromeOptions'],
-            args: [
-                `--user-data-dir=${configDir}`,
-                ...(capabilities['goog:chromeOptions']?.args ?? []),
-            ],
-        };
+        capabilities['goog:chromeOptions']!.args = [
+            `--user-data-dir=${this.tmpDir}/config`,
+            ...(capabilities['goog:chromeOptions']!.args ?? [])
+        ];
     }
 
     /**
@@ -313,7 +180,9 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
      * @param {Array.<String>} specs List of spec file paths that ran
      */
     async afterSession(config: any, capabilities: WebdriverIO.Capabilities) {
-        await fsAsync.rm(this.tmpDir, { recursive: true, force: true });
+        if (this.tmpDir) {
+            await fsAsync.rm(this.tmpDir, { recursive: true, force: true });
+        }
     }
 
     async before(capabilities: WebdriverIO.Capabilities, specs: never, browser: any) {
