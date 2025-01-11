@@ -1,6 +1,7 @@
 import * as fsAsync from "fs/promises"
 import type { Capabilities, Options, Services } from '@wdio/types'
 import { ObsidianLauncher } from "./obsidianUtils.js"
+import browserCommands, { ObsidianBrowserCommands } from "./browserCommands.js"
 import _ from "lodash"
 
 
@@ -52,14 +53,13 @@ interface ObsidianCapabilityOptions {
     appPath?: string,
 }
 
-
 declare global {
     namespace WebdriverIO {
         interface Capabilities {
             'wdio:obsidianOptions'?: ObsidianCapabilityOptions,
         }
 
-        interface Browser {
+        interface Browser extends ObsidianBrowserCommands {
             /**
              * Opens an obsidian vault. The vault will be copied, so any changes made in your tests won't be persited to the
              * original. This does require rebooting Obsidian. You can also set the vault in the `wdio.conf.ts` capabilities
@@ -239,6 +239,10 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
 
             return sessionId;
         });
+
+        for (const [name, cmd] of Object.entries(browserCommands)) {
+            await browser.addCommand(name, cmd);
+        }
     }
 }
 
