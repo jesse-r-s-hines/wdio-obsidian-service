@@ -60,7 +60,7 @@ async function getDependencyVersions(version: string, appImageUrl: string): Prom
         '--test-type=webdriver',
         `--user-data-dir=${tmpDir}`,
     ]);
-    const procExit = new Promise<number>((resolve) => proc.on('exit', (code, signal) => resolve(code ?? -1)));
+    const procExit = new Promise<number>((resolve) => proc.on('exit', (code) => resolve(code ?? -1)));
 
     // proc.stdout.on('data', data => { console.log(`stdout: ${data}`) });
     // proc.stderr.on('data', data => { console.log(`stderr: ${data}`) });
@@ -71,7 +71,7 @@ async function getDependencyVersions(version: string, appImageUrl: string): Prom
         const portPromise = new Promise<number>((resolve, reject) => {
             procExit.then(() => reject("Processed ended without opening a port"))
             proc.stderr.on('data', data => {
-                const port = data.toString().match(/ws:\/\/[\w\.]+?:(\d+)/)?.[1];
+                const port = data.toString().match(/ws:\/\/[\w.]+?:(\d+)/)?.[1];
                 if (port) {
                     resolve(Number(port));
                 }

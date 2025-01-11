@@ -1,6 +1,5 @@
 import * as fsAsync from "fs/promises"
 import { PromisePool } from '@supercharge/promise-pool'
-import _ from "lodash"
 
 
 /// Files ///
@@ -26,7 +25,7 @@ export async function sleep(ms: number): Promise<void> {
  * Returns true if the promise completed before the timeout.
  */
 export async function withTimeout<T>(promise: Promise<T>, timeout: number): Promise<boolean> {
-    return Promise.race([promise.then(r => true), sleep(timeout).then(r => false)])
+    return Promise.race([promise.then(() => true), sleep(timeout).then(() => false)])
 }
 
 /**
@@ -36,7 +35,7 @@ export async function pool<T, U>(size: number, items: T[], func: (item: T) => Pr
     const { results } = await PromisePool
         .for(items)
         .withConcurrency(size)
-        .handleError(async (error, item, pool) => { throw error; })
+        .handleError(async (error) => { throw error; })
         .useCorrespondingResults()
         .process(func);
     return results as U[];

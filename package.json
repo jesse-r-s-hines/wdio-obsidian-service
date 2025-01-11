@@ -13,7 +13,7 @@
     },
     "scripts": {
         "build": "tsup",
-        "lint": "npx eslint src",
+        "lint": "npx eslint src scripts",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "repository": {

@@ -2,7 +2,6 @@ import * as fsAsync from "fs/promises"
 import type { Capabilities, Options, Services } from '@wdio/types'
 import { ObsidianLauncher } from "./obsidianUtils.js"
 import browserCommands, { ObsidianBrowserCommands } from "./browserCommands.js"
-import _ from "lodash"
 
 
 interface ObsidianServiceOptions {
@@ -156,14 +155,6 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
         this.obsidianLauncher = new ObsidianLauncher(options.cacheDir, options.obsidianVersionsFile);
     }
 
-    /**
-     * Gets executed just before initializing the webdriver session and test framework. It allows you
-     * to manipulate configurations depending on the capability or spec.
-     * @param {object} config wdio configuration object
-     * @param {Array.<Object>} capabilities list of capabilities details
-     * @param {Array.<String>} specs List of spec file paths that are to be run
-     * @param {string} cid worker id (e.g. 0-0)
-     */
     async beforeSession(config: Options.Testrunner, capabilities: WebdriverIO.Capabilities) {
         const obsidianOptions = capabilities['wdio:obsidianOptions'];
 
@@ -181,13 +172,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
         ];
     }
 
-    /**
-     * Gets executed right after terminating the webdriver session.
-     * @param {object} config wdio configuration object
-     * @param {Array.<Object>} capabilities list of capabilities details
-     * @param {Array.<String>} specs List of spec file paths that ran
-     */
-    async afterSession(config: any, capabilities: WebdriverIO.Capabilities) {
+    async afterSession() {
         if (this.tmpDir) {
             await fsAsync.rm(this.tmpDir, { recursive: true, force: true });
         }
@@ -204,7 +189,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
     async before(capabilities: WebdriverIO.Capabilities, specs: never, browser: WebdriverIO.Browser) {
         await this.enablePlugins(browser);
 
-        const service = this;
+        const service = this; // eslint-disable-line @typescript-eslint/no-this-alias
         await browser.addCommand("openVault", async function(this: WebdriverIO.Browser, vault?: string, plugins?: string[]) {
             const appPath = this.requestedCapabilities['wdio:obsidianOptions'].appPath;
             vault = vault ?? this.requestedCapabilities['wdio:obsidianOptions'].vault;

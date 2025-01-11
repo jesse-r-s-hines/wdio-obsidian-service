@@ -8,7 +8,9 @@ export default tseslint.config(
     tseslint.configs.recommended,
     {
         rules: {
+            "no-prototype-builtins": "off",
             "@typescript-eslint/no-explicit-any": "off",
+            "@typescript-eslint/no-namespace": "off",
         },
     }
 );
