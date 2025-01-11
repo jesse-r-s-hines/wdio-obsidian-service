@@ -1,11 +1,5 @@
-import * as path from "path"
-import * as os from "os"
-import * as fs from "fs"
 import * as fsAsync from "fs/promises"
-import * as zlib from "zlib"
-import fetch from "node-fetch";
 import type { Capabilities, Options, Services } from '@wdio/types'
-import { fileExists } from "./utils.js";
 import { ObsidianLauncher } from "./obsidianUtils.js"
 import _ from "lodash"
 
@@ -63,6 +57,20 @@ declare global {
     namespace WebdriverIO {
         interface Capabilities {
             'wdio:obsidianOptions'?: ObsidianCapabilityOptions,
+        }
+
+        interface Browser {
+            /**
+             * Opens an obsidian vault. The vault will be copied, so any changes made in your tests won't be persited to the
+             * original. This does require rebooting Obsidian. You can also set the vault in the `wdio.conf.ts` capabilities
+             * section which may be useful if all your tests use the same vault.
+             * 
+             * @param vault path to the vault to open. If omitted it will use the vault set in `wdio.conf.ts` (An empty
+             *     vault by default.)
+             * @param plugins List of plugins to initialize. If omitted, it will use the plugins set in `wdio.conf.ts`.
+             * @returns Returns the new sessionId (same as reloadSession()).
+             */
+            openVault(vault?: string, plugins?: string[]): Promise<string>;
         }
     }
 }
@@ -185,12 +193,52 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
         }
     }
 
-    async before(capabilities: WebdriverIO.Capabilities, specs: never, browser: any) {
+    private async enablePlugins(browser: WebdriverIO.Browser) {
         await browser.execute("await app.plugins.setEnable(true)");
         // close the modal if it was created
         if (await browser.$(".modal.mod-trust-folder").isExisting()) {
             browser.sendKeys(["Escape"]);
         }
+    }
+
+    async before(capabilities: WebdriverIO.Capabilities, specs: never, browser: WebdriverIO.Browser) {
+        await this.enablePlugins(browser);
+
+        const service = this;
+        await browser.addCommand("openVault", async function(this: WebdriverIO.Browser, vault?: string, plugins?: string[]) {
+            const appPath = this.requestedCapabilities['wdio:obsidianOptions'].appPath;
+            vault = vault ?? this.requestedCapabilities['wdio:obsidianOptions'].vault;
+            plugins = plugins ?? this.requestedCapabilities['wdio:obsidianOptions'].plugins;
+
+            const oldTmpDir = service.tmpDir!;
+            service.tmpDir = await service.obsidianLauncher.setup(appPath, vault, plugins!)
+
+            console.log(`Opening Obsidian vault ${vault}`);
+
+            const newArgs = [
+                `--user-data-dir=${service.tmpDir}/config`,
+                ...this.requestedCapabilities['goog:chromeOptions'].args
+                    .filter((a: string) => a != `--user-data-dir=${oldTmpDir}/config`),
+            ]
+
+            // Reload session already merges with existing settings, and tries to restart the driver entirely if you
+            // set browserName explicitly instead of letting it keep existing.
+            const sessionId = await this.reloadSession({
+                'wdio:obsidianOptions': {
+                    ...this.requestedCapabilities['wdio:obsidianOptions'],
+                    vault, plugins,
+                },
+                'goog:chromeOptions': {
+                    ...this.requestedCapabilities['goog:chromeOptions'],
+                    args: newArgs,
+                },
+            });
+            await service.enablePlugins(browser);
+
+            await fsAsync.rm(oldTmpDir, { recursive: true, force: true });
+
+            return sessionId;
+        });
     }
 }
 
