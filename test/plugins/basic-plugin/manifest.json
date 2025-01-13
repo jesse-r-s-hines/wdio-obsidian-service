@@ -1,0 +1,9 @@
+{
+    "id": "basic-plugin",
+    "name": "Basic Plugin",
+    "version": "1.0.0",
+    "minAppVersion": "0.15.0",
+    "description": "Basic plugin",
+    "author": "jesse-r-s-hines",
+    "isDesktopOnly": false
+}
