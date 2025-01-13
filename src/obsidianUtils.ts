@@ -178,7 +178,7 @@ export class ObsidianLauncher {
         await fsAsync.mkdir(this.cacheDir, { recursive: true });
 
         const appUrl = appVersionInfo.downloads.asar!
-        const appPath = path.join(this.cacheDir, appUrl.split("/").at(-1)!);
+        const appPath = path.join(this.cacheDir, appUrl.split("/").at(-1)!.replace(/\.gz$/, ''));
 
         if (!(await fileExists(appPath))) {
             console.log("Downloading Obsidian app...")
