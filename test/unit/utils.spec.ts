@@ -1,6 +1,6 @@
 import { describe, it } from "mocha";
 import { expect } from "chai";
-import { sleep, withTimeout, pool, compareVersions } from "../src/utils.js";
+import { sleep, withTimeout, pool, compareVersions } from "../../src/utils.js";
 
 
 describe("withTimeout", () => {

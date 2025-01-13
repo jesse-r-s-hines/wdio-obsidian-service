@@ -14,7 +14,8 @@
     "scripts": {
         "build": "tsup",
         "lint": "eslint src scripts test",
-        "test": "tsc --noEmit && mocha"
+        "test": "run-s test:*",
+        "test:unit": "tsc --noEmit && mocha"
     },
     "repository": {
         "type": "git",
@@ -37,6 +38,7 @@
         "chai": "^5.1.2",
         "eslint": "^9.17.0",
         "mocha": "^11.0.1",
+        "npm-run-all": "^4.1.5",
         "ts-node": "^10.9.2",
         "tsup": "^8.3.5",
         "tsx": "^4.19.2",

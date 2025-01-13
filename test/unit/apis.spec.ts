@@ -1,6 +1,6 @@
 import { describe, it } from "mocha";
 import { expect } from "chai";
-import { parseLinkHeader } from "../src/apis.js";
+import { parseLinkHeader } from "../../src/apis.js";
 
 
 describe("parseLinkHeader", () => {

@@ -2,10 +2,10 @@ import { describe, it } from "mocha";
 import { expect } from "chai";
 import * as path from "path"
 import * as fsAsync from "fs/promises"
-import { createDirectory } from "./helpers.js"
-import { installPlugins, ObsidianLauncher } from "../src/obsidianUtils.js";
-import { compareVersions } from "../src/utils.js";
-import { ObsidianVersionInfo } from "../src/types.js";
+import { createDirectory } from "../helpers.js"
+import { installPlugins, ObsidianLauncher } from "../../src/obsidianUtils.js";
+import { compareVersions } from "../../src/utils.js";
+import { ObsidianVersionInfo } from "../../src/types.js";
 import _, { set } from "lodash";
 
 
