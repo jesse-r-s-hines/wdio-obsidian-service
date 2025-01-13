@@ -151,7 +151,8 @@ export class ObsidianLauncherService implements Services.ServiceInstance {
 
 export class ObsidianWorkerService implements Services.ServiceInstance {
     private obsidianLauncher: ObsidianLauncher
-    private tmpDir: string|undefined
+    /** Directories to clean up after the tests */
+    private tmpDirs: string[]
 
     constructor (
         public options: ObsidianServiceOptions,
@@ -159,6 +160,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
         public config: Options.Testrunner
     ) {
         this.obsidianLauncher = new ObsidianLauncher(options.cacheDir, options.obsidianVersionsFile);
+        this.tmpDirs = [];
     }
 
     async beforeSession(config: Options.Testrunner, capabilities: WebdriverIO.Capabilities) {
@@ -168,19 +170,20 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
             return;
         }
 
-        this.tmpDir = await this.obsidianLauncher.setup(
+        const tmpDir = await this.obsidianLauncher.setup(
             obsidianOptions.appPath!, obsidianOptions.vault, obsidianOptions.plugins!,
         );
+        this.tmpDirs.push(tmpDir);
 
         capabilities['goog:chromeOptions']!.args = [
-            `--user-data-dir=${this.tmpDir}/config`,
+            `--user-data-dir=${tmpDir}/config`,
             ...(capabilities['goog:chromeOptions']!.args ?? [])
         ];
     }
 
     async afterSession() {
-        if (this.tmpDir) {
-            await fsAsync.rm(this.tmpDir, { recursive: true, force: true });
+        for (const tmpDir of this.tmpDirs) {
+            await fsAsync.rm(tmpDir, { recursive: true, force: true });
         }
     }
 
@@ -201,15 +204,18 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
             vault = vault ?? this.requestedCapabilities['wdio:obsidianOptions'].vault;
             plugins = plugins ?? this.requestedCapabilities['wdio:obsidianOptions'].plugins;
 
-            const oldTmpDir = service.tmpDir!;
-            service.tmpDir = await service.obsidianLauncher.setup(appPath, vault, plugins!)
+            const tmpDir = await service.obsidianLauncher.setup(appPath, vault, plugins!)
+            service.tmpDirs.push(tmpDir);
 
             console.log(`Opening Obsidian vault ${vault}`);
 
             const newArgs = [
-                `--user-data-dir=${service.tmpDir}/config`,
+                `--user-data-dir=${tmpDir}/config`,
                 ...this.requestedCapabilities['goog:chromeOptions'].args
-                    .filter((a: string) => a != `--user-data-dir=${oldTmpDir}/config`),
+                    .filter((arg: string) => {
+                        const match = arg.match(/^--user-data-dir=(.*)\/config$/);
+                        return !service.tmpDirs.includes(match?.[1] ?? '');
+                    }),
             ]
 
             // Reload session already merges with existing settings, and tries to restart the driver entirely if you
@@ -225,8 +231,6 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
                 },
             });
             await service.enablePlugins(browser);
-
-            await fsAsync.rm(oldTmpDir, { recursive: true, force: true });
 
             return sessionId;
         });
