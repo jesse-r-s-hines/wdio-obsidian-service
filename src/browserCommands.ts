@@ -1,11 +1,11 @@
 const browserCommands = {
     /** Returns the Obsidian version this test is running under. */
-    getObsidianVersion(this: WebdriverIO.Browser): string {
+    async getObsidianVersion(this: WebdriverIO.Browser): Promise<string> {
         return this.requestedCapabilities['wdio:obsidianOptions'].appVersion;
     },
 
     /** Returns the Obsidian installer version this test is running under. */
-    getObsidianInstallerVersion(this: WebdriverIO.Browser): string {
+    async getObsidianInstallerVersion(this: WebdriverIO.Browser): Promise<string> {
         return this.requestedCapabilities['wdio:obsidianOptions'].installerVersion;
     },
 
@@ -14,7 +14,10 @@ const browserCommands = {
      * @param id Id of the command to run.
      */
     async executeObsidianCommand(this: WebdriverIO.Browser, id: string) {
-        await this.execute("app.commands.executeCommandById(arguments[0])", [id]);
+        const result = await this.execute("return app.commands.executeCommandById(arguments[0])", [id]);
+        if (!result) {
+            throw Error(`Obsidian command ${id} not found or failed.`)
+        }
     },
 } as const
 
