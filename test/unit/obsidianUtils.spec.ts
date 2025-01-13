@@ -10,6 +10,13 @@ import _, { set } from "lodash";
 
 
 describe("installPlugins", () => {
+    it("no plugins", async () => {
+        const vault = await createDirectory();
+        await installPlugins(vault, []);
+        const communityPlugins = await fsAsync.readFile(`${vault}/.obsidian/community-plugins.json`, 'utf-8');
+        expect(JSON.parse(communityPlugins)).to.eql([]);
+    })
+
     it("empty vault", async () => {
         const plugin = await createDirectory({
             "manifest.json": '{"id": "sample-plugin"}',

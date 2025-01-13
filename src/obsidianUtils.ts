@@ -18,6 +18,7 @@ import _ from "lodash"
  */
 export async function installPlugins(vault: string, plugins: string[]) {
     const obsidianDir = path.join(vault, '.obsidian');
+    await fsAsync.mkdir(obsidianDir, { recursive: true });
     const pluginIds: string[] = [];
 
     for (const plugin of plugins) {
