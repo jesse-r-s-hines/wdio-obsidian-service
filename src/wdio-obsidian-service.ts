@@ -20,15 +20,20 @@ interface ObsidianServiceOptions {
 
 interface ObsidianCapabilityOptions {
     /**
+     * Version of Obsidian to run. Can be set to "latest", "latest-beta", or a specific version name. Defaults to
+     * "latest". You can also use the wdio `browserVersion` option instead.
+     */
+    appVersion?: string
+
+    /**
      * Version of the Obsidian Installer to download.
      * 
-     * Note that Obsidian is distributed in  two parts, the "installer", which is the executable containing Electron,
-     * and the "app" which is a bundle of JavaScript containing the Obsidian code. Obsidian's self-update system only
+     * Note that Obsidian is distributed in two parts, the "installer", which is the executable containing Electron, and
+     * the "app" which is a bundle of JavaScript containing the Obsidian code. Obsidian's self-update system only
      * updates the JavaScript bundle, and not the base installer/Electron version. This makes Obsidian's auto-update
      * fast as it only needs to download a few MiB of JS instead of all of  Electron. But, it means different users with
      * the same Obsidian version may be running on different versions of Electron, which could cause obscure differences
-     * in plugin behavior if you are using newer JavaScript features and the like in your plugin. You can specify the
-     * installerVersion you want to test with separately here.
+     * in plugin behavior if you are using newer JavaScript features and the like in your plugin.
      * 
      * If passed "latest", it will use the maximum installer version compatible with the selected Obsidian version. If
      * passed "earliest" it will use the oldest installer version compatible with the selected Obsidian version. The 
@@ -131,7 +136,8 @@ export class ObsidianLauncherService implements Services.ServiceInstance {
                 appPath: appPath,
                 plugins: ["."],
                 ...obsidianOptions,
-                installerVersion,
+                appVersion: appVersionInfo.version, // Resolve the versions
+                installerVersion: installerVersionInfo.version,
             };
             cap['goog:chromeOptions'] = {
                 binary: installerPath,
