@@ -54,6 +54,7 @@
     "dependencies": {
         "@supercharge/promise-pool": "^3.2.0",
         "chrome-remote-interface": "^0.33.2",
+        "classic-level": "^2.0.0",
         "commander": "^13.0.0",
         "lodash": "^4.17.21",
         "node-fetch": "^3.3.2"
