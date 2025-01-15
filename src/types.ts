@@ -6,7 +6,6 @@ export type ObsidianVersionInfos = {
     versions: ObsidianVersionInfo[],
 }
 
-
 export type ObsidianVersionInfo = {
     version: string,
     minInstallerVersion: string,

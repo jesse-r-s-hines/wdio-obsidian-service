@@ -9,6 +9,7 @@ import { fileURLToPath } from "url";
 import { fileExists } from "./utils.js";
 import { ObsidianVersionInfo } from "./types.js";
 import { fetchObsidianAPI } from "./apis.js";
+import ChromeLocalStorage from "./chromeLocalStorage.js";
 import _ from "lodash"
 
 /**
@@ -152,7 +153,7 @@ export class ObsidianLauncher {
 
     /**
      * Downloads the Obsidian installer for the given version and platform. Returns the file path.
-     * installerVersion should be an actual version, not a string like "latest" etc.
+     * @param installerVersion Version to download. Should be an actual version, not a string like "latest" etc.
      */
     async downloadInstaller(installerVersion: string): Promise<string> {
         const installerVersionInfo = (await this.getVersions()).find(v => v.version == installerVersion)!;
@@ -172,7 +173,7 @@ export class ObsidianLauncher {
 
     /**
      * Downloads the Obsidian asar for the given version and platform. Returns the file path.
-     * appVersion should be an actual version, not a string like "latest" etc.
+     * @param appVersion Version to download. Should be an actual version, not a string like "latest" etc.
      */
     async downloadApp(appVersion: string): Promise<string> {
         const appVersionInfo = (await this.getVersions()).find(v => v.version == appVersion)!;
@@ -202,29 +203,35 @@ export class ObsidianLauncher {
      * Setups the vault and config dir to use for the --user-data-dir in obsidian. Returns the path to the created 
      * temporary directory, which will contain two sub directories, "config" and "vault".
      *
+     * @param appVersion Obsidian version string. Should be an actual version, not a string like "latest" etc.
+     * @param installerVersion Obsidian version string. Should be an actual version, not a string like "latest" etc.
      * @param appPath Path to the asar file to install.
      * @param vault Path to the vault to open in Obsidian. Will create an empty vault if undefined.
      * @param plugins List of plugins to install in the vault.
      */
-    async setup(appPath: string, vault: string|undefined, plugins: string[]): Promise<string> {
+    async setup(params: {
+        appVersion: string, installerVersion: string,
+        appPath: string, vault?: string, plugins?: string[],
+    }): Promise<string> {
         const tmpDir = await fsAsync.mkdtemp(path.join(os.tmpdir(), 'optl-'));
 
         const vaultCopy = path.join(tmpDir, 'vault');
         // Copy the vault folder so it isn't modified, and add the plugin to it.
-        if (vault != undefined) {
-            await fsAsync.cp(vault, vaultCopy, { recursive: true });
+        if (params.vault != undefined) {
+            await fsAsync.cp(params.vault, vaultCopy, { recursive: true });
         } else {
             await fsAsync.mkdir(vaultCopy);
         }
-        await installPlugins(vaultCopy, plugins);
+        await installPlugins(vaultCopy, params.plugins ?? []);
 
         const configDir = path.join(tmpDir, 'config');
+        const vaultId = "1234567890abcdef";
         // configDir will be passed to --user-data-dir, so Obsidian is somewhat sandboxed. We set up "obsidian.json" so
         // that Obsidian opens the vault by default.
         const obsidianConfigFile = {
             updateDisabled: true, // Prevents Obsidian trying to auto-update on boot.
             vaults: {
-                "1234567890abcdef": {
+                [vaultId]: {
                     path: path.resolve(vaultCopy),
                     ts: new Date().getTime(),
                     open: true,
@@ -234,7 +241,13 @@ export class ObsidianLauncher {
         await fsAsync.mkdir(configDir);
         await fsAsync.writeFile(path.join(configDir, 'obsidian.json'), JSON.stringify(obsidianConfigFile));
         // Create hardlink for the asar so Obsidian picks it up.
-        await fsAsync.link(appPath, path.join(configDir, path.basename(appPath)));
+        await fsAsync.link(params.appPath, path.join(configDir, path.basename(params.appPath)));
+        const localStorage = new ChromeLocalStorage(configDir);
+        await localStorage.setItems("app://obsidian.md", {
+            [`enable-plugin-${vaultId}`]: "true", // Disable "safe mode" and enable plugins
+            "most-recently-installed-version": params.appVersion, // prevents the changelog page on boot
+        })
+        await localStorage.close();
 
         return tmpDir;
     }

@@ -165,14 +165,12 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
 
     async beforeSession(config: Options.Testrunner, capabilities: WebdriverIO.Capabilities) {
         const obsidianOptions = capabilities['wdio:obsidianOptions'];
+        if (!obsidianOptions) return;
 
-        if (!obsidianOptions) {
-            return;
-        }
-
-        const tmpDir = await this.obsidianLauncher.setup(
-            obsidianOptions.appPath!, obsidianOptions.vault, obsidianOptions.plugins!,
-        );
+        const tmpDir = await this.obsidianLauncher.setup({
+            appVersion: obsidianOptions.appVersion!, installerVersion: obsidianOptions.installerVersion!,
+            appPath: obsidianOptions.appPath!, vault: obsidianOptions.vault, plugins: obsidianOptions.plugins,
+        });
         this.tmpDirs.push(tmpDir);
 
         capabilities['goog:chromeOptions']!.args = [
@@ -187,24 +185,26 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
         }
     }
 
-    private async enablePlugins(browser: WebdriverIO.Browser) {
-        await browser.execute("await app.plugins.setEnable(true)");
-        // close the modal if it was created
-        if (await browser.$(".modal.mod-trust-folder").isExisting()) {
-            browser.sendKeys(["Escape"]);
-        }
+    private async waitForReady(browser: WebdriverIO.Browser) {
+        await browser.execute(`
+            await new Promise((resolve) => { app.workspace.onLayoutReady(resolve) });
+        `)
     }
 
     async before(capabilities: WebdriverIO.Capabilities, specs: never, browser: WebdriverIO.Browser) {
-        await this.enablePlugins(browser);
+        if (!capabilities['wdio:obsidianOptions']) return;
 
         const service = this; // eslint-disable-line @typescript-eslint/no-this-alias
         await browser.addCommand("openVault", async function(this: WebdriverIO.Browser, vault?: string, plugins?: string[]) {
-            const appPath = this.requestedCapabilities['wdio:obsidianOptions'].appPath;
-            vault = vault ?? this.requestedCapabilities['wdio:obsidianOptions'].vault;
-            plugins = plugins ?? this.requestedCapabilities['wdio:obsidianOptions'].plugins;
+            const obsidianOptions = this.requestedCapabilities['wdio:obsidianOptions']!
+            vault = vault ?? obsidianOptions.vault;
+            plugins = plugins ?? obsidianOptions.plugins;
 
-            const tmpDir = await service.obsidianLauncher.setup(appPath, vault, plugins!)
+            const tmpDir = await service.obsidianLauncher.setup({
+                appVersion: obsidianOptions.appVersion, installerVersion: obsidianOptions.installerVersion,
+                appPath: obsidianOptions.appPath,
+                vault, plugins
+            });
             service.tmpDirs.push(tmpDir);
 
             console.log(`Opening Obsidian vault ${vault}`);
@@ -230,7 +230,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
                     args: newArgs,
                 },
             });
-            await service.enablePlugins(browser);
+            await service.waitForReady(this);
 
             return sessionId;
         });
@@ -238,6 +238,8 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
         for (const [name, cmd] of Object.entries(browserCommands)) {
             await browser.addCommand(name, cmd);
         }
+
+        await service.waitForReady(browser);
     }
 }
 

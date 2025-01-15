@@ -109,11 +109,12 @@ describe("setup", () => {
         });
         const launcher = new ObsidianLauncher(`${tmpDir}/cache`, path.resolve("./obsidian-versions.json"));
 
-        const setupDir = await launcher.setup(
-            `${tmpDir}/obsidian-1.7.7.asar`,
-            `${tmpDir}/my-vault`,
-            [`${tmpDir}/my-plugin`],
-        );
+        const setupDir = await launcher.setup({
+            appVersion: "1.7.7", installerVersion: "1.7.7",
+            appPath: `${tmpDir}/obsidian-1.7.7.asar`,
+            vault: `${tmpDir}/my-vault`,
+            plugins: [`${tmpDir}/my-plugin`],
+        })
         after(() => { fsAsync.rm(setupDir, { recursive: true, force: true}) });
 
         const setupDirFiles = await fsAsync.readdir(setupDir);
