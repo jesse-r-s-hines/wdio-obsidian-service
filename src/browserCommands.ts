@@ -9,6 +9,11 @@ const browserCommands = {
         return this.requestedCapabilities['wdio:obsidianOptions'].installerVersion;
     },
 
+    /** Returns the path to the vault opened in Obsidian */
+    async getVaultPath(this: WebdriverIO.Browser): Promise<string|undefined> {
+        return this.requestedCapabilities['wdio:obsidianOptions'].vault;
+    },
+
     /**
      * Executes an Obsidian command.
      * @param id Id of the command to run.

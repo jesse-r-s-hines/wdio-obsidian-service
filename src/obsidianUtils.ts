@@ -206,7 +206,7 @@ export class ObsidianLauncher {
      * @param appVersion Obsidian version string. Should be an actual version, not a string like "latest" etc.
      * @param installerVersion Obsidian version string. Should be an actual version, not a string like "latest" etc.
      * @param appPath Path to the asar file to install.
-     * @param vault Path to the vault to open in Obsidian. Will create an empty vault if undefined.
+     * @param vault Path to the vault to open in Obsidian. Won't open a vault if left undefined.
      * @param plugins List of plugins to install in the vault.
      */
     async setup(params: {
@@ -214,39 +214,46 @@ export class ObsidianLauncher {
         appPath: string, vault?: string, plugins?: string[],
     }): Promise<string> {
         const tmpDir = await fsAsync.mkdtemp(path.join(os.tmpdir(), 'optl-'));
-
-        const vaultCopy = path.join(tmpDir, 'vault');
-        // Copy the vault folder so it isn't modified, and add the plugin to it.
-        if (params.vault != undefined) {
-            await fsAsync.cp(params.vault, vaultCopy, { recursive: true });
-        } else {
-            await fsAsync.mkdir(vaultCopy);
-        }
-        await installPlugins(vaultCopy, params.plugins ?? []);
-
-        const configDir = path.join(tmpDir, 'config');
-        const vaultId = "1234567890abcdef";
         // configDir will be passed to --user-data-dir, so Obsidian is somewhat sandboxed. We set up "obsidian.json" so
-        // that Obsidian opens the vault by default.
-        const obsidianConfigFile = {
-            updateDisabled: true, // Prevents Obsidian trying to auto-update on boot.
-            vaults: {
-                [vaultId]: {
-                    path: path.resolve(vaultCopy),
-                    ts: new Date().getTime(),
-                    open: true,
-                },
-            },
-        };
+        // that Obsidian opens the vault by default and doesn't check for updates.
+        const configDir = path.join(tmpDir, 'config');
         await fsAsync.mkdir(configDir);
-        await fsAsync.writeFile(path.join(configDir, 'obsidian.json'), JSON.stringify(obsidianConfigFile));
+
+        let obsidianJson: any = {
+            updateDisabled: true, // Prevents Obsidian trying to auto-update on boot.
+        }
+        let localStorageData: Record<string, string> = {
+            "most-recently-installed-version": params.appVersion, // prevents the changelog page on boot
+        }
+
+        if (params.vault !== undefined) {
+            const vaultCopy = path.join(tmpDir, 'vault');
+            // Copy the vault folder so it isn't modified, and add the plugins to it.
+            await fsAsync.cp(params.vault, vaultCopy, { recursive: true });
+            await installPlugins(vaultCopy, params.plugins ?? []);
+
+            const vaultId = "1234567890abcdef";
+            obsidianJson = {
+                ...obsidianJson,
+                vaults: {
+                    [vaultId]: {
+                        path: path.resolve(vaultCopy),
+                        ts: new Date().getTime(),
+                        open: true,
+                    },
+                },
+            };
+            localStorageData = {
+                ...localStorageData,
+                [`enable-plugin-${vaultId}`]: "true", // Disable "safe mode" and enable plugins
+            }
+        }
+
+        await fsAsync.writeFile(path.join(configDir, 'obsidian.json'), JSON.stringify(obsidianJson));
         // Create hardlink for the asar so Obsidian picks it up.
         await fsAsync.link(params.appPath, path.join(configDir, path.basename(params.appPath)));
         const localStorage = new ChromeLocalStorage(configDir);
-        await localStorage.setItems("app://obsidian.md", {
-            [`enable-plugin-${vaultId}`]: "true", // Disable "safe mode" and enable plugins
-            "most-recently-installed-version": params.appVersion, // prevents the changelog page on boot
-        })
+        await localStorage.setItems("app://obsidian.md", localStorageData)
         await localStorage.close();
 
         return tmpDir;

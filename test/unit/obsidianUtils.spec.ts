@@ -4,9 +4,8 @@ import * as path from "path"
 import * as fsAsync from "fs/promises"
 import { createDirectory } from "../helpers.js"
 import { installPlugins, ObsidianLauncher } from "../../src/obsidianUtils.js";
-import { compareVersions } from "../../src/utils.js";
+import { compareVersions, fileExists } from "../../src/utils.js";
 import { ObsidianVersionInfo } from "../../src/types.js";
-import _, { set } from "lodash";
 
 
 describe("installPlugins", () => {
@@ -119,5 +118,30 @@ describe("setup", () => {
 
         const setupDirFiles = await fsAsync.readdir(setupDir);
         expect(setupDirFiles.sort()).to.eql(["config", "vault"]);
+        expect(await fileExists(`${setupDir}/config/obsidian-1.7.7.asar`)).to.eql(true);
+        const obsidianJson = JSON.parse(await fsAsync.readFile(`${setupDir}/config/obsidian.json`, 'utf-8'));
+        expect(Object.keys(obsidianJson.vaults).length).to.eql(1);
+    })
+
+    it(`no vault`, async () => {
+        const tmpDir = await createDirectory({
+            "obsidian-1.7.7.asar": "stuff",
+            "my-plugin/manifest.json": '{"id": "plugin-a"}',
+            "my-plugin/main.js": "console.log('foo')",
+        });
+        const launcher = new ObsidianLauncher(`${tmpDir}/cache`, path.resolve("./obsidian-versions.json"));
+
+        const setupDir = await launcher.setup({
+            appVersion: "1.7.7", installerVersion: "1.7.7",
+            appPath: `${tmpDir}/obsidian-1.7.7.asar`,
+            plugins: [`${tmpDir}/my-plugin`],
+        })
+        after(() => { fsAsync.rm(setupDir, { recursive: true, force: true}) });
+
+        const setupDirFiles = await fsAsync.readdir(setupDir);
+        expect(setupDirFiles.sort()).to.eql(["config"]);
+        expect(await fileExists(`${setupDir}/config/obsidian-1.7.7.asar`)).to.eql(true);
+        const obsidianJson = JSON.parse(await fsAsync.readFile(`${setupDir}/config/obsidian.json`, 'utf-8'));
+        expect(obsidianJson).to.not.have.key("vaults");
     })
 })

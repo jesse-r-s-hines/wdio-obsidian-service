@@ -1,4 +1,5 @@
 import * as fsAsync from "fs/promises"
+import * as path from "path"
 import type { Capabilities, Options, Services } from '@wdio/types'
 import { ObsidianLauncher } from "./obsidianUtils.js"
 import browserCommands, { ObsidianBrowserCommands } from "./browserCommands.js"
@@ -46,7 +47,7 @@ interface ObsidianCapabilityOptions {
 
     /**
      * The path to the vault to open. The vault will be copied first, so any changes made in your tests won't affect the
-     * original. Defaults to an empty vault.
+     * original. If omitted, no vault will be opened. You can call `browser.openVault` to open a vault during the tests.
      */
     vault?: string,
 
@@ -115,6 +116,7 @@ export class ObsidianLauncherService implements Services.ServiceInstance {
 
             const appVersion = cap.browserVersion ?? "latest";
             const installerVersion = obsidianOptions.installerVersion ?? "earliest";
+            const vault = obsidianOptions.vault != undefined ? path.resolve(obsidianOptions.vault) : undefined;
 
             const {
                 appVersionInfo, installerVersionInfo,
@@ -136,6 +138,7 @@ export class ObsidianLauncherService implements Services.ServiceInstance {
                 appPath: appPath,
                 plugins: ["."],
                 ...obsidianOptions,
+                vault: vault,
                 appVersion: appVersionInfo.version, // Resolve the versions
                 installerVersion: installerVersionInfo.version,
             };
@@ -186,9 +189,11 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
     }
 
     private async waitForReady(browser: WebdriverIO.Browser) {
-        await browser.execute(`
-            await new Promise((resolve) => { app.workspace.onLayoutReady(resolve) });
-        `)
+        if ((await browser.getVaultPath()) != undefined) {
+            await browser.execute(`
+                await new Promise((resolve) => { app.workspace.onLayoutReady(resolve) });
+            `)
+        }
     }
 
     async before(capabilities: WebdriverIO.Capabilities, specs: never, browser: WebdriverIO.Browser) {
@@ -198,6 +203,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
         await browser.addCommand("openVault", async function(this: WebdriverIO.Browser, vault?: string, plugins?: string[]) {
             const obsidianOptions = this.requestedCapabilities['wdio:obsidianOptions']!
             vault = vault ?? obsidianOptions.vault;
+            vault = vault != undefined ? path.resolve(vault) : undefined;
             plugins = plugins ?? obsidianOptions.plugins;
 
             const tmpDir = await service.obsidianLauncher.setup({
@@ -207,7 +213,9 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
             });
             service.tmpDirs.push(tmpDir);
 
-            console.log(`Opening Obsidian vault ${vault}`);
+            if (vault != undefined) {
+                console.log(`Opening Obsidian vault ${vault}`);
+            }
 
             const newArgs = [
                 `--user-data-dir=${tmpDir}/config`,
