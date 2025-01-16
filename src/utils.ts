@@ -1,4 +1,4 @@
-import * as fsAsync from "fs/promises"
+import fsAsync from "fs/promises"
 import { PromisePool } from '@supercharge/promise-pool'
 
 

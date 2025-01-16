@@ -1,5 +1,5 @@
-import * as fsAsync from "fs/promises"
-import * as path from "path"
+import fsAsync from "fs/promises"
+import path from "path"
 import type { Capabilities, Options, Services } from '@wdio/types'
 import { ObsidianLauncher } from "./obsidianUtils.js"
 import browserCommands from "./browserCommands.js"

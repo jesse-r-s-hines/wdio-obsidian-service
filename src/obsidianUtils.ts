@@ -1,8 +1,8 @@
-import * as fsAsync from "fs/promises"
-import * as fs from "fs"
-import * as zlib from "zlib"
-import * as path from "path"
-import * as os from "os";
+import fsAsync from "fs/promises"
+import fs from "fs"
+import zlib from "zlib"
+import path from "path"
+import os from "os";
 import fetch from "node-fetch"
 import { pipeline } from "stream/promises";
 import { fileURLToPath } from "url";

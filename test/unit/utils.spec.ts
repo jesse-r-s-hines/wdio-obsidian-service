@@ -5,7 +5,7 @@ import { sleep, withTimeout, pool, compareVersions } from "../../src/utils.js";
 
 describe("withTimeout", () => {
     it("basic", async () => {
-        const prom = sleep(15).then(r => "DONE");
+        const prom = sleep(15).then(() => "DONE");
         let result = await withTimeout(prom, 5).catch(e => e);
         expect(result).to.be.instanceOf(Error);
         result = await withTimeout(prom, 20).catch(e => e);

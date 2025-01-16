@@ -1,7 +1,7 @@
 import { describe, it } from "mocha";
 import { expect } from "chai";
-import * as path from "path"
-import * as fsAsync from "fs/promises"
+import path from "path"
+import fsAsync from "fs/promises"
 import { createDirectory } from "../helpers.js"
 import { installPlugins, ObsidianLauncher } from "../../src/obsidianUtils.js";
 import { compareVersions, fileExists } from "../../src/utils.js";

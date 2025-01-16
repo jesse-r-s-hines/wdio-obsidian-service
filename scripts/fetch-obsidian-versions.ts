@@ -4,12 +4,12 @@
  * lookup download URLs for a given Obsidian version, and check Obsidian to Electron/Chrome version mappings.
  */
 
-import * as fsAsync from "fs/promises"
-import * as path from "path"
-import * as os from "os"
+import fsAsync from "fs/promises"
+import path from "path"
+import os from "os"
 import fetch from 'node-fetch';
 import CDP from 'chrome-remote-interface'
-import * as child_process from "child_process"
+import child_process from "child_process"
 import _ from "lodash"
 import { compareVersions, sleep, withTimeout, pool } from "../src/utils.js";
 import { fetchGitHubAPIPaginated } from "../src/apis.js";

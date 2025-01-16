@@ -1,4 +1,4 @@
-import * as path from "path"
+import path from "path"
 import { ClassicLevel } from "classic-level"
 
 /**
@@ -14,10 +14,6 @@ export default class ChromeLocalStorage {
     /** Pass the path to the user data dir for Chrome/Electron. If it doesn't exist it will be created. */
     constructor(public readonly userDataDir: string) {
         this.db = new ClassicLevel(path.join(userDataDir, 'Local Storage/leveldb/'));
-
-        this.db.get
-        this.db.put
-        this.db.iterator
     }
 
     // private encodeKey(domain: string, key: string) { return "_" + domain + "\u0000\u0001" + key }
@@ -32,7 +28,7 @@ export default class ChromeLocalStorage {
      * @param key Key to retreive
      */
     async getItem(domain: string, key: string): Promise<string|null> {
-        let value = await this.db.get(this.encodeKey(domain, key));
+        const value = await this.db.get(this.encodeKey(domain, key));
         return (value === undefined) ? null : this.decodeValue(value);
     }
 

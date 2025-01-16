@@ -1,6 +1,6 @@
-import * as os from "os"
-import * as path from "path"
-import * as fsAsync from "fs/promises"
+import os from "os"
+import path from "path"
+import fsAsync from "fs/promises"
 import { after } from "mocha";
 
 

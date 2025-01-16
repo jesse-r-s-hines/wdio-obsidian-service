@@ -1,6 +1,6 @@
 import { browser } from '@wdio/globals'
 import { expect } from 'chai';
-import * as path from 'path';
+import path from 'path';
 
 describe("Test custom browser commands", () => {
     before(async () => {

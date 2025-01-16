@@ -1,6 +1,6 @@
 import { browser } from '@wdio/globals'
 import { expect } from 'chai';
-import * as path from "path"
+import path from "path"
 import { OBSIDIAN_CAPABILITY_KEY } from '../../src/types.js';
 
 
