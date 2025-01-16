@@ -2,84 +2,8 @@ import * as fsAsync from "fs/promises"
 import * as path from "path"
 import type { Capabilities, Options, Services } from '@wdio/types'
 import { ObsidianLauncher } from "./obsidianUtils.js"
-import browserCommands, { ObsidianBrowserCommands } from "./browserCommands.js"
-
-
-interface ObsidianServiceOptions {
-    /**
-     * Directory to cache downloaded Obsidian versions. Defaults to `./.optl`
-     */
-    cacheDir?: string,
-
-    /**
-     * Override the `obsidian-versions.json` used by the service. Can be a URL or a file path.
-     * This is only really useful for this package's own internal tests.
-     */
-    obsidianVersionsFile?: string,
-}
-
-
-interface ObsidianCapabilityOptions {
-    /**
-     * Version of Obsidian to run. Can be set to "latest", "latest-beta", or a specific version name. Defaults to
-     * "latest". You can also use the wdio `browserVersion` option instead.
-     */
-    appVersion?: string
-
-    /**
-     * Version of the Obsidian Installer to download.
-     * 
-     * Note that Obsidian is distributed in two parts, the "installer", which is the executable containing Electron, and
-     * the "app" which is a bundle of JavaScript containing the Obsidian code. Obsidian's self-update system only
-     * updates the JavaScript bundle, and not the base installer/Electron version. This makes Obsidian's auto-update
-     * fast as it only needs to download a few MiB of JS instead of all of  Electron. But, it means different users with
-     * the same Obsidian version may be running on different versions of Electron, which could cause obscure differences
-     * in plugin behavior if you are using newer JavaScript features and the like in your plugin.
-     * 
-     * If passed "latest", it will use the maximum installer version compatible with the selected Obsidian version. If
-     * passed "earliest" it will use the oldest installer version compatible with the selected Obsidian version. The 
-     * default is "earliest".
-     */
-    installerVersion?: string,
-
-    /** Path to local plugin to install. */
-    plugins?: string[],
-
-    /**
-     * The path to the vault to open. The vault will be copied first, so any changes made in your tests won't affect the
-     * original. If omitted, no vault will be opened. You can call `browser.openVault` to open a vault during the tests.
-     */
-    vault?: string,
-
-    /** Path to the Obsidian binary to use. If omitted it will download Obsidian automatically.*/
-    binaryPath?: string,
-
-    /** Path to the app asar to load into obsidian. If omitted it will be downloaded automatically. */
-    appPath?: string,
-}
-
-declare global {
-    namespace WebdriverIO {
-        interface Capabilities {
-            'wdio:obsidianOptions'?: ObsidianCapabilityOptions,
-        }
-
-        interface Browser extends ObsidianBrowserCommands {
-            /**
-             * Opens an obsidian vault. The vault will be copied, so any changes made in your tests won't be persited to the
-             * original. This does require rebooting Obsidian. You can also set the vault in the `wdio.conf.ts` capabilities
-             * section which may be useful if all your tests use the same vault.
-             * 
-             * @param vault path to the vault to open. If omitted it will use the vault set in `wdio.conf.ts` (An empty
-             *     vault by default.)
-             * @param plugins List of plugins to initialize. If omitted, it will use the plugins set in `wdio.conf.ts`.
-             * @returns Returns the new sessionId (same as reloadSession()).
-             */
-            openVault(vault?: string, plugins?: string[]): Promise<string>;
-        }
-    }
-}
-
+import browserCommands from "./browserCommands.js"
+import { ObsidianCapabilityOptions, ObsidianServiceOptions, OBSIDIAN_CAPABILITY_KEY } from "./types.js"
 
 
 export class ObsidianLauncherService implements Services.ServiceInstance {
@@ -112,7 +36,7 @@ export class ObsidianLauncherService implements Services.ServiceInstance {
         await this.obsidianLauncher.downloadVersions();
 
         for (const cap of obsidianCapabilities) {
-            const obsidianOptions = cap['wdio:obsidianOptions'] ?? {};
+            const obsidianOptions = cap[OBSIDIAN_CAPABILITY_KEY] ?? {};
 
             const appVersion = cap.browserVersion ?? "latest";
             const installerVersion = obsidianOptions.installerVersion ?? "earliest";
@@ -133,7 +57,7 @@ export class ObsidianLauncherService implements Services.ServiceInstance {
 
             cap.browserName = "chrome";
             cap.browserVersion = installerVersionInfo.chromeVersion;
-            cap['wdio:obsidianOptions'] = {
+            cap[OBSIDIAN_CAPABILITY_KEY] = {
                 binaryPath: installerPath,
                 appPath: appPath,
                 plugins: ["."],
@@ -166,26 +90,16 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
         this.tmpDirs = [];
     }
 
-    async beforeSession(config: Options.Testrunner, capabilities: WebdriverIO.Capabilities) {
-        const obsidianOptions = capabilities['wdio:obsidianOptions'];
-        if (!obsidianOptions) return;
-
+    private async setupObsidian(obsidianOptions: ObsidianCapabilityOptions) {
+        if (obsidianOptions.vault != undefined) {
+            console.log(`Opening vault ${obsidianOptions.vault}`);
+        }
         const tmpDir = await this.obsidianLauncher.setup({
             appVersion: obsidianOptions.appVersion!, installerVersion: obsidianOptions.installerVersion!,
             appPath: obsidianOptions.appPath!, vault: obsidianOptions.vault, plugins: obsidianOptions.plugins,
         });
         this.tmpDirs.push(tmpDir);
-
-        capabilities['goog:chromeOptions']!.args = [
-            `--user-data-dir=${tmpDir}/config`,
-            ...(capabilities['goog:chromeOptions']!.args ?? [])
-        ];
-    }
-
-    async afterSession() {
-        for (const tmpDir of this.tmpDirs) {
-            await fsAsync.rm(tmpDir, { recursive: true, force: true });
-        }
+        return tmpDir;
     }
 
     private async waitForReady(browser: WebdriverIO.Browser) {
@@ -196,43 +110,43 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
         }
     }
 
+    async beforeSession(config: Options.Testrunner, capabilities: WebdriverIO.Capabilities) {
+        if (!capabilities[OBSIDIAN_CAPABILITY_KEY]) return;
+
+        const tmpDir = await this.setupObsidian(capabilities[OBSIDIAN_CAPABILITY_KEY]);
+
+        capabilities['goog:chromeOptions']!.args = [
+            `--user-data-dir=${tmpDir}/config`,
+            ...(capabilities['goog:chromeOptions']!.args ?? [])
+        ];
+    }
+
     async before(capabilities: WebdriverIO.Capabilities, specs: never, browser: WebdriverIO.Browser) {
-        if (!capabilities['wdio:obsidianOptions']) return;
+        if (!capabilities[OBSIDIAN_CAPABILITY_KEY]) return;
 
         const service = this; // eslint-disable-line @typescript-eslint/no-this-alias
         await browser.addCommand("openVault", async function(this: WebdriverIO.Browser, vault?: string, plugins?: string[]) {
-            const obsidianOptions = this.requestedCapabilities['wdio:obsidianOptions']!
-            vault = vault ?? obsidianOptions.vault;
-            vault = vault != undefined ? path.resolve(vault) : undefined;
-            plugins = plugins ?? obsidianOptions.plugins;
-
-            const tmpDir = await service.obsidianLauncher.setup({
-                appVersion: obsidianOptions.appVersion, installerVersion: obsidianOptions.installerVersion,
-                appPath: obsidianOptions.appPath,
-                vault, plugins
-            });
-            service.tmpDirs.push(tmpDir);
-
-            if (vault != undefined) {
-                console.log(`Opening Obsidian vault ${vault}`);
+            const oldObsidianOptions = this.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY];
+            const newObsidianOptions = {
+                ...oldObsidianOptions,
+                vault: vault != undefined ? path.resolve(vault) : oldObsidianOptions.vault,
+                plugins: plugins ?? oldObsidianOptions.plugins,
             }
 
+            const tmpDir = await service.setupObsidian(newObsidianOptions);
+            
             const newArgs = [
                 `--user-data-dir=${tmpDir}/config`,
-                ...this.requestedCapabilities['goog:chromeOptions'].args
-                    .filter((arg: string) => {
-                        const match = arg.match(/^--user-data-dir=(.*)\/config$/);
-                        return !service.tmpDirs.includes(match?.[1] ?? '');
-                    }),
+                ...this.requestedCapabilities['goog:chromeOptions'].args.filter((arg: string) => {
+                    const match = arg.match(/^--user-data-dir=(.*)\/config$/);
+                    return !service.tmpDirs.includes(match?.[1] ?? '');
+                }),
             ]
 
             // Reload session already merges with existing settings, and tries to restart the driver entirely if you
             // set browserName explicitly instead of letting it keep existing.
             const sessionId = await this.reloadSession({
-                'wdio:obsidianOptions': {
-                    ...this.requestedCapabilities['wdio:obsidianOptions'],
-                    vault, plugins,
-                },
+                [OBSIDIAN_CAPABILITY_KEY]: newObsidianOptions,
                 'goog:chromeOptions': {
                     ...this.requestedCapabilities['goog:chromeOptions'],
                     args: newArgs,
@@ -248,6 +162,12 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
         }
 
         await service.waitForReady(browser);
+    }
+
+    async afterSession() {
+        for (const tmpDir of this.tmpDirs) {
+            await fsAsync.rm(tmpDir, { recursive: true, force: true });
+        }
     }
 }
 

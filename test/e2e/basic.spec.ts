@@ -1,20 +1,23 @@
 import { browser } from '@wdio/globals'
 import { expect } from 'chai';
 import * as path from "path"
+import { OBSIDIAN_CAPABILITY_KEY } from '../../src/types.js';
 
 
 describe("Basic obsidian launch", () => {
     before(async () => {
+        // Obsidian should start with no vault open
+        expect(await browser.getVaultPath()).to.eql(undefined);
         await browser.openVault("./test/vaults/basic");
     })
     
     it('Obsidian version matches', async () => {
-        const expectedAppVersion = browser.requestedCapabilities['wdio:obsidianOptions'].appVersion;
+        const expectedAppVersion = browser.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].appVersion;
         expect(await browser.getObsidianVersion()).to.eql(expectedAppVersion);
         const actualAppVersion = await browser.execute("return electron.ipcRenderer.sendSync('version')");
         expect(actualAppVersion).to.eql(expectedAppVersion);
 
-        const expectedInstallerVersion = browser.requestedCapabilities['wdio:obsidianOptions'].installerVersion;
+        const expectedInstallerVersion = browser.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].installerVersion;
         expect(await browser.getObsidianInstallerVersion()).to.eql(expectedInstallerVersion);
         const actualInstallerVersion = await browser.execute("return electron.remote.app.getVersion()");
         expect(actualInstallerVersion).to.eql(expectedInstallerVersion);
@@ -39,10 +42,7 @@ describe("Basic obsidian launch", () => {
     it('plugin was installed and enabled', async () => {
         expect(await browser.$(".basic-plugin-status-bar-item").isExisting()).to.eql(true);
     })
-})
 
-
-describe("openVault", () => {
     it('openVault', async () => {
         const beforeVaultPath: string = await browser.execute('return app.vault.adapter.getBasePath()');
         const beforeConfigDir: string = await browser.execute("return electron.remote.app.getPath('userData')");

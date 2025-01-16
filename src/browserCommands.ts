@@ -1,17 +1,19 @@
+import { OBSIDIAN_CAPABILITY_KEY } from "./types.js";
+
 const browserCommands = {
     /** Returns the Obsidian version this test is running under. */
     async getObsidianVersion(this: WebdriverIO.Browser): Promise<string> {
-        return this.requestedCapabilities['wdio:obsidianOptions'].appVersion;
+        return this.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].appVersion;
     },
 
     /** Returns the Obsidian installer version this test is running under. */
     async getObsidianInstallerVersion(this: WebdriverIO.Browser): Promise<string> {
-        return this.requestedCapabilities['wdio:obsidianOptions'].installerVersion;
+        return this.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].installerVersion;
     },
 
     /** Returns the path to the vault opened in Obsidian */
     async getVaultPath(this: WebdriverIO.Browser): Promise<string|undefined> {
-        return this.requestedCapabilities['wdio:obsidianOptions'].vault;
+        return this.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].vault;
     },
 
     /**
