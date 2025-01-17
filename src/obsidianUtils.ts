@@ -4,8 +4,10 @@ import zlib from "zlib"
 import path from "path"
 import os from "os";
 import fetch from "node-fetch"
+import extractZip from "extract-zip"
 import { pipeline } from "stream/promises";
 import { fileURLToPath } from "url";
+import { downloadArtifact } from '@electron/get';
 import { fileExists } from "./utils.js";
 import { ObsidianVersionInfo } from "./types.js";
 import { fetchObsidianAPI } from "./apis.js";
@@ -157,13 +159,15 @@ export class ObsidianLauncher {
      */
     async downloadInstaller(installerVersion: string): Promise<string> {
         const installerVersionInfo = (await this.getVersions()).find(v => v.version == installerVersion)!;
-        await fsAsync.mkdir(this.cacheDir, { recursive: true });
-
-        const installerUrl = installerVersionInfo.downloads.appImage!;
-        const installerPath = path.join(this.cacheDir, installerUrl.split("/").at(-1)!);
+        const installerUrl = installerVersionInfo.downloads.appImage;
+        if (!installerUrl) {
+            throw Error(`No linux AppImage found for Obsidian version ${installerVersion}`);
+        }
+        const installerPath = path.join(this.cacheDir, "obsidian-installer", installerUrl.split("/").at(-1)!);
 
         if (!(await fileExists(installerPath))) {
-            console.log("Downloading Obsidian installer...")
+            console.log(`Downloading Obsidian installer v${installerVersion}...`)
+            await fsAsync.mkdir(path.dirname(installerPath), { recursive: true });
             await fsAsync.writeFile(installerPath, (await fetch(installerUrl)).body as any);
             await fsAsync.chmod(installerPath, 0o755);
         }
@@ -177,13 +181,16 @@ export class ObsidianLauncher {
      */
     async downloadApp(appVersion: string): Promise<string> {
         const appVersionInfo = (await this.getVersions()).find(v => v.version == appVersion)!;
-        await fsAsync.mkdir(this.cacheDir, { recursive: true });
-
-        const appUrl = appVersionInfo.downloads.asar!
-        const appPath = path.join(this.cacheDir, appUrl.split("/").at(-1)!.replace(/\.gz$/, ''));
+        const appUrl = appVersionInfo.downloads.asar;
+        if (!appUrl) {
+            throw Error(`No asar found for Obsidian version ${appVersion}`);
+        }
+        const appPath = path.join(this.cacheDir, 'obsidian-app', appUrl.split("/").at(-1)!.replace(/\.gz$/, ''));
 
         if (!(await fileExists(appPath))) {
-            console.log("Downloading Obsidian app...")
+            console.log(`Downloading Obsidian app v${appVersion}...`)
+            await fsAsync.mkdir(path.dirname(appPath), { recursive: true });
+
             const isInsidersBuild = new URL(appUrl).hostname.endsWith('.obsidian.md');
             const response = isInsidersBuild ? await fetchObsidianAPI(appUrl) : await fetch(appUrl);
 
@@ -197,6 +204,43 @@ export class ObsidianLauncher {
         }
 
         return appPath;
+    }
+
+    /**
+     * Downloads chromedriver for the given Obsidian version.
+     * 
+     * wdio will download chromedriver from the Chrome for Testing API automatically (see
+     * https://github.com/GoogleChromeLabs/chrome-for-testing#json-api-endpoints). However, Google has only put
+     * chromedriver since v115.0.5763.0 in that API, so wdio can't download older versions of chromedriver. As of
+     * Obsidian v1.7.7, minInstallerVersion is v0.14.5 which runs on chromium v100.0.4896.75. Here we download
+     * chromedriver for older versions ourselves using the @electron/get package which fetches it from
+     * https://github.com/electron/electron/releases.
+     */
+    async downloadChromedriver(installerVersion: string): Promise<string> {
+        const versionInfo = (await this.getVersions()).find(v => v.version == installerVersion)!;
+        const electronVersion = versionInfo.electronVersion;
+        if (!electronVersion) {
+            throw Error(`${installerVersion} is not an Obsidian installer version.`)
+        }
+
+        const chromedriverZipPath = await downloadArtifact({
+            version: electronVersion,
+            artifactName: 'chromedriver',
+            cacheRoot: path.join(this.cacheDir, "chromedriver-legacy"),
+            unsafelyDisableChecksums: true, // the checksums are slow and run even on cache hit.
+        });
+        const chromedriverPath = path.join(path.dirname(chromedriverZipPath), "chromedriver");
+
+        if (!(await fileExists(chromedriverPath))) {
+            console.log(`Downloaded legacy chromedriver for electron ${electronVersion}`)
+            const extractPath = path.join(path.dirname(chromedriverZipPath), 'extract');
+            await fsAsync.rm(extractPath, { recursive: true, force: true }); // if it exists from a previous failure
+            await extractZip(chromedriverZipPath, { dir: extractPath });
+            await fsAsync.rename(path.join(extractPath, 'chromedriver'), chromedriverPath);
+            await fsAsync.rm(extractPath, { recursive: true });
+        }
+
+        return chromedriverPath;
     }
 
     /**

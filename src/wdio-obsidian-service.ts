@@ -54,14 +54,19 @@ export class ObsidianLauncherService implements Services.ServiceInstance {
             if (!appPath) {
                 appPath = await this.obsidianLauncher.downloadApp(appVersionInfo.version);
             }
+            let chromedriverPath = cap['wdio:chromedriverOptions']?.binary
+            // wdio can download chromedriver for versions greater than 115 automatically
+            if (!chromedriverPath && Number(installerVersionInfo.chromeVersion!.split(".")[0]) <= 115) {
+                chromedriverPath = await this.obsidianLauncher.downloadChromedriver(installerVersion);
+            }
 
             cap.browserName = "chrome";
             cap.browserVersion = installerVersionInfo.chromeVersion;
             cap[OBSIDIAN_CAPABILITY_KEY] = {
-                binaryPath: installerPath,
-                appPath: appPath,
                 plugins: ["."],
                 ...obsidianOptions,
+                binaryPath: installerPath,
+                appPath: appPath,
                 vault: vault,
                 appVersion: appVersionInfo.version, // Resolve the versions
                 installerVersion: installerVersionInfo.version,
@@ -70,6 +75,10 @@ export class ObsidianLauncherService implements Services.ServiceInstance {
                 binary: installerPath,
                 windowTypes: ["app", "webview"],
                 ...cap['goog:chromeOptions'],
+            }
+            cap['wdio:chromedriverOptions'] = {
+                ...cap['wdio:chromedriverOptions'],
+                binary: chromedriverPath,
             }
             cap["wdio:enforceWebDriverClassic"] = true;
         }

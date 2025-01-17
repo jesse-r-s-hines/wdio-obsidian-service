@@ -1,4 +1,5 @@
 import { ObsidianWorkerService, ObsidianLauncherService } from "./src/wdio-obsidian-service.js"
+import path from "path"
 
 const obsidianServiceOptions = {
     obsidianVersionsFile: "./obsidian-versions.json",
@@ -24,6 +25,8 @@ export const config: WebdriverIO.Config = {
     }],
 
     services: [[ObsidianWorkerService, obsidianServiceOptions], [ObsidianLauncherService, obsidianServiceOptions]],
+
+    cacheDir: path.resolve(".optl"),
 
     framework: 'mocha',
     
