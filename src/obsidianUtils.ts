@@ -168,8 +168,10 @@ export class ObsidianLauncher {
         if (!(await fileExists(installerPath))) {
             console.log(`Downloading Obsidian installer v${installerVersion}...`)
             await fsAsync.mkdir(path.dirname(installerPath), { recursive: true });
-            await fsAsync.writeFile(installerPath, (await fetch(installerUrl)).body as any);
-            await fsAsync.chmod(installerPath, 0o755);
+            await fsAsync.rm(`${installerPath}.tmp`, { force: true });
+            await fsAsync.writeFile(`${installerPath}.tmp`, (await fetch(installerUrl)).body as any);
+            await fsAsync.chmod(`${installerPath}.tmp`, 0o755);
+            await fsAsync.rename(`${installerPath}.tmp`, installerPath);
         }
 
         return installerPath;
@@ -190,17 +192,20 @@ export class ObsidianLauncher {
         if (!(await fileExists(appPath))) {
             console.log(`Downloading Obsidian app v${appVersion}...`)
             await fsAsync.mkdir(path.dirname(appPath), { recursive: true });
+            await fsAsync.rm(`${appPath}.tmp`, { force: true });
+            await fsAsync.rm(`${appPath}.gz`, { force: true });
 
             const isInsidersBuild = new URL(appUrl).hostname.endsWith('.obsidian.md');
             const response = isInsidersBuild ? await fetchObsidianAPI(appUrl) : await fetch(appUrl);
 
-            await fsAsync.writeFile(appPath + ".gz", response.body as any);
+            await fsAsync.writeFile(`${appPath}.gz`, response.body as any);
             await pipeline(
-                fs.createReadStream(appPath + ".gz"),
+                fs.createReadStream(`${appPath}.gz`),
                 zlib.createGunzip(),
-                fs.createWriteStream(appPath),
+                fs.createWriteStream(`${appPath}.tmp`,),
             );
             await fsAsync.rm(appPath + ".gz");
+            await fsAsync.rename(`${appPath}.tmp`, appPath);
         }
 
         return appPath;
