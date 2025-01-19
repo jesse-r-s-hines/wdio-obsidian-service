@@ -8,11 +8,16 @@ import extractZip from "extract-zip"
 import { pipeline } from "stream/promises";
 import { fileURLToPath } from "url";
 import { downloadArtifact } from '@electron/get';
-import { fileExists } from "./utils.js";
+import { promisify } from "util";
+import child_process from "child_process"
+import which from "which"
+import { fileExists, withTmpDir } from "./utils.js";
 import { ObsidianVersionInfo } from "./types.js";
 import { fetchObsidianAPI } from "./apis.js";
 import ChromeLocalStorage from "./chromeLocalStorage.js";
 import _ from "lodash"
+const execFile = promisify(child_process.execFile);
+
 
 /**
  * Installs a plugin into an obsidian vault.
@@ -55,6 +60,34 @@ export async function installPlugins(vault: string, plugins: string[]) {
     communityPlugins = _.uniq([...communityPlugins, ...pluginIds]);
     await fsAsync.writeFile(communityPluginsFile, JSON.stringify(communityPlugins, undefined, 2));
 }
+
+
+/**
+ * Obsidian appears to use NSIS to bundle their Window's installers. We want to extract the executable
+ * files directly without running the installer. 7zip can extract the raw files from the exe.
+ */
+export async function extractObsidianExe(exe: string, appArch: string, dest: string) {
+    const path7z = await which("7z", { nothrow: true });
+    if (!path7z) {
+        throw new Error(
+            "Downloading Obsidian for Windows requires 7zip to be installed and available on the PATH. " +
+            "You install it from https://www.7-zip.org and then add the install location to the PATH."
+        );
+    }
+    exe = path.resolve(exe);
+    // The installer contains several `.7z` files with files for different architectures 
+    const subArchive = path.join('$PLUGINSDIR', appArch + ".7z");
+    dest = path.resolve(dest);
+
+    await withTmpDir(dest, async (tmpDir) => {
+        const extractedInstaller = path.join(tmpDir, "installer");
+        await execFile(path7z, ["x", "-o" + extractedInstaller, exe, subArchive]);
+        const extractedObsidian = path.join(tmpDir, "obsidian");
+        await execFile(path7z, ["x", "-o" + extractedObsidian, path.join(extractedInstaller, subArchive)]);
+        return extractedObsidian;
+    })
+}
+
 
 /**
  * Handles downloading and setting sandboxed config directories and vaults for Obsidian.
@@ -159,19 +192,63 @@ export class ObsidianLauncher {
      */
     async downloadInstaller(installerVersion: string): Promise<string> {
         const installerVersionInfo = (await this.getVersions()).find(v => v.version == installerVersion)!;
-        const installerUrl = installerVersionInfo.downloads.appImage;
-        if (!installerUrl) {
-            throw Error(`No linux AppImage found for Obsidian version ${installerVersion}`);
+        const {platform, arch} = process;
+        const cacheDir = path.join(this.cacheDir, "obsidian-installer", `${platform}-${arch}`);
+        
+        let installerPath: string
+        let downloader: (() => Promise<void>)|undefined
+        
+        if (platform == "linux") {
+            installerPath = path.join(cacheDir, `Obsidian-${installerVersion}.AppImage`)
+            let installerUrl: string|undefined
+            if (arch.startsWith("arm")) {
+                installerUrl = installerVersionInfo.downloads.appImageArm;
+            } else {
+                installerUrl = installerVersionInfo.downloads.appImage;
+            }
+            if (installerUrl) {
+                downloader = async () => {
+                    await withTmpDir(installerPath, async (tmpDir) => {
+                        const appImage = path.join(tmpDir, "Obsidian.AppImage");
+                        await fsAsync.writeFile(appImage, (await fetch(installerUrl)).body as any);
+                        await fsAsync.chmod(appImage, 0o755);
+                        return appImage;
+                    });
+                };
+            }
+        } else if (platform == "win32") {
+            installerPath = path.join(cacheDir, `Obsidian-${installerVersion}`, "Obsidian.exe")
+            let installerUrl = installerVersionInfo.downloads.exe;
+            let appArch: string|undefined
+            if (arch == "x64") {
+                appArch = "app-64"
+            } else if (arch == "ia32") {
+                appArch = "app-32"
+            } else if (arch.startsWith("arm")) {
+                appArch = "app-arm64"
+            }
+            if (installerUrl && appArch) {
+                downloader = async () => {
+                    await withTmpDir(path.dirname(installerPath), async (tmpDir) => {
+                        const installerExecutable = path.join(tmpDir, "Obsidian.exe");
+                        await fsAsync.writeFile(installerExecutable, (await fetch(installerUrl)).body as any);
+                        const obsidianFolder = path.join(tmpDir, "Obsidian");
+                        await extractObsidianExe(installerExecutable, appArch, obsidianFolder);
+                        return obsidianFolder;
+                    });
+                };
+            }
+        } else {
+            throw Error(`Unsupported platform ${platform}`);
         }
-        const installerPath = path.join(this.cacheDir, "obsidian-installer", installerUrl.split("/").at(-1)!);
+        if (!downloader) {
+            throw Error(`No Obsidian download available for v${installerVersion} ${platform} ${arch}`);
+        }
 
         if (!(await fileExists(installerPath))) {
             console.log(`Downloading Obsidian installer v${installerVersion}...`)
-            await fsAsync.mkdir(path.dirname(installerPath), { recursive: true });
-            await fsAsync.rm(`${installerPath}.tmp`, { force: true });
-            await fsAsync.writeFile(`${installerPath}.tmp`, (await fetch(installerUrl)).body as any);
-            await fsAsync.chmod(`${installerPath}.tmp`, 0o755);
-            await fsAsync.rename(`${installerPath}.tmp`, installerPath);
+            await fsAsync.mkdir(cacheDir, { recursive: true });
+            await downloader();
         }
 
         return installerPath;
@@ -190,22 +267,18 @@ export class ObsidianLauncher {
         const appPath = path.join(this.cacheDir, 'obsidian-app', appUrl.split("/").at(-1)!.replace(/\.gz$/, ''));
 
         if (!(await fileExists(appPath))) {
-            console.log(`Downloading Obsidian app v${appVersion}...`)
+            console.log(`Downloading Obsidian app v${appVersion} ...`)
             await fsAsync.mkdir(path.dirname(appPath), { recursive: true });
-            await fsAsync.rm(`${appPath}.tmp`, { force: true });
-            await fsAsync.rm(`${appPath}.gz`, { force: true });
 
-            const isInsidersBuild = new URL(appUrl).hostname.endsWith('.obsidian.md');
-            const response = isInsidersBuild ? await fetchObsidianAPI(appUrl) : await fetch(appUrl);
-
-            await fsAsync.writeFile(`${appPath}.gz`, response.body as any);
-            await pipeline(
-                fs.createReadStream(`${appPath}.gz`),
-                zlib.createGunzip(),
-                fs.createWriteStream(`${appPath}.tmp`,),
-            );
-            await fsAsync.rm(appPath + ".gz");
-            await fsAsync.rename(`${appPath}.tmp`, appPath);
+            await withTmpDir(appPath, async (tmpDir) => {
+                const isInsidersBuild = new URL(appUrl).hostname.endsWith('.obsidian.md');
+                const response = isInsidersBuild ? await fetchObsidianAPI(appUrl) : await fetch(appUrl);
+                const archive = path.join(tmpDir, 'app.asar.gz');
+                const asar = path.join(tmpDir, 'app.asar')
+                await fsAsync.writeFile(archive, response.body as any);
+                await pipeline(fs.createReadStream(archive), zlib.createGunzip(), fs.createWriteStream(asar));
+                return asar;
+            })
         }
 
         return appPath;
@@ -234,15 +307,20 @@ export class ObsidianLauncher {
             cacheRoot: path.join(this.cacheDir, "chromedriver-legacy"),
             unsafelyDisableChecksums: true, // the checksums are slow and run even on cache hit.
         });
-        const chromedriverPath = path.join(path.dirname(chromedriverZipPath), "chromedriver");
+
+        let chromedriverPath: string
+        if (process.platform == "win32") {
+            chromedriverPath = path.join(path.dirname(chromedriverZipPath), "chromedriver.exe");
+        } else {
+            chromedriverPath = path.join(path.dirname(chromedriverZipPath), "chromedriver");
+        }
 
         if (!(await fileExists(chromedriverPath))) {
-            console.log(`Downloaded legacy chromedriver for electron ${electronVersion}`)
-            const extractPath = path.join(path.dirname(chromedriverZipPath), 'extract');
-            await fsAsync.rm(extractPath, { recursive: true, force: true }); // if it exists from a previous failure
-            await extractZip(chromedriverZipPath, { dir: extractPath });
-            await fsAsync.rename(path.join(extractPath, 'chromedriver'), chromedriverPath);
-            await fsAsync.rm(extractPath, { recursive: true });
+            console.log(`Downloading legacy chromedriver for electron ${electronVersion} ...`)
+            await withTmpDir(chromedriverPath, async (tmpDir) => {
+                await extractZip(chromedriverZipPath, { dir: tmpDir });
+                return path.join(tmpDir, path.basename(chromedriverPath));
+            })
         }
 
         return chromedriverPath;
@@ -300,7 +378,7 @@ export class ObsidianLauncher {
 
         await fsAsync.writeFile(path.join(configDir, 'obsidian.json'), JSON.stringify(obsidianJson));
         // Create hardlink for the asar so Obsidian picks it up.
-        await fsAsync.link(params.appPath, path.join(configDir, path.basename(params.appPath)));
+        await fsAsync.cp(params.appPath, path.join(configDir, path.basename(params.appPath)));
         const localStorage = new ChromeLocalStorage(configDir);
         await localStorage.setItems("app://obsidian.md", localStorageData)
         await localStorage.close();

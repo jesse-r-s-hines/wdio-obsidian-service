@@ -79,9 +79,13 @@ export class ObsidianLauncherService implements Services.ServiceInstance {
                     ...cap['goog:chromeOptions'],
                 }
                 cap['wdio:chromedriverOptions'] = {
+                    // allowedIps is not included in the types, but gets passed as --allowed-ips to chromedriver.
+                    // It defaults to ["0.0.0.0"] which makes Windows Firewall complain, and we don't need remote
+                    // connections anyways.
+                    allowedIps: [],
                     ...cap['wdio:chromedriverOptions'],
                     binary: chromedriverPath,
-                }
+                } as any
                 cap["wdio:enforceWebDriverClassic"] = true;
             }
         } catch (e: any) {

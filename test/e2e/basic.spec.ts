@@ -1,6 +1,7 @@
 import { browser } from '@wdio/globals'
 import { expect } from 'chai';
 import path from "path"
+import os from "os"
 import { OBSIDIAN_CAPABILITY_KEY } from '../../src/types.js';
 
 
@@ -27,7 +28,7 @@ describe("Basic obsidian launch", () => {
         let vaultPath: string = await browser.execute('return app.vault.adapter.getBasePath()');
         vaultPath = path.normalize(vaultPath).replace("\\", "/");
         // Should have created a copy of vault
-        expect(vaultPath).to.match(/^.*\/optl-.*\/vault$/);
+        expect(path.normalize(vaultPath).startsWith(os.tmpdir())).to.be.true;
 
         const vaultFiles = await browser.execute("return app.vault.getMarkdownFiles().map(x => x.path).sort()");
         expect(vaultFiles).to.eql(["Goodbye.md", "Welcome.md"]);
@@ -35,8 +36,7 @@ describe("Basic obsidian launch", () => {
 
     it('Sandboxed config', async () => {
         let configDir: string = await browser.execute("return electron.remote.app.getPath('userData')")
-        configDir = path.normalize(configDir).replace("\\", "/");
-        expect(configDir).to.match(/^.*\/optl-.*\/config$/);
+        expect(path.normalize(configDir).startsWith(os.tmpdir())).to.be.true;
     })
 
     it('plugin was installed and enabled', async () => {
