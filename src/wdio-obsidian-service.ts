@@ -1,5 +1,6 @@
 import fsAsync from "fs/promises"
 import path from "path"
+import { SevereServiceError } from 'webdriverio'
 import type { Capabilities, Options, Services } from '@wdio/types'
 import { ObsidianLauncher } from "./obsidianUtils.js"
 import browserCommands from "./browserCommands.js"
@@ -33,54 +34,60 @@ export class ObsidianLauncherService implements Services.ServiceInstance {
             }
         });
 
-        await this.obsidianLauncher.downloadVersions();
+        try {
+            await this.obsidianLauncher.downloadVersions();
 
-        for (const cap of obsidianCapabilities) {
-            const obsidianOptions = cap[OBSIDIAN_CAPABILITY_KEY] ?? {};
-
-            const appVersion = cap.browserVersion ?? "latest";
-            const installerVersion = obsidianOptions.installerVersion ?? "earliest";
-            const vault = obsidianOptions.vault != undefined ? path.resolve(obsidianOptions.vault) : undefined;
-
-            const {
-                appVersionInfo, installerVersionInfo,
-            } = await this.obsidianLauncher.resolveVersions(appVersion, installerVersion);
-
-            let installerPath = obsidianOptions.binaryPath;
-            if (!installerPath) {
-                installerPath = await this.obsidianLauncher.downloadInstaller(installerVersionInfo.version);
+            for (const cap of obsidianCapabilities) {
+                const obsidianOptions = cap[OBSIDIAN_CAPABILITY_KEY] ?? {};
+    
+                const appVersion = cap.browserVersion ?? "latest";
+                const installerVersion = obsidianOptions.installerVersion ?? "earliest";
+                const vault = obsidianOptions.vault != undefined ? path.resolve(obsidianOptions.vault) : undefined;
+    
+                const {
+                    appVersionInfo, installerVersionInfo,
+                } = await this.obsidianLauncher.resolveVersions(appVersion, installerVersion);
+    
+                let installerPath = obsidianOptions.binaryPath;
+                if (!installerPath) {
+                    installerPath = await this.obsidianLauncher.downloadInstaller(installerVersionInfo.version);
+                }
+                let appPath = obsidianOptions.appPath;
+                if (!appPath) {
+                    appPath = await this.obsidianLauncher.downloadApp(appVersionInfo.version);
+                }
+                let chromedriverPath = cap['wdio:chromedriverOptions']?.binary
+                // wdio can download chromedriver for versions greater than 115 automatically
+                if (!chromedriverPath && Number(installerVersionInfo.chromeVersion!.split(".")[0]) <= 115) {
+                    chromedriverPath = await this.obsidianLauncher.downloadChromedriver(installerVersion);
+                }
+    
+                cap.browserName = "chrome";
+                cap.browserVersion = installerVersionInfo.chromeVersion;
+                cap[OBSIDIAN_CAPABILITY_KEY] = {
+                    plugins: ["."],
+                    ...obsidianOptions,
+                    binaryPath: installerPath,
+                    appPath: appPath,
+                    vault: vault,
+                    appVersion: appVersionInfo.version, // Resolve the versions
+                    installerVersion: installerVersionInfo.version,
+                };
+                cap['goog:chromeOptions'] = {
+                    binary: installerPath,
+                    windowTypes: ["app", "webview"],
+                    ...cap['goog:chromeOptions'],
+                }
+                cap['wdio:chromedriverOptions'] = {
+                    ...cap['wdio:chromedriverOptions'],
+                    binary: chromedriverPath,
+                }
+                cap["wdio:enforceWebDriverClassic"] = true;
             }
-            let appPath = obsidianOptions.appPath;
-            if (!appPath) {
-                appPath = await this.obsidianLauncher.downloadApp(appVersionInfo.version);
-            }
-            let chromedriverPath = cap['wdio:chromedriverOptions']?.binary
-            // wdio can download chromedriver for versions greater than 115 automatically
-            if (!chromedriverPath && Number(installerVersionInfo.chromeVersion!.split(".")[0]) <= 115) {
-                chromedriverPath = await this.obsidianLauncher.downloadChromedriver(installerVersion);
-            }
-
-            cap.browserName = "chrome";
-            cap.browserVersion = installerVersionInfo.chromeVersion;
-            cap[OBSIDIAN_CAPABILITY_KEY] = {
-                plugins: ["."],
-                ...obsidianOptions,
-                binaryPath: installerPath,
-                appPath: appPath,
-                vault: vault,
-                appVersion: appVersionInfo.version, // Resolve the versions
-                installerVersion: installerVersionInfo.version,
-            };
-            cap['goog:chromeOptions'] = {
-                binary: installerPath,
-                windowTypes: ["app", "webview"],
-                ...cap['goog:chromeOptions'],
-            }
-            cap['wdio:chromedriverOptions'] = {
-                ...cap['wdio:chromedriverOptions'],
-                binary: chromedriverPath,
-            }
-            cap["wdio:enforceWebDriverClassic"] = true;
+        } catch (e: any) {
+            // By default wdio just logs service errors, throwing this makes it bail if anything goes wrong.
+            throw new SevereServiceError(`Failed to download and setup Obsidian. Caused by: ${e.stack}\n`+
+                                         ` ------The above causes:-----`);
         }
     }
 }
