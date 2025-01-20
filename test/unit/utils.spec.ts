@@ -1,6 +1,18 @@
 import { describe, it } from "mocha";
 import { expect } from "chai";
-import { sleep, withTimeout, pool, compareVersions } from "../../src/utils.js";
+import path from "path"
+import { createDirectory } from "../helpers.js";
+import { fileExists, sleep, withTimeout, pool, compareVersions } from "../../src/utils.js";
+
+
+describe("fileExists", () => {
+    it("basic", async () => {
+        const tmpDir = await createDirectory({"foo.txt": "foo"});
+        expect(await fileExists(path.join(tmpDir, "foo.txt"))).to.equal(true);
+        expect(await fileExists(path.join(tmpDir, "bar.txt"))).to.equal(false);
+    })
+})
+
 
 
 describe("withTimeout", () => {
