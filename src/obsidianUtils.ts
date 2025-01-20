@@ -11,7 +11,7 @@ import { downloadArtifact } from '@electron/get';
 import { promisify } from "util";
 import child_process from "child_process"
 import which from "which"
-import { fileExists, withTmpDir } from "./utils.js";
+import { Version, fileExists, withTmpDir } from "./utils.js";
 import { ObsidianVersionInfo } from "./types.js";
 import { fetchObsidianAPI } from "./apis.js";
 import ChromeLocalStorage from "./chromeLocalStorage.js";
@@ -164,7 +164,7 @@ export class ObsidianLauncher {
         } else if (appVersion == "latest-beta") {
             appVersion = versions.at(-1)!.version;
         } else {
-            appVersion = appVersion.replace(/^v/, ''); // remove v if present.
+            appVersion = Version(appVersion).toString();
         }
         const appVersionInfo = versions.find(v => v.version == appVersion);
         if (!appVersionInfo) {
@@ -176,7 +176,7 @@ export class ObsidianLauncher {
         } else if (installerVersion == "earliest") {
             installerVersion = appVersionInfo.minInstallerVersion;
         } else {
-            installerVersion = installerVersion.replace(/^v/, '');
+            installerVersion = Version(installerVersion).toString();
         }
         const installerVersionInfo = versions.find(v => v.version == installerVersion);
         if (!installerVersionInfo || !installerVersionInfo.chromeVersion) {

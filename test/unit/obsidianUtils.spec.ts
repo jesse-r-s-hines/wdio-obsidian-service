@@ -5,7 +5,7 @@ import fsAsync from "fs/promises"
 import { pathToFileURL } from "url";
 import { createDirectory } from "../helpers.js"
 import { installPlugins, ObsidianLauncher } from "../../src/obsidianUtils.js";
-import { compareVersions, fileExists } from "../../src/utils.js";
+import { Version, fileExists } from "../../src/utils.js";
 import { ObsidianVersionInfo } from "../../src/types.js";
 
 
@@ -66,7 +66,7 @@ describe("resolveVersions", () => {
 
     before(async () => {
         let versions = JSON.parse(await fsAsync.readFile(path.resolve("./obsidian-versions.json"), 'utf-8')).versions;
-        versions = versions.filter((v: ObsidianVersionInfo) => compareVersions(v.version, "1.8.0") <= 0);
+        versions = versions.filter((v: ObsidianVersionInfo) => Version(v.version) <= Version("1.8.0"));
     
         const tmpDir = await createDirectory({
             "obsidian-versions.json": JSON.stringify({
