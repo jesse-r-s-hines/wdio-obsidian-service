@@ -85,7 +85,7 @@ describe("resolveVersions", () => {
 
     const tests = [
         [["latest", "latest"], ["1.7.7", "1.7.7"]],
-        [["latest", "earliest"], ["1.7.7", "0.14.5"]],
+        [["latest", "earliest"], ["1.7.7", "1.1.9"]],
         [["latest-beta", "latest"], ["1.8.0", "1.7.7"]],
         [["0.14.5", "earliest"], ["0.14.5", "0.11.0"]],
         [["0.14.5", "latest"], ["0.14.5", "0.14.5"]],

@@ -115,6 +115,24 @@ async function getDependencyVersions(version: string, appImageUrl: string): Prom
 }
 
 
+/**
+ * Add some corrections to the Obsidian version data.
+ */
+function correctObsidianVersionInfo(versionInfo: Partial<ObsidianVersionInfo>): Partial<ObsidianVersionInfo> {
+    const corrections: Partial<ObsidianVersionInfo> = {}
+    // minInstallerVersion is incorrect, running Obsidian with installer older than 1.1.9 won't boot with errors like
+    // `(node:11592) electron: Failed to load URL: app://obsidian.md/starter.html with error: ERR_BLOCKED_BY_CLIENT`
+    if (
+        compareVersions(versionInfo.version!, "1.5.3") >= 0 &&
+        compareVersions(versionInfo.minInstallerVersion!, "1.1.9") < 0
+    ) {
+        corrections.minInstallerVersion = "1.1.9"
+    }
+
+    return corrections;
+}
+
+
 async function getAllObsidianVersionInfos(maxInstances: number, original?: ObsidianVersionInfos): Promise<ObsidianVersionInfos> {
     const repo = 'obsidianmd/obsidian-releases';
 
@@ -160,12 +178,16 @@ async function getAllObsidianVersionInfos(maxInstances: number, original?: Obsid
         versionMap[deps.version!] = _.merge({}, versionMap[deps.version!], deps);
     }
 
+    // populate maxInstallerVersion and add corrections
     let maxInstallerVersion = "0.0.0"
     for (const version of Object.keys(versionMap).sort(compareVersions)) {
         if (versionMap[version].downloads!.appImage) {
             maxInstallerVersion = version;
         }
-        versionMap[version].maxInstallerVersion = maxInstallerVersion;
+        versionMap[version] = _.merge({}, versionMap[version],
+            correctObsidianVersionInfo(versionMap[version]),
+            { maxInstallerVersion },
+        );
     }
 
     const versionInfos = Object.values(versionMap) as ObsidianVersionInfo[];

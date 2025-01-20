@@ -2700,7 +2700,7 @@
         },
         {
             "version": "1.5.3",
-            "minInstallerVersion": "0.14.5",
+            "minInstallerVersion": "1.1.9",
             "maxInstallerVersion": "1.5.3",
             "isBeta": false,
             "downloads": {
@@ -2717,7 +2717,7 @@
         },
         {
             "version": "1.5.4",
-            "minInstallerVersion": "0.14.5",
+            "minInstallerVersion": "1.1.9",
             "maxInstallerVersion": "1.5.3",
             "isBeta": true,
             "downloads": {
@@ -2726,7 +2726,7 @@
         },
         {
             "version": "1.5.5",
-            "minInstallerVersion": "0.14.5",
+            "minInstallerVersion": "1.1.9",
             "maxInstallerVersion": "1.5.3",
             "isBeta": true,
             "downloads": {
@@ -2735,7 +2735,7 @@
         },
         {
             "version": "1.5.6",
-            "minInstallerVersion": "0.14.5",
+            "minInstallerVersion": "1.1.9",
             "maxInstallerVersion": "1.5.3",
             "isBeta": true,
             "downloads": {
@@ -2744,7 +2744,7 @@
         },
         {
             "version": "1.5.7",
-            "minInstallerVersion": "0.14.5",
+            "minInstallerVersion": "1.1.9",
             "maxInstallerVersion": "1.5.3",
             "isBeta": true,
             "downloads": {
@@ -2753,7 +2753,7 @@
         },
         {
             "version": "1.5.8",
-            "minInstallerVersion": "0.14.5",
+            "minInstallerVersion": "1.1.9",
             "maxInstallerVersion": "1.5.8",
             "isBeta": false,
             "downloads": {
@@ -2771,7 +2771,7 @@
         },
         {
             "version": "1.5.9",
-            "minInstallerVersion": "0.14.5",
+            "minInstallerVersion": "1.1.9",
             "maxInstallerVersion": "1.5.8",
             "isBeta": true,
             "downloads": {
@@ -2780,7 +2780,7 @@
         },
         {
             "version": "1.5.10",
-            "minInstallerVersion": "0.14.5",
+            "minInstallerVersion": "1.1.9",
             "maxInstallerVersion": "1.5.8",
             "isBeta": true,
             "downloads": {
@@ -2789,7 +2789,7 @@
         },
         {
             "version": "1.5.11",
-            "minInstallerVersion": "0.14.5",
+            "minInstallerVersion": "1.1.9",
             "maxInstallerVersion": "1.5.11",
             "isBeta": false,
             "downloads": {
@@ -2807,7 +2807,7 @@
         },
         {
             "version": "1.5.12",
-            "minInstallerVersion": "0.14.5",
+            "minInstallerVersion": "1.1.9",
             "maxInstallerVersion": "1.5.12",
             "isBeta": false,
             "downloads": {
@@ -2825,7 +2825,7 @@
         },
         {
             "version": "1.6.0",
-            "minInstallerVersion": "0.14.5",
+            "minInstallerVersion": "1.1.9",
             "maxInstallerVersion": "1.5.12",
             "isBeta": true,
             "downloads": {
@@ -2834,7 +2834,7 @@
         },
         {
             "version": "1.6.1",
-            "minInstallerVersion": "0.14.5",
+            "minInstallerVersion": "1.1.9",
             "maxInstallerVersion": "1.5.12",
             "isBeta": true,
             "downloads": {
@@ -2843,7 +2843,7 @@
         },
         {
             "version": "1.6.2",
-            "minInstallerVersion": "0.14.5",
+            "minInstallerVersion": "1.1.9",
             "maxInstallerVersion": "1.6.2",
             "isBeta": false,
             "downloads": {
@@ -2861,7 +2861,7 @@
         },
         {
             "version": "1.6.3",
-            "minInstallerVersion": "0.14.5",
+            "minInstallerVersion": "1.1.9",
             "maxInstallerVersion": "1.6.3",
             "isBeta": false,
             "downloads": {
@@ -2879,7 +2879,7 @@
         },
         {
             "version": "1.6.4",
-            "minInstallerVersion": "0.14.5",
+            "minInstallerVersion": "1.1.9",
             "maxInstallerVersion": "1.6.3",
             "isBeta": true,
             "downloads": {
@@ -2888,7 +2888,7 @@
         },
         {
             "version": "1.6.5",
-            "minInstallerVersion": "0.14.5",
+            "minInstallerVersion": "1.1.9",
             "maxInstallerVersion": "1.6.5",
             "isBeta": false,
             "downloads": {
@@ -2906,7 +2906,7 @@
         },
         {
             "version": "1.6.6",
-            "minInstallerVersion": "0.14.5",
+            "minInstallerVersion": "1.1.9",
             "maxInstallerVersion": "1.6.5",
             "isBeta": true,
             "downloads": {
@@ -2915,7 +2915,7 @@
         },
         {
             "version": "1.6.7",
-            "minInstallerVersion": "0.14.5",
+            "minInstallerVersion": "1.1.9",
             "maxInstallerVersion": "1.6.7",
             "isBeta": false,
             "downloads": {
@@ -2933,7 +2933,7 @@
         },
         {
             "version": "1.7.0",
-            "minInstallerVersion": "0.14.5",
+            "minInstallerVersion": "1.1.9",
             "maxInstallerVersion": "1.6.7",
             "isBeta": true,
             "downloads": {
@@ -2942,7 +2942,7 @@
         },
         {
             "version": "1.7.1",
-            "minInstallerVersion": "0.14.5",
+            "minInstallerVersion": "1.1.9",
             "maxInstallerVersion": "1.6.7",
             "isBeta": true,
             "downloads": {
@@ -2951,7 +2951,7 @@
         },
         {
             "version": "1.7.2",
-            "minInstallerVersion": "0.14.5",
+            "minInstallerVersion": "1.1.9",
             "maxInstallerVersion": "1.6.7",
             "isBeta": true,
             "downloads": {
@@ -2960,7 +2960,7 @@
         },
         {
             "version": "1.7.3",
-            "minInstallerVersion": "0.14.5",
+            "minInstallerVersion": "1.1.9",
             "maxInstallerVersion": "1.6.7",
             "isBeta": true,
             "downloads": {
@@ -2969,7 +2969,7 @@
         },
         {
             "version": "1.7.4",
-            "minInstallerVersion": "0.14.5",
+            "minInstallerVersion": "1.1.9",
             "maxInstallerVersion": "1.7.4",
             "isBeta": false,
             "downloads": {
@@ -2987,7 +2987,7 @@
         },
         {
             "version": "1.7.5",
-            "minInstallerVersion": "0.14.5",
+            "minInstallerVersion": "1.1.9",
             "maxInstallerVersion": "1.7.5",
             "isBeta": false,
             "downloads": {
@@ -3005,7 +3005,7 @@
         },
         {
             "version": "1.7.6",
-            "minInstallerVersion": "0.14.5",
+            "minInstallerVersion": "1.1.9",
             "maxInstallerVersion": "1.7.6",
             "isBeta": false,
             "downloads": {
@@ -3023,7 +3023,7 @@
         },
         {
             "version": "1.7.7",
-            "minInstallerVersion": "0.14.5",
+            "minInstallerVersion": "1.1.9",
             "maxInstallerVersion": "1.7.7",
             "isBeta": false,
             "downloads": {
@@ -3041,7 +3041,7 @@
         },
         {
             "version": "1.8.0",
-            "minInstallerVersion": "0.14.5",
+            "minInstallerVersion": "1.1.9",
             "maxInstallerVersion": "1.7.7",
             "isBeta": true,
             "downloads": {
@@ -3050,7 +3050,7 @@
         },
         {
             "version": "1.8.1",
-            "minInstallerVersion": "0.14.5",
+            "minInstallerVersion": "1.1.9",
             "maxInstallerVersion": "1.7.7",
             "isBeta": true,
             "downloads": {
