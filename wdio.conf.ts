@@ -1,6 +1,35 @@
 import { ObsidianWorkerService, ObsidianLauncherService, ObsidianReporter } from "./src/index.js"
 import { pathToFileURL } from "url"
 import path from "path"
+import fsAsync from "fs/promises"
+import { Version } from "./src/utils.js"
+import { ObsidianVersionInfo } from "./src/types.js"
+import _ from "lodash"
+
+const minInstallerVersion = "1.1.9"
+const minAppVersion = "1.5.3"
+const maxInstances = Number(process.env['WDIO_MAX_INSTANCES'] ?? 4);
+
+async function getVersionsToTest() {
+    const minorVersion = (v: string) => v.split(".").slice(0, 2).join('.')
+    const versions: ObsidianVersionInfo[] = JSON.parse(
+        await fsAsync.readFile("./obsidian-versions.json", 'utf-8')
+    ).versions;
+    const versionMap = _(versions)
+        .filter(v => !!v.electronVersion && Version(v.version) >= Version(minInstallerVersion))
+        .keyBy(v => minorVersion(v.version)) // keyBy keeps last
+        .value();
+    versionMap[minorVersion(minInstallerVersion)] = versions.find(v => v.version == minInstallerVersion)!
+    return [
+        // Test every minor installer version since minInstallerVersion and every minor appVersion since minAppVersion
+        ..._.values(versionMap).map(v => ({
+            appVersion: Version(v.version) <= Version(minAppVersion) ? minAppVersion : v.version,
+            installerVersion: v.version,
+        })),
+        // And the latest beta
+        {appVersion: "latest-beta", installerVersion: "latest"},
+    ]
+}
 
 const obsidianServiceOptions = {
     obsidianVersionsUrl: pathToFileURL("./obsidian-versions.json").toString(),
@@ -14,16 +43,16 @@ export const config: WebdriverIO.Config = {
     ],
    
     // How many instances of Obsidian should be launched in parallel during testing.
-    maxInstances: 4,
+    maxInstances: maxInstances,
 
-    capabilities: [{
-        browserName: 'obsidian',
-        browserVersion: "1.7.7",
+    capabilities: (await getVersionsToTest()).map(({appVersion, installerVersion}) => ({
+        browserName: "obsidian",
+        browserVersion: appVersion,
         'wdio:obsidianOptions': {
-            installerVersion: "1.6.2",
+            installerVersion: installerVersion,
             plugins: ["./test/plugins/basic-plugin"],
-        },
-    }],
+        }
+    })),
 
     services: [[ObsidianWorkerService, obsidianServiceOptions], [ObsidianLauncherService, obsidianServiceOptions]],
 
