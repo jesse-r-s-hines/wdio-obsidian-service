@@ -61,20 +61,20 @@ export async function installPlugins(vault: string, plugins: string[]) {
  */
 export class ObsidianLauncher {
     readonly cacheDir: string
-    readonly obsidianVersionsFile: string
+    readonly obsidianVersionsUrl: string
     private versions: ObsidianVersionInfo[]|undefined
 
     /**
      * Construct an ObsidianLauncher.
      * @param cacheDir Path to the cache directory. Defaults to OPTL_CACHE or "./.optl"
-     * @param obsidianVersionsFile The `obsidian-versions.json` used by the service. Can be a URL or a file path. 
+     * @param obsidianVersionsUrl The `obsidian-versions.json` used by the service. Can be a file URL. 
      *     Defaults to the GitHub repo's obsidian-versions.json.
      */
-    constructor(cacheDir?: string, obsidianVersionsFile?: string) {
+    constructor(cacheDir?: string, obsidianVersionsUrl?: string) {
         this.cacheDir = path.resolve(cacheDir ?? process.env.OPTL_CACHE ?? "./.optl");
         const packageDir = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
         const defaultVersionsURL =  path.join(packageDir, "obsidian-versions.json"); // TODO
-        this.obsidianVersionsFile = obsidianVersionsFile ?? defaultVersionsURL;
+        this.obsidianVersionsUrl = obsidianVersionsUrl ?? defaultVersionsURL;
     }
 
     /**
@@ -86,11 +86,11 @@ export class ObsidianLauncher {
         const dest = path.join(this.cacheDir, "obsidian-versions.json");
 
         let fileContents: string
-        if (this.obsidianVersionsFile.startsWith("/") || this.obsidianVersionsFile.startsWith('.')) {
-            fileContents = await fsAsync.readFile(this.obsidianVersionsFile, 'utf-8');
+        if (this.obsidianVersionsUrl.startsWith("file://")) {
+            fileContents = await fsAsync.readFile(fileURLToPath(this.obsidianVersionsUrl), 'utf-8');
         } else {
             try {
-                fileContents = await fetch(this.obsidianVersionsFile).then(r => r.text());
+                fileContents = await fetch(this.obsidianVersionsUrl).then(r => r.text());
             } catch (e) {
                 if (await fileExists(dest)) {
                     console.warn("Unable to download obsidian-versions.json, using cached file.");

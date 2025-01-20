@@ -36,10 +36,10 @@ export interface ObsidianServiceOptions {
     cacheDir?: string,
 
     /**
-     * Override the `obsidian-versions.json` used by the service. Can be a URL or a file path.
+     * Override the `obsidian-versions.json` used by the service. Can be a file URL.
      * This is only really useful for this package's own internal tests.
      */
-    obsidianVersionsFile?: string,
+    obsidianVersionsUrl?: string,
 }
 
 export interface ObsidianCapabilityOptions {

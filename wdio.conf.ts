@@ -1,8 +1,9 @@
 import { ObsidianWorkerService, ObsidianLauncherService } from "./src/wdio-obsidian-service.js"
+import { pathToFileURL } from "url"
 import path from "path"
 
 const obsidianServiceOptions = {
-    obsidianVersionsFile: "./obsidian-versions.json",
+    obsidianVersionsUrl: pathToFileURL("./obsidian-versions.json").toString(),
 }
 
 export const config: WebdriverIO.Config = {

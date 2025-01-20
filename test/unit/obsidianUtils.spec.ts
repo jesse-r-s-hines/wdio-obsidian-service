@@ -2,6 +2,7 @@ import { describe, it } from "mocha";
 import { expect } from "chai";
 import path from "path"
 import fsAsync from "fs/promises"
+import { pathToFileURL } from "url";
 import { createDirectory } from "../helpers.js"
 import { installPlugins, ObsidianLauncher } from "../../src/obsidianUtils.js";
 import { compareVersions, fileExists } from "../../src/utils.js";
@@ -78,7 +79,7 @@ describe("resolveVersions", () => {
         });
         const cacheDir = await createDirectory();
     
-        launcher = new ObsidianLauncher(cacheDir, `${tmpDir}/obsidian-versions.json`);
+        launcher = new ObsidianLauncher(cacheDir, pathToFileURL(`${tmpDir}/obsidian-versions.json`).toString());
         await launcher.downloadVersions();
     })
 
