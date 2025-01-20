@@ -1,4 +1,5 @@
 import fsAsync from "fs/promises"
+import path from "path"
 import { PromisePool } from '@supercharge/promise-pool'
 
 
@@ -10,6 +11,24 @@ export async function fileExists(path: string) {
         return true;
     } catch {
         return false;
+    }
+}
+
+/**
+ * Handles creating a file "atomically" by creating a tmpDir, then downloading or otherwise creating the file under it,
+ * then renaming it to the final location when done.
+ * @param dest Path the file should end up at.
+ * @param func Function takes path to a temporary directory it can use as scratch space. The path it returns will be
+ *     moved to `dest`.
+ */
+export async function withTmpDir(dest: string, func: (tmpDir: string) => Promise<string>): Promise<void> {
+    dest = path.resolve(dest)
+    const tmpDir = await fsAsync.mkdtemp(path.join(path.dirname(dest), `.${path.basename(dest)}.tmp.`));
+    try {
+        const result = await func(tmpDir);
+        await fsAsync.rename(result, dest);
+    } finally {
+        await fsAsync.rm(tmpDir, { recursive: true, force: true});
     }
 }
 

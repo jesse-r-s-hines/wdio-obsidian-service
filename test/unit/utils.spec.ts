@@ -1,8 +1,9 @@
 import { describe, it } from "mocha";
 import { expect } from "chai";
+import fsAsync from "fs/promises";
 import path from "path"
 import { createDirectory } from "../helpers.js";
-import { fileExists, sleep, withTimeout, pool, compareVersions } from "../../src/utils.js";
+import { fileExists, withTmpDir, sleep, withTimeout, pool, compareVersions } from "../../src/utils.js";
 
 
 describe("fileExists", () => {
@@ -13,6 +14,44 @@ describe("fileExists", () => {
     })
 })
 
+describe("withTmpDir", () => {
+    it("basic", async () => {
+        const tmpDir = await createDirectory();
+        const dest = path.join(tmpDir, "out");
+        await withTmpDir(dest, async (scratch) => {
+            await fsAsync.writeFile(path.join(scratch, 'a'), "a");
+            await fsAsync.writeFile(path.join(scratch, 'b'), "b");
+            return path.join(scratch, 'b');
+        })
+        expect(await fsAsync.readFile(dest, 'utf-8')).to.equal("b");
+        expect(await fsAsync.readdir(tmpDir)).to.eql(["out"]);
+    })
+
+    it("with directory", async () => {
+        const tmpDir = await createDirectory();
+        const dest = path.join(tmpDir, "out");
+        await withTmpDir(dest, async (scratch) => {
+            await fsAsync.mkdir(path.join(scratch, 'a'));
+            await fsAsync.writeFile(path.join(scratch, 'a', 'b'), "b");
+            return path.join(scratch, 'a');
+        })
+        expect(await fsAsync.readFile(path.join(dest, 'b'), 'utf-8')).to.equal("b");
+        expect(await fsAsync.readdir(tmpDir)).to.eql(["out"]);
+    })
+
+    it("errors", async () => {
+        const tmpDir = await createDirectory();
+        const dest = path.join(tmpDir, "out");
+
+        const result = await withTmpDir(dest, async (scratch) => {
+            await fsAsync.writeFile(path.join(scratch, 'a'), "a");
+            throw Error("FOO")
+        }).catch(err => err)
+
+        expect(result).to.be.instanceOf(Error);
+        expect(await fsAsync.readdir(tmpDir)).to.eql([]);
+    })
+})
 
 
 describe("withTimeout", () => {
