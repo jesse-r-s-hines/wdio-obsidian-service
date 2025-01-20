@@ -1,4 +1,4 @@
-import { ObsidianWorkerService, ObsidianLauncherService } from "./src/wdio-obsidian-service.js"
+import { ObsidianWorkerService, ObsidianLauncherService, ObsidianReporter } from "./src/index.js"
 import { pathToFileURL } from "url"
 import path from "path"
 
@@ -31,7 +31,7 @@ export const config: WebdriverIO.Config = {
 
     framework: 'mocha',
     
-    reporters: ['spec'],
+    reporters: [ObsidianReporter],
 
     mochaOpts: {
         ui: 'bdd',
