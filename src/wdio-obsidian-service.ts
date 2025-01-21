@@ -15,7 +15,7 @@ export class ObsidianLauncherService implements Services.ServiceInstance {
         public capabilities: WebdriverIO.Capabilities,
         public config: Options.Testrunner
     ) {
-        this.obsidianLauncher = new ObsidianLauncher(options.cacheDir, options.obsidianVersionsUrl);
+        this.obsidianLauncher = new ObsidianLauncher(config.cacheDir, options.obsidianVersionsUrl);
     }
 
 
@@ -106,7 +106,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
         public capabilities: WebdriverIO.Capabilities,
         public config: Options.Testrunner
     ) {
-        this.obsidianLauncher = new ObsidianLauncher(options.cacheDir, options.obsidianVersionsUrl);
+        this.obsidianLauncher = new ObsidianLauncher(config.cacheDir, options.obsidianVersionsUrl);
         this.tmpDirs = [];
     }
 

@@ -31,11 +31,6 @@ export const OBSIDIAN_CAPABILITY_KEY = "wdio:obsidianOptions" as const
 
 export interface ObsidianServiceOptions {
     /**
-     * Directory to cache downloaded Obsidian versions. Defaults to `./.optl`
-     */
-    cacheDir?: string,
-
-    /**
      * Override the `obsidian-versions.json` used by the service. Can be a file URL.
      * This is only really useful for this package's own internal tests.
      */
