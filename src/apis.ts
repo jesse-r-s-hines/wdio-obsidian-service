@@ -1,5 +1,7 @@
 import _ from "lodash"
 import fetch from "node-fetch";
+import fsAsync from "fs/promises";
+import { fileURLToPath } from "url";
 
 
 /**
@@ -89,4 +91,14 @@ export async function fetchObsidianAPI(url: string) {
         },
     })
     return response;
+}
+
+
+/** Fetches a URL returning its content as a string. URL can be a file url. */
+export async function fetchWithFileUrl(url: string) {
+    if (url.startsWith("file://")) {
+        return await fsAsync.readFile(fileURLToPath(url), 'utf-8');
+    } else {
+        return await fetch(url).then(r => r.text());
+    }
 }
