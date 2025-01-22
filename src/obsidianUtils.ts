@@ -11,7 +11,8 @@ import { downloadArtifact } from '@electron/get';
 import { promisify } from "util";
 import child_process from "child_process"
 import which from "which"
-import { Version, fileExists, withTmpDir } from "./utils.js";
+import semver from "semver"
+import { fileExists, withTmpDir } from "./utils.js";
 import { ObsidianVersionInfo } from "./types.js";
 import { fetchObsidianAPI } from "./apis.js";
 import ChromeLocalStorage from "./chromeLocalStorage.js";
@@ -164,7 +165,8 @@ export class ObsidianLauncher {
         } else if (appVersion == "latest-beta") {
             appVersion = versions.at(-1)!.version;
         } else {
-            appVersion = Version(appVersion).toString();
+            // if invalid match won't be found and we'll throw error below
+            appVersion = semver.valid(appVersion) ?? appVersion;
         }
         const appVersionInfo = versions.find(v => v.version == appVersion);
         if (!appVersionInfo) {
@@ -176,7 +178,7 @@ export class ObsidianLauncher {
         } else if (installerVersion == "earliest") {
             installerVersion = appVersionInfo.minInstallerVersion;
         } else {
-            installerVersion = Version(installerVersion).toString();
+            installerVersion = semver.valid(installerVersion) ?? installerVersion;
         }
         const installerVersionInfo = versions.find(v => v.version == installerVersion);
         if (!installerVersionInfo || !installerVersionInfo.chromeVersion) {

@@ -10,8 +10,9 @@ import os from "os"
 import fetch from 'node-fetch';
 import CDP from 'chrome-remote-interface'
 import child_process from "child_process"
+import semver from "semver"
 import _ from "lodash"
-import { Version, sleep, withTimeout, pool } from "../src/utils.js";
+import { sleep, withTimeout, pool } from "../src/utils.js";
 import { fetchGitHubAPIPaginated } from "../src/apis.js";
 import { ObsidianVersionInfo, ObsidianVersionInfos } from "../src/types.js"
 
@@ -122,10 +123,7 @@ function correctObsidianVersionInfo(versionInfo: Partial<ObsidianVersionInfo>): 
     const corrections: Partial<ObsidianVersionInfo> = {}
     // minInstallerVersion is incorrect, running Obsidian with installer older than 1.1.9 won't boot with errors like
     // `(node:11592) electron: Failed to load URL: app://obsidian.md/starter.html with error: ERR_BLOCKED_BY_CLIENT`
-    if (
-        Version(versionInfo.version!) >= Version("1.5.3") &&
-        Version(versionInfo.minInstallerVersion!) < Version("1.1.9")
-    ) {
+    if (semver.gte(versionInfo.version!, "1.5.3") && semver.lt(versionInfo.minInstallerVersion!, "1.1.9")) {
         corrections.minInstallerVersion = "1.1.9"
     }
 
@@ -180,7 +178,7 @@ async function getAllObsidianVersionInfos(maxInstances: number, original?: Obsid
 
     // populate maxInstallerVersion and add corrections
     let maxInstallerVersion = "0.0.0"
-    for (const version of _.sortBy(Object.keys(versionMap), Version)) {
+    for (const version of Object.keys(versionMap).sort(semver.compare)) {
         if (versionMap[version].downloads!.appImage) {
             maxInstallerVersion = version;
         }
@@ -190,7 +188,8 @@ async function getAllObsidianVersionInfos(maxInstances: number, original?: Obsid
         );
     }
 
-    const versionInfos = _.sortBy(Object.values(versionMap) as ObsidianVersionInfo[], v => Version(v.version));
+    const versionInfos = Object.values(versionMap) as ObsidianVersionInfo[]
+    versionInfos.sort((a, b) => semver.compare(a.version, b.version));
 
     return {
         latest: {

@@ -3,7 +3,7 @@ import { expect } from "chai";
 import fsAsync from "fs/promises";
 import path from "path"
 import { createDirectory } from "../helpers.js";
-import { fileExists, withTmpDir, sleep, withTimeout, pool, Version } from "../../src/utils.js";
+import { fileExists, withTmpDir, sleep, withTimeout, pool } from "../../src/utils.js";
 
 
 describe("fileExists", () => {
@@ -94,40 +94,3 @@ describe("pool", () => {
         expect(result).to.be.instanceOf(Error);
     });
 });
-
-
-describe("Version", () => {
-    const tests: [string, string, number][] = [
-        ["0.0.0", "0.0.1", -1],
-        ["0.0.1", "0.0.0", +1],
-        ["0.0.1", "2.0.0", -1],
-        ["2.0.0", "2.0.0",  0],
-        ["2.0.0", "2.1.0", -1],
-    ];
-
-    it(`construct`, () => {
-        let version = Version("1.2.3")
-        expect([version.major, version.minor, version.patch]).to.eql([1, 2, 3])
-
-        version = Version("v1.2.3")
-        expect([version.major, version.minor, version.patch]).to.eql([1, 2, 3])
-
-        version = Version("01.02.03")
-        expect([version.major, version.minor, version.patch]).to.eql([1, 2, 3])
-
-        expect(() => Version('foo')).to.throw();
-    });
-
-    it(`toString`, () => {
-        expect(Version("1.2.3").toString()).to.eql("1.2.3")
-        expect(Version("v1.02.3").toString()).to.eql("1.2.3")
-    });
-
-    tests.forEach(([a, b, expected]) => {
-        it(`compare versions "${a}" "${b}"`, () => {
-            expect(Math.sign(Version(a).valueOf() - Version(b).valueOf())).to.eq(expected);
-        });
-    });
-});
-
-

@@ -2,7 +2,7 @@ import { ObsidianWorkerService, ObsidianLauncherService, ObsidianReporter } from
 import { pathToFileURL } from "url"
 import path from "path"
 import fsAsync from "fs/promises"
-import { Version } from "./src/utils.js"
+import semver from "semver";
 import { ObsidianVersionInfo } from "./src/types.js"
 import _ from "lodash"
 
@@ -16,14 +16,14 @@ async function getVersionsToTest() {
         await fsAsync.readFile("./obsidian-versions.json", 'utf-8')
     ).versions;
     const versionMap = _(versions)
-        .filter(v => !!v.electronVersion && Version(v.version) >= Version(minInstallerVersion))
+        .filter(v => !!v.electronVersion && semver.gte(v.version, minInstallerVersion))
         .keyBy(v => minorVersion(v.version)) // keyBy keeps last
         .value();
     versionMap[minorVersion(minInstallerVersion)] = versions.find(v => v.version == minInstallerVersion)!
     return [
         // Test every minor installer version since minInstallerVersion and every minor appVersion since minAppVersion
         ..._.values(versionMap).map(v => ({
-            appVersion: Version(v.version) <= Version(minAppVersion) ? minAppVersion : v.version,
+            appVersion: semver.lte(v.version, minAppVersion) ? minAppVersion : v.version,
             installerVersion: v.version,
         })),
         // And the latest beta

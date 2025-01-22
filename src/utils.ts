@@ -63,34 +63,3 @@ export async function pool<T, U>(size: number, items: T[], func: (item: T) => Pr
         .process(func);
     return results as U[];
 }
-
-
-/// Misc ///
-
-/**
- * Represents a simple major.minor.patch version number, and allows parsing and comparing version strings.
- */
-export interface Version {
-    major: number,
-    minor: number,
-    patch: number,
-    valueOf(): number,
-    toString(): string,
-}
-
-export function Version(version: string): Version {
-    version = version.replace(/^v/, ''); // ignore "v" at beginning of string.
-    if (!version.match(/^\d+\.\d+\.\d+$/)) {
-        throw Error(`Invalid version string ${version}`);
-    }
-    const [major, minor, patch] = version.split(".").map(Number);
-    return {
-        major, minor, patch,
-        valueOf() {
-            return this.major * 1000 * 1000 + this.minor * 1000 + this.patch;
-        },
-        toString() {
-            return `${this.major}.${this.minor}.${this.patch}`;
-        }
-    }
-}
