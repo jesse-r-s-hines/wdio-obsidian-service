@@ -28,7 +28,7 @@ export async function withTmpDir(dest: string, func: (tmpDir: string) => Promise
         const result = await func(tmpDir);
         await fsAsync.rename(result, dest);
     } finally {
-        await fsAsync.rm(tmpDir, { recursive: true, force: true});
+        await fsAsync.rm(tmpDir, { recursive: true, force: true });
     }
 }
 

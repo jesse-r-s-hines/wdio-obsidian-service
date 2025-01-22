@@ -39,15 +39,24 @@ describe("withTmpDir", () => {
         expect(await fsAsync.readdir(tmpDir)).to.eql(["out"]);
     })
 
+    it("return tmpDir", async () => {
+        const tmpDir = await createDirectory();
+        const dest = path.join(tmpDir, "out");
+        await withTmpDir(dest, async (scratch) => {
+            await fsAsync.writeFile(path.join(scratch, 'a'), "b");
+            return scratch;
+        })
+        expect(await fsAsync.readFile(path.join(dest, 'a'), 'utf-8')).to.equal("b");
+        expect(await fsAsync.readdir(tmpDir)).to.eql(["out"]);
+    })
+
     it("errors", async () => {
         const tmpDir = await createDirectory();
         const dest = path.join(tmpDir, "out");
-
         const result = await withTmpDir(dest, async (scratch) => {
             await fsAsync.writeFile(path.join(scratch, 'a'), "a");
             throw Error("FOO")
         }).catch(err => err)
-
         expect(result).to.be.instanceOf(Error);
         expect(await fsAsync.readdir(tmpDir)).to.eql([]);
     })
