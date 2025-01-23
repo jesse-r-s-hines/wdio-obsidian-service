@@ -47,6 +47,7 @@ describe("Basic obsidian launch", () => {
         const beforeVaultPath: string = await browser.execute('return app.vault.adapter.getBasePath()');
         const beforeConfigDir: string = await browser.execute("return electron.remote.app.getPath('userData')");
 
+        // This should re-open the same vault with the same plugins
         await browser.openVault("./test/vaults/basic");
 
         const afterVaultPath: string = await browser.execute('return app.vault.adapter.getBasePath()');
@@ -57,8 +58,16 @@ describe("Basic obsidian launch", () => {
         expect(beforeConfigDir).to.not.eql(afterConfigDir);
         expect(afterPlugins).to.eql(["basic-plugin"]);
 
-        await browser.openVault("./test/vaults/basic", []);
+        // Test no plugins and a new vault
+        await browser.openVault("./test/vaults/basic2", []);
         const noPlugins: string[] = await browser.execute("return [...app.plugins.enabledPlugins]");
         expect(noPlugins).to.eql([]);
+        const vaultFiles = await browser.execute("return app.vault.getMarkdownFiles().map(x => x.path).sort()");
+        expect(vaultFiles).to.eql(["A.md", "B.md"]);
+
+        // Test installing the plugin via openVault
+        await browser.openVault("./test/vaults/basic", ["./test/plugins/basic-plugin"]);
+        const afterPlugins2: string[] = await browser.execute("return [...app.plugins.enabledPlugins]");
+        expect(afterPlugins2).to.eql(["basic-plugin"]);
     })
 })

@@ -4,7 +4,9 @@ import { SevereServiceError } from 'webdriverio'
 import type { Capabilities, Options, Services } from '@wdio/types'
 import { ObsidianLauncher } from "./obsidianUtils.js"
 import browserCommands from "./browserCommands.js"
-import { ObsidianCapabilityOptions, ObsidianServiceOptions, OBSIDIAN_CAPABILITY_KEY } from "./types.js"
+import {
+    ObsidianCapabilityOptions, ObsidianServiceOptions, OBSIDIAN_CAPABILITY_KEY, PluginEntry, LocalPluginEntry,
+} from "./types.js"
 
 
 export class ObsidianLauncherService implements Services.ServiceInstance {
@@ -15,7 +17,10 @@ export class ObsidianLauncherService implements Services.ServiceInstance {
         public capabilities: WebdriverIO.Capabilities,
         public config: Options.Testrunner
     ) {
-        this.obsidianLauncher = new ObsidianLauncher(config.cacheDir, options.obsidianVersionsUrl);
+        this.obsidianLauncher = new ObsidianLauncher({
+            cacheDir: config.cacheDir,
+            versionsUrl: options.versionsUrl,
+        });
     }
 
 
@@ -35,7 +40,7 @@ export class ObsidianLauncherService implements Services.ServiceInstance {
         });
 
         try {
-            await this.obsidianLauncher.downloadVersions();
+            await this.obsidianLauncher.downloadMetadata();
 
             for (const cap of obsidianCapabilities) {
                 const obsidianOptions = cap[OBSIDIAN_CAPABILITY_KEY] ?? {};
@@ -106,7 +111,10 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
         public capabilities: WebdriverIO.Capabilities,
         public config: Options.Testrunner
     ) {
-        this.obsidianLauncher = new ObsidianLauncher(config.cacheDir, options.obsidianVersionsUrl);
+        this.obsidianLauncher = new ObsidianLauncher({
+            cacheDir: config.cacheDir,
+            versionsUrl: options.versionsUrl,
+        });
         this.tmpDirs = [];
     }
 
@@ -116,7 +124,8 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
         }
         const tmpDir = await this.obsidianLauncher.setup({
             appVersion: obsidianOptions.appVersion!, installerVersion: obsidianOptions.installerVersion!,
-            appPath: obsidianOptions.appPath!, vault: obsidianOptions.vault, plugins: obsidianOptions.plugins,
+            appPath: obsidianOptions.appPath!, vault: obsidianOptions.vault,
+            plugins: obsidianOptions.plugins,
         });
         this.tmpDirs.push(tmpDir);
         return tmpDir;
@@ -145,37 +154,39 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
         if (!capabilities[OBSIDIAN_CAPABILITY_KEY]) return;
 
         const service = this; // eslint-disable-line @typescript-eslint/no-this-alias
-        await browser.addCommand("openVault", async function(this: WebdriverIO.Browser, vault?: string, plugins?: string[]) {
-            const oldObsidianOptions = this.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY];
-            const newObsidianOptions = {
-                ...oldObsidianOptions,
-                vault: vault != undefined ? path.resolve(vault) : oldObsidianOptions.vault,
-                plugins: plugins ?? oldObsidianOptions.plugins,
+        await browser.addCommand("openVault",
+            async function(this: WebdriverIO.Browser, vault?: string, plugins?: PluginEntry[]) {
+                const oldObsidianOptions = this.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY];
+                const newObsidianOptions = {
+                    ...oldObsidianOptions,
+                    vault: vault != undefined ? path.resolve(vault) : oldObsidianOptions.vault,
+                    plugins: plugins ?? oldObsidianOptions.plugins,
+                }
+
+                const tmpDir = await service.setupObsidian(newObsidianOptions);
+                
+                const newArgs = [
+                    `--user-data-dir=${tmpDir}/config`,
+                    ...this.requestedCapabilities['goog:chromeOptions'].args.filter((arg: string) => {
+                        const match = arg.match(/^--user-data-dir=(.*)\/config$/);
+                        return !service.tmpDirs.includes(match?.[1] ?? '');
+                    }),
+                ]
+
+                // Reload session already merges with existing settings, and tries to restart the driver entirely if you
+                // set browserName explicitly instead of letting it keep existing.
+                const sessionId = await this.reloadSession({
+                    [OBSIDIAN_CAPABILITY_KEY]: newObsidianOptions,
+                    'goog:chromeOptions': {
+                        ...this.requestedCapabilities['goog:chromeOptions'],
+                        args: newArgs,
+                    },
+                });
+                await service.waitForReady(this);
+
+                return sessionId;
             }
-
-            const tmpDir = await service.setupObsidian(newObsidianOptions);
-            
-            const newArgs = [
-                `--user-data-dir=${tmpDir}/config`,
-                ...this.requestedCapabilities['goog:chromeOptions'].args.filter((arg: string) => {
-                    const match = arg.match(/^--user-data-dir=(.*)\/config$/);
-                    return !service.tmpDirs.includes(match?.[1] ?? '');
-                }),
-            ]
-
-            // Reload session already merges with existing settings, and tries to restart the driver entirely if you
-            // set browserName explicitly instead of letting it keep existing.
-            const sessionId = await this.reloadSession({
-                [OBSIDIAN_CAPABILITY_KEY]: newObsidianOptions,
-                'goog:chromeOptions': {
-                    ...this.requestedCapabilities['goog:chromeOptions'],
-                    args: newArgs,
-                },
-            });
-            await service.waitForReady(this);
-
-            return sessionId;
-        });
+        );
 
         for (const [name, cmd] of Object.entries(browserCommands)) {
             await browser.addCommand(name, cmd);

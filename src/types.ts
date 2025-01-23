@@ -34,8 +34,21 @@ export interface ObsidianServiceOptions {
      * Override the `obsidian-versions.json` used by the service. Can be a file URL.
      * This is only really useful for this package's own internal tests.
      */
-    obsidianVersionsUrl?: string,
+    versionsUrl?: string,
 }
+
+export type LocalPluginEntry = {
+    /** Path on disk to the plugin to install. */
+    path: string,
+    /** Set false to install the plugin but start it disabled. Default true. */
+    enabled?: boolean,
+}
+
+/**
+ * A plugin to install. Can be a simple string path to the local plugin to install, or an object containing `path` and
+ * `enabled`. If `enabled` is false it will install the plugin, but start it disabled by default.
+ */
+export type PluginEntry = string|LocalPluginEntry;
 
 export interface ObsidianCapabilityOptions {
     /**
@@ -60,8 +73,14 @@ export interface ObsidianCapabilityOptions {
      */
     installerVersion?: string,
 
-    /** Path to local plugin to install. */
-    plugins?: string[],
+    /**
+     * Plugins to install.
+     * 
+     * Can be simple paths to the local plugin to install, e.g. ["."] or ["dist"] depending on your build setup. You
+     * can also pass an object. If you pass an object containing `path` and `enabled`. If `enabled` is false it will
+     * install the plugin, but start it disabled by default.
+     */
+    plugins?: PluginEntry[],
 
     /**
      * The path to the vault to open. The vault will be copied first, so any changes made in your tests won't affect the
@@ -94,7 +113,7 @@ declare global {
              * @param plugins List of plugins to initialize. If omitted, it will use the plugins set in `wdio.conf.ts`.
              * @returns Returns the new sessionId (same as reloadSession()).
              */
-            openVault(vault?: string, plugins?: string[]): Promise<string>;
+            openVault(vault?: string, plugins?: PluginEntry[]): Promise<string>;
         }
     }
 }

@@ -34,7 +34,7 @@ async function getVersionsToTest() {
 }
 
 const obsidianServiceOptions = {
-    obsidianVersionsUrl: pathToFileURL("./obsidian-versions.json").toString(),
+    versionsUrl: pathToFileURL("./obsidian-versions.json").toString(),
 }
 
 export const config: WebdriverIO.Config = {

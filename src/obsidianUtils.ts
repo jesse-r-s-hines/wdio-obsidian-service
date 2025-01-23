@@ -6,60 +6,67 @@ import os from "os";
 import fetch from "node-fetch"
 import extractZip from "extract-zip"
 import { pipeline } from "stream/promises";
-import { fileURLToPath } from "url";
+import { fileURLToPath, pathToFileURL } from "url";
 import { downloadArtifact } from '@electron/get';
 import { promisify } from "util";
 import child_process from "child_process"
 import which from "which"
 import semver from "semver"
 import { fileExists, withTmpDir } from "./utils.js";
-import { ObsidianVersionInfo } from "./types.js";
-import { fetchObsidianAPI } from "./apis.js";
+import { ObsidianVersionInfo, LocalPluginEntry, PluginEntry } from "./types.js";
+import { fetchObsidianAPI, fetchWithFileUrl } from "./apis.js";
 import ChromeLocalStorage from "./chromeLocalStorage.js";
 import _ from "lodash"
 const execFile = promisify(child_process.execFile);
 
 
 /**
- * Installs a plugin into an obsidian vault.
- * @param plugins List plugins paths to install.
+ * Installs plugins into an obsidian vault.
  * @param vault Path to the vault to install the plugin in.
+ * @param plugins List plugins paths to install.
  */
-export async function installPlugins(vault: string, plugins: string[]) {
+export async function installPlugins(vault: string, plugins: LocalPluginEntry[]) {
     const obsidianDir = path.join(vault, '.obsidian');
     await fsAsync.mkdir(obsidianDir, { recursive: true });
-    const pluginIds: string[] = [];
 
-    for (const plugin of plugins) {
-        const pluginId = JSON.parse(await fsAsync.readFile(path.join(plugin, 'manifest.json'), 'utf8')).id;
-        pluginIds.push(pluginId);
-        const pluginDest = path.join(obsidianDir, 'plugins', pluginId);
+    const enabledPluginsPath = path.join(obsidianDir, 'community-plugins.json');
+    let enabledPlugins: string[] = [];
+    if (await fileExists(enabledPluginsPath)) {
+        enabledPlugins = JSON.parse(await fsAsync.readFile(enabledPluginsPath, 'utf-8'));
+    }
 
-        if (await fileExists(pluginDest)) {
-            await fsAsync.rm(pluginDest, { recursive: true });
+    for (const {path: pluginPath, enabled = true} of plugins) {
+        const manifestPath = path.join(pluginPath, 'manifest.json');
+        const pluginId = JSON.parse(await fsAsync.readFile(manifestPath, 'utf8').catch(e => "{}")).id;
+        if (!pluginId) {
+            throw Error(`${pluginPath}/manifest.json missing or malformed.`);
         }
+
+        const pluginDest = path.join(obsidianDir, 'plugins', pluginId);
+        await fsAsync.rm(pluginDest, { recursive: true, force: true });
         await fsAsync.mkdir(pluginDest, { recursive: true });
 
         const files = {
-            "manifest.json": true,
-            "main.js": true,
-            "styles.css": false,
-            "data.json": false,
+            "manifest.json": true, "main.js": true,
+            "styles.css": false, "data.json": false,
         }
         for (const [file, required] of Object.entries(files)) {
-            if (required || await fileExists(path.join(plugin, file))) {
-                await fsAsync.copyFile(path.join(plugin, file), path.join(pluginDest, file));
+            if (await fileExists(path.join(pluginPath, file))) {
+                await fsAsync.copyFile(path.join(pluginPath, file), path.join(pluginDest, file));
+            } else if (required) {
+                throw Error(`${pluginPath}/${file} missing.`);
             }
+        }
+
+        const pluginAlreadyListed = enabledPlugins.includes(pluginId);
+        if (enabled && !pluginAlreadyListed) {
+            enabledPlugins.push(pluginId)
+        } else if (!enabled && pluginAlreadyListed) {
+            enabledPlugins = enabledPlugins.filter(p => p != pluginId);
         }
     }
 
-    const communityPluginsFile = path.join(obsidianDir, 'community-plugins.json');
-    let communityPlugins = [];
-    if (await fileExists(communityPluginsFile)) {
-        communityPlugins = JSON.parse(await fsAsync.readFile(communityPluginsFile, 'utf-8'));
-    }
-    communityPlugins = _.uniq([...communityPlugins, ...pluginIds]);
-    await fsAsync.writeFile(communityPluginsFile, JSON.stringify(communityPlugins, undefined, 2));
+    await fsAsync.writeFile(enabledPluginsPath, JSON.stringify(enabledPlugins, undefined, 2));
 }
 
 
@@ -95,53 +102,46 @@ export async function extractObsidianExe(exe: string, appArch: string, dest: str
  */
 export class ObsidianLauncher {
     readonly cacheDir: string
-    readonly obsidianVersionsUrl: string
+    readonly versionsUrl: string
     private versions: ObsidianVersionInfo[]|undefined
 
     /**
      * Construct an ObsidianLauncher.
      * @param cacheDir Path to the cache directory. Defaults to OPTL_CACHE or "./.optl"
-     * @param obsidianVersionsUrl The `obsidian-versions.json` used by the service. Can be a file URL. 
-     *     Defaults to the GitHub repo's obsidian-versions.json.
+     * @param versionsUrl The `obsidian-versions.json` used by the service. Can be a file URL.
      */
-    constructor(cacheDir?: string, obsidianVersionsUrl?: string) {
-        this.cacheDir = path.resolve(cacheDir ?? process.env.OPTL_CACHE ?? "./.optl");
+    constructor(options: {cacheDir?: string, versionsUrl?: string, communityPluginsUrl?: string}) {
+        this.cacheDir = path.resolve(options.cacheDir ?? process.env.OPTL_CACHE ?? "./.optl");
         const packageDir = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
-        const defaultVersionsURL =  path.join(packageDir, "obsidian-versions.json"); // TODO
-        this.obsidianVersionsUrl = obsidianVersionsUrl ?? defaultVersionsURL;
+        const defaultVersionsUrl =  pathToFileURL(path.join(packageDir, "obsidian-versions.json")).toString(); // TODO
+        this.versionsUrl = options.versionsUrl ?? defaultVersionsUrl;
     }
 
-    /**
-     * Downloads the obsidian-versions.json file. Should be called before getVersions() if its not already
-     * downloaded.
-     */
-    async downloadVersions(): Promise<void> {
-        await fsAsync.mkdir(this.cacheDir, { recursive: true });
-        const dest = path.join(this.cacheDir, "obsidian-versions.json");
-
-        let fileContents: string
-        if (this.obsidianVersionsUrl.startsWith("file://")) {
-            fileContents = await fsAsync.readFile(fileURLToPath(this.obsidianVersionsUrl), 'utf-8');
-        } else {
-            try {
-                fileContents = await fetch(this.obsidianVersionsUrl).then(r => r.text());
-            } catch (e) {
-                if (await fileExists(dest)) {
-                    console.warn("Unable to download obsidian-versions.json, using cached file.");
-                    return
-                } else {
-                    throw e;
-                }
+    /** Tries downloading url to dest under cache, only warns on errors if the file already exists. */
+    private async tryDownload(url: string, dest: string) {
+        let fileContent: string|undefined;
+        try {
+            fileContent = await fetchWithFileUrl(url);
+        } catch (e) {
+            if (await fileExists(path.join(this.cacheDir, dest))) {
+                console.warn(`Unable to download ${dest}, using cached file.`);
+            } else {
+                throw e;
             }
         }
+        if (fileContent) {
+            await fsAsync.writeFile(path.join(this.cacheDir, dest), fileContent);
+        }
+    }
 
-        this.versions = JSON.parse(fileContents).versions;
-        await fsAsync.writeFile(path.join(this.cacheDir, "obsidian-versions.json"), fileContents);
+    async downloadMetadata(): Promise<void> {
+        await fsAsync.mkdir(this.cacheDir, { recursive: true });
+        await this.tryDownload(this.versionsUrl, "obsidian-versions.json");
     }
 
     /**
      * Get information about all available Obsidian versions.
-     * This just loads it from the cache, you'll need to call downloadObsidian() first to actually download it.
+     * This just loads it from the cache, you'll need to call downloadMetadata() first to actually download it.
      */
     async getVersions(): Promise<ObsidianVersionInfo[]> {
         if (!this.versions) {
@@ -340,8 +340,10 @@ export class ObsidianLauncher {
      */
     async setup(params: {
         appVersion: string, installerVersion: string,
-        appPath: string, vault?: string, plugins?: string[],
+        appPath: string, vault?: string, plugins?: PluginEntry[],
     }): Promise<string> {
+        const plugins = (params.plugins ?? []).map(p => typeof p == "string" ? {path: p} : p);
+
         const tmpDir = await fsAsync.mkdtemp(path.join(os.tmpdir(), 'optl-'));
         // configDir will be passed to --user-data-dir, so Obsidian is somewhat sandboxed. We set up "obsidian.json" so
         // that Obsidian opens the vault by default and doesn't check for updates.
@@ -359,7 +361,7 @@ export class ObsidianLauncher {
             const vaultCopy = path.join(tmpDir, 'vault');
             // Copy the vault folder so it isn't modified, and add the plugins to it.
             await fsAsync.cp(params.vault, vaultCopy, { recursive: true });
-            await installPlugins(vaultCopy, params.plugins ?? []);
+            await installPlugins(vaultCopy, plugins);
 
             const vaultId = "1234567890abcdef";
             obsidianJson = {
