@@ -66,7 +66,7 @@ describe("Basic obsidian launch", () => {
         expect(vaultFiles).to.eql(["A.md", "B.md"]);
 
         // Test installing the plugin via openVault
-        await browser.openVault("./test/vaults/basic", ["./test/plugins/basic-plugin"]);
+        await browser.openVault("./test/vaults/basic", ["basic-plugin"]);
         const afterPlugins2: string[] = await browser.execute("return [...app.plugins.enabledPlugins]");
         expect(afterPlugins2).to.eql(["basic-plugin"]);
     })

@@ -11,6 +11,7 @@ import { ObsidianVersionInfo } from "../../src/types.js";
 
 const obsidianLauncherOpts = {
     versionsUrl: pathToFileURL("./obsidian-versions.json").toString(),
+    communityPluginsUrl: pathToFileURL("./test/data/community-plugins.json").toString(),
 }
 
 

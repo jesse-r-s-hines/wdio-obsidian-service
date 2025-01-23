@@ -13,7 +13,7 @@ import child_process from "child_process"
 import which from "which"
 import semver from "semver"
 import { fileExists, withTmpDir } from "./utils.js";
-import { ObsidianVersionInfo, LocalPluginEntry, PluginEntry } from "./types.js";
+import { ObsidianVersionInfo, PluginEntry, LocalPluginEntry } from "./types.js";
 import { fetchObsidianAPI, fetchWithFileUrl } from "./apis.js";
 import ChromeLocalStorage from "./chromeLocalStorage.js";
 import _ from "lodash"
@@ -104,17 +104,22 @@ export class ObsidianLauncher {
     readonly cacheDir: string
     readonly versionsUrl: string
     private versions: ObsidianVersionInfo[]|undefined
+    readonly communityPluginsUrl: string
+    private communityPlugins: any[]|undefined
 
     /**
      * Construct an ObsidianLauncher.
      * @param cacheDir Path to the cache directory. Defaults to OPTL_CACHE or "./.optl"
      * @param versionsUrl The `obsidian-versions.json` used by the service. Can be a file URL.
+     * @param communityPluginsUrl The `community-plugins.json` list to use. Can be a file URL.
      */
     constructor(options: {cacheDir?: string, versionsUrl?: string, communityPluginsUrl?: string}) {
         this.cacheDir = path.resolve(options.cacheDir ?? process.env.OPTL_CACHE ?? "./.optl");
         const packageDir = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
         const defaultVersionsUrl =  pathToFileURL(path.join(packageDir, "obsidian-versions.json")).toString(); // TODO
         this.versionsUrl = options.versionsUrl ?? defaultVersionsUrl;
+        const defaultCommunityPluginsUrl = "https://raw.githubusercontent.com/obsidianmd/obsidian-releases/HEAD/community-plugins.json";
+        this.communityPluginsUrl = options.communityPluginsUrl ?? defaultCommunityPluginsUrl;
     }
 
     /** Tries downloading url to dest under cache, only warns on errors if the file already exists. */
@@ -137,6 +142,7 @@ export class ObsidianLauncher {
     async downloadMetadata(): Promise<void> {
         await fsAsync.mkdir(this.cacheDir, { recursive: true });
         await this.tryDownload(this.versionsUrl, "obsidian-versions.json");
+        await this.tryDownload(this.communityPluginsUrl, "obsidian-community-plugins.json");
     }
 
     /**
@@ -149,6 +155,18 @@ export class ObsidianLauncher {
             this.versions = JSON.parse(await fsAsync.readFile(filePath, 'utf-8')).versions;
         }
         return this.versions!;
+    }
+
+    /**
+     * Get information about all available community plugins.
+     * This just loads it from the cache, you'll need to call downloadMetadata() first to actually download it.
+     */
+    async getCommunityPlugins(): Promise<any[]> {
+        if (!this.communityPlugins) {
+            const filePath = path.join(this.cacheDir, "obsidian-community-plugins.json");
+            this.communityPlugins = JSON.parse(await fsAsync.readFile(filePath, 'utf-8'));
+        }
+        return this.communityPlugins!
     }
 
     /**
@@ -329,6 +347,113 @@ export class ObsidianLauncher {
     }
 
     /**
+     * Downloads a plugin from a GitHub repo
+     * @param repo Repo
+     * @param version Version of the plugin to install, or "latest"
+     * @returns path to the downloaded plugin
+     */
+    async downloadGitHubPlugin(repo: string, version = "latest"): Promise<string> {
+        let pluginDir = path.join(this.cacheDir, "obsidian-plugins", repo);
+
+        if (version == "latest") {
+            const manifestUrl = `https://raw.githubusercontent.com/${repo}/HEAD/manifest.json`;
+            try {
+                const response = await fetch(manifestUrl);
+                if (response.ok) {
+                    version = (await response.json() as any).version;
+                }
+            } catch (e) {
+                let existingVersions: string[] = []
+                if (await fileExists(pluginDir)) {
+                    existingVersions = (await fsAsync.readdir(pluginDir))
+                        .map(v => semver.valid(v)!)
+                        .filter(v => v)
+                        .sort(semver.compare);
+                }
+                if (existingVersions.length > 0) {
+                    version = existingVersions.at(-1)!;
+                    console.warn(`Unable to download ${repo} manifest.json, using cached plugin version.`);
+                } else {
+                    throw e
+                }
+            }
+        }
+        if (!version || version == "latest") { // We didn't find a specific version to use
+            throw Error(`No manifest.json found for ${repo}`);
+        } else if (!semver.valid(version)) {
+            throw Error(`Invalid version "${version}"`);
+        }
+        version = semver.valid(version)!;
+        pluginDir = path.join(pluginDir, version);
+
+        if (!(await fileExists(pluginDir))) {
+            await fsAsync.mkdir(path.dirname(pluginDir), { recursive: true });
+            await withTmpDir(pluginDir, async (tmpDir) => {
+                const assetsToDownload = {'manifest.json': true, 'main.js': true, 'styles.css': false};
+                await Promise.all(
+                    Object.entries(assetsToDownload).map(async ([file, required]) => {
+                        const url = `https://github.com/${repo}/releases/download/${version}/${file}`;
+                        const response = await fetch(url);
+                        if (response.ok) {
+                            await fsAsync.writeFile(path.join(tmpDir, file), response.body as any);
+                        } else if (required) {
+                            throw Error(`No ${file} found for ${repo} version ${version}`)
+                        }
+                    })
+                )
+                return tmpDir;
+            });
+        }
+
+        return pluginDir;
+    }
+
+    /**
+     * Downloads a community plugin
+     * @param id Id of the plugin
+     * @param version Version of the plugin to install, or "latest"
+     * @returns path to the downloaded plugin
+     */
+    async downloadCommunityPlugin(id: string, version = "latest"): Promise<string> {
+        const communityPlugins = await this.getCommunityPlugins();
+        const pluginInfo = communityPlugins.find(p => p.id == id);
+        if (!pluginInfo) {
+            throw Error(`No plugin with id ${id} found.`);
+        }
+        return await this.downloadGitHubPlugin(pluginInfo.repo, version);
+    }
+
+    /**
+     * Downloads a list of plugins.
+     * Also adds the `id` property to the plugins based on the manifest.
+     */
+    async downloadPlugins(plugins: PluginEntry[]): Promise<(LocalPluginEntry & {id: string})[]> {
+        return await Promise.all(
+            plugins.map(async (plugin) => {
+                let pluginPath: string
+                if (typeof plugin == "string") {
+                    pluginPath = plugin;
+                } else if ("path" in plugin) {;
+                    pluginPath = plugin.path;
+                } else if ("repo" in plugin) {
+                    pluginPath = await this.downloadGitHubPlugin(plugin.repo, plugin.version);
+                } else if ("id" in plugin) {
+                    pluginPath = await this.downloadCommunityPlugin(plugin.id, plugin.version);
+                } else {
+                    throw Error("You must specify one of plugin path, repo, or id")
+                }
+                const manifestPath = path.join(pluginPath, "manifest.json");
+                const pluginId = JSON.parse(await fsAsync.readFile(manifestPath, 'utf8').catch(e => "{}")).id;
+                if (!pluginId) {
+                    throw Error(`${pluginPath}/manifest.json missing or malformed.`);
+                }
+                const enabled = typeof plugin == "string" ? true : (plugin.enabled ?? true);
+                return {path: pluginPath, id: pluginId, enabled: enabled}
+            })
+        );
+    }
+
+    /**
      * Setups the vault and config dir to use for the --user-data-dir in obsidian. Returns the path to the created 
      * temporary directory, which will contain two sub directories, "config" and "vault".
      *
@@ -340,10 +465,8 @@ export class ObsidianLauncher {
      */
     async setup(params: {
         appVersion: string, installerVersion: string,
-        appPath: string, vault?: string, plugins?: PluginEntry[],
+        appPath: string, vault?: string, plugins?: LocalPluginEntry[],
     }): Promise<string> {
-        const plugins = (params.plugins ?? []).map(p => typeof p == "string" ? {path: p} : p);
-
         const tmpDir = await fsAsync.mkdtemp(path.join(os.tmpdir(), 'optl-'));
         // configDir will be passed to --user-data-dir, so Obsidian is somewhat sandboxed. We set up "obsidian.json" so
         // that Obsidian opens the vault by default and doesn't check for updates.
@@ -361,7 +484,7 @@ export class ObsidianLauncher {
             const vaultCopy = path.join(tmpDir, 'vault');
             // Copy the vault folder so it isn't modified, and add the plugins to it.
             await fsAsync.cp(params.vault, vaultCopy, { recursive: true });
-            await installPlugins(vaultCopy, plugins);
+            await installPlugins(vaultCopy, params.plugins ?? []);
 
             const vaultId = "1234567890abcdef";
             obsidianJson = {

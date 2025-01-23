@@ -1,0 +1,9 @@
+[
+    {
+        "id": "example-plugin",
+        "name": "Example Plugin",
+        "author": "Some Body",
+        "description": "Do the thing",
+        "repo": "somebody/obsidian-example-plugin"
+    }
+]

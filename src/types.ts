@@ -35,20 +35,41 @@ export interface ObsidianServiceOptions {
      * This is only really useful for this package's own internal tests.
      */
     versionsUrl?: string,
+    /**
+     * Override the `community-plugins.json` used by the service. Can be a file URL.
+     * This is only really useful for this package's own internal tests.
+     */
+    communityPluginsUrl?: string,
 }
 
-export type LocalPluginEntry = {
-    /** Path on disk to the plugin to install. */
-    path: string,
+type BasePluginEntry = {
     /** Set false to install the plugin but start it disabled. Default true. */
     enabled?: boolean,
 }
+export type LocalPluginEntry = BasePluginEntry & {
+    /** Path on disk to the plugin to install. */
+    path: string,
+}
+export type GitHubPluginEntry = BasePluginEntry & {
+    /** Github repo of the plugin to install, e.g. "some-user/some-plugin". */
+    repo: string,
+    /** Version of the plugin to install. Defaults to latest. */
+    version?: string,
+}
+export type CommunityPluginEntry = BasePluginEntry & {
+    /** Plugin ID to install from Obsidian community plugins. */
+    id: string,
+    /** Version of the plugin to install. Defaults to latest. */
+    version?: string,
+}
 
 /**
- * A plugin to install. Can be a simple string path to the local plugin to install, or an object containing `path` and
- * `enabled`. If `enabled` is false it will install the plugin, but start it disabled by default.
+ * A plugin to install. Can be a simple string path to the local plugin to install, or an object.
+ * If an object set one of `path` (to install a local plugin), `repo` (to install a plugin from github), or `id` to
+ * install a plugin from Obsidian community plugins. You can also pass `enabled: false` to install the plugin, but start
+ * it disabled by default.
  */
-export type PluginEntry = string|LocalPluginEntry;
+export type PluginEntry = string|LocalPluginEntry|GitHubPluginEntry|CommunityPluginEntry
 
 export interface ObsidianCapabilityOptions {
     /**
@@ -77,8 +98,9 @@ export interface ObsidianCapabilityOptions {
      * Plugins to install.
      * 
      * Can be simple paths to the local plugin to install, e.g. ["."] or ["dist"] depending on your build setup. You
-     * can also pass an object. If you pass an object containing `path` and `enabled`. If `enabled` is false it will
-     * install the plugin, but start it disabled by default.
+     * can also pass an object. If you pass an object it can contain one of either `path` (to install a local plugin),
+     * `repo` (to install a plugin from github), or `id` to install a plugin from Obsidian community plugins.  You can
+     * set `enabled: false` to install the plugin, but start it disabled by default.
      */
     plugins?: PluginEntry[],
 
@@ -108,12 +130,13 @@ declare global {
              * original. This does require rebooting Obsidian. You can also set the vault in the `wdio.conf.ts` capabilities
              * section which may be useful if all your tests use the same vault.
              * 
-             * @param vault path to the vault to open. If omitted it will use the vault set in `wdio.conf.ts` (An empty
-             *     vault by default.)
-             * @param plugins List of plugins to initialize. If omitted, it will use the plugins set in `wdio.conf.ts`.
+             * @param vault path to the vault to open. If omitted it will re-open the current vault.
+             * @param plugins List of plugin ids to enable. If omitted it will keep current plugin list.
+             *     Note, all the plugins must be defined in your wdio.conf.ts capabilities. You can use openVault to
+             *     toggle which plugins are enabled and which are disabled.
              * @returns Returns the new sessionId (same as reloadSession()).
              */
-            openVault(vault?: string, plugins?: PluginEntry[]): Promise<string>;
+            openVault(vault?: string, plugins?: string[]): Promise<string>;
         }
     }
 }

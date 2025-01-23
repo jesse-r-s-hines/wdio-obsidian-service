@@ -19,7 +19,7 @@ export class ObsidianLauncherService implements Services.ServiceInstance {
     ) {
         this.obsidianLauncher = new ObsidianLauncher({
             cacheDir: config.cacheDir,
-            versionsUrl: options.versionsUrl,
+            versionsUrl: options.versionsUrl, communityPluginsUrl: options.communityPluginsUrl,
         });
     }
 
@@ -66,12 +66,13 @@ export class ObsidianLauncherService implements Services.ServiceInstance {
                 if (!chromedriverPath && Number(installerVersionInfo.chromeVersion!.split(".")[0]) <= 115) {
                     chromedriverPath = await this.obsidianLauncher.downloadChromedriver(installerVersion);
                 }
+                const plugins = await this.obsidianLauncher.downloadPlugins(obsidianOptions.plugins ?? ["."]);
     
                 cap.browserName = "chrome";
                 cap.browserVersion = installerVersionInfo.chromeVersion;
                 cap[OBSIDIAN_CAPABILITY_KEY] = {
-                    plugins: ["."],
                     ...obsidianOptions,
+                    plugins: plugins,
                     binaryPath: installerPath,
                     appPath: appPath,
                     vault: vault,
@@ -113,7 +114,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
     ) {
         this.obsidianLauncher = new ObsidianLauncher({
             cacheDir: config.cacheDir,
-            versionsUrl: options.versionsUrl,
+            versionsUrl: options.versionsUrl, communityPluginsUrl: options.communityPluginsUrl,
         });
         this.tmpDirs = [];
     }
@@ -125,7 +126,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
         const tmpDir = await this.obsidianLauncher.setup({
             appVersion: obsidianOptions.appVersion!, installerVersion: obsidianOptions.installerVersion!,
             appPath: obsidianOptions.appPath!, vault: obsidianOptions.vault,
-            plugins: obsidianOptions.plugins,
+            plugins: obsidianOptions.plugins as LocalPluginEntry[],
         });
         this.tmpDirs.push(tmpDir);
         return tmpDir;
@@ -155,12 +156,23 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
 
         const service = this; // eslint-disable-line @typescript-eslint/no-this-alias
         await browser.addCommand("openVault",
-            async function(this: WebdriverIO.Browser, vault?: string, plugins?: PluginEntry[]) {
+            async function(this: WebdriverIO.Browser, vault?: string, plugins?: string[]) {
                 const oldObsidianOptions = this.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY];
+
+                let newPlugins: LocalPluginEntry[]
+                if (plugins) {
+                    newPlugins = oldObsidianOptions.plugins.map((p: any) => ({
+                        ...p,
+                        enabled: plugins.includes(p.id),
+                    }));
+                } else {
+                    newPlugins = oldObsidianOptions.plugins;
+                }
+
                 const newObsidianOptions = {
                     ...oldObsidianOptions,
                     vault: vault != undefined ? path.resolve(vault) : oldObsidianOptions.vault,
-                    plugins: plugins ?? oldObsidianOptions.plugins,
+                    plugins: newPlugins,
                 }
 
                 const tmpDir = await service.setupObsidian(newObsidianOptions);
