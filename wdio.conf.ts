@@ -20,15 +20,17 @@ async function getVersionsToTest() {
         .keyBy(v => minorVersion(v.version)) // keyBy keeps last
         .value();
     versionMap[minorVersion(minInstallerVersion)] = versions.find(v => v.version == minInstallerVersion)!
-    return [
-        // Test every minor installer version since minInstallerVersion and every minor appVersion since minAppVersion
-        ..._.values(versionMap).map(v => ({
+    // Test every minor installer version since minInstallerVersion and every minor appVersion since minAppVersion
+    const versionsToTest = _.values(versionMap)
+        .map(v => ({
             appVersion: semver.lte(v.version, minAppVersion) ? minAppVersion : v.version,
             installerVersion: v.version,
-        })),
-        // And the latest beta
-        {appVersion: "latest-beta", installerVersion: "latest"},
-    ]
+        }))
+    // And the latest beta
+    if (process.env['OBSIDIAN_PASSWORD']) {
+        versionsToTest.push({appVersion: "latest-beta", installerVersion: "latest"})
+    }
+    return versionsToTest;
 }
 
 const obsidianServiceOptions = {
