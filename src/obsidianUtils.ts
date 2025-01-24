@@ -12,7 +12,7 @@ import { promisify } from "util";
 import child_process from "child_process"
 import which from "which"
 import semver from "semver"
-import { fileExists, withTmpDir } from "./utils.js";
+import { fileExists, withTmpDir, linkOrCp } from "./utils.js";
 import { ObsidianVersionInfo, PluginEntry, LocalPluginEntry } from "./types.js";
 import { fetchObsidianAPI, fetchWithFileUrl } from "./apis.js";
 import ChromeLocalStorage from "./chromeLocalStorage.js";
@@ -52,7 +52,7 @@ export async function installPlugins(vault: string, plugins: LocalPluginEntry[])
         }
         for (const [file, required] of Object.entries(files)) {
             if (await fileExists(path.join(pluginPath, file))) {
-                await fsAsync.copyFile(path.join(pluginPath, file), path.join(pluginDest, file));
+                await linkOrCp(path.join(pluginPath, file), path.join(pluginDest, file));
             } else if (required) {
                 throw Error(`${pluginPath}/${file} missing.`);
             }
@@ -504,8 +504,7 @@ export class ObsidianLauncher {
         }
 
         await fsAsync.writeFile(path.join(configDir, 'obsidian.json'), JSON.stringify(obsidianJson));
-        // Create hardlink for the asar so Obsidian picks it up.
-        await fsAsync.cp(params.appPath, path.join(configDir, path.basename(params.appPath)));
+        await linkOrCp(params.appPath, path.join(configDir, path.basename(params.appPath)));
         const localStorage = new ChromeLocalStorage(configDir);
         await localStorage.setItems("app://obsidian.md", localStorageData)
         await localStorage.close();

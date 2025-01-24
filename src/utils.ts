@@ -32,6 +32,17 @@ export async function withTmpDir(dest: string, func: (tmpDir: string) => Promise
     }
 }
 
+/**
+ * Tries to hardlink a file, falls back to copy if it fails
+ */
+export async function linkOrCp(src: string, dest: string) {
+    try {
+        await fsAsync.link(src, dest);
+    } catch {
+        await fsAsync.copyFile(src, dest);
+    }
+}
+
 
 /// Promises ///
 

@@ -3,7 +3,7 @@ import { expect } from "chai";
 import fsAsync from "fs/promises";
 import path from "path"
 import { createDirectory } from "../helpers.js";
-import { fileExists, withTmpDir, sleep, withTimeout, pool } from "../../src/utils.js";
+import { fileExists, withTmpDir, linkOrCp, sleep, withTimeout, pool } from "../../src/utils.js";
 
 
 describe("fileExists", () => {
@@ -73,6 +73,13 @@ describe("withTimeout", () => {
     });
 });
 
+describe("linkOrCp", () => {
+    it("basic", async () => {
+        const tmpDir = await createDirectory({"a.txt": "A"});
+        await linkOrCp(path.join(tmpDir, "a.txt"), path.join(tmpDir, "b.txt"))
+        expect(await fsAsync.readFile(path.join(tmpDir, "b.txt"), 'utf-8')).to.eql("A")
+    });
+});
 
 describe("pool", () => {
     it("preserves order", async () => {
