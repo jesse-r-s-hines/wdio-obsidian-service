@@ -16,6 +16,5 @@ describe("Test custom browser commands", () => {
         expect(await browser.execute("return window.doTheThingCalled ?? 0")).to.eql(0);
         await browser.executeObsidianCommand("basic-plugin:do-the-thing");
         expect(await browser.execute("return window.doTheThingCalled")).to.eql(1);
-        // expect(1).to.eql(2)
     })
 })
