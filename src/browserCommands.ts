@@ -21,7 +21,7 @@ const browserCommands = {
      * @param id Id of the command to run.
      */
     async executeObsidianCommand(this: WebdriverIO.Browser, id: string) {
-        const result = await this.execute("return app.commands.executeCommandById(arguments[0])", [id]);
+        const result = await this.execute("return optl.app.commands.executeCommandById(arguments[0])", [id]);
         if (!result) {
             throw Error(`Obsidian command ${id} not found or failed.`)
         }

@@ -2,15 +2,17 @@ import fsAsync from "fs/promises"
 import path from "path"
 import { SevereServiceError } from 'webdriverio'
 import type { Capabilities, Options, Services } from '@wdio/types'
+import { fileURLToPath } from "url"
 import { ObsidianLauncher } from "./obsidianUtils.js"
 import browserCommands from "./browserCommands.js"
 import {
-    ObsidianCapabilityOptions, ObsidianServiceOptions, OBSIDIAN_CAPABILITY_KEY, PluginEntry, LocalPluginEntry,
+    ObsidianCapabilityOptions, ObsidianServiceOptions, OBSIDIAN_CAPABILITY_KEY, LocalPluginEntry,
 } from "./types.js"
 
 
 export class ObsidianLauncherService implements Services.ServiceInstance {
     private obsidianLauncher: ObsidianLauncher
+    private readonly helperPluginPath: string
 
     constructor (
         public options: ObsidianServiceOptions,
@@ -21,6 +23,7 @@ export class ObsidianLauncherService implements Services.ServiceInstance {
             cacheDir: config.cacheDir,
             versionsUrl: options.versionsUrl, communityPluginsUrl: options.communityPluginsUrl,
         });
+        this.helperPluginPath = path.resolve(path.join(fileURLToPath(import.meta.url), '../../optl-plugin'));
     }
 
 
@@ -66,7 +69,10 @@ export class ObsidianLauncherService implements Services.ServiceInstance {
                 if (!chromedriverPath && Number(installerVersionInfo.chromeVersion!.split(".")[0]) <= 115) {
                     chromedriverPath = await this.obsidianLauncher.downloadChromedriver(installerVersion);
                 }
-                const plugins = await this.obsidianLauncher.downloadPlugins(obsidianOptions.plugins ?? ["."]);
+
+                let plugins = obsidianOptions.plugins ?? ["."];
+                plugins.push(this.helperPluginPath); // Always install the helper plugin
+                plugins = await this.obsidianLauncher.downloadPlugins(plugins);
     
                 cap.browserName = "chrome";
                 cap.browserVersion = installerVersionInfo.chromeVersion;
@@ -163,7 +169,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
                 if (plugins) {
                     newPlugins = oldObsidianOptions.plugins.map((p: any) => ({
                         ...p,
-                        enabled: plugins.includes(p.id),
+                        enabled: plugins.includes(p.id) || p.id == "optl-plugin",
                     }));
                 } else {
                     newPlugins = oldObsidianOptions.plugins;

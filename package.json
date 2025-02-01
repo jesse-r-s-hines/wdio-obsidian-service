@@ -6,7 +6,8 @@
     "main": "./dist/index.js",
     "types": "./dist/index.d.ts",
     "files": [
-        "dist"
+        "dist",
+        "optl-plugin"
     ],
     "bin": {
         "obsidian-plugin-testing-library": "dist/cli.js"

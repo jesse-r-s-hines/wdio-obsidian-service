@@ -25,12 +25,13 @@ describe("Basic obsidian launch", () => {
     })
 
     it('Vault opened', async () => {
-        let vaultPath: string = await browser.execute('return app.vault.adapter.getBasePath()');
+        let vaultPath: string = await browser.execute('return optl.app.vault.adapter.getBasePath()');
         vaultPath = path.normalize(vaultPath).replace("\\", "/");
         // Should have created a copy of vault
         expect(path.normalize(vaultPath).startsWith(os.tmpdir())).to.be.true;
 
-        const vaultFiles = await browser.execute("return app.vault.getMarkdownFiles().map(x => x.path).sort()");
+        // Check that the types for `optl` work by using a function instead of a string here
+        const vaultFiles = await browser.execute(() => optl.app.vault.getMarkdownFiles().map(x => x.path).sort());
         expect(vaultFiles).to.eql(["Goodbye.md", "Welcome.md"]);
     })
 
@@ -44,30 +45,30 @@ describe("Basic obsidian launch", () => {
     })
 
     it('openVault', async () => {
-        const beforeVaultPath: string = await browser.execute('return app.vault.adapter.getBasePath()');
+        const beforeVaultPath: string = await browser.execute('return optl.app.vault.adapter.getBasePath()');
         const beforeConfigDir: string = await browser.execute("return electron.remote.app.getPath('userData')");
 
         // This should re-open the same vault with the same plugins
         await browser.openVault("./test/vaults/basic");
 
-        const afterVaultPath: string = await browser.execute('return app.vault.adapter.getBasePath()');
+        const afterVaultPath: string = await browser.execute('return optl.app.vault.adapter.getBasePath()');
         const afterConfigDir: string = await browser.execute("return electron.remote.app.getPath('userData')");
-        const afterPlugins: string[] = await browser.execute("return [...app.plugins.enabledPlugins]");
+        const afterPlugins: string[] = await browser.execute("return [...optl.app.plugins.enabledPlugins].sort()");
 
         expect(beforeVaultPath).to.not.eql(afterVaultPath);
         expect(beforeConfigDir).to.not.eql(afterConfigDir);
-        expect(afterPlugins).to.eql(["basic-plugin"]);
+        expect(afterPlugins).to.eql(["basic-plugin", "optl-plugin"]);
 
         // Test no plugins and a new vault
         await browser.openVault("./test/vaults/basic2", []);
-        const noPlugins: string[] = await browser.execute("return [...app.plugins.enabledPlugins]");
-        expect(noPlugins).to.eql([]);
-        const vaultFiles = await browser.execute("return app.vault.getMarkdownFiles().map(x => x.path).sort()");
+        const noPlugins: string[] = await browser.execute("return [...optl.app.plugins.enabledPlugins].sort()");
+        expect(noPlugins).to.eql(["optl-plugin"]);
+        const vaultFiles = await browser.execute("return optl.app.vault.getMarkdownFiles().map(x => x.path).sort()");
         expect(vaultFiles).to.eql(["A.md", "B.md"]);
 
         // Test installing the plugin via openVault
         await browser.openVault("./test/vaults/basic", ["basic-plugin"]);
-        const afterPlugins2: string[] = await browser.execute("return [...app.plugins.enabledPlugins]");
-        expect(afterPlugins2).to.eql(["basic-plugin"]);
+        const afterPlugins2: string[] = await browser.execute("return [...optl.app.plugins.enabledPlugins].sort()");
+        expect(afterPlugins2).to.eql(["basic-plugin", "optl-plugin"]);
     })
 })
