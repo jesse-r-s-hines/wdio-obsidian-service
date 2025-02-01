@@ -44,31 +44,44 @@ describe("Basic obsidian launch", () => {
         expect(await browser.$(".basic-plugin-status-bar-item").isExisting()).to.eql(true);
     })
 
+    it('theme was installed and enabled', async () => {
+        const enabledTheme = await browser.execute("return app.customCss.theme");
+        expect(enabledTheme).to.eql("Basic Theme")
+    })
+
     it('openVault', async () => {
         const beforeVaultPath: string = await browser.execute('return optl.app.vault.adapter.getBasePath()');
         const beforeConfigDir: string = await browser.execute("return electron.remote.app.getPath('userData')");
 
-        // This should re-open the same vault with the same plugins
+        // This should re-open the same vault with the same plugins and themes
         await browser.openVault("./test/vaults/basic");
 
         const afterVaultPath: string = await browser.execute('return optl.app.vault.adapter.getBasePath()');
         const afterConfigDir: string = await browser.execute("return electron.remote.app.getPath('userData')");
         const afterPlugins: string[] = await browser.execute("return [...optl.app.plugins.enabledPlugins].sort()");
+        const afterTheme = await browser.execute("return app.customCss.theme");
 
         expect(beforeVaultPath).to.not.eql(afterVaultPath);
         expect(beforeConfigDir).to.not.eql(afterConfigDir);
         expect(afterPlugins).to.eql(["basic-plugin", "optl-plugin"]);
+        expect(afterTheme).to.eql("Basic Theme");
 
-        // Test no plugins and a new vault
-        await browser.openVault("./test/vaults/basic2", []);
+        // Test no plugins, no theme, and a new vault
+        await browser.openVault("./test/vaults/basic2", [], "");
         const noPlugins: string[] = await browser.execute("return [...optl.app.plugins.enabledPlugins].sort()");
-        expect(noPlugins).to.eql(["optl-plugin"]);
+        const noTheme = await browser.execute("return app.customCss.theme");
         const vaultFiles = await browser.execute("return optl.app.vault.getMarkdownFiles().map(x => x.path).sort()");
+        
+        expect(noPlugins).to.eql(["optl-plugin"]);
+        expect(!!noTheme).to.eql(false);
         expect(vaultFiles).to.eql(["A.md", "B.md"]);
 
         // Test installing the plugin via openVault
-        await browser.openVault("./test/vaults/basic", ["basic-plugin"]);
+        await browser.openVault("./test/vaults/basic", ["basic-plugin"], "Basic Theme");
         const afterPlugins2: string[] = await browser.execute("return [...optl.app.plugins.enabledPlugins].sort()");
+        const afterTheme2 = await browser.execute("return app.customCss.theme");
+
         expect(afterPlugins2).to.eql(["basic-plugin", "optl-plugin"]);
+        expect(afterTheme2).to.eql("Basic Theme");
     })
 })

@@ -6,8 +6,9 @@ import { fileURLToPath } from "url"
 import { ObsidianLauncher } from "./obsidianUtils.js"
 import browserCommands from "./browserCommands.js"
 import {
-    ObsidianCapabilityOptions, ObsidianServiceOptions, OBSIDIAN_CAPABILITY_KEY, LocalPluginEntry,
+    ObsidianCapabilityOptions, ObsidianServiceOptions, OBSIDIAN_CAPABILITY_KEY, LocalPluginEntry, LocalThemeEntry,
 } from "./types.js"
+import _ from "lodash"
 
 
 export class ObsidianLauncherService implements Services.ServiceInstance {
@@ -21,7 +22,9 @@ export class ObsidianLauncherService implements Services.ServiceInstance {
     ) {
         this.obsidianLauncher = new ObsidianLauncher({
             cacheDir: config.cacheDir,
-            versionsUrl: options.versionsUrl, communityPluginsUrl: options.communityPluginsUrl,
+            versionsUrl: options.versionsUrl,
+            communityPluginsUrl: options.communityPluginsUrl,
+            communityThemesUrl: options.communityThemesUrl,
         });
         this.helperPluginPath = path.resolve(path.join(fileURLToPath(import.meta.url), '../../optl-plugin'));
     }
@@ -73,12 +76,15 @@ export class ObsidianLauncherService implements Services.ServiceInstance {
                 let plugins = obsidianOptions.plugins ?? ["."];
                 plugins.push(this.helperPluginPath); // Always install the helper plugin
                 plugins = await this.obsidianLauncher.downloadPlugins(plugins);
+
+                const themes = await this.obsidianLauncher.downloadThemes(obsidianOptions.themes ?? []);
     
                 cap.browserName = "chrome";
                 cap.browserVersion = installerVersionInfo.chromeVersion;
                 cap[OBSIDIAN_CAPABILITY_KEY] = {
                     ...obsidianOptions,
                     plugins: plugins,
+                    themes: themes,
                     binaryPath: installerPath,
                     appPath: appPath,
                     vault: vault,
@@ -120,7 +126,9 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
     ) {
         this.obsidianLauncher = new ObsidianLauncher({
             cacheDir: config.cacheDir,
-            versionsUrl: options.versionsUrl, communityPluginsUrl: options.communityPluginsUrl,
+            versionsUrl: options.versionsUrl,
+            communityPluginsUrl: options.communityPluginsUrl,
+            communityThemesUrl: options.communityThemesUrl,
         });
         this.tmpDirs = [];
     }
@@ -133,6 +141,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
             appVersion: obsidianOptions.appVersion!, installerVersion: obsidianOptions.installerVersion!,
             appPath: obsidianOptions.appPath!, vault: obsidianOptions.vault,
             plugins: obsidianOptions.plugins as LocalPluginEntry[],
+            themes: obsidianOptions.themes as LocalThemeEntry[],
         });
         this.tmpDirs.push(tmpDir);
         return tmpDir;
@@ -162,11 +171,15 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
 
         const service = this; // eslint-disable-line @typescript-eslint/no-this-alias
         await browser.addCommand("openVault",
-            async function(this: WebdriverIO.Browser, vault?: string, plugins?: string[]) {
+            async function(this: WebdriverIO.Browser, vault?: string, plugins?: string[], theme?: string) {
                 const oldObsidianOptions = this.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY];
 
                 let newPlugins: LocalPluginEntry[]
-                if (plugins) {
+                if (plugins !== undefined) {
+                    const unknownPlugins = _.difference(plugins, oldObsidianOptions.plugins.map((p: any) => p.id));
+                    if (unknownPlugins.length > 0) {
+                        throw Error(`Unknown plugin ids: ${unknownPlugins.join(', ')}`)
+                    }
                     newPlugins = oldObsidianOptions.plugins.map((p: any) => ({
                         ...p,
                         enabled: plugins.includes(p.id) || p.id == "optl-plugin",
@@ -175,10 +188,22 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
                     newPlugins = oldObsidianOptions.plugins;
                 }
 
+                let newThemes: LocalThemeEntry[]
+                if (theme !== undefined) {
+                    if (theme != "" && oldObsidianOptions.themes.every((t: any) => t.name != theme)) {
+                        throw Error(`Unknown theme: ${theme}`)
+                    }
+                    // If all themes is "" all will be disabled
+                    newThemes = oldObsidianOptions.themes.map((t: any) => ({...t, enabled: t.name === theme}))
+                } else {
+                    newThemes = oldObsidianOptions.themes;
+                }
+
                 const newObsidianOptions = {
                     ...oldObsidianOptions,
                     vault: vault != undefined ? path.resolve(vault) : oldObsidianOptions.vault,
                     plugins: newPlugins,
+                    themes: newThemes,
                 }
 
                 const tmpDir = await service.setupObsidian(newObsidianOptions);

@@ -5,13 +5,14 @@ import fsAsync from "fs/promises"
 import { pathToFileURL } from "url";
 import semver from "semver";
 import { createDirectory } from "../helpers.js"
-import { installPlugins, ObsidianLauncher } from "../../src/obsidianUtils.js";
+import { installPlugins, installThemes, ObsidianLauncher } from "../../src/obsidianUtils.js";
 import { fileExists } from "../../src/utils.js";
 import { ObsidianVersionInfo } from "../../src/types.js";
 
 const obsidianLauncherOpts = {
     versionsUrl: pathToFileURL("./obsidian-versions.json").toString(),
     communityPluginsUrl: pathToFileURL("./test/data/community-plugins.json").toString(),
+    communityThemesUrl: pathToFileURL("./test/data/community-css-themes.json").toString(),
 }
 
 
@@ -92,6 +93,27 @@ describe("installPlugins", () => {
 
         const pluginBFiles = await fsAsync.readdir(`${vault}/.obsidian/plugins/plugin-b`);
         expect(pluginBFiles.sort()).to.eql(["data.json", "main.js", "manifest.json", "styles.css"]);
+    })
+})
+
+describe("installThemes", () => {
+    it("no themes", async () => {
+        const vault = await createDirectory();
+        await installThemes(vault, []);
+        expect(await fileExists(`${vault}/.obsidian/themes`)).to.be.false;
+    })
+
+    it("empty vault", async () => {
+        const theme = await createDirectory({
+            "manifest.json": '{"name": "sample-theme"}',
+            "theme.css": ".foobar {}",
+        });
+        const vault = await createDirectory();
+
+        await installThemes(vault, [{path: theme}]);
+
+        const themeFiles = await fsAsync.readdir(`${vault}/.obsidian/themes/sample-theme`);
+        expect(themeFiles.sort()).to.eql(["manifest.json", "theme.css"]);
     })
 })
 

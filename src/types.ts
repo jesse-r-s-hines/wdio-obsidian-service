@@ -43,6 +43,11 @@ export interface ObsidianServiceOptions {
      * This is only really useful for this package's own internal tests.
      */
     communityPluginsUrl?: string,
+    /**
+     * Override the `community-css-themes.json` used by the service. Can be a file URL.
+     * This is only really useful for this package's own internal tests.
+     */
+    communityThemesUrl?: string,
 }
 
 type BasePluginEntry = {
@@ -74,6 +79,37 @@ export type CommunityPluginEntry = BasePluginEntry & {
  */
 export type PluginEntry = string|LocalPluginEntry|GitHubPluginEntry|CommunityPluginEntry
 
+
+type BaseThemeEntry = {
+    /**
+     * Set false to install the plugin but not enable it. Defaults to true.
+     * Only one theme can be enabled.
+     */
+    enabled?: boolean,
+}
+export type LocalThemeEntry = BaseThemeEntry & {
+    /** Path on disk to the theme to install. */
+    path: string,
+}
+export type GitHubThemeEntry = BaseThemeEntry & {
+    /** Github repo of the theme to install, e.g. "some-user/some-theme". */
+    repo: string,
+}
+export type CommunityThemeEntry = BaseThemeEntry & {
+    /** Theme name to install from Obsidian community themes. */
+    name: string,
+}
+
+/**
+ * A theme to install. Can be a simple string path to the local plugin to install, or an object.
+ * If an object set one of `path` (to install a local theme), `repo` (to install a theme from github), or `name` to
+ * install a theme from Obsidian community theme. You can also pass `enabled: false` to install the theme, but start
+ * it disabled by default. You can only have one enabled theme, so if you pass multiple you'll have to disable all but
+ * one.
+ */
+export type ThemeEntry = string|LocalThemeEntry|GitHubThemeEntry|CommunityThemeEntry
+
+
 export interface ObsidianCapabilityOptions {
     /**
      * Version of Obsidian to run. Can be set to "latest", "latest-beta", or a specific version name. Defaults to
@@ -102,10 +138,21 @@ export interface ObsidianCapabilityOptions {
      * 
      * Can be simple paths to the local plugin to install, e.g. ["."] or ["dist"] depending on your build setup. You
      * can also pass an object. If you pass an object it can contain one of either `path` (to install a local plugin),
-     * `repo` (to install a plugin from github), or `id` to install a plugin from Obsidian community plugins.  You can
+     * `repo` (to install a plugin from github), or `id` to install a plugin from Obsidian community plugins. You can
      * set `enabled: false` to install the plugin, but start it disabled by default.
      */
     plugins?: PluginEntry[],
+
+    /**
+     * Themes to install.
+     * 
+     * Can be simple paths to the local themes to install, e.g. ["."] or ["dist"]. You can also pass an object. If you
+     * pass an object it can contain one of either `path` (to install a local theme), `repo` (to install a theme from
+     * github), or `name` to install a theme from Obsidian community themes. You can set `enabled: false` to install the
+     * theme, but start it disabled by default. You can only have one enabled theme, so if you pass multiple you'll
+     * have to disable all but one.
+     */
+    themes?: ThemeEntry[],
 
     /**
      * The path to the vault to open. The vault will be copied first, so any changes made in your tests won't affect the
@@ -137,9 +184,10 @@ declare global {
              * @param plugins List of plugin ids to enable. If omitted it will keep current plugin list.
              *     Note, all the plugins must be defined in your wdio.conf.ts capabilities. You can use openVault to
              *     toggle which plugins are enabled and which are disabled.
+             * @param theme Theme to enable. Pass "" to switch back to the default theme.
              * @returns Returns the new sessionId (same as reloadSession()).
              */
-            openVault(vault?: string, plugins?: string[]): Promise<string>;
+            openVault(vault?: string, plugins?: string[], theme?: string): Promise<string>;
         }
     }
 

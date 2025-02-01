@@ -52,7 +52,12 @@ export const config: WebdriverIO.Config = {
         browserVersion: appVersion,
         'wdio:obsidianOptions': {
             installerVersion: installerVersion,
-            plugins: ["./test/plugins/basic-plugin"],
+            plugins: [
+                "./test/plugins/basic-plugin",
+            ],
+            themes: [
+                "./test/themes/basic-theme",
+            ],
         }
     })),
 

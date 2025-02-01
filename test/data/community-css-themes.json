@@ -1,0 +1,9 @@
+[
+    {
+        "name": "Example Theme",
+        "author": "Some Body",
+        "repo": "somebody/obsidian-example-theme",
+        "screenshot": "screenshot.png",
+        "modes": ["dark", "light"]
+    }
+]

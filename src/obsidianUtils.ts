@@ -13,7 +13,7 @@ import child_process from "child_process"
 import which from "which"
 import semver from "semver"
 import { fileExists, withTmpDir, linkOrCp } from "./utils.js";
-import { ObsidianVersionInfo, PluginEntry, LocalPluginEntry } from "./types.js";
+import { ObsidianVersionInfo, PluginEntry, LocalPluginEntry, ThemeEntry, LocalThemeEntry } from "./types.js";
 import { fetchObsidianAPI, fetchWithFileUrl } from "./apis.js";
 import ChromeLocalStorage from "./chromeLocalStorage.js";
 import _ from "lodash"
@@ -39,7 +39,7 @@ export async function installPlugins(vault: string, plugins: LocalPluginEntry[])
         const manifestPath = path.join(pluginPath, 'manifest.json');
         const pluginId = JSON.parse(await fsAsync.readFile(manifestPath, 'utf8').catch(e => "{}")).id;
         if (!pluginId) {
-            throw Error(`${pluginPath}/manifest.json missing or malformed.`);
+            throw Error(`${manifestPath} missing or malformed.`);
         }
 
         const pluginDest = path.join(obsidianDir, 'plugins', pluginId);
@@ -67,6 +67,55 @@ export async function installPlugins(vault: string, plugins: LocalPluginEntry[])
     }
 
     await fsAsync.writeFile(enabledPluginsPath, JSON.stringify(enabledPlugins, undefined, 2));
+}
+
+
+/** 
+ * Installs themes into an obsidian vault.
+ * @param vault Path to the theme to install the plugin in.
+ * @param themes: List of themes to install.
+ */
+export async function installThemes(vault: string, themes: LocalThemeEntry[]) {
+    const obsidianDir = path.join(vault, '.obsidian');
+    await fsAsync.mkdir(obsidianDir, { recursive: true });
+
+    let enabledTheme: string|undefined = undefined;
+
+    for (const {path: themePath, enabled = true} of themes) {
+        const manifestPath = path.join(themePath, 'manifest.json');
+        const cssPath = path.join(themePath, 'theme.css');
+
+        const themeName = JSON.parse(await fsAsync.readFile(manifestPath, 'utf8').catch(e => "{}")).name;
+        if (!themeName) {
+            throw Error(`${manifestPath} missing or malformed.`);
+        }
+        if (!(await fileExists(cssPath))) {
+            throw Error(`${cssPath} missing.`);
+        }
+
+        const themeDest = path.join(obsidianDir, 'themes', themeName);
+        await fsAsync.rm(themeDest, { recursive: true, force: true });
+        await fsAsync.mkdir(themeDest, { recursive: true });
+
+        await linkOrCp(manifestPath, path.join(themeDest, "manifest.json"));
+        await linkOrCp(cssPath, path.join(themeDest, "theme.css"));
+
+        if (enabledTheme && enabled) {
+            throw Error("You can only have one enabled theme.")
+        } else if (enabled) {
+            enabledTheme = themeName;
+        }
+    }
+
+    if (themes.length > 0) { // Only update appearance.json if we set the themes
+        const appearancePath = path.join(obsidianDir, 'appearance.json');
+        let appearance: any = {}
+        if (await fileExists(appearancePath)) {
+            appearance = JSON.parse(await fsAsync.readFile(appearancePath, 'utf-8'));
+        }
+        appearance.cssTheme = enabledTheme ?? "";
+        await fsAsync.writeFile(appearancePath, JSON.stringify(appearance, undefined, 2));
+    }
 }
 
 
@@ -130,20 +179,34 @@ export class ObsidianLauncher {
     private versions: ObsidianVersionInfo[]|undefined
     readonly communityPluginsUrl: string
     private communityPlugins: any[]|undefined
+    readonly communityThemesUrl: string
+    private communityThemes: any[]|undefined
 
     /**
      * Construct an ObsidianLauncher.
      * @param cacheDir Path to the cache directory. Defaults to OPTL_CACHE or "./.optl"
      * @param versionsUrl The `obsidian-versions.json` used by the service. Can be a file URL.
      * @param communityPluginsUrl The `community-plugins.json` list to use. Can be a file URL.
+     * @param communityThemes The `community-css-themes.json` list to use. Can be a file URL.
      */
-    constructor(options: {cacheDir?: string, versionsUrl?: string, communityPluginsUrl?: string}) {
+    constructor(options: {
+        cacheDir?: string,
+        versionsUrl?: string,
+        communityPluginsUrl?: string,
+        communityThemesUrl?: string,
+    }) {
         this.cacheDir = path.resolve(options.cacheDir ?? process.env.OPTL_CACHE ?? "./.optl");
+        
         const packageDir = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
+        
         const defaultVersionsUrl =  pathToFileURL(path.join(packageDir, "obsidian-versions.json")).toString(); // TODO
         this.versionsUrl = options.versionsUrl ?? defaultVersionsUrl;
+        
         const defaultCommunityPluginsUrl = "https://raw.githubusercontent.com/obsidianmd/obsidian-releases/HEAD/community-plugins.json";
         this.communityPluginsUrl = options.communityPluginsUrl ?? defaultCommunityPluginsUrl;
+
+        const defaultCommunityThemesUrl = "https://raw.githubusercontent.com/obsidianmd/obsidian-releases/HEAD/community-css-themes.json";
+        this.communityThemesUrl = options.communityThemesUrl ?? defaultCommunityThemesUrl;
     }
 
     /** Tries downloading url to dest under cache, only warns on errors if the file already exists. */
@@ -167,6 +230,7 @@ export class ObsidianLauncher {
         await fsAsync.mkdir(this.cacheDir, { recursive: true });
         await this.tryDownload(this.versionsUrl, "obsidian-versions.json");
         await this.tryDownload(this.communityPluginsUrl, "obsidian-community-plugins.json");
+        await this.tryDownload(this.communityThemesUrl, "obsidian-community-css-themes.json");
     }
 
     /**
@@ -191,6 +255,18 @@ export class ObsidianLauncher {
             this.communityPlugins = JSON.parse(await fsAsync.readFile(filePath, 'utf-8'));
         }
         return this.communityPlugins!
+    }
+
+    /**
+     * Get information about all available community themes.
+     * This just loads it from the cache, you'll need to call downloadMetadata() first to actually download it.
+     */
+    async getCommunityThemes(): Promise<any[]> {
+        if (!this.communityThemes) {
+            const filePath = path.join(this.cacheDir, "obsidian-community-css-themes.json");
+            this.communityThemes = JSON.parse(await fsAsync.readFile(filePath, 'utf-8'));
+        }
+        return this.communityThemes!
     }
 
     /**
@@ -478,6 +554,91 @@ export class ObsidianLauncher {
     }
 
     /**
+     * Downloads a theme from a GitHub repo
+     * @param repo Repo
+     * @returns path to the downloaded theme
+     */
+    async downloadGitHubTheme(repo: string): Promise<string> {
+        const themeDir = path.join(this.cacheDir, "obsidian-themes", repo);
+        await fsAsync.mkdir(path.dirname(themeDir), { recursive: true });
+
+        // There's no "versioning" for Obsidian themes, so we just download it each time
+        let manifest: string|undefined
+        try {
+            const response = await fetch(`https://raw.githubusercontent.com/${repo}/HEAD/manifest.json`);
+            if (response.ok) {
+                manifest = await response.text();
+            }
+        } catch (e) {
+            if (await fileExists(themeDir)) {
+                console.warn(`Unable to download theme ${repo}, using cached version.`);
+            } else {
+                throw e
+            }
+        }
+        if (!manifest) {
+            throw Error(`No manifest.json found for ${repo}`)
+        }
+
+        await withTmpDir(themeDir, async (tmpDir) => {
+            await fsAsync.writeFile(path.join(tmpDir, "manifest.json"), manifest);
+            const response = await fetch(`https://raw.githubusercontent.com/${repo}/HEAD/theme.css`);
+            if (response.ok) {
+                await fsAsync.writeFile(path.join(tmpDir, "theme.css"), response.body as any);
+            } else {
+                throw Error(`No theme.css found for ${repo}`)
+            }
+            return tmpDir;
+        });
+
+        return themeDir;
+    }
+    
+    /**
+     * Downloads a community plugin
+     * @param id name of the theme
+     * @returns path to the downloaded theme
+     */
+    async downloadCommunityTheme(name: string): Promise<string> {
+        const communityThemes = await this.getCommunityThemes();
+        const themeInfo = communityThemes.find(p => p.name == name);
+        if (!themeInfo) {
+            throw Error(`No theme with name ${name} found.`);
+        }
+        return await this.downloadGitHubTheme(themeInfo.repo);
+    }
+    
+    /**
+     * Downloads a list of themes.
+     * Also adds the `name` property to the themes based on the manifest.
+     */
+    async downloadThemes(themes: ThemeEntry[]): Promise<(LocalThemeEntry & {name: string})[]> {
+        return await Promise.all(
+            themes.map(async (theme) => {
+                let themePath: string
+                if (typeof theme == "string") {
+                    themePath = theme;
+                } else if ("path" in theme) {;
+                    themePath = theme.path;
+                } else if ("repo" in theme) {
+                    themePath = await this.downloadGitHubTheme(theme.repo);
+                } else if ("name" in theme) {
+                    themePath = await this.downloadCommunityTheme(theme.name);
+                } else {
+                    throw Error("You must specify one of theme path, repo, or id")
+                }
+                const manifestPath = path.join(themePath, "manifest.json");
+                const pluginName = JSON.parse(await fsAsync.readFile(manifestPath, 'utf8').catch(e => "{}")).name;
+                if (!pluginName) {
+                    throw Error(`${themePath}/manifest.json missing or malformed.`);
+                }
+                const enabled = typeof theme == "string" ? true : (theme.enabled ?? true);
+                return {path: themePath, name: pluginName, enabled: enabled}
+            })
+        );
+    }
+
+    /**
      * Setups the vault and config dir to use for the --user-data-dir in obsidian. Returns the path to the created 
      * temporary directory, which will contain two sub directories, "config" and "vault".
      *
@@ -489,7 +650,8 @@ export class ObsidianLauncher {
      */
     async setup(params: {
         appVersion: string, installerVersion: string,
-        appPath: string, vault?: string, plugins?: LocalPluginEntry[],
+        appPath: string, vault?: string,
+        plugins?: LocalPluginEntry[], themes?: LocalThemeEntry[],
     }): Promise<string> {
         const tmpDir = await fsAsync.mkdtemp(path.join(os.tmpdir(), 'optl-'));
         // configDir will be passed to --user-data-dir, so Obsidian is somewhat sandboxed. We set up "obsidian.json" so
@@ -509,6 +671,7 @@ export class ObsidianLauncher {
             // Copy the vault folder so it isn't modified, and add the plugins to it.
             await fsAsync.cp(params.vault, vaultCopy, { recursive: true });
             await installPlugins(vaultCopy, params.plugins ?? []);
+            await installThemes(vaultCopy, params.themes ?? []);
 
             const vaultId = "1234567890abcdef";
             obsidianJson = {
