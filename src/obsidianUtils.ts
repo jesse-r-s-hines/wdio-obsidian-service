@@ -98,6 +98,30 @@ export async function extractObsidianExe(exe: string, appArch: string, dest: str
 
 
 /**
+ * Extract the executables from the Obsidian dmg installer.
+ * TODO: This currently isn't used, need to add Mac support.
+ */
+export async function extractObsidianDmg(dmg: string, dest: string) {
+    // TODO: is there a way to extract dmg without requiring 7z?
+    const path7z = await which("7z", { nothrow: true });
+    if (!path7z) {
+        throw new Error(
+            "Downloading Obsidian for Mac requires 7zip to be installed and available on the PATH. " +
+            "You install it from https://www.7-zip.org and then add the install location to the PATH."
+        );
+    }
+    dmg = path.resolve(dmg);
+    dest = path.resolve(dest);
+
+    await withTmpDir(dest, async (tmpDir) => {
+        await execFile(path7z, ["x", "-o" + tmpDir, dmg, "*/Obsidian.app"]);
+        const universal = path.join(tmpDir, (await fsAsync.readdir(tmpDir))[0]) // e.g. "Obsidian 1.8.4-universal"
+        return path.join(universal, "Obsidian.app")
+    })
+}
+
+
+/**
  * Handles downloading and setting sandboxed config directories and vaults for Obsidian.
  */
 export class ObsidianLauncher {
