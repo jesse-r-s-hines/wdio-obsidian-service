@@ -26,9 +26,13 @@ export async function withTmpDir(dest: string, func: (tmpDir: string) => Promise
     const tmpDir = await fsAsync.mkdtemp(path.join(path.dirname(dest), `.${path.basename(dest)}.tmp.`));
     try {
         const result = await func(tmpDir);
+        if (await fileExists(dest) && (await fsAsync.stat(dest)).isDirectory()) {
+            fsAsync.rename(dest, tmpDir + ".old")
+        }
         await fsAsync.rename(result, dest);
     } finally {
         await fsAsync.rm(tmpDir, { recursive: true, force: true });
+        await fsAsync.rm(tmpDir + ".old", { recursive: true, force: true });
     }
 }
 

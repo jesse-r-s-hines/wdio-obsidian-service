@@ -50,6 +50,30 @@ describe("withTmpDir", () => {
         expect(await fsAsync.readdir(tmpDir)).to.eql(["out"]);
     })
 
+    it("overwrite file", async () => {
+        const tmpDir = await createDirectory({"foo.txt": "bar"})
+        const dest = path.join(tmpDir, "foo.txt");
+
+        await withTmpDir(dest, async (scratch) => {
+            await fsAsync.writeFile(path.join(scratch, 'foo.txt'), "baz");
+            return path.join(scratch, 'foo.txt');
+        })
+        expect(await fsAsync.readFile(dest, 'utf-8')).to.equal("baz");
+        expect(await fsAsync.readdir(tmpDir)).to.eql(["foo.txt"]);
+    })
+
+    it("overwrite folder", async () => {
+        const tmpDir = await createDirectory({"out/foo.txt": "bar"});
+        const dest = path.join(tmpDir, "out");
+
+        await withTmpDir(dest, async (scratch) => {
+            await fsAsync.writeFile(path.join(scratch, 'a'), "b");
+            return scratch;
+        })
+        expect(await fsAsync.readdir(dest)).to.eql(["a"]);
+        expect(await fsAsync.readdir(tmpDir)).to.eql(["out"]);
+    })
+
     it("errors", async () => {
         const tmpDir = await createDirectory();
         const dest = path.join(tmpDir, "out");
