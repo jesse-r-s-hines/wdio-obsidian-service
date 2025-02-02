@@ -51,14 +51,13 @@ export class ObsidianLauncherService implements Services.ServiceInstance {
             for (const cap of obsidianCapabilities) {
                 const obsidianOptions = cap[OBSIDIAN_CAPABILITY_KEY] ?? {};
     
-                const appVersion = cap.browserVersion ?? "latest";
-                const installerVersion = obsidianOptions.installerVersion ?? "earliest";
                 const vault = obsidianOptions.vault != undefined ? path.resolve(obsidianOptions.vault) : undefined;
     
-                const {
-                    appVersionInfo, installerVersionInfo,
-                } = await this.obsidianLauncher.resolveVersions(appVersion, installerVersion);
-    
+                const { appVersionInfo, installerVersionInfo } = await this.obsidianLauncher.resolveVersions(
+                    cap.browserVersion ?? "latest",
+                    obsidianOptions.installerVersion ?? "earliest",
+                );
+
                 let installerPath = obsidianOptions.binaryPath;
                 if (!installerPath) {
                     installerPath = await this.obsidianLauncher.downloadInstaller(installerVersionInfo.version);
@@ -70,7 +69,7 @@ export class ObsidianLauncherService implements Services.ServiceInstance {
                 let chromedriverPath = cap['wdio:chromedriverOptions']?.binary
                 // wdio can download chromedriver for versions greater than 115 automatically
                 if (!chromedriverPath && Number(installerVersionInfo.chromeVersion!.split(".")[0]) <= 115) {
-                    chromedriverPath = await this.obsidianLauncher.downloadChromedriver(installerVersion);
+                    chromedriverPath = await this.obsidianLauncher.downloadChromedriver(installerVersionInfo.version);
                 }
 
                 let plugins = obsidianOptions.plugins ?? ["."];
