@@ -78,3 +78,16 @@ export async function pool<T, U>(size: number, items: T[], func: (item: T) => Pr
         .process(func);
     return results as U[];
 }
+
+export type SuccessResult<T> = {success: true, result: T, error: undefined}
+export type ErrorResult = {success: false, result: undefined, error: any}
+export type Maybe<T> = SuccessResult<T>|ErrorResult
+
+/**
+ * Helper for handling asynchronous errors with less hassle.
+ */
+export async function maybe<T>(promise: Promise<T>): Promise<Maybe<T>> {
+    return promise
+        .then(r => ({success: true, result: r, error: undefined} as const))
+        .catch(e => ({success: false, result: undefined, error: e} as const))
+}

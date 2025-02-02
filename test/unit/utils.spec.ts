@@ -3,7 +3,7 @@ import { expect } from "chai";
 import fsAsync from "fs/promises";
 import path from "path"
 import { createDirectory } from "../helpers.js";
-import { fileExists, withTmpDir, linkOrCp, sleep, withTimeout, pool } from "../../src/utils.js";
+import { fileExists, withTmpDir, linkOrCp, sleep, withTimeout, pool, maybe } from "../../src/utils.js";
 
 
 describe("fileExists", () => {
@@ -123,5 +123,23 @@ describe("pool", () => {
         ]
         const result = await pool(1, promises, func => func()).catch(r => r);
         expect(result).to.be.instanceOf(Error);
+    });
+});
+
+
+describe("maybe", () => {
+    it("success", async () => {
+        const result = await maybe(new Promise(resolve => resolve(1)));
+        expect(result.success).to.be.true;
+        expect(result.result).to.eql(1);
+        expect(result.error).to.be.undefined;
+    });
+
+    it("success", async () => {
+        const result = await maybe(new Promise((resolve, reject) => reject(Error("foo"))));
+        expect(result.success).to.be.false;
+        expect(result.result).to.be.undefined;
+        expect(result.error).to.be.instanceOf(Error);
+        expect(result.error.message).to.eql("foo");
     });
 });
