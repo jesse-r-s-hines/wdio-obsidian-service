@@ -64,7 +64,7 @@ export const config: WebdriverIO.Config = {
 
     services: [[ObsidianWorkerService, obsidianServiceOptions], [ObsidianLauncherService, obsidianServiceOptions]],
 
-    cacheDir: path.resolve(".optl"),
+    cacheDir: path.resolve(".optl-cache"),
 
     framework: 'mocha',
     

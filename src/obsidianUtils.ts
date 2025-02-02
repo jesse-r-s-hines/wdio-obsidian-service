@@ -184,7 +184,7 @@ export class ObsidianLauncher {
 
     /**
      * Construct an ObsidianLauncher.
-     * @param cacheDir Path to the cache directory. Defaults to OPTL_CACHE or "./.optl"
+     * @param cacheDir Path to the cache directory. Defaults to OPTL_CACHE or "./.optl-cache"
      * @param versionsUrl The `obsidian-versions.json` used by the service. Can be a file URL.
      * @param communityPluginsUrl The `community-plugins.json` list to use. Can be a file URL.
      * @param communityThemes The `community-css-themes.json` list to use. Can be a file URL.
@@ -195,7 +195,7 @@ export class ObsidianLauncher {
         communityPluginsUrl?: string,
         communityThemesUrl?: string,
     }) {
-        this.cacheDir = path.resolve(options.cacheDir ?? process.env.OPTL_CACHE ?? "./.optl");
+        this.cacheDir = path.resolve(options.cacheDir ?? process.env.OPTL_CACHE ?? "./.optl-cache");
         
         const packageDir = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
         
