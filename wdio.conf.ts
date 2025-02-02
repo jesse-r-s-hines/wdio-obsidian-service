@@ -1,4 +1,5 @@
-import { ObsidianWorkerService, ObsidianLauncherService, ObsidianReporter } from "./src/index.js"
+import { ObsidianWorkerService, ObsidianLauncherService } from "./src/index.js"
+import ObsidianReporter from "./src/obsidianReporter.js"
 import { pathToFileURL } from "url"
 import path from "path"
 import fsAsync from "fs/promises"
