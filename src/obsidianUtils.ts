@@ -12,7 +12,7 @@ import { promisify } from "util";
 import child_process from "child_process"
 import which from "which"
 import semver from "semver"
-import { fileExists, withTmpDir, linkOrCp } from "./utils.js";
+import { fileExists, withTmpDir, linkOrCp, maybe } from "./utils.js";
 import { ObsidianVersionInfo, PluginEntry, LocalPluginEntry, ThemeEntry, LocalThemeEntry } from "./types.js";
 import { fetchObsidianAPI, fetchWithFileUrl } from "./apis.js";
 import ChromeLocalStorage from "./chromeLocalStorage.js";
@@ -211,18 +211,13 @@ export class ObsidianLauncher {
 
     /** Tries downloading url to dest under cache, only warns on errors if the file already exists. */
     private async tryDownload(url: string, dest: string) {
-        let fileContent: string|undefined;
-        try {
-            fileContent = await fetchWithFileUrl(url);
-        } catch (e) {
-            if (await fileExists(path.join(this.cacheDir, dest))) {
-                console.warn(`Unable to download ${dest}, using cached file.`);
-            } else {
-                throw e;
-            }
-        }
-        if (fileContent) {
-            await fsAsync.writeFile(path.join(this.cacheDir, dest), fileContent);
+        const fileContent = await maybe(fetchWithFileUrl(url));
+        if (fileContent.success) {
+            await fsAsync.writeFile(path.join(this.cacheDir, dest), fileContent.result);
+        } else if (await fileExists(path.join(this.cacheDir, dest))) {
+            console.warn(`Unable to download ${dest}, using cached file.`);
+        } else {
+            throw fileContent.error;
         }
     }
 
@@ -457,12 +452,9 @@ export class ObsidianLauncher {
 
         if (version == "latest") {
             const manifestUrl = `https://raw.githubusercontent.com/${repo}/HEAD/manifest.json`;
-            try {
-                const response = await fetch(manifestUrl);
-                if (response.ok) {
-                    version = (await response.json() as any).version;
-                }
-            } catch (e) {
+            const response = await maybe(fetch(manifestUrl));
+
+            if (!response.success) { // If network error, used cached plugin version as latest
                 let existingVersions: string[] = []
                 if (await fileExists(pluginDir)) {
                     existingVersions = (await fsAsync.readdir(pluginDir))
@@ -474,13 +466,16 @@ export class ObsidianLauncher {
                     version = existingVersions.at(-1)!;
                     console.warn(`Unable to download ${repo} manifest.json, using cached plugin version.`);
                 } else {
-                    throw e
+                    throw response.error;
                 }
+            } else if (response.result.ok) {
+                version = (await response.result.json() as any).version;
+            }
+            if (!version || version == "latest") { // no valid version was found for latest
+                throw Error(`No valid manifest.json found for ${repo}`);
             }
         }
-        if (!version || version == "latest") { // We didn't find a specific version to use
-            throw Error(`No manifest.json found for ${repo}`);
-        } else if (!semver.valid(version)) {
+        if (!semver.valid(version)) {
             throw Error(`Invalid version "${version}"`);
         }
         version = semver.valid(version)!;
@@ -563,20 +558,18 @@ export class ObsidianLauncher {
         await fsAsync.mkdir(path.dirname(themeDir), { recursive: true });
 
         // There's no "versioning" for Obsidian themes, so we just download it each time
-        let manifest: string|undefined
-        try {
-            const response = await fetch(`https://raw.githubusercontent.com/${repo}/HEAD/manifest.json`);
-            if (response.ok) {
-                manifest = await response.text();
-            }
-        } catch (e) {
+        const response = await maybe(fetch(`https://raw.githubusercontent.com/${repo}/HEAD/manifest.json`));
+        let manifest: string|undefined;
+        if (!response.success) {
             if (await fileExists(themeDir)) {
                 console.warn(`Unable to download theme ${repo}, using cached version.`);
+                return themeDir;
             } else {
-                throw e
+                throw response.error;
             }
-        }
-        if (!manifest) {
+        } else if (response.result.ok) {
+            manifest = await response.result.text();
+        } else {
             throw Error(`No manifest.json found for ${repo}`)
         }
 

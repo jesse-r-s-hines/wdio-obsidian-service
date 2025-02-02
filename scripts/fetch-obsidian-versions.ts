@@ -12,7 +12,7 @@ import CDP from 'chrome-remote-interface'
 import child_process from "child_process"
 import semver from "semver"
 import _ from "lodash"
-import { sleep, withTimeout, pool } from "../src/utils.js";
+import { sleep, withTimeout, pool, maybe } from "../src/utils.js";
 import { fetchGitHubAPIPaginated } from "../src/apis.js";
 import { ObsidianVersionInfo, ObsidianVersionInfos } from "../src/types.js"
 
@@ -62,9 +62,8 @@ async function getDependencyVersions(version: string, appImageUrl: string): Prom
         `--user-data-dir=${tmpDir}`,
     ]);
     const procExit = new Promise<number>((resolve) => proc.on('exit', (code) => resolve(code ?? -1)));
-
-    // proc.stdout.on('data', data => { console.log(`stdout: ${data}`) });
-    // proc.stderr.on('data', data => { console.log(`stderr: ${data}`) });
+    // proc.stdout.on('data', data => console.log(`stdout: ${data}`));
+    // proc.stderr.on('data', data => console.log(`stderr: ${data}`));
 
     let dependencyVersions: any;
     try {
@@ -79,22 +78,18 @@ async function getDependencyVersions(version: string, appImageUrl: string): Prom
             });
         })
 
-        let port: number;
-        try {
-            port = await withTimeout(portPromise, 10 * 1000);
-        } catch {
+        const port = await maybe(withTimeout(portPromise, 10 * 1000));
+        if (!port.success) {
             throw new Error("Timed out waiting for Chrome DevTools protocol port");
         }
-
-        const client = await CDP({port: port});
+        const client = await CDP({port: port.result});
         const response = await client.Runtime.evaluate({ expression: "JSON.stringify(process.versions)" });
         dependencyVersions = JSON.parse(response.result.value);
         await client.close();
     } finally {
         proc.kill("SIGTERM");
-        try {
-            await withTimeout(procExit, 4000);
-        } catch {
+        const timeout = await maybe(withTimeout(procExit, 4 * 1000));
+        if (!timeout.success) {
             console.log(`${appImage}: Stuck process ${proc.pid}, using SIGKILL`);
             proc.kill("SIGKILL");
         }
@@ -212,5 +207,5 @@ try {
 } catch {
     versionInfos = undefined;
 }
-versionInfos = await getAllObsidianVersionInfos(8, versionInfos);
+versionInfos = await getAllObsidianVersionInfos(1, versionInfos);
 fsAsync.writeFile(dest, JSON.stringify(versionInfos, undefined, 4));
