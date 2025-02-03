@@ -30,6 +30,22 @@ export type ObsidianVersionInfo = {
     nodeVersion?: string,
 }
 
+export type ObsidianCommunityPlugin = {
+    id: string,
+    name: string
+    author: string,
+    description: string,
+    repo: string,
+}
+
+export type ObsidianCommunityTheme = {
+    name: string,
+    author: string,
+    repo: string,
+    screenshot: string,
+    modes: string[],
+}
+
 export const OBSIDIAN_CAPABILITY_KEY = "wdio:obsidianOptions" as const
 
 export interface ObsidianServiceOptions {

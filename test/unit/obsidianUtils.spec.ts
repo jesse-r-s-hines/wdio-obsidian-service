@@ -5,7 +5,7 @@ import fsAsync from "fs/promises"
 import { pathToFileURL } from "url";
 import semver from "semver";
 import { createDirectory } from "../helpers.js"
-import { installPlugins, installThemes, ObsidianLauncher } from "../../src/obsidianUtils.js";
+import { ObsidianDownloader, installPlugins, installThemes, setupConfigAndVault } from "../../src/obsidianUtils.js";
 import { fileExists } from "../../src/utils.js";
 import { ObsidianVersionInfo } from "../../src/types.js";
 
@@ -55,7 +55,10 @@ describe("installPlugins", () => {
             ".obsidian/community-plugins.json": '["dataview", "plugin-b"]',
         });
 
-        await installPlugins(vault, [{path: pluginA, enabled: true}, {path: pluginB, enabled: true}]);
+        await installPlugins(vault, [
+            {path: pluginA, enabled: true},
+            {path: pluginB, enabled: true},
+        ]);
 
         const communityPlugins = await fsAsync.readFile(`${vault}/.obsidian/community-plugins.json`, 'utf-8');
         expect(JSON.parse(communityPlugins)).to.eql(["dataview", "plugin-b", "plugin-a"]);
@@ -83,7 +86,10 @@ describe("installPlugins", () => {
             ".obsidian/community-plugins.json": '["dataview", "plugin-b"]',
         });
 
-        await installPlugins(vault, [{path: pluginA, enabled: false}, {path: pluginB, enabled: false}]);
+        await installPlugins(vault, [
+            {path: pluginA, enabled: false},
+            {path: pluginB, enabled: false},
+        ]);
 
         const communityPlugins = await fsAsync.readFile(`${vault}/.obsidian/community-plugins.json`, 'utf-8');
         expect(JSON.parse(communityPlugins)).to.eql(["dataview"]);
@@ -118,7 +124,7 @@ describe("installThemes", () => {
 })
 
 describe("resolveVersions", () => {
-    let launcher: ObsidianLauncher|undefined;
+    let downloader: ObsidianDownloader|undefined;
 
     before(async () => {
         let versions = JSON.parse(await fsAsync.readFile(path.resolve("./obsidian-versions.json"), 'utf-8')).versions;
@@ -135,12 +141,11 @@ describe("resolveVersions", () => {
         });
         const cacheDir = await createDirectory();
     
-        launcher = new ObsidianLauncher({
+        downloader = new ObsidianDownloader({
             ...obsidianLauncherOpts,
             cacheDir,
             versionsUrl: pathToFileURL(`${tmpDir}/obsidian-versions.json`).toString(),
         });
-        await launcher.downloadMetadata();
     })
 
     const tests = [
@@ -153,7 +158,9 @@ describe("resolveVersions", () => {
 
     tests.forEach(([[appVersion, installerVersion], expected]) => {
         it(`resolveVersions("${appVersion}", "${installerVersion}") == ${expected}`, async () => {
-            const {appVersionInfo, installerVersionInfo} = await launcher!.resolveVersions(appVersion, installerVersion);
+            const {
+                appVersionInfo, installerVersionInfo,
+            } = await downloader!.resolveVersions(appVersion, installerVersion);
             expect([appVersionInfo.version, installerVersionInfo.version]).to.eql(expected);
         })
     })
@@ -167,9 +174,8 @@ describe("setup", () => {
             "my-plugin/main.js": "console.log('foo')",
             "my-vault/A.md": "This is a file",
         });
-        const launcher = new ObsidianLauncher({ ...obsidianLauncherOpts, cacheDir: `${tmpDir}/cache`});
 
-        const setupDir = await launcher.setup({
+        const setupDir = await setupConfigAndVault({
             appVersion: "1.7.7", installerVersion: "1.7.7",
             appPath: `${tmpDir}/obsidian-1.7.7.asar`,
             vault: `${tmpDir}/my-vault`,
@@ -190,9 +196,8 @@ describe("setup", () => {
             "my-plugin/manifest.json": '{"id": "plugin-a"}',
             "my-plugin/main.js": "console.log('foo')",
         });
-        const launcher = new ObsidianLauncher({...obsidianLauncherOpts, cacheDir: `${tmpDir}/cache`});
 
-        const setupDir = await launcher.setup({
+        const setupDir = await setupConfigAndVault({
             appVersion: "1.7.7", installerVersion: "1.7.7",
             appPath: `${tmpDir}/obsidian-1.7.7.asar`,
             plugins: [{path: `${tmpDir}/my-plugin`, enabled: true}],

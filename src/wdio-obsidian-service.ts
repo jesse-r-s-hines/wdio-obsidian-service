@@ -3,7 +3,7 @@ import path from "path"
 import { SevereServiceError } from 'webdriverio'
 import type { Capabilities, Options, Services } from '@wdio/types'
 import { fileURLToPath } from "url"
-import { ObsidianLauncher } from "./obsidianUtils.js"
+import { ObsidianDownloader, setupConfigAndVault } from "./obsidianUtils.js"
 import browserCommands from "./browserCommands.js"
 import {
     ObsidianCapabilityOptions, ObsidianServiceOptions, OBSIDIAN_CAPABILITY_KEY, LocalPluginEntry, LocalThemeEntry,
@@ -12,7 +12,7 @@ import _ from "lodash"
 
 
 export class ObsidianLauncherService implements Services.ServiceInstance {
-    private obsidianLauncher: ObsidianLauncher
+    private obsidianDownloader: ObsidianDownloader
     private readonly helperPluginPath: string
 
     constructor (
@@ -20,7 +20,7 @@ export class ObsidianLauncherService implements Services.ServiceInstance {
         public capabilities: WebdriverIO.Capabilities,
         public config: Options.Testrunner
     ) {
-        this.obsidianLauncher = new ObsidianLauncher({
+        this.obsidianDownloader = new ObsidianDownloader({
             cacheDir: config.cacheDir,
             versionsUrl: options.versionsUrl,
             communityPluginsUrl: options.communityPluginsUrl,
@@ -46,37 +46,35 @@ export class ObsidianLauncherService implements Services.ServiceInstance {
         });
 
         try {
-            await this.obsidianLauncher.downloadMetadata();
-
             for (const cap of obsidianCapabilities) {
                 const obsidianOptions = cap[OBSIDIAN_CAPABILITY_KEY] ?? {};
     
                 const vault = obsidianOptions.vault != undefined ? path.resolve(obsidianOptions.vault) : undefined;
     
-                const { appVersionInfo, installerVersionInfo } = await this.obsidianLauncher.resolveVersions(
+                const { appVersionInfo, installerVersionInfo } = await this.obsidianDownloader.resolveVersions(
                     cap.browserVersion ?? "latest",
                     obsidianOptions.installerVersion ?? "earliest",
                 );
 
                 let installerPath = obsidianOptions.binaryPath;
                 if (!installerPath) {
-                    installerPath = await this.obsidianLauncher.downloadInstaller(installerVersionInfo.version);
+                    installerPath = await this.obsidianDownloader.downloadInstaller(installerVersionInfo.version);
                 }
                 let appPath = obsidianOptions.appPath;
                 if (!appPath) {
-                    appPath = await this.obsidianLauncher.downloadApp(appVersionInfo.version);
+                    appPath = await this.obsidianDownloader.downloadApp(appVersionInfo.version);
                 }
                 let chromedriverPath = cap['wdio:chromedriverOptions']?.binary
                 // wdio can download chromedriver for versions greater than 115 automatically
                 if (!chromedriverPath && Number(installerVersionInfo.chromeVersion!.split(".")[0]) <= 115) {
-                    chromedriverPath = await this.obsidianLauncher.downloadChromedriver(installerVersionInfo.version);
+                    chromedriverPath = await this.obsidianDownloader.downloadChromedriver(installerVersionInfo.version);
                 }
 
                 let plugins = obsidianOptions.plugins ?? ["."];
                 plugins.push(this.helperPluginPath); // Always install the helper plugin
-                plugins = await this.obsidianLauncher.downloadPlugins(plugins);
+                plugins = await this.obsidianDownloader.downloadPlugins(plugins);
 
-                const themes = await this.obsidianLauncher.downloadThemes(obsidianOptions.themes ?? []);
+                const themes = await this.obsidianDownloader.downloadThemes(obsidianOptions.themes ?? []);
     
                 cap.browserName = "chrome";
                 cap.browserVersion = installerVersionInfo.chromeVersion;
@@ -114,7 +112,6 @@ export class ObsidianLauncherService implements Services.ServiceInstance {
 }
 
 export class ObsidianWorkerService implements Services.ServiceInstance {
-    private obsidianLauncher: ObsidianLauncher
     /** Directories to clean up after the tests */
     private tmpDirs: string[]
 
@@ -123,12 +120,6 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
         public capabilities: WebdriverIO.Capabilities,
         public config: Options.Testrunner
     ) {
-        this.obsidianLauncher = new ObsidianLauncher({
-            cacheDir: config.cacheDir,
-            versionsUrl: options.versionsUrl,
-            communityPluginsUrl: options.communityPluginsUrl,
-            communityThemesUrl: options.communityThemesUrl,
-        });
         this.tmpDirs = [];
     }
 
@@ -136,7 +127,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
         if (obsidianOptions.vault != undefined) {
             console.log(`Opening vault ${obsidianOptions.vault}`);
         }
-        const tmpDir = await this.obsidianLauncher.setup({
+        const tmpDir = await setupConfigAndVault({
             appVersion: obsidianOptions.appVersion!, installerVersion: obsidianOptions.installerVersion!,
             appPath: obsidianOptions.appPath!, vault: obsidianOptions.vault,
             plugins: obsidianOptions.plugins as LocalPluginEntry[],
