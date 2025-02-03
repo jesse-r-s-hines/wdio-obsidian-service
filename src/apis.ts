@@ -94,11 +94,19 @@ export async function fetchObsidianAPI(url: string) {
 }
 
 
-/** Fetches a URL returning its content as a string. URL can be a file url. */
+/**
+ * Fetches a URL returning its content as a string. Throws if response is not OK.
+ * URL can be a file url.
+ */
 export async function fetchWithFileUrl(url: string) {
     if (url.startsWith("file:")) {
         return await fsAsync.readFile(fileURLToPath(url), 'utf-8');
     } else {
-        return await fetch(url).then(r => r.text());
+        const response = await fetch(url);
+        if (response.ok) {
+            return response.text()
+        } else {
+            throw Error(`Request failed with ${response.status}: ${response.text()}`)
+        }
     }
 }
