@@ -35,7 +35,7 @@ export default class ChromeLocalStorage {
     /**
      * Set a value in localStorage
      * @param domain Domain the value is under, e.g. "https://example.com" or "app://obsidian.md"
-     * @param key Key to retreive
+     * @param key Key to set
      * @param value Value to set
      */
     async setItem(domain: string, key: string, value: string) {
@@ -45,7 +45,7 @@ export default class ChromeLocalStorage {
     /**
      * Removes a key from localStorage
      * @param domain Domain the values is under, e.g. "https://example.com" or "app://obsidian.md"
-     * @param data key/value mapping to remove.
+     * @param key key to remove.
      */
     async removeItem(domain: string, key: string) {
         await this.db.del(this.encodeKey(domain, key))
@@ -66,7 +66,7 @@ export default class ChromeLocalStorage {
 
     /**
      * Write multiple values to localStorage in batch
-     * @param domain Domain the values is under, e.g. "https://example.com" or "app://obsidian.md"
+     * @param domain Domain the values are under, e.g. "https://example.com" or "app://obsidian.md"
      * @param data key/value mapping to write
      */
     async setItems(domain: string, data: Record<string, string>) {
@@ -77,6 +77,9 @@ export default class ChromeLocalStorage {
         )
     }
 
+    /**
+     * Close the localStorage database.
+     */
     async close() {
         await this.db.close();
     }

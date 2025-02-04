@@ -206,8 +206,8 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
                     }),
                 ]
 
-                // Reload session already merges with existing settings, and tries to restart the driver entirely if you
-                // set browserName explicitly instead of letting it keep existing.
+                // Reload session already merges with existing settings, and tries to restart the driver entirely if
+                // you set browserName explicitly..
                 const sessionId = await this.reloadSession({
                     [OBSIDIAN_CAPABILITY_KEY]: newObsidianOptions,
                     'goog:chromeOptions': {

@@ -5,7 +5,7 @@ import { fileURLToPath } from "url";
 
 
 /**
- * GitHub API stores pagination information in in "Link" header. The header will look like this
+ * GitHub API stores pagination information in the "Link" header. The header looks like this:
  * ```
  * <https://api.github.com/repositories/1300192/issues?page=2>; rel="prev", <https://api.github.com/repositories/1300192/issues?page=4>; rel="next"
  * ```
@@ -49,6 +49,10 @@ function createURL(url: string, base: string, params: Record<string, any> = {}) 
 }
 
 
+/**
+ * Fetch from the GitHub API. Uses GITHUB_TOKEN if available. You can access the API without a token, but will hit
+ * the usage caps very quickly.
+ */
 export async function fetchGitHubAPI(url: string, params: Record<string, any> = {}) {
     url = createURL(url, "https://api.github.com", params)
     const token = process.env.GITHUB_TOKEN;
@@ -61,6 +65,9 @@ export async function fetchGitHubAPI(url: string, params: Record<string, any> = 
 }
 
 
+/**
+ * Fetch all data from a paginated GitHub API request.
+ */
 export async function fetchGitHubAPIPaginated(url: string, params: Record<string, any> = {}) {
     const results = [];
     let next: string|undefined = createURL(url, "https://api.github.com", { per_page: 100, ...params });
@@ -72,7 +79,10 @@ export async function fetchGitHubAPIPaginated(url: string, params: Record<string
     return results;
 }
 
-
+/**
+ * Fetch from the Obsidian API to download insider versions. Uses OBSIDIAN_USERNAME and
+ * OBSIDIAN_PASSWORD environment variables.
+ */
 export async function fetchObsidianAPI(url: string) {
     url = createURL(url, "https://releases.obsidian.md");
 

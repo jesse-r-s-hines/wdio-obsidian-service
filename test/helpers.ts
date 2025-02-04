@@ -6,7 +6,7 @@ import { after } from "mocha";
 
 /**
  * Creates a temporary directory with the given files and contents. Cleans up the directory after the tests.
- * @param files Map of file paths to file contents.
+ * @param files Map of file path to file content.
  */
 export async function createDirectory(files: Record<string, string> = {}) {
     const tmpDir = await fsAsync.mkdtemp(path.join(os.tmpdir(), "mocha-"));

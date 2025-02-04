@@ -478,7 +478,7 @@ export class ObsidianDownloader {
     }
 
     /**
-     * Downloads a community plugin
+     * Downloads a community theme.
      * @param name name of the theme
      * @returns path to the downloaded theme
      */
@@ -524,7 +524,7 @@ export class ObsidianDownloader {
 
 
 /**
- * Installs plugins into an obsidian vault.
+ * Installs plugins into an Obsidian vault.
  * @param vault Path to the vault to install the plugin in.
  * @param plugins List plugins paths to install.
  */
@@ -621,13 +621,14 @@ export async function installThemes(vault: string, themes: LocalThemeEntry[]) {
 }
 
 /**
- * Setups the vault and config dir to use for the --user-data-dir in obsidian. Returns the path to the created 
+ * Sets up the vault and config dir to use for the --user-data-dir in obsidian. Returns the path to the created 
  * temporary directory, which will contain two sub directories, "config" and "vault".
  *
  * @param appVersion Obsidian version string. Should be an actual version, not a string like "latest" etc.
  * @param installerVersion Obsidian version string. Should be an actual version, not a string like "latest" etc.
  * @param appPath Path to the asar file to install.
  * @param vault Path to the vault to open in Obsidian. Won't open a vault if left undefined.
+ * @param copyVault If true, will copy the vault before opening it in Obsidian. Default false.
  * @param plugins List of plugins to install in the vault.
  */
 export async function setupConfigAndVault(params: {
