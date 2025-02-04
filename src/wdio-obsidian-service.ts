@@ -2,6 +2,7 @@ import fsAsync from "fs/promises"
 import path from "path"
 import { SevereServiceError } from 'webdriverio'
 import type { Capabilities, Options, Services } from '@wdio/types'
+import logger from '@wdio/logger'
 import { fileURLToPath } from "url"
 import { ObsidianDownloader, setupConfigAndVault } from "./obsidianUtils.js"
 import browserCommands from "./browserCommands.js"
@@ -10,6 +11,7 @@ import {
 } from "./types.js"
 import _ from "lodash"
 
+const log = logger("wdio-obsidian-service");
 
 export class ObsidianLauncherService implements Services.ServiceInstance {
     private obsidianDownloader: ObsidianDownloader
@@ -125,7 +127,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
 
     private async setupObsidian(obsidianOptions: ObsidianCapabilityOptions) {
         if (obsidianOptions.vault != undefined) {
-            console.log(`Opening vault ${obsidianOptions.vault}`);
+            log.info(`Opening vault ${obsidianOptions.vault}`);
         }
         const tmpDir = await setupConfigAndVault({
             appVersion: obsidianOptions.appVersion!, installerVersion: obsidianOptions.installerVersion!,
@@ -139,9 +141,13 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
 
     private async waitForReady(browser: WebdriverIO.Browser) {
         if ((await browser.getVaultPath()) != undefined) {
+            await browser.waitUntil(
+                async () => browser.execute("return !!window.optl?.app?.workspace?.onLayoutReady"),
+                {timeout: 30 * 1000, interval: 200},
+            );
             await browser.execute(`
-                await new Promise((resolve) => { app.workspace.onLayoutReady(resolve) });
-            `)
+                await new Promise((resolve) => { optl.app.workspace.onLayoutReady(resolve) });
+            `);
         }
     }
 
@@ -157,6 +163,10 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
     }
 
     async before(capabilities: WebdriverIO.Capabilities, specs: never, browser: WebdriverIO.Browser) {
+        // There's a slow event listener link on the browser "command" event when you reloadSession that causes some
+        // warnings. This will silence them. TODO: Make issue or PR to wdio to fix this.
+        browser.setMaxListeners(1000);
+
         if (!capabilities[OBSIDIAN_CAPABILITY_KEY]) return;
 
         const service = this; // eslint-disable-line @typescript-eslint/no-this-alias

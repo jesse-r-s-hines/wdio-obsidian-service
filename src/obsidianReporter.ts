@@ -8,7 +8,6 @@ import { Reporters } from "@wdio/types"
 class ObsidianReporter extends SpecReporter {
     // Override this method to change the label shown for each capability 
     getHeaderDisplay(runner: RunnerStats) {
-        console.log("REPORTER", runner, runner.capabilities)
         const obsidianOptions = (runner.config as any).capabilities?.['wdio:obsidianOptions']
 
         let combo: string
