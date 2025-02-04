@@ -130,15 +130,15 @@ describe("pool", () => {
 describe("maybe", () => {
     it("success", async () => {
         const result = await maybe(new Promise(resolve => resolve(1)));
-        expect(result.success).to.be.true;
+        expect(result.success).to.equal(true);
         expect(result.result).to.eql(1);
-        expect(result.error).to.be.undefined;
+        expect(result.error).to.equal(undefined);
     });
 
     it("success", async () => {
         const result = await maybe(new Promise((resolve, reject) => reject(Error("foo"))));
-        expect(result.success).to.be.false;
-        expect(result.result).to.be.undefined;
+        expect(result.success).to.equal(false);
+        expect(result.result).to.equal(undefined);
         expect(result.error).to.be.instanceOf(Error);
         expect(result.error.message).to.eql("foo");
     });

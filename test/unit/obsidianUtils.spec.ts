@@ -106,7 +106,7 @@ describe("installThemes", () => {
     it("no themes", async () => {
         const vault = await createDirectory();
         await installThemes(vault, []);
-        expect(await fileExists(`${vault}/.obsidian/themes`)).to.be.false;
+        expect(await fileExists(`${vault}/.obsidian/themes`)).to.equal(false);
     })
 
     it("empty vault", async () => {

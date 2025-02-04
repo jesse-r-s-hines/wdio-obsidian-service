@@ -16,10 +16,9 @@ export default class ChromeLocalStorage {
         this.db = new ClassicLevel(path.join(userDataDir, 'Local Storage/leveldb/'));
     }
 
-    // private encodeKey(domain: string, key: string) { return "_" + domain + "\u0000\u0001" + key }
-    private encodeKey = (domain: string, key: string) => "_" + domain + "\u0000\u0001" + key;
+    private encodeKey = (domain: string, key: string) => `_${domain}\u0000\u0001${key}`;
     private decodeKey = (key: string) => key.slice(1).split("\u0000\u0001") as [string, string];
-    private encodeValue = (value: string) => "\u0001" + value;
+    private encodeValue = (value: string) => `\u0001${value}`;
     private decodeValue = (value: string) => value.slice(1);
 
     /**
@@ -58,7 +57,7 @@ export default class ChromeLocalStorage {
             if (pair[0].startsWith("_")) { // ignore the META values
                 const [domain, key] = this.decodeKey(pair[0]);
                 const value = this.decodeValue(pair[1]);
-                result.push([domain, key, value])
+                result.push([domain, key, value]);
             }
         }
         return result;
@@ -72,7 +71,9 @@ export default class ChromeLocalStorage {
     async setItems(domain: string, data: Record<string, string>) {
         await this.db.batch(
             Object.entries(data).map(([key, value]) => ({
-                type: "put", key: this.encodeKey(domain, key), value: this.encodeValue(value),
+                type: "put",
+                key: this.encodeKey(domain, key),
+                value: this.encodeValue(value),
             }))
         )
     }

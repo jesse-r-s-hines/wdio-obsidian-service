@@ -19,7 +19,6 @@ import {
 } from "./types.js";
 import { fetchObsidianAPI, fetchWithFileUrl } from "./apis.js";
 import ChromeLocalStorage from "./chromeLocalStorage.js";
-import _ from "lodash"
 const execFile = promisify(child_process.execFile);
 
 
@@ -236,7 +235,7 @@ export class ObsidianDownloader {
             }
         } else if (platform == "win32") {
             installerPath = path.join(cacheDir, `Obsidian-${installerVersion}`, "Obsidian.exe")
-            let installerUrl = installerVersionInfo.downloads.exe;
+            const installerUrl = installerVersionInfo.downloads.exe;
             let appArch: string|undefined
             if (arch == "x64") {
                 appArch = "app-64"
@@ -425,7 +424,7 @@ export class ObsidianDownloader {
                     throw Error("You must specify one of plugin path, repo, or id")
                 }
                 const manifestPath = path.join(pluginPath, "manifest.json");
-                const pluginId = JSON.parse(await fsAsync.readFile(manifestPath, 'utf8').catch(e => "{}")).id;
+                const pluginId = JSON.parse(await fsAsync.readFile(manifestPath, 'utf8').catch(() => "{}")).id;
                 if (!pluginId) {
                     throw Error(`${pluginPath}/manifest.json missing or malformed.`);
                 }
@@ -511,7 +510,7 @@ export class ObsidianDownloader {
                     throw Error("You must specify one of theme path, repo, or id")
                 }
                 const manifestPath = path.join(themePath, "manifest.json");
-                const pluginName = JSON.parse(await fsAsync.readFile(manifestPath, 'utf8').catch(e => "{}")).name;
+                const pluginName = JSON.parse(await fsAsync.readFile(manifestPath, 'utf8').catch(() => "{}")).name;
                 if (!pluginName) {
                     throw Error(`${themePath}/manifest.json missing or malformed.`);
                 }
@@ -540,7 +539,7 @@ export async function installPlugins(vault: string, plugins: LocalPluginEntry[])
 
     for (const {path: pluginPath, enabled = true} of plugins) {
         const manifestPath = path.join(pluginPath, 'manifest.json');
-        const pluginId = JSON.parse(await fsAsync.readFile(manifestPath, 'utf8').catch(e => "{}")).id;
+        const pluginId = JSON.parse(await fsAsync.readFile(manifestPath, 'utf8').catch(() => "{}")).id;
         if (!pluginId) {
             throw Error(`${manifestPath} missing or malformed.`);
         }
@@ -587,7 +586,7 @@ export async function installThemes(vault: string, themes: LocalThemeEntry[]) {
         const manifestPath = path.join(themePath, 'manifest.json');
         const cssPath = path.join(themePath, 'theme.css');
 
-        const themeName = JSON.parse(await fsAsync.readFile(manifestPath, 'utf8').catch(e => "{}")).name;
+        const themeName = JSON.parse(await fsAsync.readFile(manifestPath, 'utf8').catch(() => "{}")).name;
         if (!themeName) {
             throw Error(`${manifestPath} missing or malformed.`);
         }

@@ -28,7 +28,7 @@ describe("Basic obsidian launch", () => {
         let vaultPath: string = await browser.execute('return optl.app.vault.adapter.getBasePath()');
         vaultPath = path.normalize(vaultPath).replace("\\", "/");
         // Should have created a copy of vault
-        expect(path.normalize(vaultPath).startsWith(os.tmpdir())).to.be.true;
+        expect(path.normalize(vaultPath).startsWith(os.tmpdir())).to.equal(true);
 
         // Check that the types for `optl` work by using a function instead of a string here
         const vaultFiles = await browser.execute(() => optl.app.vault.getMarkdownFiles().map(x => x.path).sort());
@@ -36,12 +36,12 @@ describe("Basic obsidian launch", () => {
     })
 
     it('Sandboxed config', async () => {
-        let configDir: string = await browser.execute("return electron.remote.app.getPath('userData')")
-        expect(path.normalize(configDir).startsWith(os.tmpdir())).to.be.true;
+        const configDir: string = await browser.execute("return electron.remote.app.getPath('userData')")
+        expect(path.normalize(configDir).startsWith(os.tmpdir())).to.equal(true);
     })
 
     it('plugin was installed and enabled', async () => {
-        expect(await browser.$(".basic-plugin-status-bar-item").isExisting()).to.eql(true);
+        expect(await browser.$(".basic-plugin-status-bar-item").isExisting()).to.equal(true);
     })
 
     it('theme was installed and enabled', async () => {
