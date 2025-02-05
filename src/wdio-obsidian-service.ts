@@ -7,7 +7,8 @@ import { fileURLToPath } from "url"
 import { ObsidianDownloader, setupConfigAndVault } from "./obsidianUtils.js"
 import browserCommands from "./browserCommands.js"
 import {
-    ObsidianCapabilityOptions, ObsidianServiceOptions, OBSIDIAN_CAPABILITY_KEY, LocalPluginEntry, LocalThemeEntry,
+    ObsidianCapabilityOptions, ObsidianServiceOptions, OBSIDIAN_CAPABILITY_KEY,
+    LocalPluginEntry, LocalPluginEntryWithId, LocalThemeEntry, LocalThemeEntryWithName,
 } from "./types.js"
 import _ from "lodash"
 
@@ -163,6 +164,33 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
         ];
     }
 
+    private selectPlugins(currentPlugins: LocalPluginEntryWithId[], selection?: string[]) {
+        if (selection !== undefined) {
+            const unknownPlugins = _.difference(selection, currentPlugins.map(p => p.id));
+            if (unknownPlugins.length > 0) {
+                throw Error(`Unknown plugin ids: ${unknownPlugins.join(', ')}`)
+            }
+            return currentPlugins.map(p => ({
+                ...p,
+                enabled: selection.includes(p.id) || p.id == "optl-plugin",
+            }));
+        } else {
+            return currentPlugins;
+        }
+    }
+
+    private selectThemes(currentThemes: LocalThemeEntryWithName[], selection?: string) {
+        if (selection !== undefined) {
+            if (selection != "" && currentThemes.every((t: any) => t.name != selection)) {
+                throw Error(`Unknown theme: ${selection}`)
+            }
+            // If themes is "" all will be disabled
+            return currentThemes.map((t: any) => ({...t, enabled: t.name === selection}))
+        } else {
+            return currentThemes;
+        }
+    }
+
     async before(capabilities: WebdriverIO.Capabilities, specs: never, browser: WebdriverIO.Browser) {
         // There's a slow event listener link on the browser "command" event when you reloadSession that causes some
         // warnings. This will silence them. TODO: Make issue or PR to wdio to fix this.
@@ -175,36 +203,11 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
             async function(this: WebdriverIO.Browser, vault?: string, plugins?: string[], theme?: string) {
                 const oldObsidianOptions = this.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY];
 
-                let newPlugins: LocalPluginEntry[]
-                if (plugins !== undefined) {
-                    const unknownPlugins = _.difference(plugins, oldObsidianOptions.plugins.map((p: any) => p.id));
-                    if (unknownPlugins.length > 0) {
-                        throw Error(`Unknown plugin ids: ${unknownPlugins.join(', ')}`)
-                    }
-                    newPlugins = oldObsidianOptions.plugins.map((p: any) => ({
-                        ...p,
-                        enabled: plugins.includes(p.id) || p.id == "optl-plugin",
-                    }));
-                } else {
-                    newPlugins = oldObsidianOptions.plugins;
-                }
-
-                let newThemes: LocalThemeEntry[]
-                if (theme !== undefined) {
-                    if (theme != "" && oldObsidianOptions.themes.every((t: any) => t.name != theme)) {
-                        throw Error(`Unknown theme: ${theme}`)
-                    }
-                    // If all themes is "" all will be disabled
-                    newThemes = oldObsidianOptions.themes.map((t: any) => ({...t, enabled: t.name === theme}))
-                } else {
-                    newThemes = oldObsidianOptions.themes;
-                }
-
                 const newObsidianOptions = {
                     ...oldObsidianOptions,
                     vault: vault != undefined ? path.resolve(vault) : oldObsidianOptions.vault,
-                    plugins: newPlugins,
-                    themes: newThemes,
+                    plugins: service.selectPlugins(oldObsidianOptions.plugins, plugins),
+                    themes: service.selectThemes(oldObsidianOptions.themes, theme),
                 }
 
                 const tmpDir = await service.setupObsidian(newObsidianOptions);
@@ -213,7 +216,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
                     `--user-data-dir=${tmpDir}/config`,
                     ...this.requestedCapabilities['goog:chromeOptions'].args.filter((arg: string) => {
                         const match = arg.match(/^--user-data-dir=(.*)\/config$/);
-                        return !service.tmpDirs.includes(match?.[1] ?? '');
+                        return !match || !service.tmpDirs.includes(match[1]);
                     }),
                 ]
 
