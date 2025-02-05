@@ -14,8 +14,9 @@ import which from "which"
 import semver from "semver"
 import { fileExists, withTmpDir, linkOrCp, maybe } from "./utils.js";
 import {
-    ObsidianVersionInfo, ObsidianCommunityPlugin, ObsidianCommunityTheme, PluginEntry, LocalPluginEntry, ThemeEntry,
-    LocalThemeEntry,
+    ObsidianVersionInfo, ObsidianCommunityPlugin, ObsidianCommunityTheme,
+    PluginEntry, LocalPluginEntry, LocalPluginEntryWithId,
+    ThemeEntry, LocalThemeEntry, LocalThemeEntryWithName,
 } from "./types.js";
 import { fetchObsidianAPI, fetchWithFileUrl } from "./apis.js";
 import ChromeLocalStorage from "./chromeLocalStorage.js";
@@ -70,6 +71,7 @@ export class ObsidianDownloader {
     private async cachedFetch(url: string, dest: string, {
         cacheDuration = 30 * 60 * 1000,
     } = {}): Promise<any> {
+        dest = path.resolve(dest);
         if (!(dest in this.metadataCache)) {
             let fileContent: string|undefined;
             const mtime = await fileExists(dest) ? (await fsAsync.stat(dest)).mtime : undefined;
@@ -408,7 +410,7 @@ export class ObsidianDownloader {
      * Downloads a list of plugins.
      * Also adds the `id` property to the plugins based on the manifest.
      */
-    async downloadPlugins(plugins: PluginEntry[]): Promise<(LocalPluginEntry & {id: string})[]> {
+    async downloadPlugins(plugins: PluginEntry[]): Promise<LocalPluginEntryWithId[]> {
         return await Promise.all(
             plugins.map(async (plugin) => {
                 let pluginPath: string
@@ -494,7 +496,7 @@ export class ObsidianDownloader {
      * Downloads a list of themes.
      * Also adds the `name` property to the themes based on the manifest.
      */
-    async downloadThemes(themes: ThemeEntry[]): Promise<(LocalThemeEntry & {name: string})[]> {
+    async downloadThemes(themes: ThemeEntry[]): Promise<LocalThemeEntryWithName[]> {
         return await Promise.all(
             themes.map(async (theme) => {
                 let themePath: string
@@ -631,8 +633,8 @@ export async function installThemes(vault: string, themes: LocalThemeEntry[]) {
  * @param plugins List of plugins to install in the vault.
  */
 export async function setupConfigAndVault(params: {
-    appVersion: string, installerVersion: string,
-    appPath: string, vault?: string,
+    appVersion: string, installerVersion: string, appPath: string,
+    vault?: string, copyVault?: boolean,
     plugins?: LocalPluginEntry[], themes?: LocalThemeEntry[],
 }): Promise<string> {
     const tmpDir = await fsAsync.mkdtemp(path.join(os.tmpdir(), 'optl-'));
@@ -649,18 +651,24 @@ export async function setupConfigAndVault(params: {
     }
 
     if (params.vault !== undefined) {
-        const vaultCopy = path.join(tmpDir, 'vault');
-        // Copy the vault folder so it isn't modified, and add the plugins to it.
-        await fsAsync.cp(params.vault, vaultCopy, { recursive: true });
-        await installPlugins(vaultCopy, params.plugins ?? []);
-        await installThemes(vaultCopy, params.themes ?? []);
+        let vault: string
+        if (params.copyVault) {
+            // Copy the vault folder so it isn't modified, and add the plugins to it.
+            vault = path.join(tmpDir, 'vault');
+            await fsAsync.cp(params.vault, vault, { recursive: true });
+        } else {
+            vault = params.vault;
+        }
+        
+        await installPlugins(vault, params.plugins ?? []);
+        await installThemes(vault, params.themes ?? []);
 
         const vaultId = "1234567890abcdef";
         obsidianJson = {
             ...obsidianJson,
             vaults: {
                 [vaultId]: {
-                    path: path.resolve(vaultCopy),
+                    path: path.resolve(vault),
                     ts: new Date().getTime(),
                     open: true,
                 },

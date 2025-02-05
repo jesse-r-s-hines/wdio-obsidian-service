@@ -131,7 +131,8 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
         }
         const tmpDir = await setupConfigAndVault({
             appVersion: obsidianOptions.appVersion!, installerVersion: obsidianOptions.installerVersion!,
-            appPath: obsidianOptions.appPath!, vault: obsidianOptions.vault,
+            appPath: obsidianOptions.appPath!,
+            vault: obsidianOptions.vault, copyVault: true,
             plugins: obsidianOptions.plugins as LocalPluginEntry[],
             themes: obsidianOptions.themes as LocalThemeEntry[],
         });

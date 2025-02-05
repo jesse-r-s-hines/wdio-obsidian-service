@@ -222,16 +222,46 @@ describe("setup", () => {
         const setupDir = await setupConfigAndVault({
             appVersion: "1.7.7", installerVersion: "1.7.7",
             appPath: `${tmpDir}/obsidian-1.7.7.asar`,
-            vault: `${tmpDir}/my-vault`,
+            vault: `${tmpDir}/my-vault`, copyVault: true,
             plugins: [{path: `${tmpDir}/my-plugin`, enabled: true}],
         })
         after(() => { fsAsync.rm(setupDir, { recursive: true, force: true}) });
 
         const setupDirFiles = await fsAsync.readdir(setupDir);
         expect(setupDirFiles.sort()).to.eql(["config", "vault"]);
+
         expect(await fileExists(`${setupDir}/config/obsidian-1.7.7.asar`)).to.eql(true);
         const obsidianJson = JSON.parse(await fsAsync.readFile(`${setupDir}/config/obsidian.json`, 'utf-8'));
         expect(Object.keys(obsidianJson.vaults).length).to.eql(1);
+
+        const vault = path.join(setupDir, "vault");
+        expect(await fsAsync.readdir(path.join(vault, ".obsidian/plugins"))).to.eql(['plugin-a']);
+    })
+
+    it(`no vault copy`, async () => {
+        const tmpDir = await createDirectory({
+            "obsidian-1.7.7.asar": "stuff",
+            "my-plugin/manifest.json": '{"id": "plugin-a"}',
+            "my-plugin/main.js": "console.log('foo')",
+            "my-vault/A.md": "This is a file",
+        });
+
+        const setupDir = await setupConfigAndVault({
+            appVersion: "1.7.7", installerVersion: "1.7.7",
+            appPath: `${tmpDir}/obsidian-1.7.7.asar`,
+            vault: `${tmpDir}/my-vault`, copyVault: false,
+            plugins: [{path: `${tmpDir}/my-plugin`, enabled: true}],
+        })
+        after(() => { fsAsync.rm(setupDir, { recursive: true, force: true}) });
+
+        const setupDirFiles = await fsAsync.readdir(setupDir);
+        expect(setupDirFiles.sort()).to.eql(["config"]);
+
+        const obsidianJson = JSON.parse(await fsAsync.readFile(`${setupDir}/config/obsidian.json`, 'utf-8'));
+        expect(Object.keys(obsidianJson.vaults).length).to.eql(1);
+
+        const vault = path.join(tmpDir, "my-vault");
+        expect(await fsAsync.readdir(path.join(vault, ".obsidian/plugins"))).to.eql(['plugin-a']);
     })
 
     it(`no vault`, async () => {
