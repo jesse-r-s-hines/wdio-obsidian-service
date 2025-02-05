@@ -100,6 +100,27 @@ describe("installPlugins", () => {
         const pluginBFiles = await fsAsync.readdir(`${vault}/.obsidian/plugins/plugin-b`);
         expect(pluginBFiles.sort()).to.eql(["data.json", "main.js", "manifest.json", "styles.css"]);
     })
+
+    it("overwrites plugins", async () => {
+        const pluginA = await createDirectory({
+            "manifest.json": '{"id": "plugin-a"}',
+            "main.js": "console.log('foo')",
+        });
+        const vault = await createDirectory({
+            ".obsidian/community-plugins.json": '["dataview", "plugin-b"]',
+            ".obsidian/plugins/plugin-a/foo.json": '{}',
+        });
+
+        await installPlugins(vault, [
+            {path: pluginA, enabled: true},
+        ]);
+
+        const communityPlugins = await fsAsync.readFile(`${vault}/.obsidian/community-plugins.json`, 'utf-8');
+        expect(JSON.parse(communityPlugins)).to.eql(["dataview", "plugin-b", "plugin-a"]);
+        
+        const pluginAFiles = await fsAsync.readdir(`${vault}/.obsidian/plugins/plugin-a`);
+        expect(pluginAFiles.sort()).to.eql(["main.js", "manifest.json"]); // deletes foo.json
+    })
 })
 
 describe("installThemes", () => {
@@ -120,6 +141,29 @@ describe("installThemes", () => {
 
         const themeFiles = await fsAsync.readdir(`${vault}/.obsidian/themes/sample-theme`);
         expect(themeFiles.sort()).to.eql(["manifest.json", "theme.css"]);
+    })
+
+    it("overwrites themes", async () => {
+        const theme = await createDirectory({
+            "manifest.json": '{"name": "sample-theme"}',
+            "theme.css": ".foobar {}",
+        });
+        const vault = await createDirectory({
+            ".obsidian/appearance.json": '{"cssTheme": "another-theme", "anotherKey": 1}',
+            ".obsidian/themes/sample-theme/foo.json": "{}",
+        });
+
+        await installThemes(vault, [{path: theme}]);
+
+        const themeFiles = await fsAsync.readdir(`${vault}/.obsidian/themes/sample-theme`);
+        expect(themeFiles.sort()).to.eql(["manifest.json", "theme.css"]); // deletes foo.json
+
+        const appearancePath = path.join(vault, '.obsidian/appearance.json');
+        const appearance = JSON.parse(await fsAsync.readFile(appearancePath, 'utf-8'));
+        expect(appearance).to.eql({
+            cssTheme: "sample-theme",
+            anotherKey: 1,
+        });
     })
 })
 
