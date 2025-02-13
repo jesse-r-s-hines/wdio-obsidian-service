@@ -200,7 +200,8 @@ declare global {
 
         interface Browser extends ObsidianBrowserCommands {
             /**
-             * Opens an obsidian vault.
+             * Relaunch obsidian. Can be used to switch to a new vault, change the plugin list, or just to reboot
+             * Obsidian.
              * 
              * The vault will be copied, so any changes made in your tests won't be persited to the original. This
              * does require rebooting Obsidian, so avoid calling this too often so you don't slow your tests down.
