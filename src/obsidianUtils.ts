@@ -23,6 +23,10 @@ import ChromeLocalStorage from "./chromeLocalStorage.js";
 const execFile = promisify(child_process.execFile);
 
 
+function normalizeGitHubRepo(repo: string) {
+    return repo.replace(/^(https?:\/\/)?(github.com\/)/, '')
+}
+
 /**
  * Handles downloading Obsidian versions and other file necessary to launch obsidian.
  */
@@ -347,6 +351,7 @@ export class ObsidianDownloader {
 
     /** Gets the latest version of a plugin. */
     async getLatestPluginVersion(repo: string) {
+        repo = normalizeGitHubRepo(repo)
         const manifestUrl = `https://raw.githubusercontent.com/${repo}/HEAD/manifest.json`;
         const cacheDest = path.join(this.cacheDir, "obsidian-plugins", repo, "latest.json");
         const manifest = await this.cachedFetch(manifestUrl, cacheDest);
@@ -360,6 +365,7 @@ export class ObsidianDownloader {
      * @returns path to the downloaded plugin
      */
     async downloadGitHubPlugin(repo: string, version = "latest"): Promise<string> {
+        repo = normalizeGitHubRepo(repo)
         if (version == "latest") {
             version = await this.getLatestPluginVersion(repo);
         }
@@ -438,6 +444,7 @@ export class ObsidianDownloader {
 
     /** Gets the latest version of a theme. */
     async getLatestThemeVersion(repo: string) {
+        repo = normalizeGitHubRepo(repo)
         const manifestUrl = `https://raw.githubusercontent.com/${repo}/HEAD/manifest.json`;
         const cacheDest = path.join(this.cacheDir, "obsidian-themes", repo, "latest.json");
         const manifest = await this.cachedFetch(manifestUrl, cacheDest);
@@ -450,6 +457,7 @@ export class ObsidianDownloader {
      * @returns path to the downloaded theme
      */
     async downloadGitHubTheme(repo: string): Promise<string> {
+        repo = normalizeGitHubRepo(repo)
         // Obsidian theme's are just pulled from the repo HEAD, not releases, so we can't really choose a specific 
         // version of a theme.
         // We use the manifest.json version to check if the theme has changed.
