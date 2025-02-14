@@ -19,13 +19,13 @@ export async function fileExists(path: string) {
  * then renaming it to the final location when done.
  * @param dest Path the file should end up at.
  * @param func Function takes path to a temporary directory it can use as scratch space. The path it returns will be
- *     moved to `dest`.
+ *     moved to `dest`. If no path is returned, it will move the whole tmpDir to dest.
  */
-export async function withTmpDir(dest: string, func: (tmpDir: string) => Promise<string>): Promise<void> {
+export async function withTmpDir(dest: string, func: (tmpDir: string) => Promise<string|void>): Promise<void> {
     dest = path.resolve(dest);
     const tmpDir = await fsAsync.mkdtemp(path.join(path.dirname(dest), `.${path.basename(dest)}.tmp.`));
     try {
-        const result = await func(tmpDir);
+        const result = await func(tmpDir) ?? tmpDir;
         // rename will overwrite files but not directories
         if (await fileExists(dest) && (await fsAsync.stat(dest)).isDirectory()) {
             fsAsync.rename(dest, tmpDir + ".old")
