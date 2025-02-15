@@ -2,7 +2,7 @@
 import path from "path"
 import { Command } from 'commander';
 import child_process from "child_process"
-import { setupConfigAndVault, ObsidianDownloader } from "./obsidianUtils.js"
+import ObsidianLauncher from "./obsidianLauncher.js"
 import { PluginEntry, ThemeEntry } from "./types.js";
 
 const program = new Command("obsidian-plugin-testing-library");
@@ -19,18 +19,16 @@ const launch = new Command("launch")
         `Themes to install. Format: "<path>" or "repo:<github-repo>" or "name:<community-name>". Can be repeated but only last will be enabled.`,
         (curr, prev) => [...prev, curr], [],
     )
-    .option('--no-copy', "Don't copy the vault")
+    .option('--copy', "Copy the vault first.")
     .action(async (vault, opts) => {
         vault = path.resolve(vault)
-        const downloader = new ObsidianDownloader()
-        const { appVersionInfo, installerVersionInfo } = await downloader.resolveVersions(
-            opts.version, opts.installerVersion
-        );
+        const launcher = new ObsidianLauncher()
+        const [appVersion, installerVersion] = await launcher.resolveVersions(opts.version, opts.installerVersion);
 
-        const installerPath = await downloader.downloadInstaller(installerVersionInfo.version);
-        const appPath = await downloader.downloadApp(appVersionInfo.version);
+        const appPath = await launcher.downloadApp(appVersion);
+        const installerPath = await launcher.downloadInstaller(installerVersion);
 
-        const pluginEntries: PluginEntry[] = opts.plugin.map((p: string) => {
+        const plugins: PluginEntry[] = opts.plugin.map((p: string) => {
             if (p.startsWith("id:")) {
                 return {id: p.slice(3)}
             } else if (p.startsWith("repo:")) {
@@ -39,9 +37,8 @@ const launch = new Command("launch")
                 return {path: p}
             }
         })
-        const plugins = await downloader.downloadPlugins(pluginEntries);
 
-        const themeEntries: ThemeEntry[] = opts.theme.map((t: string, i: number) => {
+        const themes: ThemeEntry[] = opts.theme.map((t: string, i: number) => {
             let result: ThemeEntry
             if (t.startsWith("name:")) {
                 result = {name: t.slice(5)}
@@ -52,26 +49,28 @@ const launch = new Command("launch")
             }
             return {...result, enabled: i == opts.theme.length - 1}
         })
-        const themes = await downloader.downloadThemes(themeEntries)
         
+        if (opts.copy) {
+            vault = await launcher.copyVault(vault);
+        }
 
-        const tmpDir = await setupConfigAndVault({
-            appVersion: appVersionInfo.version, installerVersion: installerVersionInfo.version,
+        const configDir = await launcher.setupConfigDir({
+            appVersion: appVersion, installerVersion: installerVersion,
             appPath: appPath,
-            vault: vault, copyVault: opts.copy,
+            vault: vault,
             plugins: plugins, themes: themes,
         });
 
         // Spawn child and detach
         const proc = child_process.spawn(installerPath, [
-            `--user-data-dir=${tmpDir}/config`,
+            `--user-data-dir=${configDir}`,
         ], {
             detached: true,
             stdio: 'ignore',
         })
         proc.unref()
 
-        console.log(`Launched obsidian ${appVersionInfo.version}`)
+        console.log(`Launched obsidian ${appVersion}`)
     })
 
 program

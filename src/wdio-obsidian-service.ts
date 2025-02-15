@@ -4,7 +4,7 @@ import { SevereServiceError } from 'webdriverio'
 import type { Capabilities, Options, Services } from '@wdio/types'
 import logger from '@wdio/logger'
 import { fileURLToPath } from "url"
-import { ObsidianDownloader, setupConfigAndVault } from "./obsidianUtils.js"
+import ObsidianLauncher from "./obsidianLauncher.js"
 import browserCommands from "./browserCommands.js"
 import {
     ObsidianCapabilityOptions, ObsidianServiceOptions, OBSIDIAN_CAPABILITY_KEY,
@@ -15,7 +15,7 @@ import _ from "lodash"
 const log = logger("wdio-obsidian-service");
 
 export class ObsidianLauncherService implements Services.ServiceInstance {
-    private obsidianDownloader: ObsidianDownloader
+    private obsidianLauncher: ObsidianLauncher
     private readonly helperPluginPath: string
 
     constructor (
@@ -23,12 +23,12 @@ export class ObsidianLauncherService implements Services.ServiceInstance {
         public capabilities: WebdriverIO.Capabilities,
         public config: Options.Testrunner
     ) {
-        this.obsidianDownloader = new ObsidianDownloader({
+        this.obsidianLauncher = new ObsidianLauncher({
             cacheDir: config.cacheDir,
             versionsUrl: options.versionsUrl,
-            communityPluginsUrl: options.communityPluginsUrl,
-            communityThemesUrl: options.communityThemesUrl,
+            communityPluginsUrl: options.communityPluginsUrl, communityThemesUrl: options.communityThemesUrl,
         });
+        this.obsidianLauncher = new ObsidianLauncher();
         this.helperPluginPath = path.resolve(path.join(fileURLToPath(import.meta.url), '../../optl-plugin'));
     }
 
@@ -54,30 +54,31 @@ export class ObsidianLauncherService implements Services.ServiceInstance {
     
                 const vault = obsidianOptions.vault != undefined ? path.resolve(obsidianOptions.vault) : undefined;
     
-                const { appVersionInfo, installerVersionInfo } = await this.obsidianDownloader.resolveVersions(
+                const [appVersion, installerVersion] = await this.obsidianLauncher.resolveVersions(
                     cap.browserVersion ?? "latest",
                     obsidianOptions.installerVersion ?? "earliest",
                 );
+                const installerVersionInfo = await this.obsidianLauncher.getVersionInfo(installerVersion);
 
                 let installerPath = obsidianOptions.binaryPath;
                 if (!installerPath) {
-                    installerPath = await this.obsidianDownloader.downloadInstaller(installerVersionInfo.version);
+                    installerPath = await this.obsidianLauncher.downloadInstaller(installerVersion);
                 }
                 let appPath = obsidianOptions.appPath;
                 if (!appPath) {
-                    appPath = await this.obsidianDownloader.downloadApp(appVersionInfo.version);
+                    appPath = await this.obsidianLauncher.downloadApp(appVersion);
                 }
                 let chromedriverPath = cap['wdio:chromedriverOptions']?.binary
                 // wdio can download chromedriver for versions greater than 115 automatically
                 if (!chromedriverPath && Number(installerVersionInfo.chromeVersion!.split(".")[0]) <= 115) {
-                    chromedriverPath = await this.obsidianDownloader.downloadChromedriver(installerVersionInfo.version);
+                    chromedriverPath = await this.obsidianLauncher.downloadChromedriver(installerVersion);
                 }
 
                 let plugins = obsidianOptions.plugins ?? ["."];
                 plugins.push(this.helperPluginPath); // Always install the helper plugin
-                plugins = await this.obsidianDownloader.downloadPlugins(plugins);
+                plugins = await this.obsidianLauncher.downloadPlugins(plugins);
 
-                const themes = await this.obsidianDownloader.downloadThemes(obsidianOptions.themes ?? []);
+                const themes = await this.obsidianLauncher.downloadThemes(obsidianOptions.themes ?? []);
     
                 cap.browserName = "chrome";
                 cap.browserVersion = installerVersionInfo.chromeVersion;
@@ -88,8 +89,8 @@ export class ObsidianLauncherService implements Services.ServiceInstance {
                     binaryPath: installerPath,
                     appPath: appPath,
                     vault: vault,
-                    appVersion: appVersionInfo.version, // Resolve the versions
-                    installerVersion: installerVersionInfo.version,
+                    appVersion: appVersion, // Resolve the versions
+                    installerVersion: installerVersion,
                 };
                 cap['goog:chromeOptions'] = {
                     binary: installerPath,
@@ -115,6 +116,7 @@ export class ObsidianLauncherService implements Services.ServiceInstance {
 }
 
 export class ObsidianWorkerService implements Services.ServiceInstance {
+    private obsidianLauncher: ObsidianLauncher
     /** Directories to clean up after the tests */
     private tmpDirs: string[]
 
@@ -123,22 +125,34 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
         public capabilities: WebdriverIO.Capabilities,
         public config: Options.Testrunner
     ) {
+        this.obsidianLauncher = new ObsidianLauncher({
+            cacheDir: config.cacheDir,
+            versionsUrl: options.versionsUrl,
+            communityPluginsUrl: options.communityPluginsUrl, communityThemesUrl: options.communityThemesUrl,
+        });
         this.tmpDirs = [];
     }
 
     private async setupObsidian(obsidianOptions: ObsidianCapabilityOptions) {
-        if (obsidianOptions.vault != undefined) {
+        let vault = obsidianOptions.vault;
+        if (vault != undefined) {
             log.info(`Opening vault ${obsidianOptions.vault}`);
+            vault = await this.obsidianLauncher.copyVault(vault);
+            this.tmpDirs.push(vault);
+        } else {
+            log.info(`Opening Obsidian without a vault`)
         }
-        const tmpDir = await setupConfigAndVault({
+
+        const configDir = await this.obsidianLauncher.setupConfigDir({
             appVersion: obsidianOptions.appVersion!, installerVersion: obsidianOptions.installerVersion!,
             appPath: obsidianOptions.appPath!,
-            vault: obsidianOptions.vault, copyVault: true,
+            vault: vault,
             plugins: obsidianOptions.plugins as LocalPluginEntry[],
             themes: obsidianOptions.themes as LocalThemeEntry[],
         });
-        this.tmpDirs.push(tmpDir);
-        return tmpDir;
+        this.tmpDirs.push(configDir);
+
+        return configDir;
     }
 
     private async waitForReady(browser: WebdriverIO.Browser) {
@@ -156,10 +170,10 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
     async beforeSession(config: Options.Testrunner, capabilities: WebdriverIO.Capabilities) {
         if (!capabilities[OBSIDIAN_CAPABILITY_KEY]) return;
 
-        const tmpDir = await this.setupObsidian(capabilities[OBSIDIAN_CAPABILITY_KEY]);
+        const configDir = await this.setupObsidian(capabilities[OBSIDIAN_CAPABILITY_KEY]);
 
         capabilities['goog:chromeOptions']!.args = [
-            `--user-data-dir=${tmpDir}/config`,
+            `--user-data-dir=${configDir}`,
             ...(capabilities['goog:chromeOptions']!.args ?? [])
         ];
     }
@@ -210,12 +224,12 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
                     themes: service.selectThemes(oldObsidianOptions.themes, theme),
                 }
 
-                const tmpDir = await service.setupObsidian(newObsidianOptions);
+                const configDir = await service.setupObsidian(newObsidianOptions);
                 
                 const newArgs = [
-                    `--user-data-dir=${tmpDir}/config`,
+                    `--user-data-dir=${configDir}`,
                     ...this.requestedCapabilities['goog:chromeOptions'].args.filter((arg: string) => {
-                        const match = arg.match(/^--user-data-dir=(.*)\/config$/);
+                        const match = arg.match(/^--user-data-dir=(.*)$/);
                         return !match || !service.tmpDirs.includes(match[1]);
                     }),
                 ]
