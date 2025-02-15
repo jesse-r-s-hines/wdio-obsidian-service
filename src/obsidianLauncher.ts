@@ -710,6 +710,50 @@ export default class ObsidianLauncher {
         await fsAsync.cp(src, dest, { recursive: true });
         return dest;
     }
+
+    /**
+     * Downloads and launches Obsidian with a sandboxed config dir. Optionally open a specific vault and install plugins
+     * and themes first.
+     *
+     * @param appVersion Obsidian version string.
+     * @param installerVersion Obsidian version string.
+     * @param vault Path to the vault to open in Obsidian.
+     * @param plugins List of plugins to install in the vault.
+     * @param themes List of themes to install in the vault.
+     * @param dest Destination path for the config dir. If omitted it will create it under `/tmp`.
+     * @param args CLI args to pass to Obsidian
+     * @param spawnOptions Options to pass to `spawn`.
+     * @returns The launched child process and the created config dir.
+     */
+    async launch(params: {
+        appVersion: string, installerVersion: string,
+        vault?: string,
+        plugins?: PluginEntry[], themes?: ThemeEntry[],
+        dest?: string,
+        args?: string[],
+        spawnOptions?: child_process.SpawnOptions,
+    }): Promise<[child_process.ChildProcess, string]> {
+        const [appVersion, installerVersion] = await this.resolveVersions(params.appVersion, params.installerVersion);
+        const appPath = await this.downloadApp(appVersion);
+        const installerPath = await this.downloadInstaller(installerVersion);
+
+        const configDir = await this.setupConfigDir({
+            appVersion: appVersion, installerVersion: installerVersion,
+            appPath: appPath,
+            vault: params.vault,
+            plugins: params.plugins, themes: params.themes,
+        });
+
+        // Spawn child.
+        const proc = child_process.spawn(installerPath, [
+            `--user-data-dir=${configDir}`,
+            ...(params.args ?? []),
+        ], {
+            ...params.spawnOptions,
+        });
+
+        return [proc, configDir];
+    }
 }
 
 

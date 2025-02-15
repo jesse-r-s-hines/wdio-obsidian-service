@@ -1,81 +1,112 @@
 #!/bin/env node
-import path from "path"
 import { Command } from 'commander';
-import child_process from "child_process"
 import ObsidianLauncher from "./obsidianLauncher.js"
 import { PluginEntry, ThemeEntry } from "./types.js";
 
+
+function parsePlugins(plugins: string[]): PluginEntry[] {
+    return plugins.map((p: string) => {
+        if (p.startsWith("id:")) {
+            return {id: p.slice(3)}
+        } else if (p.startsWith("repo:")) {
+            return {repo: p.slice(5)}
+        } else {
+            return {path: p}
+        }
+    })
+}
+
+function parseThemes(themes: string[]): ThemeEntry[] {
+    return themes.map((t: string, i: number) => {
+        let result: ThemeEntry
+        if (t.startsWith("name:")) {
+            result = {name: t.slice(5)}
+        } else if (t.startsWith("repo:")) {
+            result = {repo: t.slice(5)}
+        } else {
+            result = {path: t}
+        }
+        return {...result, enabled: i == themes.length - 1}
+    })
+}
+
+const cacheOptionArgs = [
+    '-c, --cache <cache>',
+    'Directory to use as the download cache',
+] as const
+const pluginOptionArgs = [
+    '-p, --plugin <plugin>',
+    `Plugin to install. Format: "<path>" or "repo:<github-repo>" or "id:<community-id>". Can be repeated.`,
+    (curr: string, prev: string[]) => [...prev, curr], [] as string[],
+] as const
+const themeOptionArgs = [
+    '-t, --theme <plugin>',
+    `Themes to install. Format: "<path>" or "repo:<github-repo>" or "name:<community-name>". Can be repeated but only last will be enabled.`,
+    (curr: string, prev: string[]) => [...prev, curr], [] as string[],
+] as const
+
+
 const program = new Command("obsidian-plugin-testing-library");
 
-const launch = new Command("launch")
-    .argument('<vault>', 'Vault to open')
+program
+    .command("download")
+    .description("Download Obsidian to the cache")
+    .option(...cacheOptionArgs)
     .option('-v, --version <version>', "Obsidian version to run", "latest")
     .option('--installer-version <version>', "Obsidian installer version to run", "latest")
-    .option<string[]>('-p, --plugin <plugin>',
-        `Plugin to install. Format: "<path>" or "repo:<github-repo>" or "id:<community-id>". Can be repeated.`,
-        (curr, prev) => [...prev, curr], [],
-    )
-    .option<string[]>('-t, --theme <plugin>',
-        `Themes to install. Format: "<path>" or "repo:<github-repo>" or "name:<community-name>". Can be repeated but only last will be enabled.`,
-        (curr, prev) => [...prev, curr], [],
-    )
-    .option('--copy', "Copy the vault first.")
-    .action(async (vault, opts) => {
-        vault = path.resolve(vault)
-        const launcher = new ObsidianLauncher()
+    .action(async (opts) => {
+        const launcher = new ObsidianLauncher({cacheDir: opts.cache});
         const [appVersion, installerVersion] = await launcher.resolveVersions(opts.version, opts.installerVersion);
-
-        const appPath = await launcher.downloadApp(appVersion);
         const installerPath = await launcher.downloadInstaller(installerVersion);
-
-        const plugins: PluginEntry[] = opts.plugin.map((p: string) => {
-            if (p.startsWith("id:")) {
-                return {id: p.slice(3)}
-            } else if (p.startsWith("repo:")) {
-                return {repo: p.slice(5)}
-            } else {
-                return {path: p}
-            }
-        })
-
-        const themes: ThemeEntry[] = opts.theme.map((t: string, i: number) => {
-            let result: ThemeEntry
-            if (t.startsWith("name:")) {
-                result = {name: t.slice(5)}
-            } else if (t.startsWith("repo:")) {
-                result = {repo: t.slice(5)}
-            } else {
-                result = {path: t}
-            }
-            return {...result, enabled: i == opts.theme.length - 1}
-        })
-        
-        if (opts.copy) {
-            vault = await launcher.copyVault(vault);
-        }
-
-        const configDir = await launcher.setupConfigDir({
-            appVersion: appVersion, installerVersion: installerVersion,
-            appPath: appPath,
-            vault: vault,
-            plugins: plugins, themes: themes,
-        });
-
-        // Spawn child and detach
-        const proc = child_process.spawn(installerPath, [
-            `--user-data-dir=${configDir}`,
-        ], {
-            detached: true,
-            stdio: 'ignore',
-        })
-        proc.unref()
-
-        console.log(`Launched obsidian ${appVersion}`)
+        console.log(`Downloaded Obsidian installer to ${installerPath}`)
+        const appPath = await launcher.downloadApp(appVersion);
+        console.log(`Downloaded Obsidian app to ${appPath}`)
     })
 
 program
-  .version(process.env.npm_package_version ?? "dev")
-  .addCommand(launch)
+    .command("launch")
+    .description("Download and launch Obsidian")
+    .argument('[vault]', 'Vault to open')
+    .option(...cacheOptionArgs)
+    .option('-v, --version <version>', "Obsidian version to run", "latest")
+    .option('--installer-version <version>', "Obsidian installer version to run", "latest")
+    .option(...pluginOptionArgs)
+    .option(...themeOptionArgs)
+    .option('--copy', "Copy the vault first.")
+    .action(async (vault, opts) => {
+        const launcher = new ObsidianLauncher({cacheDir: opts.cache});
+
+        if (vault && opts.copy) {
+            vault = await launcher.copyVault(vault);
+        }
+    
+        const [proc, configDir] = await launcher.launch({
+            appVersion: opts.version, installerVersion: opts.installerVersion,
+            vault: vault,
+            plugins: parsePlugins(opts.plugin), themes: parseThemes(opts.theme),
+            spawnOptions: {
+                detached: true,
+                stdio: 'ignore',
+            }
+        })
+        proc.unref() // Allow node to exit and leave proc running
+
+        console.log(`Launched obsidian ${opts.version}`)
+    })
+
+program
+    .command("install")
+    .description("Install plugins and themes into an Obsidian vault")
+    .argument('<vault>', 'Vault to install into')
+    .option(...cacheOptionArgs)
+    .option(...pluginOptionArgs)
+    .option(...themeOptionArgs)
+    .action(async (vault, opts) => {
+        const launcher = new ObsidianLauncher({cacheDir: opts.cache});
+        await launcher.installPlugins(vault, parsePlugins(opts.plugin));
+        await launcher.installThemes(vault, parseThemes(opts.theme));
+        console.log(`Installed plugins and themes into ${vault}`)
+    })
 
 program.parse();
 
