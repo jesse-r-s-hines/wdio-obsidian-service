@@ -91,7 +91,7 @@ export default class ObsidianLauncher {
 
     /**
      * Construct an ObsidianLauncher.
-     * @param cacheDir Path to the cache directory. Defaults to OPTL_CACHE or "./.optl-cache"
+     * @param cacheDir Path to the cache directory. Defaults to "OBSIDIAN_CACHE" env var or ".obsidian-cache".
      * @param versionsUrl Custom `obsidian-versions.json` url. Can be a file URL.
      * @param communityPluginsUrl Custom `community-plugins.json` url. Can be a file URL.
      * @param communityThemes Custom `community-css-themes.json` url. Can be a file URL.
@@ -102,7 +102,7 @@ export default class ObsidianLauncher {
         communityPluginsUrl?: string,
         communityThemesUrl?: string,
     } = {}) {
-        this.cacheDir = path.resolve(options.cacheDir ?? process.env.OPTL_CACHE ?? "./.optl-cache");
+        this.cacheDir = path.resolve(options.cacheDir ?? process.env.OBSIDIAN_CACHE ?? "./.obsidian-cache");
         
         const packageDir = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
         const defaultVersionsUrl =  pathToFileURL(path.join(packageDir, "obsidian-versions.json")).toString(); // TODO
@@ -662,7 +662,7 @@ export default class ObsidianLauncher {
         const [appVersion, installerVersion] = await this.resolveVersions(params.appVersion, params.installerVersion);
         // configDir will be passed to --user-data-dir, so Obsidian is somewhat sandboxed. We set up "obsidian.json" so
         // that Obsidian opens the vault by default and doesn't check for updates.
-        const configDir = params.dest ?? await fsAsync.mkdtemp(path.join(os.tmpdir(), 'optl-config-'));
+        const configDir = params.dest ?? await fsAsync.mkdtemp(path.join(os.tmpdir(), 'obs-launcher-config-'));
     
         let obsidianJson: any = {
             updateDisabled: true, // Prevents Obsidian trying to auto-update on boot.
@@ -706,7 +706,7 @@ export default class ObsidianLauncher {
      * @returns Path to the created tmpDir.
      */
     async copyVault(src: string) {
-        const dest = await fsAsync.mkdtemp(path.join(os.tmpdir(), 'optl-vault-'));
+        const dest = await fsAsync.mkdtemp(path.join(os.tmpdir(), 'obs-launcher-vault-'));
         await fsAsync.cp(src, dest, { recursive: true });
         return dest;
     }

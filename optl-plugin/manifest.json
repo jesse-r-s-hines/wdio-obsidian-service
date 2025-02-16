@@ -1,9 +1,0 @@
-{
-    "id": "optl-plugin",
-    "name": "OPTL Plugin",
-    "version": "1.0.0",
-    "minAppVersion": "0.15.0",
-    "description": "OPTL Plugin",
-    "author": "jesse-r-s-hines",
-    "isDesktopOnly": false
-}

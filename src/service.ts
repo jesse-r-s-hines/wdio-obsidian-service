@@ -14,6 +14,10 @@ import _ from "lodash"
 
 const log = logger("wdio-obsidian-service");
 
+function getDefaultCacheDir() {
+    return path.resolve(process.env.WEBDRIVER_CACHE_DIR ?? "./.wdio-obsidian-service")
+}
+
 export class ObsidianLauncherService implements Services.ServiceInstance {
     private obsidianLauncher: ObsidianLauncher
     private readonly helperPluginPath: string
@@ -24,12 +28,11 @@ export class ObsidianLauncherService implements Services.ServiceInstance {
         public config: Options.Testrunner
     ) {
         this.obsidianLauncher = new ObsidianLauncher({
-            cacheDir: config.cacheDir,
+            cacheDir: config.cacheDir ?? getDefaultCacheDir(),
             versionsUrl: options.versionsUrl,
             communityPluginsUrl: options.communityPluginsUrl, communityThemesUrl: options.communityThemesUrl,
         });
-        this.obsidianLauncher = new ObsidianLauncher();
-        this.helperPluginPath = path.resolve(path.join(fileURLToPath(import.meta.url), '../../optl-plugin'));
+        this.helperPluginPath = path.resolve(path.join(fileURLToPath(import.meta.url), '../../helper-plugin'));
     }
 
 
@@ -126,7 +129,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
         public config: Options.Testrunner
     ) {
         this.obsidianLauncher = new ObsidianLauncher({
-            cacheDir: config.cacheDir,
+            cacheDir: config.cacheDir ?? getDefaultCacheDir(),
             versionsUrl: options.versionsUrl,
             communityPluginsUrl: options.communityPluginsUrl, communityThemesUrl: options.communityThemesUrl,
         });
@@ -157,8 +160,8 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
 
     private async waitForReady(browser: WebdriverIO.Browser) {
         if ((await browser.getVaultPath()) != undefined) {
-            await browser.waitUntil( // wait until optl-plugin is loaded
-                async () => browser.execute(() => !!(window as any)._optl_vars?.app?.workspace?.onLayoutReady),
+            await browser.waitUntil( // wait until the helper plugin is loaded
+                () => browser.execute(() => !!(window as any)._wdioObsidianService?.app?.workspace?.onLayoutReady),
                 {timeout: 30 * 1000, interval: 100},
             );
             await browser.executeObsidian(async ({app}) => {
@@ -186,7 +189,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
             }
             return currentPlugins.map(p => ({
                 ...p,
-                enabled: selection.includes(p.id) || p.id == "optl-plugin",
+                enabled: selection.includes(p.id) || p.id == "wdio-obsidian-service-plugin",
             }));
         } else {
             return currentPlugins;
@@ -262,6 +265,3 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
         }
     }
 }
-
-export default ObsidianWorkerService;
-export const launcher = ObsidianLauncherService;

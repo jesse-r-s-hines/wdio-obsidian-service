@@ -53,8 +53,8 @@ const browserCommands = {
         return await browser.execute<Return, Params>(
             `
                 const obs = {
-                    app: window._optl_vars.app,
-                    obsidian: window._optl_vars.obsidian,
+                    app: window._wdioObsidianService.app,
+                    obsidian: window._wdioObsidianService.obsidian,
                 };
                 const func = (${func.toString()});
                 return func(obs, ...arguments);

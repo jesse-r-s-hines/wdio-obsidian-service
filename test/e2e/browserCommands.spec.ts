@@ -22,14 +22,14 @@ describe("Test custom browser commands", () => {
         let plugins: string[] = await browser.executeObsidian(({app}) =>
             [...(app as any).plugins.enabledPlugins].sort() 
         );
-        expect(plugins).to.eql(["basic-plugin", "optl-plugin"]);
+        expect(plugins).to.eql(["basic-plugin", "wdio-obsidian-service-plugin"]);
 
         await browser.disablePlugin("basic-plugin");
         plugins = await browser.executeObsidian(({app}) => [...(app as any).plugins.enabledPlugins].sort());
-        expect(plugins).to.eql(["optl-plugin"]);
+        expect(plugins).to.eql(["wdio-obsidian-service-plugin"]);
 
         await browser.enablePlugin("basic-plugin");
         plugins = await browser.executeObsidian(({app}) => [...(app as any).plugins.enabledPlugins].sort());
-        expect(plugins).to.eql(["basic-plugin", "optl-plugin"]);
+        expect(plugins).to.eql(["basic-plugin", "wdio-obsidian-service-plugin"]);
     })
 })

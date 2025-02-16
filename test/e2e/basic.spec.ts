@@ -70,7 +70,7 @@ describe("Basic obsidian launch", () => {
 
         expect(beforeVaultPath).to.not.eql(afterVaultPath);
         expect(beforeConfigDir).to.not.eql(afterConfigDir);
-        expect(afterPlugins).to.eql(["basic-plugin", "optl-plugin"]);
+        expect(afterPlugins).to.eql(["basic-plugin", "wdio-obsidian-service-plugin"]);
         expect(afterTheme).to.eql("Basic Theme");
 
         // Test no plugins, no theme, and a new vault
@@ -82,7 +82,7 @@ describe("Basic obsidian launch", () => {
         const vaultFiles = await browser.executeObsidian(({app}) =>
             app.vault.getMarkdownFiles().map(x => x.path).sort()
         );
-        expect(noPlugins).to.eql(["optl-plugin"]);
+        expect(noPlugins).to.eql(["wdio-obsidian-service-plugin"]);
         expect(!!noTheme).to.eql(false);
         expect(vaultFiles).to.eql(["A.md", "B.md"]);
 
@@ -93,7 +93,7 @@ describe("Basic obsidian launch", () => {
         );
         const afterTheme2 = await browser.executeObsidian(({app}) => (app as any).customCss.theme);
 
-        expect(afterPlugins2).to.eql(["basic-plugin", "optl-plugin"]);
+        expect(afterPlugins2).to.eql(["basic-plugin", "wdio-obsidian-service-plugin"]);
         expect(afterTheme2).to.eql("Basic Theme");
     })
 })

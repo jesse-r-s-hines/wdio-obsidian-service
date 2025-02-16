@@ -49,7 +49,7 @@ function parseGithubRelease(gitHubRelease: any): Partial<ObsidianVersionInfo> {
 
 
 async function getDependencyVersions(version: string, appImageUrl: string): Promise<Partial<ObsidianVersionInfo>> {
-    const tmpDir = await fsAsync.mkdtemp(path.join(os.tmpdir(), `optl-fetch-versions-`));
+    const tmpDir = await fsAsync.mkdtemp(path.join(os.tmpdir(), `wos-fetch-versions-`));
     const appImage = path.join(tmpDir, appImageUrl.split("/").at(-1)!)
     console.log(`${appImage}: Extracting electron & chrome versions...`)
 

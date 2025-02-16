@@ -46,7 +46,7 @@ const themeOptionArgs = [
 ] as const
 
 
-const program = new Command("obsidian-plugin-testing-library");
+const program = new Command("wdio-obsidian-service");
 
 program
     .command("download")

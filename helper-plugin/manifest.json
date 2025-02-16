@@ -1,0 +1,9 @@
+{
+    "id": "wdio-obsidian-service-plugin",
+    "name": "Wdio Obsidian Service Plugin",
+    "version": "1.0.0",
+    "minAppVersion": "0.15.0",
+    "description": "Helper plugin for wdio-obsidian-service",
+    "author": "jesse-r-s-hines",
+    "isDesktopOnly": false
+}

@@ -1,3 +1,4 @@
-import { ObsidianLauncherService, ObsidianWorkerService } from "./wdio-obsidian-service.js";
+import { ObsidianLauncherService, ObsidianWorkerService } from "./service.js";
 
-export { ObsidianWorkerService, ObsidianLauncherService }
+export default ObsidianWorkerService;
+export const launcher = ObsidianLauncherService;
