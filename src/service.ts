@@ -83,11 +83,12 @@ export class ObsidianLauncherService implements Services.ServiceInstance {
 
                 const themes = await this.obsidianLauncher.downloadThemes(obsidianOptions.themes ?? []);
 
-                const args = cap['goog:chromeOptions']?.args ?? [];
-                // Workaround for SUID issue on AppImages. See https://github.com/electron/electron/issues/42510
-                if (installerPath.endsWith(".AppImage")) {
-                    args.push("--no-sandbox")
-                }
+                const args = [
+                    '--headless',
+                    // Workaround for SUID issue on AppImages. See https://github.com/electron/electron/issues/42510
+                    ...(installerPath.endsWith(".AppImage") ? ["--no-sandbox"] : []),
+                    ...(cap['goog:chromeOptions']?.args ?? [])
+                ];
 
                 cap.browserName = "chrome";
                 cap.browserVersion = installerVersionInfo.chromeVersion;
