@@ -60,6 +60,7 @@ async function getDependencyVersions(version: string, appImageUrl: string): Prom
         `--remote-debugging-port=0`, // 0 will make it choose a random available port
         '--test-type=webdriver',
         `--user-data-dir=${tmpDir}`,
+        '--no-sandbox', // Workaround for SUID issue, see https://github.com/electron/electron/issues/42510
     ]);
     const procExit = new Promise<number>((resolve) => proc.on('exit', (code) => resolve(code ?? -1)));
     // proc.stdout.on('data', data => console.log(`stdout: ${data}`));

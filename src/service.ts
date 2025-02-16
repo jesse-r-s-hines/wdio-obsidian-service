@@ -82,7 +82,13 @@ export class ObsidianLauncherService implements Services.ServiceInstance {
                 plugins = await this.obsidianLauncher.downloadPlugins(plugins);
 
                 const themes = await this.obsidianLauncher.downloadThemes(obsidianOptions.themes ?? []);
-    
+
+                const args = cap['goog:chromeOptions']?.args ?? [];
+                // Workaround for SUID issue on AppImages. See https://github.com/electron/electron/issues/42510
+                if (installerPath.endsWith(".AppImage")) {
+                    args.push("--no-sandbox")
+                }
+
                 cap.browserName = "chrome";
                 cap.browserVersion = installerVersionInfo.chromeVersion;
                 cap[OBSIDIAN_CAPABILITY_KEY] = {
@@ -99,6 +105,7 @@ export class ObsidianLauncherService implements Services.ServiceInstance {
                     binary: installerPath,
                     windowTypes: ["app", "webview"],
                     ...cap['goog:chromeOptions'],
+                    args: args,
                 }
                 cap['wdio:chromedriverOptions'] = {
                     // allowedIps is not included in the types, but gets passed as --allowed-ips to chromedriver.
