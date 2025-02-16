@@ -158,11 +158,11 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
     private async waitForReady(browser: WebdriverIO.Browser) {
         if ((await browser.getVaultPath()) != undefined) {
             await browser.waitUntil( // wait until optl-plugin is loaded
-                async () => browser.execute(() => !!(window as any).optl?.app?.workspace?.onLayoutReady),
+                async () => browser.execute(() => !!(window as any)._optl_vars?.app?.workspace?.onLayoutReady),
                 {timeout: 30 * 1000, interval: 100},
             );
-            await browser.execute(async () => {
-                await new Promise<void>((resolve) => optl.app.workspace.onLayoutReady(resolve) );
+            await browser.executeObsidian(async ({app}) => {
+                await new Promise<void>((resolve) => app.workspace.onLayoutReady(resolve) );
             })
         }
     }

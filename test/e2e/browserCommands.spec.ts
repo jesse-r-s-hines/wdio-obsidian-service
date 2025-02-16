@@ -19,17 +19,17 @@ describe("Test custom browser commands", () => {
     })
 
     it('enable/disable plugin', async () => {
-        let plugins: string[] = await browser.execute(() =>
-            [...(optl.app as any).plugins.enabledPlugins].sort() 
+        let plugins: string[] = await browser.executeObsidian(({app}) =>
+            [...(app as any).plugins.enabledPlugins].sort() 
         );
         expect(plugins).to.eql(["basic-plugin", "optl-plugin"]);
 
         await browser.disablePlugin("basic-plugin");
-        plugins = await browser.execute(() => [...(optl.app as any).plugins.enabledPlugins].sort());
+        plugins = await browser.executeObsidian(({app}) => [...(app as any).plugins.enabledPlugins].sort());
         expect(plugins).to.eql(["optl-plugin"]);
 
         await browser.enablePlugin("basic-plugin");
-        plugins = await browser.execute(() => [...(optl.app as any).plugins.enabledPlugins].sort());
+        plugins = await browser.executeObsidian(({app}) => [...(app as any).plugins.enabledPlugins].sort());
         expect(plugins).to.eql(["basic-plugin", "optl-plugin"]);
     })
 })

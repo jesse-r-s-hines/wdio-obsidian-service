@@ -1,7 +1,5 @@
 import type { ObsidianBrowserCommands } from "./browserCommands.js"
-import type { App } from "obsidian"
 
-type ObsidianApi = typeof import("obsidian")
 
 /**
  * Type of the obsidian-versions.json file.
@@ -218,22 +216,5 @@ declare global {
              */
             openVault(vault?: string, plugins?: string[], theme?: string): Promise<string>;
         }
-    }
-
-    /**
-     * This is a global added inside Obsidian so you can access app and the obsidian API.
-     * You can only access this inside a wdio execute context (see https://webdriver.io/docs/api/browser/execute)
-     */
-    const optl: {
-        /**
-         * There is a global "app" instance, but that may be removed in the future so you can use
-         * `optl` to access it from tests.
-         * See https://docs.obsidian.md/Plugins/Releasing/Plugin+guidelines#Avoid+using+global+app+instance
-         */
-        app: App,
-        /**
-         * The full obsidian API. See https://github.com/obsidianmd/obsidian-api/blob/master/obsidian.d.ts
-         */
-        obsidian: ObsidianApi,
     }
 }

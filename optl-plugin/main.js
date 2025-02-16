@@ -3,7 +3,7 @@ const obsidian = require('obsidian');
 
 class OPTLPlugin extends obsidian.Plugin {
     async onload() {
-        window.optl = {
+        window._optl_vars = {
             app: this.app,
             obsidian: obsidian,
         }
