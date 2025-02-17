@@ -27,6 +27,16 @@ describe("withTmpDir", () => {
         expect(await fsAsync.readdir(tmpDir)).to.eql(["out"]);
     })
 
+    it("relative path", async () => {
+        const tmpDir = await createDirectory();
+        const dest = path.join(tmpDir, "out");
+        await withTmpDir(dest, async (scratch) => {
+            await fsAsync.writeFile(path.join(scratch, 'a'), "a");
+            return 'a';
+        })
+        expect(await fsAsync.readFile(dest, 'utf-8')).to.equal("a");
+    })
+
     it("with directory", async () => {
         const tmpDir = await createDirectory();
         const dest = path.join(tmpDir, "out");
