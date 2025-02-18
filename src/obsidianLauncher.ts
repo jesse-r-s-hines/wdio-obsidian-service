@@ -10,14 +10,20 @@ import { fileURLToPath, pathToFileURL } from "url";
 import { downloadArtifact } from '@electron/get';
 import child_process from "child_process"
 import semver from "semver"
-import { fileExists, withTmpDir, linkOrCp, maybe } from "./utils.js";
+import CDP from 'chrome-remote-interface'
+import { fileExists, withTmpDir, linkOrCp, maybe, pool, withTimeout, sleep } from "./utils.js";
 import {
     ObsidianVersionInfo, ObsidianCommunityPlugin, ObsidianCommunityTheme,
     PluginEntry, LocalPluginEntryWithId, ThemeEntry, LocalThemeEntryWithName,
+    ObsidianVersionInfos,
 } from "./types.js";
-import { fetchObsidianAPI, fetchWithFileUrl } from "./apis.js";
+import { fetchObsidianAPI, fetchGitHubAPIPaginated, fetchWithFileUrl } from "./apis.js";
 import ChromeLocalStorage from "./chromeLocalStorage.js";
-import { normalizeGitHubRepo, extractObsidianAppImage, extractObsidianExe } from "./launcherUtils.js";
+import {
+    normalizeGitHubRepo, extractObsidianAppImage, extractObsidianExe,
+    parseObsidianDesktopRelease, parseObsidianGithubRelease, correctObsidianVersionInfo,
+} from "./launcherUtils.js";
+import _ from "lodash"
 
 
 /**
@@ -167,6 +173,15 @@ export default class ObsidianLauncher {
      */
     async downloadInstaller(installerVersion: string): Promise<string> {
         const installerVersionInfo = await this.getVersionInfo(installerVersion);
+        return await this.downloadInstallerFromVersionInfo(installerVersionInfo);
+    }
+
+    /**
+     * Helper for downloadInstaller that doesn't require the obsidian-versions.json file so it can be used in
+     * updateObsidianVersionInfos
+     */
+    private async downloadInstallerFromVersionInfo(versionInfo: ObsidianVersionInfo): Promise<string> {
+        const installerVersion = versionInfo.version;
         const {platform, arch} = process;
         const cacheDir = path.join(this.cacheDir, `obsidian-installer/${platform}-${arch}/Obsidian-${installerVersion}`);
         
@@ -177,9 +192,9 @@ export default class ObsidianLauncher {
             installerPath = path.join(cacheDir, "obsidian");
             let installerUrl: string|undefined
             if (arch.startsWith("arm")) {
-                installerUrl = installerVersionInfo.downloads.appImageArm;
+                installerUrl = versionInfo.downloads.appImageArm;
             } else {
-                installerUrl = installerVersionInfo.downloads.appImage;
+                installerUrl = versionInfo.downloads.appImage;
             }
             if (installerUrl) {
                 downloader = async (tmpDir) => {
@@ -192,7 +207,7 @@ export default class ObsidianLauncher {
             }
         } else if (platform == "win32") {
             installerPath = path.join(cacheDir, "Obsidian.exe")
-            const installerUrl = installerVersionInfo.downloads.exe;
+            const installerUrl = versionInfo.downloads.exe;
             let appArch: string|undefined
             if (arch == "x64") {
                 appArch = "app-64"
@@ -599,7 +614,8 @@ export default class ObsidianLauncher {
      * @param dest Destination path for the config dir. If omitted it will create it under `/tmp`.
      */
     async setupConfigDir(params: {
-        appVersion: string, installerVersion: string, appPath: string,
+        appVersion: string, installerVersion: string,
+        appPath?: string,
         vault?: string,
         plugins?: PluginEntry[], themes?: ThemeEntry[],
         dest?: string,
@@ -638,7 +654,11 @@ export default class ObsidianLauncher {
         }
 
         await fsAsync.writeFile(path.join(configDir, 'obsidian.json'), JSON.stringify(obsidianJson));
-        await linkOrCp(params.appPath, path.join(configDir, path.basename(params.appPath)));
+        if (params.appPath) {
+            await linkOrCp(params.appPath, path.join(configDir, path.basename(params.appPath)));
+        } else if (appVersion != installerVersion) {
+            throw Error("You must specify app path if appVersion != installerVersion");
+        }
         const localStorage = new ChromeLocalStorage(configDir);
         await localStorage.setItems("app://obsidian.md", localStorageData)
         await localStorage.close();
@@ -699,6 +719,149 @@ export default class ObsidianLauncher {
 
         return [proc, configDir];
     }
+
+
+    /**
+     * Extract electron and chrome versions for an Obsidian version.
+     */
+    async getDependencyVersions(versionInfo: Partial<ObsidianVersionInfo>): Promise<Partial<ObsidianVersionInfo>> {
+        const binary = await this.downloadInstallerFromVersionInfo(versionInfo as ObsidianVersionInfo);
+        console.log(`${versionInfo.version!}: Extracting electron & chrome versions...`);
+
+        const configDir = await fsAsync.mkdtemp(path.join(os.tmpdir(), `fetch-obsidian-versions-`));
+
+        const proc = child_process.spawn(binary, [
+            `--remote-debugging-port=0`, // 0 will make it choose a random available port
+            '--test-type=webdriver',
+            `--user-data-dir=${configDir}`,
+            '--no-sandbox', // Workaround for SUID issue, see https://github.com/electron/electron/issues/42510
+            '--headless',
+        ]);
+        const procExit = new Promise<number>((resolve) => proc.on('exit', (code) => resolve(code ?? -1)));
+        // proc.stdout.on('data', data => console.log(`stdout: ${data}`));
+        // proc.stderr.on('data', data => console.log(`stderr: ${data}`));
+
+        let dependencyVersions: any;
+        try {
+            // Wait for the logs showing that Obsidian is ready, and pull the chosen DevTool Protocol port from it
+            const portPromise = new Promise<number>((resolve, reject) => {
+                procExit.then(() => reject("Processed ended without opening a port"))
+                proc.stderr.on('data', data => {
+                    const port = data.toString().match(/ws:\/\/[\w.]+?:(\d+)/)?.[1];
+                    if (port) {
+                        resolve(Number(port));
+                    }
+                });
+            })
+
+            const port = await maybe(withTimeout(portPromise, 10 * 1000));
+            if (!port.success) {
+                throw new Error("Timed out waiting for Chrome DevTools protocol port");
+            }
+            const client = await CDP({port: port.result});
+            const response = await client.Runtime.evaluate({ expression: "JSON.stringify(process.versions)" });
+            dependencyVersions = JSON.parse(response.result.value);
+            await client.close();
+        } finally {
+            proc.kill("SIGTERM");
+            const timeout = await maybe(withTimeout(procExit, 4 * 1000));
+            if (!timeout.success) {
+                console.log(`${versionInfo.version!}: Stuck process ${proc.pid}, using SIGKILL`);
+                proc.kill("SIGKILL");
+            }
+            await procExit;
+            await sleep(1000); // Need to wait a bit or sometimes the rm fails because something else is writing to it
+            await fsAsync.rm(configDir, { recursive: true, force: true });
+        }
+
+        if (!dependencyVersions?.electron || !dependencyVersions?.chrome) {
+            throw Error(`Failed to extract electron and chrome versions for ${versionInfo.version!}`)
+        }
+
+        return {
+            ...versionInfo,
+            electronVersion: dependencyVersions.electron,
+            chromeVersion: dependencyVersions.chrome,
+            nodeVersion: dependencyVersions.node,
+        };
+    }
+
+    /** 
+     * Updates the info obsidian-versions.json. The obsidian-versions.json file is used in other launcher commands
+     * and in wdio-obsidian-service to get metadata about Obsidian versions in one place such as minInstallerVersion and
+     * the internal electron version.
+     */
+    async updateObsidianVersionInfos(
+        original?: ObsidianVersionInfos, { maxInstances = 1 } = {},
+    ): Promise<ObsidianVersionInfos> {
+        const repo = 'obsidianmd/obsidian-releases';
+
+        let commitHistory = await fetchGitHubAPIPaginated(`repos/${repo}/commits`, {
+            path: "desktop-releases.json",
+            since: original?.latest.date,
+        });
+        commitHistory.reverse();
+        if (original) {
+            commitHistory = _.takeRightWhile(commitHistory, c => c.sha != original.latest.sha);
+        }
+    
+        const fileHistory: any[] = await pool(8, commitHistory, commit =>
+            fetch(`https://raw.githubusercontent.com/${repo}/${commit.sha}/desktop-releases.json`).then(r => r.json())
+        );
+    
+        const githubReleases = await fetchGitHubAPIPaginated(`repos/${repo}/releases`);
+    
+        const versionMap: _.Dictionary<Partial<ObsidianVersionInfo>> = _.keyBy(
+            original?.versions ?? [],
+            v => v.version,
+        );
+    
+        for (const {beta, ...current} of fileHistory) {
+            if (beta && (!versionMap[beta.latestVersion] || versionMap[beta.latestVersion].isBeta)) {
+                versionMap[beta.latestVersion] = _.merge({}, versionMap[beta.latestVersion],
+                    parseObsidianDesktopRelease(beta, true),
+                );
+            }
+            versionMap[current.latestVersion] = _.merge({}, versionMap[current.latestVersion],
+                parseObsidianDesktopRelease(current, false),
+            )
+        }
+    
+        for (const release of githubReleases) {
+            if (versionMap.hasOwnProperty(release.name)) {
+                versionMap[release.name] = _.merge({}, versionMap[release.name], parseObsidianGithubRelease(release));
+            }
+        }
+    
+        const dependencyVersions = await pool(maxInstances,
+            Object.values(versionMap).filter(v => v.downloads?.appImage && !v.chromeVersion),
+            (v) => this.getDependencyVersions(v),
+        )
+        for (const deps of dependencyVersions) {
+            versionMap[deps.version!] = _.merge({}, versionMap[deps.version!], deps);
+        }
+    
+        // populate maxInstallerVersion and add corrections
+        let maxInstallerVersion = "0.0.0"
+        for (const version of Object.keys(versionMap).sort(semver.compare)) {
+            if (versionMap[version].downloads!.appImage) {
+                maxInstallerVersion = version;
+            }
+            versionMap[version] = _.merge({}, versionMap[version],
+                correctObsidianVersionInfo(versionMap[version]),
+                { maxInstallerVersion },
+            );
+        }
+    
+        const versionInfos = Object.values(versionMap) as ObsidianVersionInfo[]
+        versionInfos.sort((a, b) => semver.compare(a.version, b.version));
+    
+        return {
+            latest: {
+                date: commitHistory.at(-1)?.commit.committer.date ?? original?.latest.date,
+                sha: commitHistory.at(-1)?.sha ?? original?.latest.sha,
+            },
+            versions: versionInfos,
+        }
+    }
 }
-
-

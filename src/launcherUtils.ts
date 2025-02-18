@@ -3,7 +3,9 @@ import path from "path"
 import { promisify } from "util";
 import child_process from "child_process"
 import which from "which"
+import semver from "semver"
 import { withTmpDir } from "./utils.js";
+import { ObsidianVersionInfo } from "./types.js";
 const execFile = promisify(child_process.execFile);
 
 
@@ -69,4 +71,49 @@ export async function extractObsidianDmg(dmg: string, dest: string) {
         const universal = path.join(tmpDir, (await fsAsync.readdir(tmpDir))[0]) // e.g. "Obsidian 1.8.4-universal"
         return path.join(universal, "Obsidian.app")
     })
+}
+
+
+export function parseObsidianDesktopRelease(fileRelease: any, isBeta: boolean): Partial<ObsidianVersionInfo> {
+    return {
+        version: fileRelease.latestVersion,
+        minInstallerVersion: fileRelease.minimumVersion,
+        maxInstallerVersion: "", // Will be set later
+        isBeta: isBeta,
+        downloads: {
+            asar: fileRelease.downloadUrl,
+        },
+    };
+}
+
+export function parseObsidianGithubRelease(gitHubRelease: any): Partial<ObsidianVersionInfo> {
+    const version = gitHubRelease.name;
+    const assets: string[] = gitHubRelease.assets.map((a: any) => a.browser_download_url);
+
+    return {
+        version: version,
+        gitHubRelease: gitHubRelease.html_url,
+        downloads: {
+            appImage: assets.find(u => u.match(`${version}.AppImage$`)),
+            appImageArm: assets.find(u => u.match(`${version}-arm64.AppImage$`)),
+            apk: assets.find(u => u.match(`${version}.apk$`)),
+            asar: assets.find(u => u.match(`${version}.asar.gz$`)),
+            dmg: assets.find(u => u.match(`${version}(-universal)?.dmg$`)),
+            exe: assets.find(u => u.match(`${version}.exe$`)),
+        },
+    }
+}
+
+/**
+ * Add some corrections to the Obsidian version data.
+ */
+export function correctObsidianVersionInfo(versionInfo: Partial<ObsidianVersionInfo>): Partial<ObsidianVersionInfo> {
+    const corrections: Partial<ObsidianVersionInfo> = {}
+    // minInstallerVersion is incorrect, running Obsidian with installer older than 1.1.9 won't boot with errors like
+    // `(node:11592) electron: Failed to load URL: app://obsidian.md/starter.html with error: ERR_BLOCKED_BY_CLIENT`
+    if (semver.gte(versionInfo.version!, "1.5.3") && semver.lt(versionInfo.minInstallerVersion!, "1.1.9")) {
+        corrections.minInstallerVersion = "1.1.9"
+    }
+
+    return corrections;
 }
