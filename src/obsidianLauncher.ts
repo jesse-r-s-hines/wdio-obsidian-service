@@ -17,7 +17,7 @@ import {
 } from "./types.js";
 import { fetchObsidianAPI, fetchWithFileUrl } from "./apis.js";
 import ChromeLocalStorage from "./chromeLocalStorage.js";
-import { normalizeGitHubRepo, extractObsidianExe } from "./launcherUtils.js";
+import { normalizeGitHubRepo, extractObsidianAppImage, extractObsidianExe } from "./launcherUtils.js";
 
 
 /**
@@ -174,7 +174,7 @@ export default class ObsidianLauncher {
         let downloader: ((tmpDir: string) => Promise<string>)|undefined
         
         if (platform == "linux") {
-            installerPath = path.join(cacheDir, "Obsidian.AppImage");
+            installerPath = path.join(cacheDir, "obsidian");
             let installerUrl: string|undefined
             if (arch.startsWith("arm")) {
                 installerUrl = installerVersionInfo.downloads.appImageArm;
@@ -185,8 +185,9 @@ export default class ObsidianLauncher {
                 downloader = async (tmpDir) => {
                     const appImage = path.join(tmpDir, "Obsidian.AppImage");
                     await fsAsync.writeFile(appImage, (await fetch(installerUrl)).body as any);
-                    await fsAsync.chmod(appImage, 0o755);
-                    return tmpDir;
+                    const obsidianFolder = path.join(tmpDir, "Obsidian");
+                    await extractObsidianAppImage(appImage, obsidianFolder);
+                    return obsidianFolder;
                 };
             }
         } else if (platform == "win32") {
