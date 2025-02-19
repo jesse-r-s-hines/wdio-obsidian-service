@@ -17,7 +17,7 @@
         "lint": "eslint src scripts test",
         "test": "run-s test:*",
         "test:unit": "tsc --noEmit && mocha",
-        "test:e2e": "npm run build && npx wdio run ./wdio.conf.ts"
+        "test:e2e": "npx wdio run ./wdio.conf.ts"
     },
     "repository": {
         "type": "git",
