@@ -80,7 +80,7 @@ program
             vault = await launcher.copyVault(vault);
         }
     
-        const [proc, configDir] = await launcher.launch({
+        const [proc, _configDir] = await launcher.launch({
             appVersion: opts.version, installerVersion: opts.installerVersion,
             vault: vault,
             plugins: parsePlugins(opts.plugin), themes: parseThemes(opts.theme),

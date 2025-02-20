@@ -12,6 +12,7 @@ export default tseslint.config(
             "@typescript-eslint/no-namespace": "off",
             '@typescript-eslint/no-require-imports': 'off',
             'no-undef': 'off',
+            "@typescript-eslint/no-unused-vars": ["error", { "varsIgnorePattern": "^_" }],
         },
     }
 );

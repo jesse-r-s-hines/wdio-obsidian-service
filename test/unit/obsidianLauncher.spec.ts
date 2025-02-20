@@ -46,7 +46,7 @@ describe("test ObsidianLauncher", () => {
         const vault = await createDirectory();
         await launcher.installPlugins(vault, []);
         // Shouldn't create the file if there are no changes.
-        expect(await fileExists(`${vault}/.obsidian/community-plugins.json`)).to.be.false;
+        expect(await fileExists(`${vault}/.obsidian/community-plugins.json`)).to.eql(false);
     })
 
     it("installPlugins no plugins with existing plugins", async () => {
