@@ -33,7 +33,7 @@ export async function withTmpDir(dest: string, func: (tmpDir: string) => Promise
         }
         // rename will overwrite files but not directories
         if (await fileExists(dest) && (await fsAsync.stat(dest)).isDirectory()) {
-            fsAsync.rename(dest, tmpDir + ".old")
+            await fsAsync.rename(dest, tmpDir + ".old")
         }
         
         await fsAsync.rename(result, dest);
