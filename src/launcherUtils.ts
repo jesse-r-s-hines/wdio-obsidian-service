@@ -55,7 +55,7 @@ export async function extractObsidianExe(exe: string, appArch: string, dest: str
  * TODO: This currently isn't used, need to add Mac support.
  */
 export async function extractObsidianDmg(dmg: string, dest: string) {
-    // TODO: is there a way to extract dmg without requiring 7z?
+    // TODO: should use hdiutil to remove dependency on 7zip. See https://stackoverflow.com/questions/11679475
     const path7z = await which("7z", { nothrow: true });
     if (!path7z) {
         throw new Error(
