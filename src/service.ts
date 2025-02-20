@@ -223,41 +223,43 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
         if (!capabilities[OBSIDIAN_CAPABILITY_KEY]) return;
 
         const service = this; // eslint-disable-line @typescript-eslint/no-this-alias
-        await browser.addCommand("openVault",
-            async function(this: WebdriverIO.Browser, vault?: string, plugins?: string[], theme?: string) {
-                const oldObsidianOptions = this.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY];
+        const openVault: typeof browser['openVault'] = async function(
+            this: WebdriverIO.Browser,
+            {vault, plugins, theme} = {},
+        ) {
+            const oldObsidianOptions = this.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY];
 
-                const newObsidianOptions = {
-                    ...oldObsidianOptions,
-                    vault: vault != undefined ? path.resolve(vault) : oldObsidianOptions.vault,
-                    plugins: service.selectPlugins(oldObsidianOptions.plugins, plugins),
-                    themes: service.selectThemes(oldObsidianOptions.themes, theme),
-                }
-
-                const configDir = await service.setupObsidian(newObsidianOptions);
-                
-                const newArgs = [
-                    `--user-data-dir=${configDir}`,
-                    ...this.requestedCapabilities['goog:chromeOptions'].args.filter((arg: string) => {
-                        const match = arg.match(/^--user-data-dir=(.*)$/);
-                        return !match || !service.tmpDirs.includes(match[1]);
-                    }),
-                ]
-
-                // Reload session already merges with existing settings, and tries to restart the driver entirely if
-                // you set browserName explicitly..
-                const sessionId = await this.reloadSession({
-                    [OBSIDIAN_CAPABILITY_KEY]: newObsidianOptions,
-                    'goog:chromeOptions': {
-                        ...this.requestedCapabilities['goog:chromeOptions'],
-                        args: newArgs,
-                    },
-                });
-                await service.waitForReady(this);
-
-                return sessionId;
+            const newObsidianOptions = {
+                ...oldObsidianOptions,
+                vault: vault != undefined ? path.resolve(vault) : oldObsidianOptions.vault,
+                plugins: service.selectPlugins(oldObsidianOptions.plugins, plugins),
+                themes: service.selectThemes(oldObsidianOptions.themes, theme),
             }
-        );
+
+            const configDir = await service.setupObsidian(newObsidianOptions);
+            
+            const newArgs = [
+                `--user-data-dir=${configDir}`,
+                ...this.requestedCapabilities['goog:chromeOptions'].args.filter((arg: string) => {
+                    const match = arg.match(/^--user-data-dir=(.*)$/);
+                    return !match || !service.tmpDirs.includes(match[1]);
+                }),
+            ]
+
+            // Reload session already merges with existing settings, and tries to restart the driver entirely if
+            // you set browserName explicitly..
+            const sessionId = await this.reloadSession({
+                [OBSIDIAN_CAPABILITY_KEY]: newObsidianOptions,
+                'goog:chromeOptions': {
+                    ...this.requestedCapabilities['goog:chromeOptions'],
+                    args: newArgs,
+                },
+            });
+            await service.waitForReady(this);
+
+            return sessionId;
+        }
+        await browser.addCommand("openVault", openVault);
 
         for (const [name, cmd] of Object.entries(browserCommands)) {
             await browser.addCommand(name, cmd);

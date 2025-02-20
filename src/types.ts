@@ -214,7 +214,10 @@ declare global {
              *     back to the default theme. Like with plugins, the theme must be defined in wdio.conf.ts.
              * @returns Returns the new sessionId (same as reloadSession()).
              */
-            openVault(vault?: string, plugins?: string[], theme?: string): Promise<string>;
+            openVault(params?: {
+                vault?: string,
+                plugins?: string[], theme?: string,
+            }): Promise<string>;
         }
     }
 }

@@ -9,7 +9,7 @@ describe("Basic obsidian launch", () => {
     before(async () => {
         // Obsidian should start with no vault open
         expect(await browser.getVaultPath()).to.eql(undefined);
-        await browser.openVault("./test/vaults/basic");
+        await browser.openVault({vault: "./test/vaults/basic"});
     })
     
     it('Obsidian version matches', async () => {
@@ -57,7 +57,7 @@ describe("Basic obsidian launch", () => {
         const beforeConfigDir: string = await browser.execute("return electron.remote.app.getPath('userData')");
 
         // This should re-open the same vault with the same plugins and themes
-        await browser.openVault("./test/vaults/basic");
+        await browser.openVault({vault: "./test/vaults/basic"});
 
         const afterVaultPath: string = await browser.executeObsidian(({app}) =>
             (app.vault.adapter as any).getBasePath()
@@ -74,7 +74,7 @@ describe("Basic obsidian launch", () => {
         expect(afterTheme).to.eql("Basic Theme");
 
         // Test no plugins, no theme, and a new vault
-        await browser.openVault("./test/vaults/basic2", [], "");
+        await browser.openVault({vault: "./test/vaults/basic2", plugins: [], theme: ""});
         const noPlugins: string[] = await browser.executeObsidian(({app}) =>
             [...(app as any).plugins.enabledPlugins].sort()
         );
@@ -87,7 +87,7 @@ describe("Basic obsidian launch", () => {
         expect(vaultFiles).to.eql(["A.md", "B.md"]);
 
         // Test installing the plugin via openVault
-        await browser.openVault("./test/vaults/basic", ["basic-plugin"], "Basic Theme");
+        await browser.openVault({vault: "./test/vaults/basic", plugins: ["basic-plugin"], theme: "Basic Theme"});
         const afterPlugins2: string[] = await browser.executeObsidian(({app}) =>
             [...(app as any).plugins.enabledPlugins].sort()
         );

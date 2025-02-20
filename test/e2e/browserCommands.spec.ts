@@ -5,7 +5,7 @@ import fsAsync from "fs/promises"
 
 describe("Test custom browser commands", () => {
     before(async () => {
-        await browser.openVault("./test/vaults/basic");
+        await browser.openVault({vault: "./test/vaults/basic"});
     })
 
     it('getVaultPath', async () => {
