@@ -205,11 +205,10 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
 
     private selectThemes(currentThemes: LocalThemeEntryWithName[], selection?: string) {
         if (selection !== undefined) {
-            if (selection != "" && currentThemes.every((t: any) => t.name != selection)) {
-                throw Error(`Unknown theme: ${selection}`)
+            if (selection != "default" && currentThemes.every((t: any) => t.name != selection)) {
+                throw Error(`Unknown theme: ${selection}`);
             }
-            // If themes is "" all will be disabled
-            return currentThemes.map((t: any) => ({...t, enabled: t.name === selection}))
+            return currentThemes.map((t: any) => ({...t, enabled: selection != 'default' && t.name === selection}));
         } else {
             return currentThemes;
         }

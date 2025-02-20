@@ -513,10 +513,11 @@ export default class ObsidianLauncher {
         await fsAsync.mkdir(obsidianDir, { recursive: true });
 
         const enabledPluginsPath = path.join(obsidianDir, 'community-plugins.json');
-        let enabledPlugins: string[] = [];
+        let originalEnabledPlugins: string[] = [];
         if (await fileExists(enabledPluginsPath)) {
-            enabledPlugins = JSON.parse(await fsAsync.readFile(enabledPluginsPath, 'utf-8'));
+            originalEnabledPlugins = JSON.parse(await fsAsync.readFile(enabledPluginsPath, 'utf-8'));
         }
+        let enabledPlugins = [...originalEnabledPlugins];
 
         for (const {path: pluginPath, enabled = true} of downloadedPlugins) {
             const manifestPath = path.join(pluginPath, 'manifest.json');
@@ -549,7 +550,9 @@ export default class ObsidianLauncher {
             }
         }
 
-        await fsAsync.writeFile(enabledPluginsPath, JSON.stringify(enabledPlugins, undefined, 2));
+        if (!_.isEqual(enabledPlugins, originalEnabledPlugins)) {
+            await fsAsync.writeFile(enabledPluginsPath, JSON.stringify(enabledPlugins, undefined, 2));
+        }
     }
 
     /** 

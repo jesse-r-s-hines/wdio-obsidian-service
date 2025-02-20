@@ -74,7 +74,7 @@ describe("Basic obsidian launch", () => {
         expect(afterTheme).to.eql("Basic Theme");
 
         // Test no plugins, no theme, and a new vault
-        await browser.openVault({vault: "./test/vaults/basic2", plugins: [], theme: ""});
+        await browser.openVault({vault: "./test/vaults/basic2", plugins: [], theme: "default"});
         const noPlugins: string[] = await browser.executeObsidian(({app}) =>
             [...(app as any).plugins.enabledPlugins].sort()
         );

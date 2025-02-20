@@ -210,8 +210,8 @@ declare global {
              * @param plugins List of plugin ids to enable. If omitted it will keep current plugin list.
              *     Note, all the plugins must be defined in your wdio.conf.ts capabilities. You can use openVault to
              *     toggle which plugins are enabled and which are disabled.
-             * @param theme Name of the theme to enable. If omitted it will keep the current theme. Pass "" to switch
-             *     back to the default theme. Like with plugins, the theme must be defined in wdio.conf.ts.
+             * @param theme Name of the theme to enable. If omitted it will keep the current theme. Pass "default" to
+             *     switch back to the default theme. Like with plugins, the theme must be defined in wdio.conf.ts.
              * @returns Returns the new sessionId (same as reloadSession()).
              */
             openVault(params?: {

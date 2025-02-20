@@ -16,7 +16,6 @@ const obsidianLauncherOpts = {
 }
 
 
-
 describe("test ObsidianLauncher", () => {
     let launcher: ObsidianLauncher;
 
@@ -43,11 +42,21 @@ describe("test ObsidianLauncher", () => {
         });
     })
 
-    it("installPlugins no plugins", async () => {
+    it("installPlugins no plugins empty vault", async () => {
         const vault = await createDirectory();
         await launcher.installPlugins(vault, []);
+        // Shouldn't create the file if there are no changes.
+        expect(await fileExists(`${vault}/.obsidian/community-plugins.json`)).to.be.false;
+    })
+
+    it("installPlugins no plugins with existing plugins", async () => {
+        const vault = await createDirectory({
+            ".obsidian/community-plugins.json": '["plugin-b" ]',
+        });
+        await launcher.installPlugins(vault, []);
+        // Shouldn't update the file if there are no changes.
         const communityPlugins = await fsAsync.readFile(`${vault}/.obsidian/community-plugins.json`, 'utf-8');
-        expect(JSON.parse(communityPlugins)).to.eql([]);
+        expect(communityPlugins).to.eql('["plugin-b" ]');
     })
     
     it("installPlugins empty vault", async () => {
