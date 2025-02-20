@@ -27,11 +27,6 @@ const browserCommands = {
         return this.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].installerVersion;
     },
 
-    /** Returns the path to the vault opened in Obsidian */
-    async getVaultPath(this: WebdriverIO.Browser): Promise<string|undefined> {
-        return this.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].vault;
-    },
-
     /**
      * Wrapper around browser.execute that passes the Obsidian API to the function. The function will be run inside
      * Obsidian. The first argument to the function is an object containing keys:
@@ -61,6 +56,21 @@ const browserCommands = {
             `,
             ...params,
         )
+    },
+
+    /** Returns the path to the vault opened in Obsidian */
+    async getVaultPath(this: WebdriverIO.Browser): Promise<string|undefined> {
+        if (this.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].vault == undefined) {
+            return undefined; // no vault open
+        } else { // return the actual path to the vault
+            return await this.executeObsidian(({app, obsidian}) => {
+                if (app.vault.adapter instanceof obsidian.FileSystemAdapter) {
+                    return app.vault.adapter.getBasePath()
+                } else { // TODO handle CapacitorAdapater
+                    throw new Error(`Unrecognized DataAdapater type`)
+                };
+            })
+        }
     },
 
     /** Enables a plugin */

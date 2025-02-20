@@ -177,8 +177,8 @@ export interface ObsidianCapabilityOptions {
     /**
      * The path to the vault to open.
      * 
-     * The vault will be copied first, so any changes made in your tests won't affect the original. If omitted, no
-     * vault will be opened. You can call `browser.openVault` to open a vault during the tests.
+     * The vault will be copied, so any changes made in your tests won't affect the original. If omitted, no vault will
+     * be opened and you'll need to call `browser.openVault` to open a vault during your tests.
      */
     vault?: string,
 

@@ -1,6 +1,7 @@
 import { browser } from '@wdio/globals'
 import { expect } from 'chai';
 import path from 'path';
+import fsAsync from "fs/promises"
 
 describe("Test custom browser commands", () => {
     before(async () => {
@@ -8,8 +9,12 @@ describe("Test custom browser commands", () => {
     })
 
     it('getVaultPath', async () => {
-        const vaultPath = await browser.getVaultPath();
-        expect(vaultPath).to.eql(path.resolve("./test/vaults/basic"));
+        const originalVaultPath = path.resolve("./test/vaults/basic");
+        const vaultPath = (await browser.getVaultPath())!;
+        
+        // vault should be copied
+        expect(path.resolve(vaultPath)).to.not.eql(originalVaultPath)
+        expect(await fsAsync.readdir(vaultPath)).to.include.members(["Goodbye.md", "Welcome.md"]);
     })
     
     it('runObsidianCommand', async () => {
