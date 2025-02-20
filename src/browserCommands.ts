@@ -46,14 +46,13 @@ const browserCommands = {
         ...params: Params
     ): Promise<Return> {
         return await browser.execute<Return, Params>(
-            `
-                const obs = {
+            `return (${func.toString()}).call(null,
+                {
                     app: window._wdioObsidianService.app,
                     obsidian: window._wdioObsidianService.obsidian,
-                };
-                const func = (${func.toString()});
-                return func(obs, ...arguments);
-            `,
+                },
+                ...arguments,
+            )`,
             ...params,
         )
     },
