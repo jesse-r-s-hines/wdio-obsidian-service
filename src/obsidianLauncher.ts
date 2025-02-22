@@ -869,7 +869,7 @@ export default class ObsidianLauncher {
         const result: ObsidianVersionInfos = {
             metadata: {
                 commit_date: commitHistory.at(-1)?.commit.committer.date ?? original?.metadata.commit_date,
-                commit_sha: commitHistory.at(-1)?.sha ?? original?.metadata.commit_date,
+                commit_sha: commitHistory.at(-1)?.sha ?? original?.metadata.commit_sha,
                 timestamp: original?.metadata.timestamp ?? "", // set down below
             },
             versions: versionInfos,
