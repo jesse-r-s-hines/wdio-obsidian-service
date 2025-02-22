@@ -51,25 +51,21 @@ export async function extractObsidianExe(exe: string, appArch: string, dest: str
 }
 
 /**
- * Extract the executables from the Obsidian dmg installer.
- * TODO: This currently isn't used, need to add Mac support.
+ * Extract the executable from the Obsidian dmg installer.
  */
 export async function extractObsidianDmg(dmg: string, dest: string) {
-    // TODO: should use hdiutil to remove dependency on 7zip. See https://stackoverflow.com/questions/11679475
-    const path7z = await which("7z", { nothrow: true });
-    if (!path7z) {
-        throw new Error(
-            "Downloading Obsidian for Mac requires 7zip to be installed and available on the PATH. " +
-            "You install it from https://www.7-zip.org and then add the install location to the PATH."
-        );
-    }
-    dmg = path.resolve(dmg);
     dest = path.resolve(dest);
 
     await withTmpDir(dest, async (tmpDir) => {
-        await execFile(path7z, ["x", "-o" + tmpDir, dmg, "*/Obsidian.app"]);
-        const universal = path.join(tmpDir, (await fsAsync.readdir(tmpDir))[0]) // e.g. "Obsidian 1.8.4-universal"
-        return path.join(universal, "Obsidian.app")
+        let proc = await execFile('hdiutil', ['attach', '-nobrowse', '-readonly', dmg]);
+        const volume = proc.stdout.match(/\/Volumes\/.*$/m)![0];
+        const obsidianApp = path.join(volume, "Obsidian.app");
+        try {
+            await fsAsync.cp(obsidianApp, tmpDir, {recursive: true, verbatimSymlinks: true});
+        } finally {
+            await execFile('hdiutil', ['detach', volume]);
+        }
+        return tmpDir;
     })
 }
 

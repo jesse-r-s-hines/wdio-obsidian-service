@@ -13,7 +13,7 @@ jobs:
         os: 
           - ubuntu-latest
           - windows-latest
-          # - macos-latest
+          - macos-latest
         node-version: ["18.x"]
     runs-on: ${{ matrix.os }}
     steps:

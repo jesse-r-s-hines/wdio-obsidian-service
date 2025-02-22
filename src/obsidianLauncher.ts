@@ -20,7 +20,7 @@ import {
 import { fetchObsidianAPI, fetchGitHubAPIPaginated, fetchWithFileUrl } from "./apis.js";
 import ChromeLocalStorage from "./chromeLocalStorage.js";
 import {
-    normalizeGitHubRepo, extractObsidianAppImage, extractObsidianExe,
+    normalizeGitHubRepo, extractObsidianAppImage, extractObsidianExe, extractObsidianDmg,
     parseObsidianDesktopRelease, parseObsidianGithubRelease, correctObsidianVersionInfo,
 } from "./launcherUtils.js";
 import _ from "lodash"
@@ -229,6 +229,18 @@ export default class ObsidianLauncher {
                     await fsAsync.writeFile(installerExecutable, (await fetch(installerUrl)).body as any);
                     const obsidianFolder = path.join(tmpDir, "Obsidian");
                     await extractObsidianExe(installerExecutable, appArch, obsidianFolder);
+                    return obsidianFolder;
+                };
+            }
+        } else if (platform == "darwin") {
+            installerPath = path.join(cacheDir, "Contents/MacOS/Obsidian");
+            const installerUrl = versionInfo.downloads.dmg;
+            if (installerUrl) {
+                downloader = async (tmpDir) => {
+                    const dmg = path.join(tmpDir, "Obsidian.dmg");
+                    await fsAsync.writeFile(dmg, (await fetch(installerUrl)).body as any);
+                    const obsidianFolder = path.join(tmpDir, "Obsidian");
+                    await extractObsidianDmg(dmg, obsidianFolder);
                     return obsidianFolder;
                 };
             }

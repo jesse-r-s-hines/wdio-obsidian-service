@@ -26,9 +26,8 @@ describe("Basic obsidian launch", () => {
 
     it('Vault opened', async () => {
         let vaultPath: string = await browser.executeObsidian(({app}) => (app.vault.adapter as any).getBasePath());
-        vaultPath = path.normalize(vaultPath).replace("\\", "/");
         // Should have created a copy of vault
-        expect(path.normalize(vaultPath).startsWith(os.tmpdir())).to.equal(true);
+        expect(vaultPath).to.contain("obs-launcher-vault-");
 
         const vaultFiles = await browser.executeObsidian(({app}) =>
             app.vault.getMarkdownFiles().map(x => x.path).sort()
@@ -38,7 +37,8 @@ describe("Basic obsidian launch", () => {
 
     it('Sandboxed config', async () => {
         const configDir: string = await browser.execute("return electron.remote.app.getPath('userData')")
-        expect(path.normalize(configDir).startsWith(os.tmpdir())).to.equal(true);
+        // Should be using sandboxed config dir
+        expect(configDir).to.contain("obs-launcher-config-");
     })
 
     it('plugin was installed and enabled', async () => {
