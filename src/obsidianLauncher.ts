@@ -251,7 +251,7 @@ export default class ObsidianLauncher {
         if (!appUrl) {
             throw Error(`No asar found for Obsidian version ${appVersion}`);
         }
-        const appPath = path.join(this.cacheDir, 'obsidian-app', appUrl.split("/").at(-1)!.replace(/\.gz$/, ''));
+        const appPath = path.join(this.cacheDir, 'obsidian-app', `obsidian-${appVersionInfo.version}.asar`);
 
         if (!(await fileExists(appPath))) {
             console.log(`Downloading Obsidian app v${appVersion} ...`)
@@ -878,5 +878,22 @@ export default class ObsidianLauncher {
         }
 
         return result;
+    }
+
+    /**
+     * Returns true if the Obsidian version is already in the cache.
+     */
+    async isInCache(type: "app"|"installer", version: string) {
+        version = (await this.resolveVersions(version))[0];
+
+        let dest: string
+        if (type == "app") {
+            dest = `obsidian-app/obsidian-${version}.asar`;
+        } else { // type == "installer"
+            const {platform, arch} = process;
+            dest =`obsidian-installer/${platform}-${arch}/Obsidian-${version}`;
+        }
+
+        return (await fileExists(path.join(this.cacheDir, dest)));
     }
 }
