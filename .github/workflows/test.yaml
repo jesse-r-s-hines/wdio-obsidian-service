@@ -46,7 +46,7 @@ jobs:
           npm run test:e2e
         env:
           TEST_ENV: ${{matrix.os}}
-          WDIO_MAX_INSTANCES: 5
+          WDIO_MAX_INSTANCES: ${{matrix.os == 'macos-latest' && '2' || '4'}}
           # Secrets won't be available when run as on a PR
           OBSIDIAN_USERNAME: ${{ secrets.OBSIDIAN_USERNAME }}
           OBSIDIAN_PASSWORD: ${{ secrets.OBSIDIAN_PASSWORD }}
