@@ -154,6 +154,13 @@ export default class ObsidianLauncher {
             throw Error(`No Obsidian installer for version ${installerVersion} found`);
         }
 
+        if (semver.lt(installerVersionInfo.version, appVersionInfo.minInstallerVersion)) {
+            throw Error(
+                `Installer and app versions incompatible: minInstallerVersion of v${appVersionInfo.version} is ` +
+                `${appVersionInfo.minInstallerVersion}, but v${installerVersionInfo.version} specified`
+            )
+        }
+
         return [appVersionInfo.version, installerVersionInfo.version];
     }
 
