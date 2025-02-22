@@ -880,7 +880,7 @@ export default class ObsidianLauncher {
         // updates to make sure there's commit activity in the repo.
         const dayMs = 24 * 60 * 60 * 1000;
         const timeSinceLastUpdate = new Date().getTime() - new Date(original?.metadata.timestamp ?? 0).getTime();
-        if (!_.isEqual(original, result) || timeSinceLastUpdate > 30 * dayMs) {
+        if (!_.isEqual(original, result) || timeSinceLastUpdate > 29 * dayMs) {
             result.metadata.timestamp = new Date().toISOString();
         }
 

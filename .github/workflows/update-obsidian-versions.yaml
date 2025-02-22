@@ -1,0 +1,80 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
+name: Update Obsidian Versions
+on:
+  schedule: # Run every 2 hours at minute 22
+    - cron: '22 */2 * * *'
+  workflow_dispatch:
+
+jobs:
+  update-obsidian-versions:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: "Check if update is needed"
+        id: check
+        uses: actions/github-script@v7
+        with:
+          result-encoding: string
+          script: |
+            const desktopReleasesJson = await fetch("https://raw.githubusercontent.com/obsidianmd/obsidian-releases/HEAD/desktop-releases.json").then(r => r.json())
+            const versionsJson = await fetch("https://raw.githubusercontent.com/jesse-r-s-hines/wdio-obsidian-service/HEAD/obsidian-versions.json").then(r => r.json())
+
+            const latestObsidian = desktopReleasesJson.beta.latestVersion;
+            const ourLatestObsidian = versionsJson.versions.at(-1).version;
+            const ourLatestTimestamp = new Date(versionsJson.metadata.timestamp);
+
+            if (!latestObsidian || !ourLatestObsidian || isNaN(ourLatestTimestamp.getTime())) {
+                throw Error("Failed to parse files");
+            }
+
+            const now = new Date();
+            const timeSinceLastUpdate = (now.getTime() - ourLatestTimestamp.getTime()) / 1000; // convert to seconds
+            const needsUpdate = (
+                // if obsidian version has changed
+                latestObsidian != ourLatestObsidian ||
+                // if more than 30 days since the last obsidian-versions.json update. GitHub disables schedule workflows
+                // after 60 days of repo inactivity, so we want to trigger the obsidian-versions.json update
+                // periodically even if there's no new Obsidian version to make sure there's commit activity.
+                timeSinceLastUpdate <= 30 * 24 * 60 * 60 ||
+                // The desktop-releases.json can be updated a bit before the GitHub release is actually created, which
+                // could cause in obsidian-versions.json to be incomplete. So we'll also re-run it a second time after
+                // an update to make sure that gets corrected.
+                timeSinceLastUpdate <= $((3 * 60 * 60))
+            )
+            return needsUpdate ? 'true' : 'false';
+
+      - if: ${{ steps.check.outputs.result == 'true' }}
+        uses: actions/checkout@v4
+        with:
+          # By default, GitHub won't trigger workflows from events created from a workflow, so the new commit won't
+          # trigger the tests. The recommended workaround is to use a Personal Access Token instead of the default
+          # GITHUB_TOKEN. See
+          # - https://docs.github.com/en/actions/writing-workflows/choosing-when-your-workflow-runs/triggering-a-workflow#triggering-a-workflow-from-a-workflow
+          # - https://stackoverflow.com/questions/67550727 
+          token: ${{ secrets.GH_PAT }}
+      - if: ${{ steps.check.outputs.result == 'true' }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'npm'
+      - if: ${{ steps.check.outputs.result == 'true' }}
+        run: npm ci
+      - if: ${{ steps.check.outputs.result == 'true' }}
+        run: xvfb-run npx tsx scripts/fetch-obsidian-versions.ts obsidian-versions.json
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - if: ${{ steps.check.outputs.result == 'true' }}
+        name: Commit
+        run: |
+          git config --global user.name '${{github.repository_owner}}'
+          git config --global user.email '${{github.repository_owner}}@users.noreply.github.com'
+          if [[ $(git diff -- obsidian-versions.json) ]]; then
+            git pull
+            git add obsidian-versions.json
+            git commit -m "Update obsidian-versions.json"
+            git push
+          else
+            echo "No change to obsidian-versions.json"
+          fi
