@@ -5,7 +5,11 @@ import type { ObsidianBrowserCommands } from "./browserCommands.js"
  * Type of the obsidian-versions.json file.
  */
 export type ObsidianVersionInfos = {
-    latest: { date: string, sha: string },
+    metadata: {
+        commit_date: string,
+        commit_sha: string,
+        timestamp: string,
+    },
     versions: ObsidianVersionInfo[],
 }
 

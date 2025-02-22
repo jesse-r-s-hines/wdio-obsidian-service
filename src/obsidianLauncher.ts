@@ -801,11 +801,11 @@ export default class ObsidianLauncher {
 
         let commitHistory = await fetchGitHubAPIPaginated(`repos/${repo}/commits`, {
             path: "desktop-releases.json",
-            since: original?.latest.date,
+            since: original?.metadata.commit_date,
         });
         commitHistory.reverse();
         if (original) {
-            commitHistory = _.takeRightWhile(commitHistory, c => c.sha != original.latest.sha);
+            commitHistory = _.takeRightWhile(commitHistory, c => c.sha != original.metadata.commit_sha);
         }
     
         const fileHistory: any[] = await pool(8, commitHistory, commit =>
@@ -859,12 +859,24 @@ export default class ObsidianLauncher {
         const versionInfos = Object.values(versionMap) as ObsidianVersionInfo[]
         versionInfos.sort((a, b) => semver.compare(a.version, b.version));
     
-        return {
-            latest: {
-                date: commitHistory.at(-1)?.commit.committer.date ?? original?.latest.date,
-                sha: commitHistory.at(-1)?.sha ?? original?.latest.sha,
+        const result: ObsidianVersionInfos = {
+            metadata: {
+                commit_date: commitHistory.at(-1)?.commit.committer.date ?? original?.metadata.commit_date,
+                commit_sha: commitHistory.at(-1)?.sha ?? original?.metadata.commit_date,
+                timestamp: original?.metadata.timestamp ?? "", // set down below
             },
             versions: versionInfos,
         }
+
+        // Update timestamp if anything has changed. Also, GitHub will cancel scheduled workflows if the repository is
+        // "inactive" for 60 days. So we'll update the timestamp every once in a while even if there are no Obsidian
+        // updates to make sure there's commit activity in the repo.
+        const dayMs = 24 * 60 * 60 * 1000;
+        const timeSinceLastUpdate = new Date().getTime() - new Date(original?.metadata.timestamp ?? 0).getTime();
+        if (!_.isEqual(original, result) || timeSinceLastUpdate > 30 * dayMs) {
+            result.metadata.timestamp = new Date().toISOString();
+        }
+
+        return result;
     }
 }
