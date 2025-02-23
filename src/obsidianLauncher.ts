@@ -6,7 +6,6 @@ import os from "os";
 import fetch from "node-fetch"
 import extractZip from "extract-zip"
 import { pipeline } from "stream/promises";
-import { fileURLToPath, pathToFileURL } from "url";
 import { downloadArtifact } from '@electron/get';
 import child_process from "child_process"
 import semver from "semver"
@@ -54,8 +53,7 @@ export default class ObsidianLauncher {
     } = {}) {
         this.cacheDir = path.resolve(options.cacheDir ?? process.env.OBSIDIAN_CACHE ?? "./.obsidian-cache");
         
-        const packageDir = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
-        const defaultVersionsUrl =  pathToFileURL(path.join(packageDir, "obsidian-versions.json")).toString(); // TODO
+        const defaultVersionsUrl =  'https://raw.githubusercontent.com/jesse-r-s-hines/wdio-obsidian-service/HEAD/obsidian-versions.json'
         this.versionsUrl = options.versionsUrl ?? defaultVersionsUrl;
         
         const defaultCommunityPluginsUrl = "https://raw.githubusercontent.com/obsidianmd/obsidian-releases/HEAD/community-plugins.json";
