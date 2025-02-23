@@ -1,2 +1,3 @@
-# Obsidian Plugin Testing Library
+# wdio-obsidian-service-workspace
+
 TODO

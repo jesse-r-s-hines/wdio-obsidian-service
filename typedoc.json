@@ -1,0 +1,20 @@
+{
+    "$schema": "https://typedoc.org/schema.json",
+    "entryPointStrategy": "packages",
+    "entryPoints": ["packages/*"],
+    "out": "./docs",
+    "readme": "./README.md",
+    "sourceLinkExternal": true,
+    "githubPages": true,
+    "searchInComments": true,
+    "navigationLinks": {
+        "GitHub": "https://github.com/jesse-r-s-hines/wdio-obsidian-service"
+    },
+    "visibilityFilters": {
+    },
+    "packageOptions": {
+        "entryPoints": ["src/index.ts"],
+        "readme": "./README.md",
+        "gitRevision": "main"
+    }
+}

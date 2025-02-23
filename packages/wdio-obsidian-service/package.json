@@ -1,0 +1,68 @@
+{
+    "name": "wdio-obsidian-service",
+    "version": "0.0.1",
+    "description": "TODO",
+    "type": "module",
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "files": [
+        "dist",
+        "helper-plugin"
+    ],
+    "bin": {
+        "wdio-obsidian-service": "dist/cli.js"
+    },
+    "scripts": {
+        "build": "tsup",
+        "lint": "eslint src test",
+        "test": "run-s test:*",
+        "test:unit": "tsc --noEmit && mocha",
+        "test:e2e": "npx wdio run ./wdio.conf.ts"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/jesse-r-s-hines/wdio-obsidian-service.git"
+    },
+    "author": "",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/jesse-r-s-hines/wdio-obsidian-service/issues"
+    },
+    "homepage": "https://github.com/jesse-r-s-hines/wdio-obsidian-service#readme",
+    "devDependencies": {
+        "@eslint/js": "^9.17.0",
+        "@types/chai": "^5.0.1",
+        "@types/lodash": "^4.17.14",
+        "@types/mocha": "^10.0.10",
+        "@types/node": "^18.11.9",
+        "@wdio/cli": "^9.5.7",
+        "@wdio/local-runner": "^9.5.7",
+        "@wdio/mocha-framework": "^9.5.0",
+        "@wdio/spec-reporter": "^9.5.0",
+        "@wdio/types": "^9.5.0",
+        "chai": "^5.1.2",
+        "eslint": "^9.17.0",
+        "mocha": "^11.0.1",
+        "npm-run-all": "^4.1.5",
+        "ts-node": "^10.9.2",
+        "tsup": "^8.3.5",
+        "tsx": "^4.19.2",
+        "typescript": "^5.7.2",
+        "typescript-eslint": "^8.19.0"
+    },
+    "dependencies": {
+        "lodash": "^4.17.21",
+        "obsidian-launcher": "^0.0.1"
+    },
+    "peerDependencies": {
+        "@wdio/cli": "^9.5.0",
+        "@wdio/local-runner": "^9.5.0",
+        "@wdio/mocha-framework": "^9.5.0",
+        "@wdio/spec-reporter": "^9.5.0",
+        "obsidian": ">=1.7.2",
+        "webdriverio": "^9.5.0"
+    },
+    "engines": {
+        "node": ">=18"
+    }
+}

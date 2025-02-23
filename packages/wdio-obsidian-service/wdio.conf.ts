@@ -4,19 +4,18 @@ import { pathToFileURL } from "url"
 import path from "path"
 import fsAsync from "fs/promises"
 import semver from "semver";
-import { ObsidianVersionInfo } from "./src/types.js"
+import { ObsidianVersionInfo } from "obsidian-launcher"
 import _ from "lodash"
 
 const minAppVersion = "1.5.3";
 const maxInstances = Number(process.env['WDIO_MAX_INSTANCES'] ?? 4);
 const testEnv = process.env['TEST_ENV'] ?? 'local';
-const allVersions: ObsidianVersionInfo[] = JSON.parse(
-    await fsAsync.readFile("./obsidian-versions.json", 'utf-8')
-).versions;
+const obsidianVersionsJson = path.resolve("../../obsidian-versions.json");
+const allVersions: ObsidianVersionInfo[] = JSON.parse(await fsAsync.readFile(obsidianVersionsJson, 'utf-8')).versions;
 const minInstallerVersion = allVersions.find(v => v.version == minAppVersion)!.minInstallerVersion;
 const cacheDir = path.resolve(".obsidian-cache");
 const obsidianServiceOptions = {
-    versionsUrl: pathToFileURL("./obsidian-versions.json").toString(),
+    versionsUrl: pathToFileURL(obsidianVersionsJson).toString(),
 }
 
 const minorVersion = (v: string) => v.split(".").slice(0, 2).join('.');

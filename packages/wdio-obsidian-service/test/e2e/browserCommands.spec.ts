@@ -3,6 +3,7 @@ import { expect } from 'chai';
 import path from 'path';
 import fsAsync from "fs/promises"
 
+
 describe("Test custom browser commands", () => {
     before(async () => {
         await browser.openVault({vault: "./test/vaults/basic"});

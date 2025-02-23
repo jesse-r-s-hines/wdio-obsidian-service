@@ -1,11 +1,13 @@
 .obsidian-cache
+# Ignore the generated docs
+docs
 
 # Ignore test-related files
 /coverage.data
 /coverage/
 
 # Build files
-/dist
+dist
 
 # Created by https://www.toptal.com/developers/gitignore/api/linux,windows,macos,visualstudiocode,node
 # Edit at https://www.toptal.com/developers/gitignore?templates=linux,windows,macos,visualstudiocode,node

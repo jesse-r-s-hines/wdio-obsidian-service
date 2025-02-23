@@ -331,7 +331,7 @@ export class ObsidianLauncher {
     }
 
     /** Gets the latest version of a plugin. */
-    async getLatestPluginVersion(repo: string) {
+    private async getLatestPluginVersion(repo: string) {
         repo = normalizeGitHubRepo(repo)
         const manifestUrl = `https://raw.githubusercontent.com/${repo}/HEAD/manifest.json`;
         const cacheDest = path.join(this.cacheDir, "obsidian-plugins", repo, "latest.json");
@@ -345,7 +345,7 @@ export class ObsidianLauncher {
      * @param version Version of the plugin to install or "latest"
      * @returns path to the downloaded plugin
      */
-    async downloadGitHubPlugin(repo: string, version = "latest"): Promise<string> {
+    private async downloadGitHubPlugin(repo: string, version = "latest"): Promise<string> {
         repo = normalizeGitHubRepo(repo)
         if (version == "latest") {
             version = await this.getLatestPluginVersion(repo);
@@ -384,7 +384,7 @@ export class ObsidianLauncher {
      * @param version Version of the plugin to install, or "latest"
      * @returns path to the downloaded plugin
      */
-    async downloadCommunityPlugin(id: string, version = "latest"): Promise<string> {
+    private async downloadCommunityPlugin(id: string, version = "latest"): Promise<string> {
         const communityPlugins = await this.getCommunityPlugins();
         const pluginInfo = communityPlugins.find(p => p.id == id);
         if (!pluginInfo) {
@@ -394,8 +394,11 @@ export class ObsidianLauncher {
     }
 
     /**
-     * Downloads a list of plugins.
+     * Downloads a list of plugins to the cache and returns a list of LocalPluginEntry with the downloaded paths.
      * Also adds the `id` property to the plugins based on the manifest.
+     * 
+     * You can download plugins from GitHub using `{repo: "org/repo"}` and community plugins using `{id: 'plugin-id'}`.
+     * Local plugins will just be passed through.
      */
     async downloadPlugins(plugins: PluginEntry[]): Promise<LocalPluginEntryWithId[]> {
         return await Promise.all(
@@ -428,7 +431,7 @@ export class ObsidianLauncher {
     }
 
     /** Gets the latest version of a theme. */
-    async getLatestThemeVersion(repo: string) {
+    private async getLatestThemeVersion(repo: string) {
         repo = normalizeGitHubRepo(repo)
         const manifestUrl = `https://raw.githubusercontent.com/${repo}/HEAD/manifest.json`;
         const cacheDest = path.join(this.cacheDir, "obsidian-themes", repo, "latest.json");
@@ -441,7 +444,7 @@ export class ObsidianLauncher {
      * @param repo Repo
      * @returns path to the downloaded theme
      */
-    async downloadGitHubTheme(repo: string): Promise<string> {
+    private async downloadGitHubTheme(repo: string): Promise<string> {
         repo = normalizeGitHubRepo(repo)
         // Obsidian theme's are just pulled from the repo HEAD, not releases, so we can't really choose a specific 
         // version of a theme.
@@ -476,7 +479,7 @@ export class ObsidianLauncher {
      * @param name name of the theme
      * @returns path to the downloaded theme
      */
-    async downloadCommunityTheme(name: string): Promise<string> {
+    private async downloadCommunityTheme(name: string): Promise<string> {
         const communityThemes = await this.getCommunityThemes();
         const themeInfo = communityThemes.find(p => p.name == name);
         if (!themeInfo) {
@@ -486,8 +489,11 @@ export class ObsidianLauncher {
     }
 
     /**
-     * Downloads a list of themes to the cache.
-     * Also adds the `name` property to the themes based on the manifest.
+     * Downloads a list of themes to the cache and returns a list of LocalThemeEntry with the downloaded paths.
+     * Also adds the `name` property to the plugins based on the manifest.
+     * 
+     * You can download themes from GitHub using `{repo: "org/repo"}` and community themes using `{name: 'theme-name'}`.
+     * Local themes will just be passed through.
      */
     async downloadThemes(themes: ThemeEntry[]): Promise<LocalThemeEntryWithName[]> {
         return await Promise.all(
@@ -744,7 +750,9 @@ export class ObsidianLauncher {
     /**
      * Extract electron and chrome versions for an Obsidian version.
      */
-    async getDependencyVersions(versionInfo: Partial<ObsidianVersionInfo>): Promise<Partial<ObsidianVersionInfo>> {
+    private async getDependencyVersions(
+        versionInfo: Partial<ObsidianVersionInfo>,
+    ): Promise<Partial<ObsidianVersionInfo>> {
         const binary = await this.downloadInstallerFromVersionInfo(versionInfo as ObsidianVersionInfo);
         console.log(`${versionInfo.version!}: Extracting electron & chrome versions...`);
 
