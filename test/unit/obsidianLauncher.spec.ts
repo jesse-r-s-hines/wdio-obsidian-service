@@ -15,12 +15,12 @@ const obsidianLauncherOpts = {
     communityThemesUrl: pathToFileURL("./test/data/community-css-themes.json").toString(),
 }
 
-
 describe("test ObsidianLauncher", () => {
     let launcher: ObsidianLauncher;
 
     before(async () => {
-        let versions = JSON.parse(await fsAsync.readFile(path.resolve("./obsidian-versions.json"), 'utf-8')).versions;
+        const versionsFile = path.resolve("./obsidian-versions.json");
+        let versions = JSON.parse(await fsAsync.readFile(versionsFile, 'utf-8')).versions;
         versions = versions.filter((v: ObsidianVersionInfo) => semver.lte(v.version, "1.8.0"));
 
         // Create constant version of obsidian-versions.json

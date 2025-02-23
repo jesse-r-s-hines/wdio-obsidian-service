@@ -35,7 +35,6 @@ export class ObsidianLauncherService implements Services.ServiceInstance {
         this.helperPluginPath = path.resolve(path.join(fileURLToPath(import.meta.url), '../../helper-plugin'));
     }
 
-
     async onPrepare(config: Options.Testrunner, capabilities: Capabilities.TestrunnerCapabilities) {
         if (!Array.isArray(capabilities)) {
             capabilities = Object.values(capabilities as Capabilities.RequestedMultiremoteCapabilities).map(

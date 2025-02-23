@@ -58,7 +58,7 @@ export async function extractObsidianDmg(dmg: string, dest: string) {
     dest = path.resolve(dest);
 
     await withTmpDir(dest, async (tmpDir) => {
-        let proc = await execFile('hdiutil', ['attach', '-nobrowse', '-readonly', dmg]);
+        const proc = await execFile('hdiutil', ['attach', '-nobrowse', '-readonly', dmg]);
         const volume = proc.stdout.match(/\/Volumes\/.*$/m)![0];
         const obsidianApp = path.join(volume, "Obsidian.app");
         try {
