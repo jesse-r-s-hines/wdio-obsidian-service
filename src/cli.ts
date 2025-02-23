@@ -2,6 +2,7 @@
 import { Command } from 'commander';
 import { ObsidianLauncher } from "./obsidianLauncher.js"
 import { PluginEntry, ThemeEntry } from "./types.js";
+import fsAsync from "fs/promises"
 
 
 function parsePlugins(plugins: string[]): PluginEntry[] {
@@ -108,5 +109,29 @@ program
         console.log(`Installed plugins and themes into ${vault}`)
     })
 
-program.parse();
+program
+    .command("create-versions-list")
+    .description("Collect Obsidian version information into a single file")
+    .addHelpText('after', "\n" +
+        "This command is used to collect Obsidian version information in one place including download links, the " +
+        "minimum installer version, and the internal Electron version for every Obsidian release and beta version. " +
+        "This info is available and kept up to date at https://raw.githubusercontent.com/jesse-r-s-hines/wdio-obsidian-service/HEAD/obsidian-versions.json, " +
+        "but you can use this command to recreate the file manually if you want."
+    )
+    .argument('dest', 'Path to output. If it already exists, it will update the information instead of creating it from scratch.')
+    .option(...cacheOptionArgs)
+    .option('--max-instances <version>', "Number of parallel Obsidian instances to launch when checking Electron versions", "1")
+    .action(async (dest, opts) => {
+        let versionInfos: any;
+        try {
+            versionInfos = JSON.parse(await fsAsync.readFile(dest, "utf-8"))
+        } catch {
+            versionInfos = undefined;
+        }
+        const launcher = new ObsidianLauncher({cacheDir: opts.cache});
+        versionInfos = await launcher.updateObsidianVersionInfos(versionInfos, { maxInstances: 1 });
+        fsAsync.writeFile(dest, JSON.stringify(versionInfos, undefined, 4));
+        console.log(`Wrote updated version information to ${dest}`)
+    })
 
+program.parse();

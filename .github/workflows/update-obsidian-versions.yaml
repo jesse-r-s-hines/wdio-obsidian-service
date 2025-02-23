@@ -60,9 +60,10 @@ jobs:
           node-version: 18
           cache: 'npm'
       - if: ${{ steps.check.outputs.result == 'true' }}
-        run: npm ci
-      - if: ${{ steps.check.outputs.result == 'true' }}
-        run: xvfb-run npx tsx scripts/fetch-obsidian-versions.ts obsidian-versions.json
+        run: |
+          npm ci
+          npm run build
+          xvfb-run npx wdio-obsidian-service create-versions-list obsidian-versions.json
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - if: ${{ steps.check.outputs.result == 'true' }}

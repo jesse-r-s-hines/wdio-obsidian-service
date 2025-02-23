@@ -4,6 +4,7 @@ import { promisify } from "util";
 import child_process from "child_process"
 import which from "which"
 import semver from "semver"
+import _ from "lodash"
 import { withTmpDir } from "./utils.js";
 import { ObsidianVersionInfo } from "./types.js";
 const execFile = promisify(child_process.execFile);
@@ -85,18 +86,19 @@ export function parseObsidianDesktopRelease(fileRelease: any, isBeta: boolean): 
 export function parseObsidianGithubRelease(gitHubRelease: any): Partial<ObsidianVersionInfo> {
     const version = gitHubRelease.name;
     const assets: string[] = gitHubRelease.assets.map((a: any) => a.browser_download_url);
+    const downloads = {
+        appImage: assets.find(u => u.match(`${version}.AppImage$`)),
+        appImageArm: assets.find(u => u.match(`${version}-arm64.AppImage$`)),
+        apk: assets.find(u => u.match(`${version}.apk$`)),
+        asar: assets.find(u => u.match(`${version}.asar.gz$`)),
+        dmg: assets.find(u => u.match(`${version}(-universal)?.dmg$`)),
+        exe: assets.find(u => u.match(`${version}.exe$`)),
+    }
 
     return {
         version: version,
         gitHubRelease: gitHubRelease.html_url,
-        downloads: {
-            appImage: assets.find(u => u.match(`${version}.AppImage$`)),
-            appImageArm: assets.find(u => u.match(`${version}-arm64.AppImage$`)),
-            apk: assets.find(u => u.match(`${version}.apk$`)),
-            asar: assets.find(u => u.match(`${version}.asar.gz$`)),
-            dmg: assets.find(u => u.match(`${version}(-universal)?.dmg$`)),
-            exe: assets.find(u => u.match(`${version}.exe$`)),
-        },
+        downloads: _.pickBy(downloads, x => x !== undefined),
     }
 }
 
