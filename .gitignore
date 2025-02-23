@@ -1,4 +1,4 @@
-.wdio-cache
+.obsidian-cache
 
 # Ignore test-related files
 /coverage.data

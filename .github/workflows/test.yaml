@@ -24,12 +24,12 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
 
-      - name: Cache .wdio-cache
+      - name: Cache .obsidian-cache
         uses: actions/cache@v4
         with:
-          path: .wdio-cache
-          key: wdio-cache-${{matrix.os}}-${{ hashFiles('./obsidian-versions.json') }}
-          restore-keys: wdio-cache-${{matrix.os}}-
+          path: .obsidian-cache
+          key: obsidian-cache-${{matrix.os}}-${{ hashFiles('./obsidian-versions.json') }}
+          restore-keys: obsidian-cache-${{matrix.os}}-
 
       - name: Build
         run: |

@@ -14,7 +14,7 @@ const allVersions: ObsidianVersionInfo[] = JSON.parse(
     await fsAsync.readFile("./obsidian-versions.json", 'utf-8')
 ).versions;
 const minInstallerVersion = allVersions.find(v => v.version == minAppVersion)!.minInstallerVersion;
-const cacheDir = path.resolve(".wdio-cache");
+const cacheDir = path.resolve(".obsidian-cache");
 const obsidianServiceOptions = {
     versionsUrl: pathToFileURL("./obsidian-versions.json").toString(),
 }
