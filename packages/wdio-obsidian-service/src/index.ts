@@ -1,20 +1,15 @@
-import { ObsidianLauncher } from "./obsidianLauncher.js"
+import ObsidianLauncher from "obsidian-launcher"
 import { ObsidianLauncherService, ObsidianWorkerService } from "./service.js";
-import type {
-    ObsidianServiceOptions, ObsidianCapabilityOptions,
-    ObsidianCommunityPlugin, ObsidianCommunityTheme,
-    LocalPluginEntry, GitHubPluginEntry, CommunityPluginEntry, PluginEntry,
-    LocalThemeEntry, GitHubThemeEntry, CommunityThemeEntry, ThemeEntry,
-} from "./types.js";
-
 
 export default ObsidianWorkerService;
 export const launcher = ObsidianLauncherService;
+
+export type { ObsidianServiceOptions, ObsidianCapabilityOptions } from "./types.js";
+
 export type {
-    ObsidianServiceOptions, ObsidianCapabilityOptions, ObsidianCommunityPlugin, ObsidianCommunityTheme,
     LocalPluginEntry, GitHubPluginEntry, CommunityPluginEntry, PluginEntry,
     LocalThemeEntry, GitHubThemeEntry, CommunityThemeEntry, ThemeEntry,
-}
+} from "obsidian-launcher"
 
 /**
  * Returns true if we either have the credentails to download the latest Obsidian beta or it's already in cache.

@@ -4,13 +4,11 @@ import { SevereServiceError } from 'webdriverio'
 import type { Capabilities, Options, Services } from '@wdio/types'
 import logger from '@wdio/logger'
 import { fileURLToPath } from "url"
-import { ObsidianLauncher } from "./obsidianLauncher.js"
+import ObsidianLauncher, { LocalPluginEntryWithId, LocalThemeEntryWithName } from "obsidian-launcher"
 import browserCommands from "./browserCommands.js"
-import {
-    ObsidianCapabilityOptions, ObsidianServiceOptions, OBSIDIAN_CAPABILITY_KEY,
-    LocalPluginEntry, LocalPluginEntryWithId, LocalThemeEntry, LocalThemeEntryWithName,
-} from "./types.js"
+import { ObsidianCapabilityOptions, ObsidianServiceOptions, OBSIDIAN_CAPABILITY_KEY } from "./types.js"
 import _ from "lodash"
+
 
 const log = logger("wdio-obsidian-service");
 
@@ -156,8 +154,8 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
             appVersion: obsidianOptions.appVersion!, installerVersion: obsidianOptions.installerVersion!,
             appPath: obsidianOptions.appPath!,
             vault: vault,
-            plugins: obsidianOptions.plugins as LocalPluginEntry[],
-            themes: obsidianOptions.themes as LocalThemeEntry[],
+            plugins: obsidianOptions.plugins,
+            themes: obsidianOptions.themes,
         });
         this.tmpDirs.push(configDir);
 

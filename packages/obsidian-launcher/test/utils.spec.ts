@@ -2,8 +2,8 @@ import { describe, it } from "mocha";
 import { expect } from "chai";
 import fsAsync from "fs/promises";
 import path from "path"
-import { createDirectory } from "../helpers.js";
-import { fileExists, withTmpDir, linkOrCp, sleep, withTimeout, pool, maybe } from "../../src/utils.js";
+import { createDirectory } from "./helpers.js";
+import { fileExists, withTmpDir, linkOrCp, sleep, withTimeout, pool, maybe } from "../src/utils.js";
 
 
 describe("fileExists", () => {
@@ -145,7 +145,6 @@ describe("pool", () => {
         expect(result).to.be.instanceOf(Error);
     });
 });
-
 
 describe("maybe", () => {
     it("success", async () => {

@@ -1,8 +1,8 @@
 import { describe, it } from "mocha";
 import { expect } from "chai";
-import { fileExists } from "../../src/utils.js";
-import { createDirectory } from "../helpers.js"
-import ChromeLocalStorage from "../../src/chromeLocalStorage.js";
+import { fileExists } from "../src/utils.js";
+import { createDirectory } from "./helpers.js"
+import ChromeLocalStorage from "../src/chromeLocalStorage.js";
 
 
 describe("ChromeLocalStorage", () => {

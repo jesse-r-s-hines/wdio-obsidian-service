@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    /* Visit https://aka.ms/tsconfig to read more about this file */
+    "target": "es2020",
+    "lib": ["es2020", "dom"],
+    "module": "node16",
+    "moduleResolution": "node16",
+    "types": ["node", "@wdio/globals/types"],
+    "outDir": "dist",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "skipLibCheck": true
+  }
+}

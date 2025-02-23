@@ -1,9 +1,9 @@
 import { describe, it } from "mocha";
 import { expect } from "chai";
-import { parseLinkHeader, fetchWithFileUrl } from "../../src/apis.js";
+import { parseLinkHeader, fetchWithFileUrl } from "../src/apis.js";
 import path from "path"
 import { pathToFileURL } from "url";
-import { createDirectory } from "../helpers.js";
+import { createDirectory } from "./helpers.js";
 
 
 describe("parseLinkHeader", () => {
@@ -52,7 +52,6 @@ describe("parseLinkHeader", () => {
         })
     })
 })
-
 
 describe("fetchWithFileUrl", () => {
     it("Fetch a file url", async () => {

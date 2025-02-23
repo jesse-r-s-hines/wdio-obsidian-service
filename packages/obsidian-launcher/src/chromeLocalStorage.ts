@@ -1,6 +1,7 @@
 import path from "path"
 import { ClassicLevel } from "classic-level"
 
+
 /**
  * Class to directly manipulate chrome/electron local storage.
  *

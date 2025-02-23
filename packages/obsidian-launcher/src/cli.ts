@@ -1,6 +1,6 @@
 #!/bin/env node
 import { Command } from 'commander';
-import { ObsidianLauncher } from "./obsidianLauncher.js"
+import { ObsidianLauncher } from "./launcher.js"
 import { PluginEntry, ThemeEntry } from "./types.js";
 import fsAsync from "fs/promises"
 
@@ -47,7 +47,7 @@ const themeOptionArgs = [
 ] as const
 
 
-const program = new Command("wdio-obsidian-service");
+const program = new Command("obsidian-launcher");
 
 program
     .command("download")

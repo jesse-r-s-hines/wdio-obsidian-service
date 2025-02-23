@@ -15,7 +15,6 @@ type ExecuteObsidianArg = {
     obsidian: typeof obsidian,
 }
 
-
 const browserCommands = {
     /** Returns the Obsidian version this test is running under. */
     async getObsidianVersion(this: WebdriverIO.Browser): Promise<string> {
