@@ -9,9 +9,6 @@
         "dist",
         "helper-plugin"
     ],
-    "bin": {
-        "wdio-obsidian-service": "dist/cli.js"
-    },
     "scripts": {
         "build": "tsup",
         "lint": "eslint src test",
