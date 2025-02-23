@@ -72,7 +72,7 @@ describe("test ObsidianLauncher", () => {
         const communityPlugins = await fsAsync.readFile(`${vault}/.obsidian/community-plugins.json`, 'utf-8');
         expect(JSON.parse(communityPlugins)).to.eql(["sample-plugin"]);
         const pluginFiles = await fsAsync.readdir(`${vault}/.obsidian/plugins/sample-plugin`);
-        expect(pluginFiles.sort()).to.eql(["main.js", "manifest.json"]);
+        expect(pluginFiles.sort()).to.eql([".hotreload", "main.js", "manifest.json"]);
     })
     
     it("installPlugins multiple plugins and existing community-plugins.json", async () => {
@@ -100,10 +100,10 @@ describe("test ObsidianLauncher", () => {
         expect(JSON.parse(communityPlugins)).to.eql(["dataview", "plugin-b", "plugin-a"]);
         
         const pluginAFiles = await fsAsync.readdir(`${vault}/.obsidian/plugins/plugin-a`);
-        expect(pluginAFiles.sort()).to.eql(["main.js", "manifest.json"]);
+        expect(pluginAFiles.sort()).to.eql([".hotreload", "main.js", "manifest.json"]);
 
         const pluginBFiles = await fsAsync.readdir(`${vault}/.obsidian/plugins/plugin-b`);
-        expect(pluginBFiles.sort()).to.eql(["data.json", "main.js", "manifest.json", "styles.css"]);
+        expect(pluginBFiles.sort()).to.eql([".hotreload", "data.json", "main.js", "manifest.json", "styles.css"]);
     })
 
     it("installPlugins disabled plugins", async () => {
@@ -131,10 +131,10 @@ describe("test ObsidianLauncher", () => {
         expect(JSON.parse(communityPlugins)).to.eql(["dataview"]);
         
         const pluginAFiles = await fsAsync.readdir(`${vault}/.obsidian/plugins/plugin-a`);
-        expect(pluginAFiles.sort()).to.eql(["main.js", "manifest.json"]);
+        expect(pluginAFiles.sort()).to.eql([".hotreload", "main.js", "manifest.json"]);
 
         const pluginBFiles = await fsAsync.readdir(`${vault}/.obsidian/plugins/plugin-b`);
-        expect(pluginBFiles.sort()).to.eql(["data.json", "main.js", "manifest.json", "styles.css"]);
+        expect(pluginBFiles.sort()).to.eql([".hotreload", "data.json", "main.js", "manifest.json", "styles.css"]);
     })
     
     it("installPlugins overwrites plugins", async () => {
@@ -155,7 +155,7 @@ describe("test ObsidianLauncher", () => {
         expect(JSON.parse(communityPlugins)).to.eql(["dataview", "plugin-b", "plugin-a"]);
         
         const pluginAFiles = await fsAsync.readdir(`${vault}/.obsidian/plugins/plugin-a`);
-        expect(pluginAFiles.sort()).to.eql(["main.js", "manifest.json"]); // deletes foo.json
+        expect(pluginAFiles.sort()).to.eql([".hotreload", "main.js", "manifest.json"]); // deletes foo.json
     })
 
     it("installThemes no themes", async () => {

@@ -559,7 +559,7 @@ export class ObsidianLauncher {
         }
         let enabledPlugins = [...originalEnabledPlugins];
 
-        for (const {path: pluginPath, enabled = true} of downloadedPlugins) {
+        for (const {path: pluginPath, enabled = true, originalType} of downloadedPlugins) {
             const manifestPath = path.join(pluginPath, 'manifest.json');
             const pluginId = JSON.parse(await fsAsync.readFile(manifestPath, 'utf8').catch(() => "{}")).id;
             if (!pluginId) {
@@ -587,6 +587,11 @@ export class ObsidianLauncher {
                 enabledPlugins.push(pluginId)
             } else if (!enabled && pluginAlreadyListed) {
                 enabledPlugins = enabledPlugins.filter(p => p != pluginId);
+            }
+
+            if (originalType == "local") {
+                // Add a .hotreload file for the https://github.com/pjeby/hot-reload plugin
+                await fsAsync.writeFile(path.join(pluginDest, '.hotreload'), '');
             }
         }
 
