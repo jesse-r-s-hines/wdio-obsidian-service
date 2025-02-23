@@ -14,7 +14,7 @@ import CDP from 'chrome-remote-interface'
 import { fileExists, withTmpDir, linkOrCp, maybe, pool, withTimeout, sleep } from "./utils.js";
 import {
     ObsidianVersionInfo, ObsidianCommunityPlugin, ObsidianCommunityTheme,
-    PluginEntry, LocalPluginEntryWithId, ThemeEntry, LocalThemeEntryWithName,
+    PluginEntry, DownloadedPluginEntry, ThemeEntry, DownloadedThemeEntry,
     ObsidianVersionInfos,
 } from "./types.js";
 import { fetchObsidianAPI, fetchGitHubAPIPaginated, fetchWithFileUrl } from "./apis.js";
@@ -401,18 +401,26 @@ export class ObsidianLauncher {
      * You can download plugins from GitHub using `{repo: "org/repo"}` and community plugins using `{id: 'plugin-id'}`.
      * Local plugins will just be passed through.
      */
-    async downloadPlugins(plugins: PluginEntry[]): Promise<LocalPluginEntryWithId[]> {
+    async downloadPlugins(plugins: PluginEntry[]): Promise<DownloadedPluginEntry[]> {
         return await Promise.all(
             plugins.map(async (plugin) => {
+                if (typeof plugin == "object" && "originalType" in plugin) {
+                    return {...plugin as DownloadedPluginEntry}
+                }
                 let pluginPath: string
+                let originalType: "local"|"github"|"community"
                 if (typeof plugin == "string") {
                     pluginPath = plugin;
+                    originalType = "local";
                 } else if ("path" in plugin) {;
                     pluginPath = plugin.path;
+                    originalType = "local";
                 } else if ("repo" in plugin) {
                     pluginPath = await this.downloadGitHubPlugin(plugin.repo, plugin.version);
+                    originalType = "github";
                 } else if ("id" in plugin) {
                     pluginPath = await this.downloadCommunityPlugin(plugin.id, plugin.version);
+                    originalType = "community";
                 } else {
                     throw Error("You must specify one of plugin path, repo, or id")
                 }
@@ -426,7 +434,7 @@ export class ObsidianLauncher {
                     }
                 }
                 const enabled = typeof plugin == "string" ? true : plugin.enabled;
-                return {path: pluginPath, id: pluginId, enabled: enabled}
+                return {path: pluginPath, id: pluginId, enabled, originalType}
             })
         );
     }
@@ -496,18 +504,26 @@ export class ObsidianLauncher {
      * You can download themes from GitHub using `{repo: "org/repo"}` and community themes using `{name: 'theme-name'}`.
      * Local themes will just be passed through.
      */
-    async downloadThemes(themes: ThemeEntry[]): Promise<LocalThemeEntryWithName[]> {
+    async downloadThemes(themes: ThemeEntry[]): Promise<DownloadedThemeEntry[]> {
         return await Promise.all(
             themes.map(async (theme) => {
+                if (typeof theme == "object" && "originalType" in theme) {
+                    return {...theme as DownloadedThemeEntry}
+                }
                 let themePath: string
+                let originalType: "local"|"github"|"community"
                 if (typeof theme == "string") {
                     themePath = theme;
+                    originalType = "local";
                 } else if ("path" in theme) {;
                     themePath = theme.path;
+                    originalType = "local";
                 } else if ("repo" in theme) {
                     themePath = await this.downloadGitHubTheme(theme.repo);
+                    originalType = "github";
                 } else if ("name" in theme) {
                     themePath = await this.downloadCommunityTheme(theme.name);
+                    originalType = "community";
                 } else {
                     throw Error("You must specify one of theme path, repo, or name")
                 }
@@ -520,7 +536,7 @@ export class ObsidianLauncher {
                     }
                 }
                 const enabled = typeof theme == "string" ? true : theme.enabled;
-                return {path: themePath, name: themeName, enabled: enabled}
+                return {path: themePath, name: themeName, enabled: enabled, originalType};
             })
         );
     }

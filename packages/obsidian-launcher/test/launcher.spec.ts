@@ -200,6 +200,42 @@ describe("test ObsidianLauncher", () => {
         });
     })
 
+    it("downloadPlugins", async () => {
+        const plugin = await createDirectory({
+            "manifest.json": '{"id": "plugin-a"}',
+            "main.js": "console.log('foo')",
+        });
+        const downloaded = await launcher.downloadPlugins([plugin]);
+        expect(downloaded[0]).to.eql({
+            path: plugin,
+            id: "plugin-a",
+            enabled: true,
+            originalType: "local",
+        });
+
+        const reDownloaded = await launcher.downloadPlugins(downloaded);
+        // Shouldn't reset the originalType if called twice
+        expect(reDownloaded[0]).to.eql(downloaded[0]);
+    })
+
+    it("downloadThemes", async () => {
+        const theme = await createDirectory({
+            "manifest.json": '{"name": "sample-theme"}',
+            "theme.css": ".foobar {}",
+        });
+        const downloaded = await launcher.downloadThemes([theme]);
+        expect(downloaded[0]).to.eql({
+            path: theme,
+            name: "sample-theme",
+            enabled: true,
+            originalType: "local",
+        });
+
+        const reDownloaded = await launcher.downloadThemes(downloaded);
+        // Shouldn't reset the originalType if called twice
+        expect(reDownloaded[0]).to.eql(downloaded[0]);
+    })
+
     const resolveVersionsTests = [
         [["latest", "latest"], ["1.7.7", "1.7.7"]],
         [["latest", "earliest"], ["1.7.7", "1.1.9"]],

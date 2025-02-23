@@ -4,6 +4,6 @@ export { ObsidianLauncher };
 export default ObsidianLauncher;
 export type {
     ObsidianVersionInfos, ObsidianVersionInfo, ObsidianCommunityPlugin, ObsidianCommunityTheme,
-    LocalPluginEntry, LocalPluginEntryWithId, GitHubPluginEntry, CommunityPluginEntry, PluginEntry,
-    LocalThemeEntry, LocalThemeEntryWithName, GitHubThemeEntry, CommunityThemeEntry, ThemeEntry,
+    LocalPluginEntry, GitHubPluginEntry, CommunityPluginEntry, PluginEntry, DownloadedPluginEntry,
+    LocalThemeEntry, GitHubThemeEntry, CommunityThemeEntry, ThemeEntry, DownloadedThemeEntry,
 } from "./types.js";
