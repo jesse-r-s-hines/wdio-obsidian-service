@@ -273,16 +273,3 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
         }
     }
 }
-
-
-/**
- * Returns true if we either have the credentails to download the latest Obsidian beta or it's already in cache.
- */
-export async function obsidianBetaAvailable(cacheDir: string) {
-    const hasCreds = !!(process.env['OBSIDIAN_USERNAME'] && process.env['OBSIDIAN_PASSWORD']);
-    const launcher = new ObsidianLauncher({cacheDir: cacheDir});
-    const latest = (await launcher.resolveVersions("latest"))[0];
-    const latestBeta = (await launcher.resolveVersions("latest-beta"))[0];
-    const betaInCache = await launcher.isInCache('app', 'latest-beta');
-    return (hasCreds || latest == latestBeta || betaInCache);
-}

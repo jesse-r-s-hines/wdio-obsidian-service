@@ -913,4 +913,19 @@ export default class ObsidianLauncher {
 
         return (await fileExists(path.join(this.cacheDir, dest)));
     }
+
+    /**
+     * Returns true if we either have the credentails to download the version or it's already in cache.
+     * This is only relevant for Obsidian beta versions, as they require Obsidian insider credentials to download.
+     */
+    async isAvailable(version: string): Promise<boolean> {
+        const versionInfo = await this.getVersionInfo(version);
+        if (versionInfo.isBeta) {
+            const hasCreds = !!(process.env['OBSIDIAN_USERNAME'] && process.env['OBSIDIAN_PASSWORD']);
+            const inCache = await this.isInCache('app', versionInfo.version);
+            return hasCreds || inCache;
+        } else {
+            return !!versionInfo.downloads.asar;
+        }
+    }
 }
