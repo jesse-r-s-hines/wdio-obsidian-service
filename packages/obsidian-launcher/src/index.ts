@@ -1,5 +1,6 @@
 import { ObsidianLauncher } from "./launcher.js"
 
+export { ObsidianLauncher };
 export default ObsidianLauncher;
 export type {
     ObsidianVersionInfos, ObsidianVersionInfo, ObsidianCommunityPlugin, ObsidianCommunityTheme,
