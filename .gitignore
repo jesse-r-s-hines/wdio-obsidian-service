@@ -1,4 +1,6 @@
 .obsidian-cache
+# Ignore the generated docs
+docs
 
 # Ignore test-related files
 /coverage.data
