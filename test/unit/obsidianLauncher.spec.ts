@@ -5,7 +5,7 @@ import fsAsync from "fs/promises"
 import { pathToFileURL } from "url";
 import semver from "semver";
 import { createDirectory } from "../helpers.js"
-import ObsidianLauncher from "../../src/obsidianLauncher.js";
+import { ObsidianLauncher } from "../../src/obsidianLauncher.js";
 import { fileExists } from "../../src/utils.js";
 import { ObsidianVersionInfo } from "../../src/types.js";
 

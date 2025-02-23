@@ -4,7 +4,7 @@ import { SevereServiceError } from 'webdriverio'
 import type { Capabilities, Options, Services } from '@wdio/types'
 import logger from '@wdio/logger'
 import { fileURLToPath } from "url"
-import ObsidianLauncher from "./obsidianLauncher.js"
+import { ObsidianLauncher } from "./obsidianLauncher.js"
 import browserCommands from "./browserCommands.js"
 import {
     ObsidianCapabilityOptions, ObsidianServiceOptions, OBSIDIAN_CAPABILITY_KEY,

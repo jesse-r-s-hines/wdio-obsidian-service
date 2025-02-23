@@ -5,7 +5,7 @@
 
 import fsAsync from "fs/promises"
 import { ObsidianVersionInfos } from "../src/types.js"
-import ObsidianLauncher from "../src/obsidianLauncher.js";
+import { ObsidianLauncher } from "../src/obsidianLauncher.js";
 
 
 const dest = process.argv[2];

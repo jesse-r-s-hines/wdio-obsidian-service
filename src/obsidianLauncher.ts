@@ -28,7 +28,7 @@ import _ from "lodash"
 /**
  * Handles downloading Obsidian versions, plugins, and themes and launching obsidian with sandboxed configuration.
  */
-export default class ObsidianLauncher {
+export class ObsidianLauncher {
     readonly cacheDir: string
 
     readonly versionsUrl: string

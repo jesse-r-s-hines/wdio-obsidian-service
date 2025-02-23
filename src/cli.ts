@@ -1,6 +1,6 @@
 #!/bin/env node
 import { Command } from 'commander';
-import ObsidianLauncher from "./obsidianLauncher.js"
+import { ObsidianLauncher } from "./obsidianLauncher.js"
 import { PluginEntry, ThemeEntry } from "./types.js";
 
 
