@@ -12,4 +12,5 @@ export default defineConfig({
     env: {
         npm_package_version: packageJson.version,
     },
+    minify: false,
 });
