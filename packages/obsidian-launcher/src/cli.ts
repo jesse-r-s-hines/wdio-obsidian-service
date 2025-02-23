@@ -74,17 +74,14 @@ program
     .option(...pluginOptionArgs)
     .option(...themeOptionArgs)
     .option('--copy', "Copy the vault first.")
-    .action(async (vault, opts) => {
+    .action(async (vault: string, opts) => {
         const launcher = new ObsidianLauncher({cacheDir: opts.cache});
-
-        if (vault && opts.copy) {
-            vault = await launcher.copyVault(vault);
-        }
-    
-        const [proc, _configDir] = await launcher.launch({
+        const {proc, configDir, vault: vaultCopy} = await launcher.launch({
             appVersion: opts.version, installerVersion: opts.installerVersion,
             vault: vault,
-            plugins: parsePlugins(opts.plugin), themes: parseThemes(opts.theme),
+            copy: opts.copy ?? false,
+            plugins: parsePlugins(opts.plugin),
+            themes: parseThemes(opts.theme),
             spawnOptions: {
                 detached: true,
                 stdio: 'ignore',

@@ -144,7 +144,12 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
         let vault = obsidianOptions.vault;
         if (vault != undefined) {
             log.info(`Opening vault ${obsidianOptions.vault}`);
-            vault = await this.obsidianLauncher.copyVault(vault);
+            vault = await this.obsidianLauncher.setupVault({
+                vault,
+                copy: true,
+                plugins: obsidianOptions.plugins,
+                themes: obsidianOptions.themes,
+            });
             this.tmpDirs.push(vault);
         } else {
             log.info(`Opening Obsidian without a vault`)
@@ -154,8 +159,6 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
             appVersion: obsidianOptions.appVersion!, installerVersion: obsidianOptions.installerVersion!,
             appPath: obsidianOptions.appPath!,
             vault: vault,
-            plugins: obsidianOptions.plugins,
-            themes: obsidianOptions.themes,
         });
         this.tmpDirs.push(configDir);
 

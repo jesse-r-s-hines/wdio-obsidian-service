@@ -3,6 +3,7 @@ import fs from "fs"
 import zlib from "zlib"
 import path from "path"
 import os from "os";
+import crypto from "crypto";
 import fetch from "node-fetch"
 import extractZip from "extract-zip"
 import { pipeline } from "stream/promises";
@@ -635,15 +636,12 @@ export class ObsidianLauncher {
      * @param installerVersion Obsidian version string.
      * @param appPath Path to the asar file to install.
      * @param vault Path to the vault to open in Obsidian.
-     * @param plugins List of plugins to install in the vault.
-     * @param themes List of themes to install in the vault.
      * @param dest Destination path for the config dir. If omitted it will create it under `/tmp`.
      */
     async setupConfigDir(params: {
         appVersion: string, installerVersion: string,
         appPath?: string,
         vault?: string,
-        plugins?: PluginEntry[], themes?: ThemeEntry[],
         dest?: string,
     }): Promise<string> {
         const [appVersion, installerVersion] = await this.resolveVersions(params.appVersion, params.installerVersion);
@@ -659,10 +657,7 @@ export class ObsidianLauncher {
         }
 
         if (params.vault !== undefined) {
-            await this.installPlugins(params.vault, params.plugins ?? []);
-            await this.installThemes(params.vault, params.themes ?? []);
-
-            const vaultId = "1234567890abcdef";
+            const vaultId = crypto.randomBytes(8).toString("hex");
             obsidianJson = {
                 ...obsidianJson,
                 vaults: {
@@ -693,47 +688,69 @@ export class ObsidianLauncher {
     }
 
     /**
-     * Copies a vault to a temporary directory.
-     * @returns Path to the created tmpDir.
+     * Sets up a vault for Obsidian, installing plugins and themes and optionally copying the vault to a temporary
+     * directory first.
+     * @param vault Path to the vault to open in Obsidian.
+     * @param copy Whether to copy the vault to a tmpdir first. Default false.
+     * @param plugins List of plugins to install in the vault.
+     * @param themes List of themes to install in the vault.
+     * @returns Path to the copied vault (or just the path to the vault if copy is false)
      */
-    async copyVault(src: string) {
-        const dest = await fsAsync.mkdtemp(path.join(os.tmpdir(), 'obs-launcher-vault-'));
-        await fsAsync.cp(src, dest, { recursive: true });
-        return dest;
+    async setupVault(params: {
+        vault: string,
+        copy?: boolean,
+        plugins?: PluginEntry[], themes?: ThemeEntry[],
+    }): Promise<string> {
+        let vault = params.vault;
+        if (params.copy) {
+            const dest = await fsAsync.mkdtemp(path.join(os.tmpdir(), 'obs-launcher-vault-'));
+            await fsAsync.cp(vault, dest, { recursive: true });
+            vault = dest;
+        }
+        await this.installPlugins(vault, params.plugins ?? []);
+        await this.installThemes(vault, params.themes ?? []);
+
+        return vault;
     }
 
     /**
-     * Downloads and launches Obsidian with a sandboxed config dir. Optionally open a specific vault and install plugins
+     * Downloads and launches Obsidian with a sandboxed config dir and a specifc vault open. Optionally install plugins
      * and themes first.
+     * 
+     * This is just a shortcut for calling downloadApp, downloadInstaller, setupVault and setupConfDir.
      *
      * @param appVersion Obsidian version string.
      * @param installerVersion Obsidian version string.
      * @param vault Path to the vault to open in Obsidian.
+     * @param copy Whether to copy the vault to a tmpdir first. Default false.
      * @param plugins List of plugins to install in the vault.
      * @param themes List of themes to install in the vault.
-     * @param dest Destination path for the config dir. If omitted it will create it under `/tmp`.
      * @param args CLI args to pass to Obsidian
      * @param spawnOptions Options to pass to `spawn`.
-     * @returns The launched child process and the created config dir.
+     * @returns The launched child process and the created tmpdirs.
      */
     async launch(params: {
         appVersion: string, installerVersion: string,
+        copy?: boolean,
         vault?: string,
         plugins?: PluginEntry[], themes?: ThemeEntry[],
-        dest?: string,
         args?: string[],
         spawnOptions?: child_process.SpawnOptions,
-    }): Promise<[child_process.ChildProcess, string]> {
+    }): Promise<{proc: child_process.ChildProcess, configDir: string, vault?: string}> {
         const [appVersion, installerVersion] = await this.resolveVersions(params.appVersion, params.installerVersion);
         const appPath = await this.downloadApp(appVersion);
         const installerPath = await this.downloadInstaller(installerVersion);
 
-        const configDir = await this.setupConfigDir({
-            appVersion: appVersion, installerVersion: installerVersion,
-            appPath: appPath,
-            vault: params.vault,
-            plugins: params.plugins, themes: params.themes,
-        });
+        let vault = params.vault;
+        if (vault) {
+            vault = await this.setupVault({
+                vault,
+                copy: params.copy ?? false,
+                plugins: params.plugins, themes: params.themes,
+            })
+        }
+
+        const configDir = await this.setupConfigDir({ appVersion, installerVersion, appPath, vault });
 
         // Spawn child.
         const proc = child_process.spawn(installerPath, [
@@ -743,7 +760,7 @@ export class ObsidianLauncher {
             ...params.spawnOptions,
         });
 
-        return [proc, configDir];
+        return {proc, configDir, vault};
     }
 
 

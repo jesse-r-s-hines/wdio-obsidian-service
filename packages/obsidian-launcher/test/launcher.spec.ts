@@ -230,8 +230,6 @@ describe("test ObsidianLauncher", () => {
     it(`setupConfigDir basic`, async () => {
         const tmpDir = await createDirectory({
             "obsidian-1.7.7.asar": "stuff",
-            "my-plugin/manifest.json": '{"id": "plugin-a"}',
-            "my-plugin/main.js": "console.log('foo')",
             "my-vault/A.md": "This is a file",
         });
         const vault = path.join(tmpDir, "my-vault");
@@ -240,28 +238,22 @@ describe("test ObsidianLauncher", () => {
             appVersion: "1.7.7", installerVersion: "1.7.7",
             appPath: `${tmpDir}/obsidian-1.7.7.asar`,
             vault: vault,
-            plugins: [{path: `${tmpDir}/my-plugin`, enabled: true}],
         })
         after(() => { fsAsync.rm(configDir, { recursive: true, force: true}) });
 
         expect(await fileExists(`${configDir}/obsidian-1.7.7.asar`)).to.eql(true);
         const obsidianJson = JSON.parse(await fsAsync.readFile(`${configDir}/obsidian.json`, 'utf-8'));
         expect(Object.keys(obsidianJson.vaults).length).to.eql(1);
-
-        expect(await fsAsync.readdir(path.join(vault, ".obsidian/plugins"))).to.eql(['plugin-a']);
     })
 
     it(`setupConfig no vault`, async () => {
         const tmpDir = await createDirectory({
             "obsidian-1.7.7.asar": "stuff",
-            "my-plugin/manifest.json": '{"id": "plugin-a"}',
-            "my-plugin/main.js": "console.log('foo')",
         });
 
         const configDir = await launcher.setupConfigDir({
             appVersion: "1.7.7", installerVersion: "1.7.7",
             appPath: `${tmpDir}/obsidian-1.7.7.asar`,
-            plugins: [{path: `${tmpDir}/my-plugin`, enabled: true}],
         })
         after(() => { fsAsync.rm(configDir, { recursive: true, force: true}) });
 
@@ -270,14 +262,33 @@ describe("test ObsidianLauncher", () => {
         expect(obsidianJson).to.not.have.key("vaults");
     })
 
-    it('copyVault', async () => {
-        const vault = await createDirectory({
-            "A.md": "A",
-            "B.md": "B",
+    it(`setupVault basic`, async () => {
+        const tmpDir = await createDirectory({
+            "my-plugin/manifest.json": '{"id": "plugin-a"}',
+            "my-plugin/main.js": "console.log('foo')",
+            "my-vault/A.md": "This is a file",
         });
-        const vaultCopy = await launcher.copyVault(vault);
+        const vault = path.join(tmpDir, "my-vault");
+
+        const vaultCopy = await launcher.setupVault({
+            vault: vault,
+            copy: true,
+            plugins: [{path: `${tmpDir}/my-plugin`, enabled: true}],
+        })
         after(() => { fsAsync.rm(vaultCopy, { recursive: true, force: true}) });
 
-        expect((await fsAsync.readdir(vaultCopy)).sort()).to.eql(['A.md', 'B.md']);
+        expect(vaultCopy).to.not.eql(vault);
+        expect((await fsAsync.readdir(vaultCopy)).sort()).to.eql(['.obsidian', 'A.md']);
+        expect(await fsAsync.readdir(path.join(vaultCopy, ".obsidian/plugins"))).to.eql(['plugin-a']);
+        expect((await fsAsync.readdir(vault)).sort()).to.eql(['A.md']);
+
+        const noVaultCopy = await launcher.setupVault({
+            vault: vault,
+            copy: false,
+            plugins: [{path: `${tmpDir}/my-plugin`, enabled: true}],
+        })
+        expect(noVaultCopy).to.eql(vault);
+        expect((await fsAsync.readdir(vault)).sort()).to.eql(['.obsidian', 'A.md']);
+        expect(await fsAsync.readdir(path.join(vault, ".obsidian/plugins"))).to.eql(['plugin-a']);
     })
 })
