@@ -1,8 +1,11 @@
 #!/bin/env node
 import { Command } from 'commander';
+import _ from "lodash";
 import { ObsidianLauncher } from "./launcher.js"
 import { PluginEntry, ThemeEntry } from "./types.js";
-import fsAsync from "fs/promises"
+import fs from "fs";
+import path from "path"
+import fsAsync from "fs/promises";
 
 
 function parsePlugins(plugins: string[]): PluginEntry[] {
@@ -64,6 +67,21 @@ program
         console.log(`Downloaded Obsidian app to ${appPath}`)
     })
 
+function watchFiles(
+    files: string[],
+    func: (curr: fs.Stats, prev: fs.Stats) => void,
+    options: { interval: number, persistent: boolean, debounce: number },
+) {
+    const debouncedFunc = _.debounce((curr: fs.Stats, prev: fs.Stats) => {
+        if (curr.mtimeMs > prev.mtimeMs || (curr.mtimeMs == 0 && prev.mtimeMs != 0)) {
+            func(curr, prev)
+        }
+    }, options.debounce);
+    for (const file of files) {
+        fs.watchFile(file, {interval: options.interval, persistent: options.persistent}, debouncedFunc);
+    }
+}
+
 program
     .command("launch")
     .description("Download and launch Obsidian")
@@ -74,22 +92,87 @@ program
     .option(...pluginOptionArgs)
     .option(...themeOptionArgs)
     .option('--copy', "Copy the vault first.")
+    .option('--watch', "Watches for changes to plugins and themes. Automatically adds the 'pjeby/hot-reload' plugin.")
     .action(async (vault: string, opts) => {
         const launcher = new ObsidianLauncher({cacheDir: opts.cache});
-        const {proc, configDir, vault: vaultCopy} = await launcher.launch({
+        // Normalize the plugins and themes
+        const plugins = await launcher.downloadPlugins(parsePlugins(opts.plugin));
+        const themes = await launcher.downloadThemes(parseThemes(opts.theme));
+        const launchArgs = {
             appVersion: opts.version, installerVersion: opts.installerVersion,
             vault: vault,
             copy: opts.copy ?? false,
-            plugins: parsePlugins(opts.plugin),
-            themes: parseThemes(opts.theme),
-            spawnOptions: {
-                detached: true,
-                stdio: 'ignore',
-            }
-        })
-        proc.unref() // Allow node to exit and leave proc running
+            plugins: plugins,
+            themes: themes,
+        } as const
 
-        console.log(`Launched obsidian ${opts.version}`)
+        if (opts.watch) {
+            const {proc, configDir, vault: vaultCopy} = await launcher.launch({
+                ...launchArgs,
+                plugins: [...plugins, {repo: "pjeby/hot-reload"}],
+                spawnOptions: {
+                    detached: false,
+                    stdio: "overlapped",
+                }
+            })
+            const procExit = new Promise<number>((resolve) => proc.on('exit', (code) => resolve(code ?? -1)));
+
+            for (const plugin of plugins) {
+                if (plugin.originalType == "local") {
+                    watchFiles(
+                        ["manifest.json", "main.js", "styles.css", "data.json"].map(f => path.join(plugin.path, f)),
+                        async () => {
+                            console.log(`Detected change to "${plugin.id}"`);
+                            try {
+                                await launcher.installPlugins(vaultCopy!, [plugin]);
+                            } catch (e) {
+                                console.error(`Failed to update plugin "${plugin.id}": ${e}`)
+                            }
+                        },
+                        {interval: 500, persistent: false, debounce: 1000},
+                    )
+                }
+            }
+            for (const theme of themes) {
+                if (theme.originalType == "local") {
+                    watchFiles(
+                        ["manifest.json", "theme.css"].map(f => path.join(theme.path, f)),
+                        async () => {
+                            console.log(`Detected change to "${theme.name}"`);
+                            try {
+                                await launcher.installThemes(vaultCopy!, [theme]);
+                            } catch (e) {
+                                console.error(`Failed to update theme "${theme.name}": ${e}`)
+                            }
+                        },
+                        {interval: 500, persistent: false, debounce: 1000},
+                    )
+                }
+            }
+
+            const cleanup = async () => {
+                proc.kill("SIGTERM");
+                await procExit;
+                await fsAsync.rm(configDir, {recursive: true, force: true});
+                await fsAsync.rm(vaultCopy!, {recursive: true, force: true});
+                process.exit(1);
+            }
+            process.on('SIGINT', cleanup);
+            process.on('exit', cleanup);
+
+            console.log("Watching for changes to plugins...")
+            await procExit;
+        } else {
+            const {proc, configDir, vault: vaultCopy} = await launcher.launch({
+                ...launchArgs,
+                spawnOptions: {
+                    detached: true,
+                    stdio: 'ignore',
+                }
+            })
+            proc.unref() // Allow node to exit and leave proc running
+            console.log(`Launched obsidian ${opts.version}`)
+        }
     })
 
 program
