@@ -4,7 +4,7 @@ import { SevereServiceError } from 'webdriverio'
 import type { Capabilities, Options, Services } from '@wdio/types'
 import logger from '@wdio/logger'
 import { fileURLToPath } from "url"
-import ObsidianLauncher, { LocalPluginEntryWithId, LocalThemeEntryWithName } from "obsidian-launcher"
+import ObsidianLauncher, { DownloadedPluginEntry, DownloadedThemeEntry } from "obsidian-launcher"
 import browserCommands from "./browserCommands.js"
 import { ObsidianCapabilityOptions, ObsidianServiceOptions, OBSIDIAN_CAPABILITY_KEY } from "./types.js"
 import _ from "lodash"
@@ -144,7 +144,12 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
         let vault = obsidianOptions.vault;
         if (vault != undefined) {
             log.info(`Opening vault ${obsidianOptions.vault}`);
-            vault = await this.obsidianLauncher.copyVault(vault);
+            vault = await this.obsidianLauncher.setupVault({
+                vault,
+                copy: true,
+                plugins: obsidianOptions.plugins,
+                themes: obsidianOptions.themes,
+            });
             this.tmpDirs.push(vault);
         } else {
             log.info(`Opening Obsidian without a vault`)
@@ -154,8 +159,6 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
             appVersion: obsidianOptions.appVersion!, installerVersion: obsidianOptions.installerVersion!,
             appPath: obsidianOptions.appPath!,
             vault: vault,
-            plugins: obsidianOptions.plugins,
-            themes: obsidianOptions.themes,
         });
         this.tmpDirs.push(configDir);
 
@@ -185,7 +188,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
         ];
     }
 
-    private selectPlugins(currentPlugins: LocalPluginEntryWithId[], selection?: string[]) {
+    private selectPlugins(currentPlugins: DownloadedPluginEntry[], selection?: string[]) {
         if (selection !== undefined) {
             const unknownPlugins = _.difference(selection, currentPlugins.map(p => p.id));
             if (unknownPlugins.length > 0) {
@@ -200,7 +203,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
         }
     }
 
-    private selectThemes(currentThemes: LocalThemeEntryWithName[], selection?: string) {
+    private selectThemes(currentThemes: DownloadedThemeEntry[], selection?: string) {
         if (selection !== undefined) {
             if (selection != "default" && currentThemes.every((t: any) => t.name != selection)) {
                 throw Error(`Unknown theme: ${selection}`);

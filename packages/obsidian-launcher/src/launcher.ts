@@ -3,6 +3,7 @@ import fs from "fs"
 import zlib from "zlib"
 import path from "path"
 import os from "os";
+import crypto from "crypto";
 import fetch from "node-fetch"
 import extractZip from "extract-zip"
 import { pipeline } from "stream/promises";
@@ -13,7 +14,7 @@ import CDP from 'chrome-remote-interface'
 import { fileExists, withTmpDir, linkOrCp, maybe, pool, withTimeout, sleep } from "./utils.js";
 import {
     ObsidianVersionInfo, ObsidianCommunityPlugin, ObsidianCommunityTheme,
-    PluginEntry, LocalPluginEntryWithId, ThemeEntry, LocalThemeEntryWithName,
+    PluginEntry, DownloadedPluginEntry, ThemeEntry, DownloadedThemeEntry,
     ObsidianVersionInfos,
 } from "./types.js";
 import { fetchObsidianAPI, fetchGitHubAPIPaginated, fetchWithFileUrl } from "./apis.js";
@@ -400,18 +401,26 @@ export class ObsidianLauncher {
      * You can download plugins from GitHub using `{repo: "org/repo"}` and community plugins using `{id: 'plugin-id'}`.
      * Local plugins will just be passed through.
      */
-    async downloadPlugins(plugins: PluginEntry[]): Promise<LocalPluginEntryWithId[]> {
+    async downloadPlugins(plugins: PluginEntry[]): Promise<DownloadedPluginEntry[]> {
         return await Promise.all(
             plugins.map(async (plugin) => {
+                if (typeof plugin == "object" && "originalType" in plugin) {
+                    return {...plugin as DownloadedPluginEntry}
+                }
                 let pluginPath: string
+                let originalType: "local"|"github"|"community"
                 if (typeof plugin == "string") {
                     pluginPath = plugin;
+                    originalType = "local";
                 } else if ("path" in plugin) {;
                     pluginPath = plugin.path;
+                    originalType = "local";
                 } else if ("repo" in plugin) {
                     pluginPath = await this.downloadGitHubPlugin(plugin.repo, plugin.version);
+                    originalType = "github";
                 } else if ("id" in plugin) {
                     pluginPath = await this.downloadCommunityPlugin(plugin.id, plugin.version);
+                    originalType = "community";
                 } else {
                     throw Error("You must specify one of plugin path, repo, or id")
                 }
@@ -425,7 +434,7 @@ export class ObsidianLauncher {
                     }
                 }
                 const enabled = typeof plugin == "string" ? true : plugin.enabled;
-                return {path: pluginPath, id: pluginId, enabled: enabled}
+                return {path: pluginPath, id: pluginId, enabled, originalType}
             })
         );
     }
@@ -495,18 +504,26 @@ export class ObsidianLauncher {
      * You can download themes from GitHub using `{repo: "org/repo"}` and community themes using `{name: 'theme-name'}`.
      * Local themes will just be passed through.
      */
-    async downloadThemes(themes: ThemeEntry[]): Promise<LocalThemeEntryWithName[]> {
+    async downloadThemes(themes: ThemeEntry[]): Promise<DownloadedThemeEntry[]> {
         return await Promise.all(
             themes.map(async (theme) => {
+                if (typeof theme == "object" && "originalType" in theme) {
+                    return {...theme as DownloadedThemeEntry}
+                }
                 let themePath: string
+                let originalType: "local"|"github"|"community"
                 if (typeof theme == "string") {
                     themePath = theme;
+                    originalType = "local";
                 } else if ("path" in theme) {;
                     themePath = theme.path;
+                    originalType = "local";
                 } else if ("repo" in theme) {
                     themePath = await this.downloadGitHubTheme(theme.repo);
+                    originalType = "github";
                 } else if ("name" in theme) {
                     themePath = await this.downloadCommunityTheme(theme.name);
+                    originalType = "community";
                 } else {
                     throw Error("You must specify one of theme path, repo, or name")
                 }
@@ -519,7 +536,7 @@ export class ObsidianLauncher {
                     }
                 }
                 const enabled = typeof theme == "string" ? true : theme.enabled;
-                return {path: themePath, name: themeName, enabled: enabled}
+                return {path: themePath, name: themeName, enabled: enabled, originalType};
             })
         );
     }
@@ -542,7 +559,7 @@ export class ObsidianLauncher {
         }
         let enabledPlugins = [...originalEnabledPlugins];
 
-        for (const {path: pluginPath, enabled = true} of downloadedPlugins) {
+        for (const {path: pluginPath, enabled = true, originalType} of downloadedPlugins) {
             const manifestPath = path.join(pluginPath, 'manifest.json');
             const pluginId = JSON.parse(await fsAsync.readFile(manifestPath, 'utf8').catch(() => "{}")).id;
             if (!pluginId) {
@@ -570,6 +587,11 @@ export class ObsidianLauncher {
                 enabledPlugins.push(pluginId)
             } else if (!enabled && pluginAlreadyListed) {
                 enabledPlugins = enabledPlugins.filter(p => p != pluginId);
+            }
+
+            if (originalType == "local") {
+                // Add a .hotreload file for the https://github.com/pjeby/hot-reload plugin
+                await fsAsync.writeFile(path.join(pluginDest, '.hotreload'), '');
             }
         }
 
@@ -635,15 +657,12 @@ export class ObsidianLauncher {
      * @param installerVersion Obsidian version string.
      * @param appPath Path to the asar file to install.
      * @param vault Path to the vault to open in Obsidian.
-     * @param plugins List of plugins to install in the vault.
-     * @param themes List of themes to install in the vault.
      * @param dest Destination path for the config dir. If omitted it will create it under `/tmp`.
      */
     async setupConfigDir(params: {
         appVersion: string, installerVersion: string,
         appPath?: string,
         vault?: string,
-        plugins?: PluginEntry[], themes?: ThemeEntry[],
         dest?: string,
     }): Promise<string> {
         const [appVersion, installerVersion] = await this.resolveVersions(params.appVersion, params.installerVersion);
@@ -659,10 +678,7 @@ export class ObsidianLauncher {
         }
 
         if (params.vault !== undefined) {
-            await this.installPlugins(params.vault, params.plugins ?? []);
-            await this.installThemes(params.vault, params.themes ?? []);
-
-            const vaultId = "1234567890abcdef";
+            const vaultId = crypto.randomBytes(8).toString("hex");
             obsidianJson = {
                 ...obsidianJson,
                 vaults: {
@@ -693,47 +709,69 @@ export class ObsidianLauncher {
     }
 
     /**
-     * Copies a vault to a temporary directory.
-     * @returns Path to the created tmpDir.
+     * Sets up a vault for Obsidian, installing plugins and themes and optionally copying the vault to a temporary
+     * directory first.
+     * @param vault Path to the vault to open in Obsidian.
+     * @param copy Whether to copy the vault to a tmpdir first. Default false.
+     * @param plugins List of plugins to install in the vault.
+     * @param themes List of themes to install in the vault.
+     * @returns Path to the copied vault (or just the path to the vault if copy is false)
      */
-    async copyVault(src: string) {
-        const dest = await fsAsync.mkdtemp(path.join(os.tmpdir(), 'obs-launcher-vault-'));
-        await fsAsync.cp(src, dest, { recursive: true });
-        return dest;
+    async setupVault(params: {
+        vault: string,
+        copy?: boolean,
+        plugins?: PluginEntry[], themes?: ThemeEntry[],
+    }): Promise<string> {
+        let vault = params.vault;
+        if (params.copy) {
+            const dest = await fsAsync.mkdtemp(path.join(os.tmpdir(), 'obs-launcher-vault-'));
+            await fsAsync.cp(vault, dest, { recursive: true });
+            vault = dest;
+        }
+        await this.installPlugins(vault, params.plugins ?? []);
+        await this.installThemes(vault, params.themes ?? []);
+
+        return vault;
     }
 
     /**
-     * Downloads and launches Obsidian with a sandboxed config dir. Optionally open a specific vault and install plugins
+     * Downloads and launches Obsidian with a sandboxed config dir and a specifc vault open. Optionally install plugins
      * and themes first.
+     * 
+     * This is just a shortcut for calling downloadApp, downloadInstaller, setupVault and setupConfDir.
      *
      * @param appVersion Obsidian version string.
      * @param installerVersion Obsidian version string.
      * @param vault Path to the vault to open in Obsidian.
+     * @param copy Whether to copy the vault to a tmpdir first. Default false.
      * @param plugins List of plugins to install in the vault.
      * @param themes List of themes to install in the vault.
-     * @param dest Destination path for the config dir. If omitted it will create it under `/tmp`.
      * @param args CLI args to pass to Obsidian
      * @param spawnOptions Options to pass to `spawn`.
-     * @returns The launched child process and the created config dir.
+     * @returns The launched child process and the created tmpdirs.
      */
     async launch(params: {
         appVersion: string, installerVersion: string,
+        copy?: boolean,
         vault?: string,
         plugins?: PluginEntry[], themes?: ThemeEntry[],
-        dest?: string,
         args?: string[],
         spawnOptions?: child_process.SpawnOptions,
-    }): Promise<[child_process.ChildProcess, string]> {
+    }): Promise<{proc: child_process.ChildProcess, configDir: string, vault?: string}> {
         const [appVersion, installerVersion] = await this.resolveVersions(params.appVersion, params.installerVersion);
         const appPath = await this.downloadApp(appVersion);
         const installerPath = await this.downloadInstaller(installerVersion);
 
-        const configDir = await this.setupConfigDir({
-            appVersion: appVersion, installerVersion: installerVersion,
-            appPath: appPath,
-            vault: params.vault,
-            plugins: params.plugins, themes: params.themes,
-        });
+        let vault = params.vault;
+        if (vault) {
+            vault = await this.setupVault({
+                vault,
+                copy: params.copy ?? false,
+                plugins: params.plugins, themes: params.themes,
+            })
+        }
+
+        const configDir = await this.setupConfigDir({ appVersion, installerVersion, appPath, vault });
 
         // Spawn child.
         const proc = child_process.spawn(installerPath, [
@@ -743,7 +781,7 @@ export class ObsidianLauncher {
             ...params.spawnOptions,
         });
 
-        return [proc, configDir];
+        return {proc, configDir, vault};
     }
 
 

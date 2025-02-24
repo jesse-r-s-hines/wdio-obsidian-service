@@ -72,7 +72,7 @@ describe("test ObsidianLauncher", () => {
         const communityPlugins = await fsAsync.readFile(`${vault}/.obsidian/community-plugins.json`, 'utf-8');
         expect(JSON.parse(communityPlugins)).to.eql(["sample-plugin"]);
         const pluginFiles = await fsAsync.readdir(`${vault}/.obsidian/plugins/sample-plugin`);
-        expect(pluginFiles.sort()).to.eql(["main.js", "manifest.json"]);
+        expect(pluginFiles.sort()).to.eql([".hotreload", "main.js", "manifest.json"]);
     })
     
     it("installPlugins multiple plugins and existing community-plugins.json", async () => {
@@ -100,10 +100,10 @@ describe("test ObsidianLauncher", () => {
         expect(JSON.parse(communityPlugins)).to.eql(["dataview", "plugin-b", "plugin-a"]);
         
         const pluginAFiles = await fsAsync.readdir(`${vault}/.obsidian/plugins/plugin-a`);
-        expect(pluginAFiles.sort()).to.eql(["main.js", "manifest.json"]);
+        expect(pluginAFiles.sort()).to.eql([".hotreload", "main.js", "manifest.json"]);
 
         const pluginBFiles = await fsAsync.readdir(`${vault}/.obsidian/plugins/plugin-b`);
-        expect(pluginBFiles.sort()).to.eql(["data.json", "main.js", "manifest.json", "styles.css"]);
+        expect(pluginBFiles.sort()).to.eql([".hotreload", "data.json", "main.js", "manifest.json", "styles.css"]);
     })
 
     it("installPlugins disabled plugins", async () => {
@@ -131,10 +131,10 @@ describe("test ObsidianLauncher", () => {
         expect(JSON.parse(communityPlugins)).to.eql(["dataview"]);
         
         const pluginAFiles = await fsAsync.readdir(`${vault}/.obsidian/plugins/plugin-a`);
-        expect(pluginAFiles.sort()).to.eql(["main.js", "manifest.json"]);
+        expect(pluginAFiles.sort()).to.eql([".hotreload", "main.js", "manifest.json"]);
 
         const pluginBFiles = await fsAsync.readdir(`${vault}/.obsidian/plugins/plugin-b`);
-        expect(pluginBFiles.sort()).to.eql(["data.json", "main.js", "manifest.json", "styles.css"]);
+        expect(pluginBFiles.sort()).to.eql([".hotreload", "data.json", "main.js", "manifest.json", "styles.css"]);
     })
     
     it("installPlugins overwrites plugins", async () => {
@@ -155,7 +155,7 @@ describe("test ObsidianLauncher", () => {
         expect(JSON.parse(communityPlugins)).to.eql(["dataview", "plugin-b", "plugin-a"]);
         
         const pluginAFiles = await fsAsync.readdir(`${vault}/.obsidian/plugins/plugin-a`);
-        expect(pluginAFiles.sort()).to.eql(["main.js", "manifest.json"]); // deletes foo.json
+        expect(pluginAFiles.sort()).to.eql([".hotreload", "main.js", "manifest.json"]); // deletes foo.json
     })
 
     it("installThemes no themes", async () => {
@@ -200,6 +200,42 @@ describe("test ObsidianLauncher", () => {
         });
     })
 
+    it("downloadPlugins", async () => {
+        const plugin = await createDirectory({
+            "manifest.json": '{"id": "plugin-a"}',
+            "main.js": "console.log('foo')",
+        });
+        const downloaded = await launcher.downloadPlugins([plugin]);
+        expect(downloaded[0]).to.eql({
+            path: plugin,
+            id: "plugin-a",
+            enabled: true,
+            originalType: "local",
+        });
+
+        const reDownloaded = await launcher.downloadPlugins(downloaded);
+        // Shouldn't reset the originalType if called twice
+        expect(reDownloaded[0]).to.eql(downloaded[0]);
+    })
+
+    it("downloadThemes", async () => {
+        const theme = await createDirectory({
+            "manifest.json": '{"name": "sample-theme"}',
+            "theme.css": ".foobar {}",
+        });
+        const downloaded = await launcher.downloadThemes([theme]);
+        expect(downloaded[0]).to.eql({
+            path: theme,
+            name: "sample-theme",
+            enabled: true,
+            originalType: "local",
+        });
+
+        const reDownloaded = await launcher.downloadThemes(downloaded);
+        // Shouldn't reset the originalType if called twice
+        expect(reDownloaded[0]).to.eql(downloaded[0]);
+    })
+
     const resolveVersionsTests = [
         [["latest", "latest"], ["1.7.7", "1.7.7"]],
         [["latest", "earliest"], ["1.7.7", "1.1.9"]],
@@ -230,8 +266,6 @@ describe("test ObsidianLauncher", () => {
     it(`setupConfigDir basic`, async () => {
         const tmpDir = await createDirectory({
             "obsidian-1.7.7.asar": "stuff",
-            "my-plugin/manifest.json": '{"id": "plugin-a"}',
-            "my-plugin/main.js": "console.log('foo')",
             "my-vault/A.md": "This is a file",
         });
         const vault = path.join(tmpDir, "my-vault");
@@ -240,28 +274,22 @@ describe("test ObsidianLauncher", () => {
             appVersion: "1.7.7", installerVersion: "1.7.7",
             appPath: `${tmpDir}/obsidian-1.7.7.asar`,
             vault: vault,
-            plugins: [{path: `${tmpDir}/my-plugin`, enabled: true}],
         })
         after(() => { fsAsync.rm(configDir, { recursive: true, force: true}) });
 
         expect(await fileExists(`${configDir}/obsidian-1.7.7.asar`)).to.eql(true);
         const obsidianJson = JSON.parse(await fsAsync.readFile(`${configDir}/obsidian.json`, 'utf-8'));
         expect(Object.keys(obsidianJson.vaults).length).to.eql(1);
-
-        expect(await fsAsync.readdir(path.join(vault, ".obsidian/plugins"))).to.eql(['plugin-a']);
     })
 
     it(`setupConfig no vault`, async () => {
         const tmpDir = await createDirectory({
             "obsidian-1.7.7.asar": "stuff",
-            "my-plugin/manifest.json": '{"id": "plugin-a"}',
-            "my-plugin/main.js": "console.log('foo')",
         });
 
         const configDir = await launcher.setupConfigDir({
             appVersion: "1.7.7", installerVersion: "1.7.7",
             appPath: `${tmpDir}/obsidian-1.7.7.asar`,
-            plugins: [{path: `${tmpDir}/my-plugin`, enabled: true}],
         })
         after(() => { fsAsync.rm(configDir, { recursive: true, force: true}) });
 
@@ -270,14 +298,33 @@ describe("test ObsidianLauncher", () => {
         expect(obsidianJson).to.not.have.key("vaults");
     })
 
-    it('copyVault', async () => {
-        const vault = await createDirectory({
-            "A.md": "A",
-            "B.md": "B",
+    it(`setupVault basic`, async () => {
+        const tmpDir = await createDirectory({
+            "my-plugin/manifest.json": '{"id": "plugin-a"}',
+            "my-plugin/main.js": "console.log('foo')",
+            "my-vault/A.md": "This is a file",
         });
-        const vaultCopy = await launcher.copyVault(vault);
+        const vault = path.join(tmpDir, "my-vault");
+
+        const vaultCopy = await launcher.setupVault({
+            vault: vault,
+            copy: true,
+            plugins: [{path: `${tmpDir}/my-plugin`, enabled: true}],
+        })
         after(() => { fsAsync.rm(vaultCopy, { recursive: true, force: true}) });
 
-        expect((await fsAsync.readdir(vaultCopy)).sort()).to.eql(['A.md', 'B.md']);
+        expect(vaultCopy).to.not.eql(vault);
+        expect((await fsAsync.readdir(vaultCopy)).sort()).to.eql(['.obsidian', 'A.md']);
+        expect(await fsAsync.readdir(path.join(vaultCopy, ".obsidian/plugins"))).to.eql(['plugin-a']);
+        expect((await fsAsync.readdir(vault)).sort()).to.eql(['A.md']);
+
+        const noVaultCopy = await launcher.setupVault({
+            vault: vault,
+            copy: false,
+            plugins: [{path: `${tmpDir}/my-plugin`, enabled: true}],
+        })
+        expect(noVaultCopy).to.eql(vault);
+        expect((await fsAsync.readdir(vault)).sort()).to.eql(['.obsidian', 'A.md']);
+        expect(await fsAsync.readdir(path.join(vault, ".obsidian/plugins"))).to.eql(['plugin-a']);
     })
 })

@@ -53,7 +53,11 @@ export type LocalPluginEntry = BasePluginEntry & {
     /** Path on disk to the plugin to install. */
     path: string,
 }
-export type LocalPluginEntryWithId = LocalPluginEntry & {id: string}
+export type DownloadedPluginEntry = LocalPluginEntry & {
+    id: string,
+    /** Type of the plugin entry before downloading */
+    originalType: "local"|"github"|"community",
+}
 export type GitHubPluginEntry = BasePluginEntry & {
     /** Github repo of the plugin to install, e.g. "some-user/some-plugin". */
     repo: string,
@@ -86,7 +90,11 @@ export type LocalThemeEntry = BaseThemeEntry & {
     /** Path on disk to the theme to install. */
     path: string,
 }
-export type LocalThemeEntryWithName = LocalPluginEntry & {name: string}
+export type DownloadedThemeEntry = LocalPluginEntry & {
+    name: string,
+    /** Type of the plugin entry before downloading */
+    originalType: "local"|"github"|"community",
+}
 export type GitHubThemeEntry = BaseThemeEntry & {
     /** Github repo of the theme to install, e.g. "some-user/some-theme". */
     repo: string,
