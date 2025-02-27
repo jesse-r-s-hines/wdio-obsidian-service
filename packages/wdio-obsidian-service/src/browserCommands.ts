@@ -45,13 +45,7 @@ const browserCommands = {
         ...params: Params
     ): Promise<Return> {
         return await browser.execute<Return, Params>(
-            `return (${func.toString()}).call(null,
-                {
-                    app: window._wdioObsidianService.app,
-                    obsidian: window._wdioObsidianService.obsidian,
-                },
-                ...arguments,
-            )`,
+            `return (${func.toString()}).call(null, {...window.wdioObsidianService}, ...arguments )`,
             ...params,
         )
     },

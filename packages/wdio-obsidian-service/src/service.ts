@@ -168,7 +168,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
     private async waitForReady(browser: WebdriverIO.Browser) {
         if (browser.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].vault != undefined) {
             await browser.waitUntil( // wait until the helper plugin is loaded
-                () => browser.execute(() => !!(window as any)._wdioObsidianService?.app?.workspace?.onLayoutReady),
+                () => browser.execute(() => !!(window as any).wdioObsidianService?.app?.workspace?.onLayoutReady),
                 {timeout: 30 * 1000, interval: 100},
             );
             await browser.executeObsidian(async ({app}) => {
