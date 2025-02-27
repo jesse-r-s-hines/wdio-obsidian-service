@@ -16,7 +16,6 @@ jobs:
           node-version: 18
           cache: 'npm'
           registry-url: 'https://registry.npmjs.org'
-      - run: npm ci
   
       - name: Safety Check
         run: |
@@ -31,7 +30,12 @@ jobs:
             echo "version already published"
             exit 1
           fi
-      
+
+      - name: Build
+        run: |
+          npm ci
+          npm run build
+
       - name: Publish
         run: npm publish --workspaces --provenance --access public
         env:
