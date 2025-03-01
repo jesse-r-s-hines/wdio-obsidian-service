@@ -1,11 +1,50 @@
 # yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
-# Should be run after running and pushing results from scripts/bump_versions.json
+# Will run after pushing results from scripts/bump_versions.json
 name: Publish
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - 'package.json'
+      - 'packages/*/package.json'
+
 jobs:
-  publish:
+  check:
     runs-on: ubuntu-latest
+    outputs:
+      versionChanged: "${{ steps.check.outputs.versionChanged }}"
+      version: "${{ steps.check.outputs.version }}"
+    steps:
+      - uses: actions/checkout@v4
+      - name: "Check"
+        id: check
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require("fs")
+            const launcherPackageJson = fs.readFileSync("packages/obsidian-launcher/package.json");
+            const launcherVersion = JSON.parse(launcherPackageJson).version;
+            const servicePackageJson = fs.readFileSync("packages/wdio-obsidian-service/package.json");
+            const serviceVersion = JSON.parse(servicePackageJson).version;
+            const registryJson = await fetch('https://registry.npmjs.org/wdio-obsidian-service/latest').then(r => r.json());
+            const registryVersion = registryJson.version;
+
+            if (serviceVersion != launcherVersion) {
+              throw Error("Package versions must match")
+            }
+
+            core.setOutput('version', serviceVersion);
+            if (registryVersion == serviceVersion) {
+              core.setOutput('versionChanged', 'false');
+            } else {
+              core.setOutput('versionChanged', 'true');
+            }
+  
+  publish:
+    if: ${{ success() && needs.check.outputs.versionChanged == 'true' }}
+    runs-on: ubuntu-latest
+    needs: check
     permissions:
       contents: write
       id-token: write
@@ -16,22 +55,6 @@ jobs:
           node-version: 18
           cache: 'npm'
           registry-url: 'https://registry.npmjs.org'
-  
-      - name: Safety Check
-        id: check
-        run: |
-          LAUNCHER_VERSION=$(jq -r '.version' packages/obsidian-launcher/package.json)
-          SERVICE_VERSION=$(jq -r '.version' packages/wdio-obsidian-service/package.json)
-          REGISTRY_VERSION=$(npm view wdio-obsidian-service version)
-          if [[ "$LAUNCHER_VERSION" != "$SERVICE_VERSION" ]]; then
-            echo "package versions must match"
-            exit 1
-          fi
-          if [[ "$REGISTRY_VERSION" == "$SERVICE_VERSION" ]]; then
-            echo "version already published"
-            exit 1
-          fi
-          echo "version=$SERVICE_VERSION" >> $GITHUB_OUTPUT
 
       - name: Build
         run: |
@@ -40,15 +63,15 @@ jobs:
 
       - name: Release
         run: |
-          VERSION="${{ steps.check.outputs.version }}"
-          gh release create "VERSION" --title "VERSION"
+          gh release create "$VERSION" --title "$VERSION"
         env:
-          GH_TOKEN: ${{ github.token }}
+          VERSION: "${{ needs.check.outputs.version }}"
+          GH_TOKEN: "${{ github.token }}"
 
       - name: Publish
         run: npm publish --workspaces --provenance --access public
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NODE_AUTH_TOKEN: "${{ secrets.NPM_TOKEN }}"
 
       - name: Generate docs
         run: npm run doc
@@ -59,4 +82,4 @@ jobs:
           branch: gh-pages
           folder: docs
           clean: true
-          commit-message: "Publish docs for version ${{ steps.check.outputs.version }}"
+          commit-message: "Publish docs for version ${{ needs.check.outputs.version }}"
