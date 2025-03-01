@@ -14,7 +14,6 @@
     },
     "packageOptions": {
         "entryPoints": ["src/index.ts"],
-        "readme": "./README.md",
-        "gitRevision": "main"
+        "readme": "./README.md"
     }
 }
