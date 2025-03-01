@@ -50,7 +50,8 @@ jobs:
         with:
           # By default, GitHub won't trigger workflows from events created from a workflow, so the new commit won't
           # trigger the tests. The recommended workaround is to use a Personal Access Token instead of the default
-          # GITHUB_TOKEN. See
+          # GITHUB_TOKEN. Using the PAT also lets the workflow bypass branch protection (if the user is allowed to).
+          # See
           # - https://docs.github.com/en/actions/writing-workflows/choosing-when-your-workflow-runs/triggering-a-workflow#triggering-a-workflow-from-a-workflow
           # - https://stackoverflow.com/questions/67550727 
           token: ${{ secrets.GH_PAT }}
