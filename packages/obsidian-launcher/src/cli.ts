@@ -34,39 +34,9 @@ function parseThemes(themes: string[]): ThemeEntry[] {
     })
 }
 
-const cacheOptionArgs = [
-    '-c, --cache <cache>',
-    'Directory to use as the download cache',
-] as const
-const pluginOptionArgs = [
-    '-p, --plugin <plugin>',
-    `Plugin to install. Format: "<path>" or "repo:<github-repo>" or "id:<community-id>". Can be repeated.`,
-    (curr: string, prev: string[]) => [...prev, curr], [] as string[],
-] as const
-const themeOptionArgs = [
-    '-t, --theme <plugin>',
-    `Themes to install. Format: "<path>" or "repo:<github-repo>" or "name:<community-name>". Can be repeated but only last will be enabled.`,
-    (curr: string, prev: string[]) => [...prev, curr], [] as string[],
-] as const
-
-
-const program = new Command("obsidian-launcher");
-
-program
-    .command("download")
-    .description("Download Obsidian to the cache")
-    .option(...cacheOptionArgs)
-    .option('-v, --version <version>', "Obsidian version to run", "latest")
-    .option('--installer-version <version>', "Obsidian installer version to run", "latest")
-    .action(async (opts) => {
-        const launcher = new ObsidianLauncher({cacheDir: opts.cache});
-        const [appVersion, installerVersion] = await launcher.resolveVersions(opts.version, opts.installerVersion);
-        const installerPath = await launcher.downloadInstaller(installerVersion);
-        console.log(`Downloaded Obsidian installer to ${installerPath}`)
-        const appPath = await launcher.downloadApp(appVersion);
-        console.log(`Downloaded Obsidian app to ${appPath}`)
-    })
-
+/**
+ * Watch a list of files, calls func whenever there's an update. Debounced files changes.
+ */
 function watchFiles(
     files: string[],
     func: (curr: fs.Stats, prev: fs.Stats) => void,
@@ -82,97 +52,46 @@ function watchFiles(
     }
 }
 
+const versionOptionArgs = [
+    '-v, --version <version>',
+    "Obsidian version to run",
+    "latest",
+] as const
+const installerVersionOptionArgs = [
+    '--installer-version <version>',
+    "Obsidian installer version to run",
+    "latest",
+] as const
+const cacheOptionArgs = [
+    '-c, --cache <cache>',
+    'Directory to use as the download cache',
+] as const
+const pluginOptionArgs = [
+    '-p, --plugin <plugin>',
+    `Plugin to install. Format: "<path>" or "repo:<github-repo>" or "id:<community-id>". Can be repeated.`,
+    (curr: string, prev: string[]) => [...prev, curr], [] as string[],
+] as const
+const themeOptionArgs = [
+    '-t, --theme <plugin>',
+    `Themes to install. Format: "<path>" or "repo:<github-repo>" or "name:<community-name>". Can be repeated but only last will be enabled.`,
+    (curr: string, prev: string[]) => [...prev, curr], [] as string[],
+] as const
+
+const program = new Command("obsidian-launcher");
+
 program
-    .command("launch")
-    .description("Download and launch Obsidian")
-    .argument('[vault]', 'Vault to open')
+    .command("download")
+    .description("Download Obsidian to the cache")
     .option(...cacheOptionArgs)
-    .option('-v, --version <version>', "Obsidian version to run", "latest")
-    .option('--installer-version <version>', "Obsidian installer version to run", "latest")
-    .option(...pluginOptionArgs)
-    .option(...themeOptionArgs)
-    .option('--copy', "Copy the vault first.")
-    .option('--watch', "Watches for changes to plugins and themes. Automatically adds the 'pjeby/hot-reload' plugin.")
-    .action(async (vault: string, opts) => {
+    .option(...versionOptionArgs)
+    .option(...installerVersionOptionArgs)
+    .action(async (opts) => {
         const launcher = new ObsidianLauncher({cacheDir: opts.cache});
-        // Normalize the plugins and themes
-        const plugins = await launcher.downloadPlugins(parsePlugins(opts.plugin));
-        const themes = await launcher.downloadThemes(parseThemes(opts.theme));
-        const launchArgs = {
-            appVersion: opts.version, installerVersion: opts.installerVersion,
-            vault: vault,
-            copy: opts.copy ?? false,
-            plugins: plugins,
-            themes: themes,
-        } as const
-
-        if (opts.watch) {
-            const {proc, configDir, vault: vaultCopy} = await launcher.launch({
-                ...launchArgs,
-                plugins: [...plugins, {repo: "pjeby/hot-reload"}],
-                spawnOptions: {
-                    detached: false,
-                    stdio: "overlapped",
-                }
-            })
-            const procExit = new Promise<number>((resolve) => proc.on('exit', (code) => resolve(code ?? -1)));
-
-            for (const plugin of plugins) {
-                if (plugin.originalType == "local") {
-                    watchFiles(
-                        ["manifest.json", "main.js", "styles.css", "data.json"].map(f => path.join(plugin.path, f)),
-                        async () => {
-                            console.log(`Detected change to "${plugin.id}"`);
-                            try {
-                                await launcher.installPlugins(vaultCopy!, [plugin]);
-                            } catch (e) {
-                                console.error(`Failed to update plugin "${plugin.id}": ${e}`)
-                            }
-                        },
-                        {interval: 500, persistent: false, debounce: 1000},
-                    )
-                }
-            }
-            for (const theme of themes) {
-                if (theme.originalType == "local") {
-                    watchFiles(
-                        ["manifest.json", "theme.css"].map(f => path.join(theme.path, f)),
-                        async () => {
-                            console.log(`Detected change to "${theme.name}"`);
-                            try {
-                                await launcher.installThemes(vaultCopy!, [theme]);
-                            } catch (e) {
-                                console.error(`Failed to update theme "${theme.name}": ${e}`)
-                            }
-                        },
-                        {interval: 500, persistent: false, debounce: 1000},
-                    )
-                }
-            }
-
-            const cleanup = async () => {
-                proc.kill("SIGTERM");
-                await procExit;
-                await fsAsync.rm(configDir, {recursive: true, force: true});
-                await fsAsync.rm(vaultCopy!, {recursive: true, force: true});
-                process.exit(1);
-            }
-            process.on('SIGINT', cleanup);
-            process.on('exit', cleanup);
-
-            console.log("Watching for changes to plugins...")
-            await procExit;
-        } else {
-            const {proc, configDir, vault: vaultCopy} = await launcher.launch({
-                ...launchArgs,
-                spawnOptions: {
-                    detached: true,
-                    stdio: 'ignore',
-                }
-            })
-            proc.unref() // Allow node to exit and leave proc running
-            console.log(`Launched obsidian ${opts.version}`)
-        }
+        const [appVersion, installerVersion] = await launcher.resolveVersions(opts.version, opts.installerVersion);
+        const installerPath = await launcher.downloadInstaller(installerVersion);
+        console.log(`Downloaded Obsidian installer to ${installerPath}`)
+        const appPath = await launcher.downloadApp(appVersion);
+        console.log(`Downloaded Obsidian app to ${appPath}`)
     })
 
 program
@@ -189,13 +108,131 @@ program
         console.log(`Installed plugins and themes into ${vault}`)
     })
 
+
+program
+    .command("launch")
+    .description("Download and launch Obsidian")
+    .argument('[vault]', 'Vault to open')
+    .option(...cacheOptionArgs)
+    .option(...versionOptionArgs)
+    .option(...installerVersionOptionArgs)
+    .option(...pluginOptionArgs)
+    .option(...themeOptionArgs)
+    .option('--copy', "Copy the vault first")
+    .action(async (vault: string, opts) => {
+        const launcher = new ObsidianLauncher({cacheDir: opts.cache});
+        const {proc, configDir, vault: vaultCopy} = await launcher.launch({
+            appVersion: opts.version, installerVersion: opts.installerVersion,
+            vault: vault,
+            copy: opts.copy ?? false,
+            plugins: parsePlugins(opts.plugin),
+            themes: parseThemes(opts.theme),
+            spawnOptions: {
+                detached: true,
+                stdio: 'ignore',
+            }
+        })
+        proc.unref() // Allow node to exit and leave proc running
+        console.log(`Launched obsidian ${opts.version}`)
+    })
+
+program
+    .command("watch")
+    .summary("Launch Obsidian and watch for changes to plugins and themes")
+    .description(
+        "Downlaods Launch Obsidian and watch for changes to plugins and themes.\n" +
+        "\n" +
+        'Takes the same arguments as the "launch" command but watches for changes to any local plugins or themes ' +
+        'updates the copies in the vault. Automatically installs the "pjeby/hot-reload" so plugins will hot-reload ' +
+        'as they are updated.'
+    )
+    .argument('[vault]', 'Vault to open')
+    .option(...cacheOptionArgs)
+    .option(...versionOptionArgs)
+    .option(...installerVersionOptionArgs)
+    .option(...pluginOptionArgs)
+    .option(...themeOptionArgs)
+    .option('--copy', "Copy the vault first")
+    .action(async (vault: string, opts) => {
+        const launcher = new ObsidianLauncher({cacheDir: opts.cache});
+        // Normalize the plugins and themes
+        const plugins = await launcher.downloadPlugins(parsePlugins(opts.plugin));
+        const themes = await launcher.downloadThemes(parseThemes(opts.theme));
+        const launchArgs = {
+            appVersion: opts.version, installerVersion: opts.installerVersion,
+            vault: vault,
+            copy: opts.copy ?? false,
+            plugins: plugins,
+            themes: themes,
+        } as const
+
+        const {proc, configDir, vault: vaultCopy} = await launcher.launch({
+            ...launchArgs,
+            plugins: [...plugins, {repo: "pjeby/hot-reload"}],
+            spawnOptions: {
+                detached: false,
+                stdio: "overlapped",
+            }
+        })
+        const procExit = new Promise<number>((resolve) => proc.on('exit', (code) => resolve(code ?? -1)));
+
+        for (const plugin of plugins) {
+            if (plugin.originalType == "local") {
+                watchFiles(
+                    ["manifest.json", "main.js", "styles.css", "data.json"].map(f => path.join(plugin.path, f)),
+                    async () => {
+                        console.log(`Detected change to "${plugin.id}"`);
+                        try {
+                            await launcher.installPlugins(vaultCopy!, [plugin]);
+                        } catch (e) {
+                            console.error(`Failed to update plugin "${plugin.id}": ${e}`)
+                        }
+                    },
+                    {interval: 500, persistent: false, debounce: 1000},
+                )
+            }
+        }
+        for (const theme of themes) {
+            if (theme.originalType == "local") {
+                watchFiles(
+                    ["manifest.json", "theme.css"].map(f => path.join(theme.path, f)),
+                    async () => {
+                        console.log(`Detected change to "${theme.name}"`);
+                        try {
+                            await launcher.installThemes(vaultCopy!, [theme]);
+                        } catch (e) {
+                            console.error(`Failed to update theme "${theme.name}": ${e}`)
+                        }
+                    },
+                    {interval: 500, persistent: false, debounce: 1000},
+                )
+            }
+        }
+
+        const cleanup = async () => {
+            proc.kill("SIGTERM");
+            await procExit;
+            await fsAsync.rm(configDir, {recursive: true, force: true});
+            await fsAsync.rm(vaultCopy!, {recursive: true, force: true});
+            process.exit(1);
+        }
+        process.on('SIGINT', cleanup);
+        process.on('exit', cleanup);
+
+        console.log("Watching for changes to plugins and themes...")
+        await procExit;
+    })
+
 program
     .command("create-versions-list")
-    .description("Collect Obsidian version information into a single file")
-    .addHelpText('after', "\n" +
+    .summary("Collect Obsidian version information into a single file")
+    .description(
+        "Collect Obsidian version information into a single file.\n" +
+        "\n" +
         "This command is used to collect Obsidian version information in one place including download links, the " +
         "minimum installer version, and the internal Electron version for every Obsidian release and beta version. " +
-        "This info is available and kept up to date at https://raw.githubusercontent.com/jesse-r-s-hines/wdio-obsidian-service/HEAD/obsidian-versions.json, " +
+        "This info is available and automatically kept up to date at " +
+        "https://raw.githubusercontent.com/jesse-r-s-hines/wdio-obsidian-service/HEAD/obsidian-versions.json " +
         "but you can use this command to recreate the file manually if you want."
     )
     .argument('dest', 'Path to output. If it already exists, it will update the information instead of creating it from scratch.')
