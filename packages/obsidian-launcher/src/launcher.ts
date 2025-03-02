@@ -410,10 +410,10 @@ export class ObsidianLauncher {
                 let pluginPath: string
                 let originalType: "local"|"github"|"community"
                 if (typeof plugin == "string") {
-                    pluginPath = plugin;
+                    pluginPath = path.resolve(plugin);
                     originalType = "local";
                 } else if ("path" in plugin) {;
-                    pluginPath = plugin.path;
+                    pluginPath = path.resolve(plugin.path);
                     originalType = "local";
                 } else if ("repo" in plugin) {
                     pluginPath = await this.downloadGitHubPlugin(plugin.repo, plugin.version);
@@ -425,12 +425,15 @@ export class ObsidianLauncher {
                     throw Error("You must specify one of plugin path, repo, or id")
                 }
 
+                const manifestPath = path.join(pluginPath, "manifest.json");
+                if (!(await fileExists(manifestPath))) {
+                    throw Error(`No plugin found at ${pluginPath}`)
+                }
                 let pluginId = (typeof plugin == "object" && ("id" in plugin)) ? plugin.id : undefined;
                 if (!pluginId) {
-                    const manifestPath = path.join(pluginPath, "manifest.json");
                     pluginId = JSON.parse(await fsAsync.readFile(manifestPath, 'utf8').catch(() => "{}")).id;
                     if (!pluginId) {
-                        throw Error(`${pluginPath}/manifest.json missing or malformed.`);
+                        throw Error(`${pluginPath}/manifest.json malformed.`);
                     }
                 }
                 const enabled = typeof plugin == "string" ? true : plugin.enabled;
@@ -513,10 +516,10 @@ export class ObsidianLauncher {
                 let themePath: string
                 let originalType: "local"|"github"|"community"
                 if (typeof theme == "string") {
-                    themePath = theme;
+                    themePath = path.resolve(theme);
                     originalType = "local";
                 } else if ("path" in theme) {;
-                    themePath = theme.path;
+                    themePath = path.resolve(theme.path);
                     originalType = "local";
                 } else if ("repo" in theme) {
                     themePath = await this.downloadGitHubTheme(theme.repo);
@@ -527,12 +530,17 @@ export class ObsidianLauncher {
                 } else {
                     throw Error("You must specify one of theme path, repo, or name")
                 }
+
+                const manifestPath = path.join(themePath, "manifest.json");
+                if (!(await fileExists(manifestPath))) {
+                    throw Error(`No theme found at ${themePath}`)
+                }
                 let themeName = (typeof theme == "object" && ("name" in theme)) ? theme.name : undefined;
                 if (!themeName) {
                     const manifestPath = path.join(themePath, "manifest.json");
                     themeName = JSON.parse(await fsAsync.readFile(manifestPath, 'utf8').catch(() => "{}")).name;
                     if (!themeName) {
-                        throw Error(`${themePath}/manifest.json missing or malformed.`);
+                        throw Error(`${themePath}/manifest.json malformed.`);
                     }
                 }
                 const enabled = typeof theme == "string" ? true : theme.enabled;
