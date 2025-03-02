@@ -23,9 +23,9 @@ jobs:
         with:
           script: |
             const fs = require("fs")
-            const launcherPackageJson = fs.readFileSync("packages/obsidian-launcher/package.json");
+            const launcherPackageJson = fs.readFileSync("packages/obsidian-launcher/package.json", 'utf-8');
             const launcherVersion = JSON.parse(launcherPackageJson).version;
-            const servicePackageJson = fs.readFileSync("packages/wdio-obsidian-service/package.json");
+            const servicePackageJson = fs.readFileSync("packages/wdio-obsidian-service/package.json", 'utf-8');
             const serviceVersion = JSON.parse(servicePackageJson).version;
             const registryJson = await fetch('https://registry.npmjs.org/wdio-obsidian-service/latest').then(r => r.json());
             const registryVersion = registryJson.version;
