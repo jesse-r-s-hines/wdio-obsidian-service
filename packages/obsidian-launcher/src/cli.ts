@@ -73,7 +73,7 @@ const pluginOptionArgs = [
 ] as const
 const themeOptionArgs = [
     '-t, --theme <plugin>',
-    `Themes to install. Format: "<path>" or "repo:<github-repo>" or "name:<community-name>". Can be repeated but only last will be enabled.`,
+    `Theme to install. Format: "<path>" or "repo:<github-repo>" or "name:<community-name>". Can be repeated but only last will be enabled.`,
     (curr: string, prev: string[]) => [...prev, curr], [] as string[],
 ] as const
 
@@ -81,7 +81,7 @@ const program = new Command("obsidian-launcher");
 
 program
     .command("download")
-    .description("Download Obsidian to the cache")
+    .description("download Obsidian to the cache")
     .option(...cacheOptionArgs)
     .option(...versionOptionArgs)
     .option(...installerVersionOptionArgs)
@@ -96,7 +96,7 @@ program
 
 program
     .command("install")
-    .description("Install plugins and themes into an Obsidian vault")
+    .description("install plugins and themes into an Obsidian vault")
     .argument('<vault>', 'Vault to install into')
     .option(...cacheOptionArgs)
     .option(...pluginOptionArgs)
@@ -111,7 +111,11 @@ program
 
 program
     .command("launch")
-    .description("Download and launch Obsidian")
+    .summary("Download and launch Obsidian")
+    .description(
+        "download and launch Obsidian, opening the specified vault. The Obsidian instance will have a sandboxed " +
+        "configuration directory."
+    )
     .argument('[vault]', 'Vault to open')
     .option(...cacheOptionArgs)
     .option(...versionOptionArgs)
@@ -119,7 +123,7 @@ program
     .option(...pluginOptionArgs)
     .option(...themeOptionArgs)
     .option('--copy', "Copy the vault first")
-    .action(async (vault: string, opts) => {
+    .action(async (vault: string|undefined, opts) => {
         const launcher = new ObsidianLauncher({cacheDir: opts.cache});
         const {proc, configDir, vault: vaultCopy} = await launcher.launch({
             appVersion: opts.version, installerVersion: opts.installerVersion,
@@ -138,12 +142,12 @@ program
 
 program
     .command("watch")
-    .summary("Launch Obsidian and watch for changes to plugins and themes")
+    .summary("launch Obsidian and watch for changes to plugins and themes")
     .description(
-        "Downlaods Launch Obsidian and watch for changes to plugins and themes.\n" +
+        "Downloads Obsidian and opens a vault, then watches for changes to plugins and themes.\n" +
         "\n" +
-        'Takes the same arguments as the "launch" command but watches for changes to any local plugins or themes ' +
-        'updates the copies in the vault. Automatically installs the "pjeby/hot-reload" so plugins will hot-reload ' +
+        'Takes the same arguments as the "launch" command but watches for changes to any local plugins or themes and ' +
+        'updates the copies in the vault. Automatically installs the "pjeby/hot-reload" so plugins will hot reload ' +
         'as they are updated.'
     )
     .argument('[vault]', 'Vault to open')
@@ -225,7 +229,7 @@ program
 
 program
     .command("create-versions-list")
-    .summary("Collect Obsidian version information into a single file")
+    .summary("collect Obsidian version information into a single file")
     .description(
         "Collect Obsidian version information into a single file.\n" +
         "\n" +
@@ -245,8 +249,13 @@ program
         } catch {
             versionInfos = undefined;
         }
+        const maxInstances = Number(opts.maxInstances)
+        if (isNaN(maxInstances)) {
+            throw Error(`Invalid number ${opts.maxInstances}`)
+        }
+
         const launcher = new ObsidianLauncher({cacheDir: opts.cache});
-        versionInfos = await launcher.updateObsidianVersionInfos(versionInfos, { maxInstances: 1 });
+        versionInfos = await launcher.updateObsidianVersionInfos(versionInfos, { maxInstances });
         fsAsync.writeFile(dest, JSON.stringify(versionInfos, undefined, 4));
         console.log(`Wrote updated version information to ${dest}`)
     })
