@@ -575,18 +575,21 @@ export class ObsidianLauncher {
             }
 
             const pluginDest = path.join(obsidianDir, 'plugins', pluginId);
-            await fsAsync.rm(pluginDest, { recursive: true, force: true });
             await fsAsync.mkdir(pluginDest, { recursive: true });
 
-            const files = {
-                "manifest.json": true, "main.js": true,
-                "styles.css": false, "data.json": false,
+            const files: Record<string, [boolean, boolean]> = {
+                "manifest.json": [true, true],
+                "main.js": [true, true],
+                "styles.css": [false, true],
+                "data.json": [false, false],
             }
-            for (const [file, required] of Object.entries(files)) {
+            for (const [file, [required, deleteIfMissing]] of Object.entries(files)) {
                 if (await fileExists(path.join(pluginPath, file))) {
                     await linkOrCp(path.join(pluginPath, file), path.join(pluginDest, file));
                 } else if (required) {
                     throw Error(`${pluginPath}/${file} missing.`);
+                } else if (deleteIfMissing) {
+                    await fsAsync.rm(path.join(pluginDest, file), {force: true});
                 }
             }
 
@@ -634,7 +637,6 @@ export class ObsidianLauncher {
             }
 
             const themeDest = path.join(obsidianDir, 'themes', themeName);
-            await fsAsync.rm(themeDest, { recursive: true, force: true });
             await fsAsync.mkdir(themeDest, { recursive: true });
 
             await linkOrCp(manifestPath, path.join(themeDest, "manifest.json"));

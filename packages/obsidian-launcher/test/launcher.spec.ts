@@ -144,6 +144,8 @@ describe("test ObsidianLauncher", () => {
         });
         const vault = await createDirectory({
             ".obsidian/community-plugins.json": '["dataview", "plugin-b"]',
+            ".obsidian/plugins/plugin-a/styles.css": '.foo {}',
+            ".obsidian/plugins/plugin-a/data.json": '{}',
             ".obsidian/plugins/plugin-a/foo.json": '{}',
         });
 
@@ -155,7 +157,8 @@ describe("test ObsidianLauncher", () => {
         expect(JSON.parse(communityPlugins)).to.eql(["dataview", "plugin-b", "plugin-a"]);
         
         const pluginAFiles = await fsAsync.readdir(`${vault}/.obsidian/plugins/plugin-a`);
-        expect(pluginAFiles.sort()).to.eql([".hotreload", "main.js", "manifest.json"]); // deletes foo.json
+        // deletes style.css but keeps data.json and foo.json
+        expect(pluginAFiles.sort()).to.eql([".hotreload", "data.json", "foo.json", "main.js", "manifest.json"]);
     })
 
     it("installThemes no themes", async () => {
@@ -177,7 +180,7 @@ describe("test ObsidianLauncher", () => {
         expect(themeFiles.sort()).to.eql(["manifest.json", "theme.css"]);
     })
 
-    it("installThemes overwrites themes", async () => {
+    it("installThemes preserves extra files", async () => {
         const theme = await createDirectory({
             "manifest.json": '{"name": "sample-theme"}',
             "theme.css": ".foobar {}",
@@ -190,7 +193,7 @@ describe("test ObsidianLauncher", () => {
         await launcher.installThemes(vault, [{path: theme}]);
 
         const themeFiles = await fsAsync.readdir(`${vault}/.obsidian/themes/sample-theme`);
-        expect(themeFiles.sort()).to.eql(["manifest.json", "theme.css"]); // deletes foo.json
+        expect(themeFiles.sort()).to.eql(["foo.json", "manifest.json", "theme.css"]);
 
         const appearancePath = path.join(vault, '.obsidian/appearance.json');
         const appearance = JSON.parse(await fsAsync.readFile(appearancePath, 'utf-8'));

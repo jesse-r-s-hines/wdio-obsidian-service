@@ -4,8 +4,6 @@ import { ObsidianLauncherService, ObsidianWorkerService } from "./service.js";
 export default ObsidianWorkerService;
 export const launcher = ObsidianLauncherService;
 
-export { ObsidianLauncherService, ObsidianWorkerService };
-
 export type { ObsidianServiceOptions, ObsidianCapabilityOptions } from "./types.js";
 
 export type {
