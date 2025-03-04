@@ -40,14 +40,11 @@ jobs:
             } else {
               core.setOutput('versionChanged', 'true');
             }
-  
-  publish:
+
+  build-and-publish:
     if: ${{ success() && needs.check.outputs.versionChanged == 'true' }}
     runs-on: ubuntu-latest
     needs: check
-    permissions:
-      contents: write
-      id-token: write
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -76,10 +73,22 @@ jobs:
       - name: Generate docs
         run: npm run doc
 
-      - name: Deploy
-        uses: JamesIves/github-pages-deploy-action@v4.7.3
+      - name: Upload docs as artifact
+        id: deployment
+        uses: actions/upload-pages-artifact@v3
         with:
-          branch: gh-pages
-          folder: docs
-          clean: true
-          commit-message: "Publish docs for version ${{ needs.check.outputs.version }}"
+          name: github-pages
+          path: docs/
+
+  deploy-docs:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build-and-publish
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+        with:
+          artifact_name: github-pages
