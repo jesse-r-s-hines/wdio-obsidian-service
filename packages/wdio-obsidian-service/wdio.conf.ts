@@ -25,7 +25,7 @@ if (process.env['OBSIDIAN_VERSIONS']) {
     const appVersions = process.env['OBSIDIAN_VERSIONS'].trim().split(/[ ,]+/);
     const installerVersions = process.env['OBSIDIAN_INSTALLER_VERSIONS']?.trim().split(/[ ,]+/) ?? [];
     versionsToTest = appVersions.map((v, i) => [v, installerVersions[i] ?? 'earliest']);
-} else if (['local', 'ubuntu-latest', 'windows-latest'].includes(testEnv)) {
+} else if (['local', 'ubuntu-latest'].includes(testEnv)) {
     // Test every minor installer version since minInstallerVersion and every minor appVersion since minAppVersion
     const versionMap = _(allVersions)
         .filter(v => !!v.electronVersion && !v.isBeta && semver.gte(v.version, minInstallerVersion))
@@ -48,8 +48,8 @@ if (process.env['OBSIDIAN_VERSIONS']) {
             );
         }
     }
-} else if (testEnv == "macos-latest") {
-    // MacOS runners cost 10x of our GitHub actions quota compared to ubuntu, so only run min and latest.
+} else if (["windows-latest", "macos-latest"].includes(testEnv)) {
+    // Windows costs 2x and MacOS cost 10x of our GitHub actions quota compared to ubuntu, so only run min and latest.
     versionsToTest = [[minAppVersion, "earliest"], ["latest", "latest"]];
 } else {
     throw Error(`Unknown TEST_ENV ${testEnv}`)
