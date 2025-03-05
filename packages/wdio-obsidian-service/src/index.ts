@@ -12,9 +12,11 @@ export type {
 } from "obsidian-launcher"
 
 /**
- * Returns true if we either have the credentails to download the latest Obsidian beta or it's already in cache.
+ * Returns true if there's currently an Obsidian beta and we have the credentials to download it or it's already in the
+ * cache.
  */
 export async function obsidianBetaAvailable(cacheDir?: string) {
     const launcher = new ObsidianLauncher({cacheDir: cacheDir});
-    return await launcher.isAvailable("latest-beta");
+    const versionInfo = await launcher.getVersionInfo("latest-beta");
+    return versionInfo.isBeta && await launcher.isAvailable(versionInfo.version);
 }
