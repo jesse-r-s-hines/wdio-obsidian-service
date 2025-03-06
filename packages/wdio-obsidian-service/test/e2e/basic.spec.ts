@@ -7,7 +7,7 @@ describe("Basic obsidian launch", () => {
     before(async () => {
         // Obsidian should start with no vault open
         expect(await browser.getVaultPath()).to.eql(undefined);
-        await browser.openVault({vault: "./test/vaults/basic"});
+        await browser.reloadObsidian({vault: "./test/vaults/basic"});
     })
     
     it('Obsidian version matches', async () => {
@@ -48,50 +48,77 @@ describe("Basic obsidian launch", () => {
         expect(enabledTheme).to.eql("Basic Theme")
     })
 
-    it('openVault', async () => {
-        const beforeVaultPath: string = await browser.executeObsidian(({app}) =>
+    it('reloadObsidian', async () => {
+        const vaultPath1: string = await browser.executeObsidian(({app}) =>
             (app.vault.adapter as any).getBasePath()
         );
-        const beforeConfigDir: string = await browser.execute("return electron.remote.app.getPath('userData')");
+        const configDir1: string = await browser.execute("return electron.remote.app.getPath('userData')");
 
-        // This should re-open the same vault with the same plugins and themes
-        await browser.openVault({vault: "./test/vaults/basic"});
+        await browser.executeObsidian(async ({app}) => {
+            await app.vault.create("foo.md", "FOO");
+        })
 
-        const afterVaultPath: string = await browser.executeObsidian(({app}) =>
+        // This should re-open the same vault with the same plugins and themes, and re-copying the vault from source
+        await browser.reloadObsidian({vault: "./test/vaults/basic"});
+
+        const vaultPath2: string = await browser.executeObsidian(({app}) =>
             (app.vault.adapter as any).getBasePath()
         );
-        const afterConfigDir: string = await browser.execute("return electron.remote.app.getPath('userData')");
-        const afterPlugins: string[] = await browser.executeObsidian(({app}) =>
+        const configDir2: string = await browser.execute("return electron.remote.app.getPath('userData')");
+        const plugins2: string[] = await browser.executeObsidian(({app}) =>
             [...(app as any).plugins.enabledPlugins].sort()
         );
-        const afterTheme = await browser.execute("return app.customCss.theme");
+        const theme2 = await browser.execute("return app.customCss.theme");
+        const files2 = await browser.executeObsidian(({app}) =>
+            app.vault.getMarkdownFiles().map(f => f.path).sort()
+        );
 
-        expect(beforeVaultPath).to.not.eql(afterVaultPath);
-        expect(beforeConfigDir).to.not.eql(afterConfigDir);
-        expect(afterPlugins).to.eql(["basic-plugin", "wdio-obsidian-service-plugin"]);
-        expect(afterTheme).to.eql("Basic Theme");
+        expect(vaultPath2).to.not.eql(vaultPath1);
+        expect(configDir2).to.not.eql(configDir1);
+        expect(plugins2).to.eql(["basic-plugin", "wdio-obsidian-service-plugin"]);
+        expect(theme2).to.eql("Basic Theme");
+        // Should have re-copied the vault (not carrying foo.md over)
+        expect(files2).to.eql(["Goodbye.md", "Welcome.md"]);
+
+        await browser.executeObsidian(async ({app}) => {
+            await app.vault.create("foo.md", "FOO");
+        })
+        // Test preserving the vault.
+        await browser.reloadObsidian();
+
+        const vaultPath3: string = await browser.executeObsidian(({app}) =>
+            (app.vault.adapter as any).getBasePath()
+        );
+        const configDir3: string = await browser.execute("return electron.remote.app.getPath('userData')");
+        const files3 = await browser.executeObsidian(({app}) =>
+            app.vault.getMarkdownFiles().map(f => f.path).sort()
+        );
+
+        expect(vaultPath3).to.eql(vaultPath2);
+        expect(configDir3).to.eql(configDir2);
+        expect(files3).to.eql(["Goodbye.md", "Welcome.md", "foo.md"]);
 
         // Test no plugins, no theme, and a new vault
-        await browser.openVault({vault: "./test/vaults/basic2", plugins: [], theme: "default"});
-        const noPlugins: string[] = await browser.executeObsidian(({app}) =>
+        await browser.reloadObsidian({vault: "./test/vaults/basic2", plugins: [], theme: "default"});
+        const plugins4: string[] = await browser.executeObsidian(({app}) =>
             [...(app as any).plugins.enabledPlugins].sort()
         );
-        const noTheme = await browser.executeObsidian(({app}) => (app as any).customCss.theme);
-        const vaultFiles = await browser.executeObsidian(({app}) =>
-            app.vault.getMarkdownFiles().map(x => x.path).sort()
+        const theme4 = await browser.executeObsidian(({app}) => (app as any).customCss.theme);
+        const files4 = await browser.executeObsidian(({app}) =>
+            app.vault.getMarkdownFiles().map(f => f.path).sort()
         );
-        expect(noPlugins).to.eql(["wdio-obsidian-service-plugin"]);
-        expect(!!noTheme).to.eql(false);
-        expect(vaultFiles).to.eql(["A.md", "B.md"]);
+        expect(plugins4).to.eql(["wdio-obsidian-service-plugin"]);
+        expect(!!theme4).to.eql(false);
+        expect(files4).to.eql(["A.md", "B.md"]);
 
-        // Test installing the plugin via openVault
-        await browser.openVault({vault: "./test/vaults/basic", plugins: ["basic-plugin"], theme: "Basic Theme"});
-        const afterPlugins2: string[] = await browser.executeObsidian(({app}) =>
+        // Test installing a plugin via reloadObsidian
+        await browser.reloadObsidian({vault: "./test/vaults/basic", plugins: ["basic-plugin"], theme: "Basic Theme"});
+        const plugins5: string[] = await browser.executeObsidian(({app}) =>
             [...(app as any).plugins.enabledPlugins].sort()
         );
-        const afterTheme2 = await browser.executeObsidian(({app}) => (app as any).customCss.theme);
+        const theme5 = await browser.executeObsidian(({app}) => (app as any).customCss.theme);
 
-        expect(afterPlugins2).to.eql(["basic-plugin", "wdio-obsidian-service-plugin"]);
-        expect(afterTheme2).to.eql("Basic Theme");
+        expect(plugins5).to.eql(["basic-plugin", "wdio-obsidian-service-plugin"]);
+        expect(theme5).to.eql("Basic Theme");
     })
 })

@@ -7,7 +7,7 @@ import { TFile } from 'obsidian';
 
 describe("Test custom browser commands", () => {
     before(async () => {
-        await browser.openVault({vault: "./test/vaults/basic"});
+        await browser.reloadObsidian({vault: "./test/vaults/basic"});
     })
 
     it('getVaultPath', async () => {
