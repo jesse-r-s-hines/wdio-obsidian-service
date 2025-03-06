@@ -40,6 +40,19 @@ describe("Test custom browser commands", () => {
         expect(plugins).to.eql(["basic-plugin", "wdio-obsidian-service-plugin"]);
     })
 
+    it('set theme', async () => {
+        let theme = await browser.executeObsidian(({app}) => (app.vault as any).getConfig("cssTheme"));
+        expect(theme).to.eql("Basic Theme");
+        
+        await browser.setTheme("default");
+        theme = await browser.executeObsidian(({app}) => (app.vault as any).getConfig("cssTheme"));
+        expect(theme).to.eql("");
+
+        await browser.setTheme("Basic Theme");
+        theme = await browser.executeObsidian(({app}) => (app.vault as any).getConfig("cssTheme"));
+        expect(theme).to.eql("Basic Theme");
+    })
+
     it('windows', async () => {
         // pop-out windows have isolated window objects, check that executeObsidian still works and can access the
         // globals.
