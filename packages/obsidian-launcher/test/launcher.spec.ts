@@ -16,10 +16,12 @@ const obsidianLauncherOpts = {
     communityThemesUrl: pathToFileURL("./test/data/community-css-themes.json").toString(),
 }
 
-describe("test ObsidianLauncher", () => {
+describe('ObsdianLauncher resolve versions', () => {
     let launcher: ObsidianLauncher;
+    const originalCwd = process.cwd();
 
-    before(async () => {
+    beforeEach(async () => {
+        process.chdir(originalCwd);
         const versionsFile = path.resolve("../../obsidian-versions.json");
         let versions = JSON.parse(await fsAsync.readFile(versionsFile, 'utf-8')).versions;
         versions = versions.filter((v: ObsidianVersionInfo) => semver.lte(v.version, "1.8.0"));
@@ -35,11 +37,79 @@ describe("test ObsidianLauncher", () => {
             }),
         });
         const cacheDir = await createDirectory();
-    
+
         launcher = new ObsidianLauncher({
             ...obsidianLauncherOpts,
             cacheDir,
             versionsUrl: pathToFileURL(`${tmpDir}/obsidian-versions.json`).toString(),
+        });
+    })
+
+    after(() => {
+        process.chdir(originalCwd);
+    })
+
+    const resolveVersionsTests = [
+        [["latest", "latest"], ["1.7.7", "1.7.7"]],
+        [["latest", "earliest"], ["1.7.7", "1.1.9"]],
+        [["latest-beta", "latest"], ["1.8.0", "1.7.7"]],
+        [["0.14.5", "earliest"], ["0.14.5", "0.11.0"]],
+        [["0.14.5", "latest"], ["0.14.5", "0.14.5"]],
+    ]
+
+    resolveVersionsTests.forEach(([[appVersion, installerVersion], expected]) => {
+        it(`resolveVersions("${appVersion}", "${installerVersion}") == ${expected}`, async () => {
+            const [resolvedAppVersion, resolvedInstallerVersion] =
+                await launcher.resolveVersions(appVersion, installerVersion);
+            expect([resolvedAppVersion, resolvedInstallerVersion]).to.eql(expected);
+        })
+    })
+
+    it('resolveVersions earliest error', async () => {
+        const result = await launcher.resolveVersions("earliest").catch(e => e);
+        expect(result).to.be.instanceOf(Error);
+        expect(result.toString()).includes("minAppVersion");
+    })
+
+    it('resolveVersions earliest', async () => {
+        const tmpDir = await createDirectory({
+            "manifest.json": '{"minAppVersion": "1.7.4"}',
+        });
+        process.chdir(tmpDir);
+        const [appVersion, installerVersion] = await launcher.resolveVersions("earliest", "latest");
+        expect([appVersion, installerVersion]).to.eql(["1.7.4", "1.7.4"]);
+    })
+
+    it('resolveVersions nested', async () => {
+        const tmpDir = await createDirectory({
+            "foo/a.md": "Hello",
+            "manifest.json": '{"minAppVersion": "1.7.4"}',
+        });
+        process.chdir(path.join(tmpDir, 'foo'));
+        const [appVersion, installerVersion] = await launcher.resolveVersions("earliest", "latest");
+        expect([appVersion, installerVersion]).to.eql(["1.7.4", "1.7.4"]);
+    })
+
+    it('getVersionInfo basic', async () => {
+        const versionInfo = await launcher.getVersionInfo("1.7.7");
+        expect(versionInfo.chromeVersion).to.eql('128.0.6613.186');
+    })
+
+    it('getVersionInfo missing', async () => {
+        const result = await launcher.getVersionInfo("foo").catch(e => e);
+        expect(result).to.be.instanceOf(Error);
+        expect(result.toString()).includes("No Obsidian app version");
+    })
+})
+
+describe("ObsidianLauncher download, install and setup", () => {
+    let launcher: ObsidianLauncher;
+
+    before(async () => {
+        const cacheDir = await createDirectory();
+        launcher = new ObsidianLauncher({
+            ...obsidianLauncherOpts,
+            cacheDir,
         });
     })
 
@@ -59,7 +129,7 @@ describe("test ObsidianLauncher", () => {
         const communityPlugins = await fsAsync.readFile(`${vault}/.obsidian/community-plugins.json`, 'utf-8');
         expect(communityPlugins).to.eql('["plugin-b" ]');
     })
-    
+
     it("installPlugins empty vault", async () => {
         const plugin = await createDirectory({
             "manifest.json": '{"id": "sample-plugin"}',
@@ -74,7 +144,7 @@ describe("test ObsidianLauncher", () => {
         const pluginFiles = await fsAsync.readdir(`${vault}/.obsidian/plugins/sample-plugin`);
         expect(pluginFiles.sort()).to.eql([".hotreload", "main.js", "manifest.json"]);
     })
-    
+
     it("installPlugins multiple plugins and existing community-plugins.json", async () => {
         const pluginA = await createDirectory({
             "manifest.json": '{"id": "plugin-a"}',
@@ -98,7 +168,7 @@ describe("test ObsidianLauncher", () => {
 
         const communityPlugins = await fsAsync.readFile(`${vault}/.obsidian/community-plugins.json`, 'utf-8');
         expect(JSON.parse(communityPlugins)).to.eql(["dataview", "plugin-b", "plugin-a"]);
-        
+
         const pluginAFiles = await fsAsync.readdir(`${vault}/.obsidian/plugins/plugin-a`);
         expect(pluginAFiles.sort()).to.eql([".hotreload", "main.js", "manifest.json"]);
 
@@ -129,14 +199,14 @@ describe("test ObsidianLauncher", () => {
 
         const communityPlugins = await fsAsync.readFile(`${vault}/.obsidian/community-plugins.json`, 'utf-8');
         expect(JSON.parse(communityPlugins)).to.eql(["dataview"]);
-        
+
         const pluginAFiles = await fsAsync.readdir(`${vault}/.obsidian/plugins/plugin-a`);
         expect(pluginAFiles.sort()).to.eql([".hotreload", "main.js", "manifest.json"]);
 
         const pluginBFiles = await fsAsync.readdir(`${vault}/.obsidian/plugins/plugin-b`);
         expect(pluginBFiles.sort()).to.eql([".hotreload", "data.json", "main.js", "manifest.json", "styles.css"]);
     })
-    
+
     it("installPlugins overwrites plugins", async () => {
         const pluginA = await createDirectory({
             "manifest.json": '{"id": "plugin-a"}',
@@ -155,7 +225,7 @@ describe("test ObsidianLauncher", () => {
 
         const communityPlugins = await fsAsync.readFile(`${vault}/.obsidian/community-plugins.json`, 'utf-8');
         expect(JSON.parse(communityPlugins)).to.eql(["dataview", "plugin-b", "plugin-a"]);
-        
+
         const pluginAFiles = await fsAsync.readdir(`${vault}/.obsidian/plugins/plugin-a`);
         // deletes style.css but keeps data.json and foo.json
         expect(pluginAFiles.sort()).to.eql([".hotreload", "data.json", "foo.json", "main.js", "manifest.json"]);
@@ -237,33 +307,6 @@ describe("test ObsidianLauncher", () => {
         const reDownloaded = await launcher.downloadThemes(downloaded);
         // Shouldn't reset the originalType if called twice
         expect(reDownloaded[0]).to.eql(downloaded[0]);
-    })
-
-    const resolveVersionsTests = [
-        [["latest", "latest"], ["1.7.7", "1.7.7"]],
-        [["latest", "earliest"], ["1.7.7", "1.1.9"]],
-        [["latest-beta", "latest"], ["1.8.0", "1.7.7"]],
-        [["0.14.5", "earliest"], ["0.14.5", "0.11.0"]],
-        [["0.14.5", "latest"], ["0.14.5", "0.14.5"]],
-    ]
-    
-    resolveVersionsTests.forEach(([[appVersion, installerVersion], expected]) => {
-        it(`resolveVersions("${appVersion}", "${installerVersion}") == ${expected}`, async () => {
-            const [resolvedAppVersion, resolvedInstallerVersion] = 
-                await launcher.resolveVersions(appVersion, installerVersion);
-            expect([resolvedAppVersion, resolvedInstallerVersion]).to.eql(expected);
-        })
-    })
-
-    it('getVersionInfo basic', async () => {
-        const versionInfo = await launcher.getVersionInfo("1.7.7");
-        expect(versionInfo.chromeVersion).to.eql('128.0.6613.186');
-    })
-
-    it('getVersionInfo missing', async () => {
-        const result = await launcher.getVersionInfo("foo").catch(e => e);
-        expect(result).to.be.instanceOf(Error);
-        expect(result.toString()).includes("No Obsidian version");
     })
 
     it(`setupConfigDir basic`, async () => {

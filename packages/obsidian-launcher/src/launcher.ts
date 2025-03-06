@@ -36,7 +36,7 @@ export class ObsidianLauncher {
     readonly communityPluginsUrl: string
     readonly communityThemesUrl: string
 
-    /** Cached requests from cachedFetch() */
+    /** Cached metadata files and requests */
     private metadataCache: Record<string, any>
 
     /**
@@ -101,6 +101,23 @@ export class ObsidianLauncher {
         return this.metadataCache[dest];
     }
 
+    private async getRootManifest(): Promise<any> {
+        if (!('manifest.json' in this.metadataCache)) {
+            const root = path.parse(process.cwd()).root;
+            let dir = process.cwd();
+            while (dir != root && !(await fileExists(path.join(dir, 'manifest.json')))) {
+                dir = path.dirname(dir);
+            }
+            const manifestPath = path.join(dir, 'manifest.json');
+            if (await fileExists(manifestPath)) {
+                this.metadataCache['manifest.json'] = JSON.parse(await fsAsync.readFile(manifestPath, 'utf-8'));
+            } else {
+                this.metadataCache['manifest.json'] = null;
+            }
+        }
+        return this.metadataCache['manifest.json'];
+    }
+
     /** Get information about all available Obsidian versions. */
     async getVersions(): Promise<ObsidianVersionInfo[]> {
         const dest = path.join(this.cacheDir, "obsidian-versions.json");
@@ -121,24 +138,31 @@ export class ObsidianLauncher {
 
     /**
      * Resolves Obsidian version strings to absolute obsidian versions.
-     * @param appVersion Obsidian version string or "latest" or "latest-beta"
-     * @param installerVersion Obsidian version string or "latest" or "earliest"
+     * @param appVersion Obsidian version string or "latest", "earliest", or "latest-beta". "earliest" will use the 
+     *     minAppVersion set in your manifest.json.
+     * @param installerVersion Obsidian version string or "latest" or "earliest". "earliest" will use the minimum
+     *     installer version compatible with the appVersion.
      * @returns [appVersion, installerVersion] with any "latest" etc. resolved to specific versions.
      */
     async resolveVersions(appVersion: string, installerVersion = "latest"): Promise<[string, string]> {
         const versions = await this.getVersions();
 
-        if (appVersion == "latest") {
-            appVersion = versions.filter(v => !v.isBeta).at(-1)!.version;
-        } else if (appVersion == "latest-beta") {
+        if (appVersion == "latest-beta") {
             appVersion = versions.at(-1)!.version;
+        } else if (appVersion == "latest") {
+            appVersion = versions.filter(v => !v.isBeta).at(-1)!.version;
+        } else if (appVersion == "earliest") {
+            appVersion = (await this.getRootManifest())?.minAppVersion;
+            if (!appVersion) {
+                throw Error('Unable to resolve Obsidian app version "earliest", no manifest.json or minAppVersion found.')
+            }
         } else {
             // if invalid match won't be found and we'll throw error below
             appVersion = semver.valid(appVersion) ?? appVersion;
         }
         const appVersionInfo = versions.find(v => v.version == appVersion);
         if (!appVersionInfo) {
-            throw Error(`No Obsidian version ${appVersion} found`);
+            throw Error(`No Obsidian app version ${appVersion} found`);
         }
 
         if (installerVersion == "latest") {
