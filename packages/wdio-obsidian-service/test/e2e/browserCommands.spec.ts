@@ -7,7 +7,7 @@ import { TFile } from 'obsidian';
 
 describe("Test custom browser commands", () => {
     before(async () => {
-        await browser.openVault({vault: "./test/vaults/basic"});
+        await browser.reloadObsidian({vault: "./test/vaults/basic"});
     })
 
     it('getVaultPath', async () => {
@@ -38,6 +38,19 @@ describe("Test custom browser commands", () => {
         await browser.enablePlugin("basic-plugin");
         plugins = await browser.executeObsidian(({app}) => [...(app as any).plugins.enabledPlugins].sort());
         expect(plugins).to.eql(["basic-plugin", "wdio-obsidian-service-plugin"]);
+    })
+
+    it('set theme', async () => {
+        let theme = await browser.executeObsidian(({app}) => (app.vault as any).getConfig("cssTheme"));
+        expect(theme).to.eql("Basic Theme");
+        
+        await browser.setTheme("default");
+        theme = await browser.executeObsidian(({app}) => (app.vault as any).getConfig("cssTheme"));
+        expect(theme).to.eql("");
+
+        await browser.setTheme("Basic Theme");
+        theme = await browser.executeObsidian(({app}) => (app.vault as any).getConfig("cssTheme"));
+        expect(theme).to.eql("Basic Theme");
     })
 
     it('windows', async () => {

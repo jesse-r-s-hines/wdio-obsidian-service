@@ -81,6 +81,15 @@ const browserCommands = {
         );
     },
 
+    /** Sets the theme. Pass "default" to reset to the Obsidian theme. */
+    async setTheme(this: WebdriverIO.Browser, themeName: string): Promise<void> {
+        themeName = themeName == 'default' ? '' : themeName;
+        await this.executeObsidian(
+            async ({app}, themeName) => await (app as any).customCss.setTheme(themeName),
+            themeName,
+        )
+    },
+
     /**
      * Executes an Obsidian command.
      * @param id Id of the command to run.

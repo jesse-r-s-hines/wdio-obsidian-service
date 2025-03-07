@@ -55,7 +55,7 @@ export interface ObsidianCapabilityOptions {
      * Each entry is a path to the local plugin to install, e.g. ["."] or ["dist"] depending on your build setup. You
      * can also pass objects. If you pass an object it can contain one of either `path` (to install a local plugin),
      * `repo` (to install a plugin from github), or `id` (to install a community plugin). You can set `enabled: false`
-     * to install the plugin but start it disabled. You can enable the plugin later using `openVault` or the
+     * to install the plugin but start it disabled. You can enable the plugin later using `reloadObsidian` or the
      * `enablePlugin` command.
      */
     plugins?: PluginEntry[],
@@ -74,7 +74,7 @@ export interface ObsidianCapabilityOptions {
      * The path to the vault to open.
      * 
      * The vault will be copied, so any changes made in your tests won't affect the original. If omitted, no vault will
-     * be opened and you'll need to call `browser.openVault` to open a vault during your tests.
+     * be opened and you'll need to call `browser.reloadObsidian` to open a vault during your tests.
      */
     vault?: string,
 
@@ -97,20 +97,21 @@ declare global {
              * Relaunch obsidian. Can be used to switch to a new vault, change the plugin list, or just to reboot
              * Obsidian.
              * 
-             * The vault will be copied, so any changes made in your tests won't be persited to the original. This
-             * does require rebooting Obsidian, so avoid calling this too often so you don't slow your tests down.
+             * As this does a full reboot of Obsidian, avoid calling this too often so you don't slow your tests down.
              * You can also set the vault in the `wdio.conf.ts` capabilities section which may be useful if all
              * your tests use the same vault.
              * 
-             * @param vault path to the vault to open. If omitted it will re-open the current vault.
-             * @param plugins List of plugin ids to enable. If omitted it will keep current plugin list.
-             *     Note, all the plugins must be defined in your wdio.conf.ts capabilities. You can use openVault to
-             *     toggle which plugins are enabled and which are disabled.
+             * @param vault Path to the vault to open. The vault will be copied, so any changes made in your tests won't
+             *     be persited to the original. If omitted, it will reboot Obsidian with the current vault, without
+             *     creating a new copy of the vault.
+             * @param plugins List of plugin ids to enable. If omitted it will keep current plugin list. Note, all the
+             *     plugins must be defined in your wdio.conf.ts capabilities. You can also use the enablePlugin and 
+             *     disablePlugin commands to change plugins without relaunching Obsidian.
              * @param theme Name of the theme to enable. If omitted it will keep the current theme. Pass "default" to
              *     switch back to the default theme. Like with plugins, the theme must be defined in wdio.conf.ts.
-             * @returns Returns the new sessionId (same as reloadSession()).
+             * @returns Returns the new sessionId (same as browser.reloadSession()).
              */
-            openVault(params?: {
+            reloadObsidian(params?: {
                 vault?: string,
                 plugins?: string[], theme?: string,
             }): Promise<string>;
