@@ -7,6 +7,7 @@ import { fileURLToPath } from "url"
 import ObsidianLauncher, { DownloadedPluginEntry, DownloadedThemeEntry } from "obsidian-launcher"
 import browserCommands from "./browserCommands.js"
 import { ObsidianCapabilityOptions, ObsidianServiceOptions, OBSIDIAN_CAPABILITY_KEY } from "./types.js"
+import { sleep } from "./utils.js"
 import _ from "lodash"
 
 
@@ -208,7 +209,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
             if (selection != "default" && currentThemes.every((t: any) => t.name != selection)) {
                 throw Error(`Unknown theme: ${selection}`);
             }
-            return currentThemes.map(t => ({...t, enabled: selection != 'default' && t.name === selection}));
+            return currentThemes.map((t: any) => ({...t, enabled: selection != 'default' && t.name === selection}));
         } else {
             return currentThemes;
         }
@@ -227,16 +228,14 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
             {vault, plugins, theme} = {},
         ) {
             const oldObsidianOptions = this.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY];
-            const newPlugins = service.selectPlugins(oldObsidianOptions.plugins, plugins);
-            const newThemes = service.selectThemes(oldObsidianOptions.themes, theme);
-
             let newCapabilities: WebdriverIO.Capabilities
 
             if (vault) {
                 const newObsidianOptions = {
                     ...oldObsidianOptions,
                     vault: path.resolve(vault),
-                    plugins: newPlugins, themes: newThemes,
+                    plugins: service.selectPlugins(oldObsidianOptions.plugins, plugins),
+                    themes: service.selectThemes(oldObsidianOptions.themes, theme),
                 }
     
                 const configDir = await service.setupObsidian(newObsidianOptions);
@@ -259,16 +258,27 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
             } else {
                 // preserve vault and config dir
                 newCapabilities = {};
-                const currentVault = await browser.getVaultPath();
-                if (currentVault && (plugins || theme)) {
-                    // Explicitly close obsidian so we can mess with the vault while its down
-                    await browser.deleteSession({shutdownDriver: false});
-                    log.info(`Re-opening vault ${currentVault}`);
-                    await service.obsidianLauncher.setupVault({
-                        vault: currentVault, copy: false,
-                        plugins: newPlugins, themes: newThemes,
-                    });
+                // Since we aren't recreating the vault, we'll need to reset plugins and themes here if specified.
+                if (plugins) {
+                    const enabledPlugins = await browser.executeObsidian(({app}) =>
+                        [...(app as any).plugins.enabledPlugins].sort()
+                    )
+                    for (const pluginId of _.difference(enabledPlugins, plugins, ['wdio-obsidian-service-plugin'])) {
+                        await browser.disablePlugin(pluginId);
+                    }
+                    for (const pluginId of _.difference(plugins, enabledPlugins)) {
+                        await browser.enablePlugin(pluginId);
+                    }
+                    await browser.executeObsidian(async ({app}) => await (app as any).plugins.saveConfig())
                 }
+                if (theme) {
+                    await browser.setTheme(theme);
+                    await browser.executeObsidian(async ({app}) => await (app.vault as any).saveConfig())
+                }
+                // Obsidian debounces saves to the config dir, and so changes to plugin list, themes, and anything else
+                // you set in your tests may not get saved to disk before the reboot. I haven't found a better way to
+                // make sure everything's saved then just waiting a bit.
+                await sleep(2000);
             }
 
             const sessionId = await browser.reloadSession({
