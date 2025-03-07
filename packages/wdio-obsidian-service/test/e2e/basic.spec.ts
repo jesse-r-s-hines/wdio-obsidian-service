@@ -90,12 +90,18 @@ describe("Basic obsidian launch", () => {
             (app.vault.adapter as any).getBasePath()
         );
         const configDir3: string = await browser.execute("return electron.remote.app.getPath('userData')");
+        const plugins3: string[] = await browser.executeObsidian(({app}) =>
+            [...(app as any).plugins.enabledPlugins].sort()
+        );
+        const theme3 = await browser.execute("return app.customCss.theme");
         const files3 = await browser.executeObsidian(({app}) =>
             app.vault.getMarkdownFiles().map(f => f.path).sort()
         );
 
         expect(vaultPath3).to.eql(vaultPath2);
         expect(configDir3).to.eql(configDir2);
+        expect(plugins3).to.eql(plugins2);
+        expect(theme3).to.eql(theme2);
         expect(files3).to.eql(["Goodbye.md", "Welcome.md", "foo.md"]);
 
         // Test no plugins, no theme, and a new vault
@@ -111,7 +117,7 @@ describe("Basic obsidian launch", () => {
         expect(!!theme4).to.eql(false);
         expect(files4).to.eql(["A.md", "B.md"]);
 
-        // Test installing a plugin via reloadObsidian
+        // Test enabling a plugin via reloadObsidian
         await browser.reloadObsidian({vault: "./test/vaults/basic", plugins: ["basic-plugin"], theme: "Basic Theme"});
         const plugins5: string[] = await browser.executeObsidian(({app}) =>
             [...(app as any).plugins.enabledPlugins].sort()
@@ -120,5 +126,15 @@ describe("Basic obsidian launch", () => {
 
         expect(plugins5).to.eql(["basic-plugin", "wdio-obsidian-service-plugin"]);
         expect(theme5).to.eql("Basic Theme");
+
+        // Test changing plugins without resetting vault
+        await browser.reloadObsidian({plugins: [], theme: "default"});
+        const plugins6: string[] = await browser.executeObsidian(({app}) =>
+            [...(app as any).plugins.enabledPlugins].sort()
+        );
+        const theme6 = await browser.execute("return app.customCss.theme");
+
+        expect(plugins6).to.eql(['wdio-obsidian-service-plugin']);
+        expect(theme6).to.eql("");
     })
 })

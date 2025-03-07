@@ -208,7 +208,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
             if (selection != "default" && currentThemes.every((t: any) => t.name != selection)) {
                 throw Error(`Unknown theme: ${selection}`);
             }
-            return currentThemes.map((t: any) => ({...t, enabled: selection != 'default' && t.name === selection}));
+            return currentThemes.map(t => ({...t, enabled: selection != 'default' && t.name === selection}));
         } else {
             return currentThemes;
         }
@@ -227,14 +227,16 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
             {vault, plugins, theme} = {},
         ) {
             const oldObsidianOptions = this.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY];
+            const newPlugins = service.selectPlugins(oldObsidianOptions.plugins, plugins);
+            const newThemes = service.selectThemes(oldObsidianOptions.themes, theme);
+
             let newCapabilities: WebdriverIO.Capabilities
 
             if (vault) {
                 const newObsidianOptions = {
                     ...oldObsidianOptions,
                     vault: path.resolve(vault),
-                    plugins: service.selectPlugins(oldObsidianOptions.plugins, plugins),
-                    themes: service.selectThemes(oldObsidianOptions.themes, theme),
+                    plugins: newPlugins, themes: newThemes,
                 }
     
                 const configDir = await service.setupObsidian(newObsidianOptions);
@@ -257,6 +259,16 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
             } else {
                 // preserve vault and config dir
                 newCapabilities = {};
+                const currentVault = await browser.getVaultPath();
+                if (currentVault && (plugins || theme)) {
+                    // Explicitly close obsidian so we can mess with the vault while its down
+                    await browser.deleteSession({shutdownDriver: false});
+                    log.info(`Re-opening vault ${currentVault}`);
+                    await service.obsidianLauncher.setupVault({
+                        vault: currentVault, copy: false,
+                        plugins: newPlugins, themes: newThemes,
+                    });
+                }
             }
 
             const sessionId = await browser.reloadSession({
