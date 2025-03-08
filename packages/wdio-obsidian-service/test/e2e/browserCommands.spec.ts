@@ -3,6 +3,7 @@ import { expect } from 'chai';
 import path from 'path';
 import fsAsync from "fs/promises"
 import { TFile } from 'obsidian';
+import { ObsidianPage } from '../../src/pageobjects/obsidianPage.js';
 
 
 describe("Test custom browser commands", () => {
@@ -23,34 +24,6 @@ describe("Test custom browser commands", () => {
         expect(await browser.execute("return window.doTheThingCalled ?? 0")).to.eql(0);
         await browser.executeObsidianCommand("basic-plugin:do-the-thing");
         expect(await browser.execute("return window.doTheThingCalled")).to.eql(1);
-    })
-
-    it('enable/disable plugin', async () => {
-        let plugins: string[] = await browser.executeObsidian(({app}) =>
-            [...(app as any).plugins.enabledPlugins].sort() 
-        );
-        expect(plugins).to.eql(["basic-plugin", "wdio-obsidian-service-plugin"]);
-
-        await browser.disablePlugin("basic-plugin");
-        plugins = await browser.executeObsidian(({app}) => [...(app as any).plugins.enabledPlugins].sort());
-        expect(plugins).to.eql(["wdio-obsidian-service-plugin"]);
-
-        await browser.enablePlugin("basic-plugin");
-        plugins = await browser.executeObsidian(({app}) => [...(app as any).plugins.enabledPlugins].sort());
-        expect(plugins).to.eql(["basic-plugin", "wdio-obsidian-service-plugin"]);
-    })
-
-    it('set theme', async () => {
-        let theme = await browser.executeObsidian(({app}) => (app.vault as any).getConfig("cssTheme"));
-        expect(theme).to.eql("Basic Theme");
-        
-        await browser.setTheme("default");
-        theme = await browser.executeObsidian(({app}) => (app.vault as any).getConfig("cssTheme"));
-        expect(theme).to.eql("");
-
-        await browser.setTheme("Basic Theme");
-        theme = await browser.executeObsidian(({app}) => (app.vault as any).getConfig("cssTheme"));
-        expect(theme).to.eql("Basic Theme");
     })
 
     it('windows', async () => {
@@ -77,5 +50,10 @@ describe("Test custom browser commands", () => {
 
         await browser.switchToWindow(mainWindow);
         await browser.executeObsidian(({app}) => { app.workspace.detachLeavesOfType("markdown") })
+    })
+
+    it("getObsidianPage", async () => {
+        const obsidianPage = await browser.getObsidianPage();
+        expect(obsidianPage).to.be.instanceof(ObsidianPage);
     })
 })
