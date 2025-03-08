@@ -7,6 +7,7 @@ import { fileURLToPath } from "url"
 import ObsidianLauncher, { DownloadedPluginEntry, DownloadedThemeEntry } from "obsidian-launcher"
 import browserCommands from "./browserCommands.js"
 import { ObsidianCapabilityOptions, ObsidianServiceOptions, OBSIDIAN_CAPABILITY_KEY } from "./types.js"
+import obsidianPage from "./pageobjects/obsidianPage.js"
 import { sleep } from "./utils.js"
 import _ from "lodash"
 
@@ -264,16 +265,14 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
                         [...(app as any).plugins.enabledPlugins].sort()
                     )
                     for (const pluginId of _.difference(enabledPlugins, plugins, ['wdio-obsidian-service-plugin'])) {
-                        await browser.disablePlugin(pluginId);
+                        await obsidianPage.disablePlugin(pluginId);
                     }
                     for (const pluginId of _.difference(plugins, enabledPlugins)) {
-                        await browser.enablePlugin(pluginId);
+                        await obsidianPage.enablePlugin(pluginId);
                     }
-                    await browser.executeObsidian(async ({app}) => await (app as any).plugins.saveConfig())
                 }
                 if (theme) {
-                    await browser.setTheme(theme);
-                    await browser.executeObsidian(async ({app}) => await (app.vault as any).saveConfig())
+                    await obsidianPage.setTheme(theme);
                 }
                 // Obsidian debounces saves to the config dir, and so changes to plugin list, themes, and anything else
                 // you set in your tests may not get saved to disk before the reboot. I haven't found a better way to

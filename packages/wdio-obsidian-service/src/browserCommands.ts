@@ -1,5 +1,6 @@
 import { OBSIDIAN_CAPABILITY_KEY } from "./types.js";
 import type * as obsidian from "obsidian"
+import obsidianPage, { ObsidianPage } from "./pageobjects/obsidianPage.js"
 
 
 type ExecuteObsidianArg = {
@@ -27,8 +28,8 @@ const browserCommands = {
     },
 
     /**
-     * Wrapper around browser.execute that passes the Obsidian API to the function. The function will be run inside
-     * Obsidian. The first argument to the function is an object containing keys:
+     * Wrapper around browser.execute that passes the Obsidian API to the function. The first argument to the function
+     * is an object containing keys:
      * - app: Obsidian app instance
      * - obsidian: Full Obsidian API
      * See also: https://webdriver.io/docs/api/browser/execute
@@ -37,6 +38,27 @@ const browserCommands = {
      * ```ts
      * const file = browser.executeObsidian(({app, obsidian}, path) => {
      *      return app.vault.getMarkdownFiles().find(f => f.path == path)
+     * })
+     * ```
+     * 
+     * Note: The same caveats as `browser.execute` apply. The function will be stringified and then run inside Obsidian,
+     * so you can't capture any local variables. E.g.
+     * 
+     * This *won't* work:
+     * ```ts
+     * import { FileView } from Obsidian
+     * browser.executeObsidian(({app, obsidian}) => {
+     *     if (leaf.view instanceof FileView) {
+     *         ...
+     *     }
+     * })
+     * ```
+     * do this instead:
+     * ```ts
+     * browser.executeObsidian(({app, obsidian}) => {
+     *     if (leaf.view instanceof obsidian.FileView) {
+     *         ...
+     *     }
      * })
      * ```
      */
@@ -48,6 +70,17 @@ const browserCommands = {
             `return (${func.toString()}).call(null, {...window.wdioObsidianService}, ...arguments )`,
             ...params,
         )
+    },
+
+    /**
+     * Executes an Obsidian command by id.
+     * @param id Id of the command to run.
+     */
+    async executeObsidianCommand(this: WebdriverIO.Browser, id: string) {
+        const result = await this.executeObsidian(({app}, id) => (app as any).commands.executeCommandById(id), id);
+        if (!result) {
+            throw Error(`Obsidian command ${id} not found or failed.`);
+        }
     },
 
     /** Returns the path to the vault opened in Obsidian */
@@ -65,41 +98,16 @@ const browserCommands = {
         }
     },
 
-    /** Enables a plugin */
-    async enablePlugin(this: WebdriverIO.Browser, pluginId: string): Promise<void> {
-        await this.executeObsidian(
-            async ({app}, pluginId) => await (app as any).plugins.enablePluginAndSave(pluginId),
-            pluginId,
-        );
-    },
-
-    /** Disables a plugin */
-    async disablePlugin(this: WebdriverIO.Browser, pluginId: string): Promise<void> {
-        await this.executeObsidian(
-            async ({app}, pluginId) => await (app as any).plugins.disablePluginAndSave(pluginId),
-            pluginId,
-        );
-    },
-
-    /** Sets the theme. Pass "default" to reset to the Obsidian theme. */
-    async setTheme(this: WebdriverIO.Browser, themeName: string): Promise<void> {
-        themeName = themeName == 'default' ? '' : themeName;
-        await this.executeObsidian(
-            async ({app}, themeName) => await (app as any).customCss.setTheme(themeName),
-            themeName,
-        )
-    },
-
     /**
-     * Executes an Obsidian command.
-     * @param id Id of the command to run.
+     * Returns the Workspace page object with convenience helper functions.
+     * You can also import the page object directly with
+     * ```ts
+     * import { obsidianPage } from "wdio-obsidian-service"
+     * ```
      */
-    async executeObsidianCommand(this: WebdriverIO.Browser, id: string) {
-        const result = await this.executeObsidian(({app}, id) => (app as any).commands.executeCommandById(id), id);
-        if (!result) {
-            throw Error(`Obsidian command ${id} not found or failed.`);
-        }
-    },
+    async getObsidianPage(this: WebdriverIO.Browser): Promise<ObsidianPage> {
+        return obsidianPage;
+    }
 } as const
 
 export type ObsidianBrowserCommands = typeof browserCommands;
