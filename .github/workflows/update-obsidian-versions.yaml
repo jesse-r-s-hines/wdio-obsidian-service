@@ -19,17 +19,18 @@ jobs:
           result-encoding: string
           script: |
             // Get the latest commit to desktop-releases.json
-            const commitResponse = await github.repos.listCommits({
+            const commitResponse = await github.rest.repos.listCommits({
                 owner: "obsidianmd", repo: "obsidian-releases",
                 path: "desktop-releases.json", per_page: 1,
             })
-            const latestCommit = commitResponse.data[0];
-            const versionsJson = await fetch(`https://raw.githubusercontent.com/${context.repository}/HEAD/obsidian-versions.json`).then(r => r.json())
+            const latestCommit = commitResponse.data[0].sha;
+            const obsidianVersionsUrl = `https://raw.githubusercontent.com/${context.repo.owner}/${context.repo.repo}/HEAD/obsidian-versions.json`;
+            const versionsJson = await fetch(obsidianVersionsUrl).then(r => r.json());
 
-            const outLatestCommit = versionsJson.metadata.commit_sha;
+            const ourLatestCommit = versionsJson.metadata.commit_sha;
             const ourLatestTimestamp = new Date(versionsJson.metadata.timestamp);
 
-            if (!latestCommit || !outLatestCommit || isNaN(ourLatestTimestamp.getTime())) {
+            if (!latestCommit || !ourLatestCommit || isNaN(ourLatestTimestamp.getTime())) {
                 throw Error("Failed to parse requests");
             }
 
@@ -37,7 +38,7 @@ jobs:
             const timeSinceLastUpdate = (now.getTime() - ourLatestTimestamp.getTime()) / 1000; // convert to seconds
             const needsUpdate = (
                 // if obsidian the desktop-releases.json file has changed
-                latestCommit != outLatestCommit ||
+                latestCommit != ourLatestCommit ||
                 // if more than 30 days since the last obsidian-versions.json update. GitHub disables schedule workflows
                 // after 60 days of repo inactivity, so we want to trigger the obsidian-versions.json update
                 // periodically even if there's no new Obsidian version to make sure there's commit activity.
@@ -46,7 +47,7 @@ jobs:
                 // could cause in obsidian-versions.json to be incomplete. So we'll re-run it a second time after an
                 // update to make sure that gets corrected.
                 timeSinceLastUpdate <= 6 * 60 * 60
-            )
+            );
             return needsUpdate ? 'true' : 'false';
 
       - if: ${{ steps.check.outputs.result == 'true' }}
