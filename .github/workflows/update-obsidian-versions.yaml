@@ -18,29 +18,33 @@ jobs:
         with:
           result-encoding: string
           script: |
-            const desktopReleasesJson = await fetch("https://raw.githubusercontent.com/obsidianmd/obsidian-releases/HEAD/desktop-releases.json").then(r => r.json())
-            const versionsJson = await fetch("https://raw.githubusercontent.com/jesse-r-s-hines/wdio-obsidian-service/HEAD/obsidian-versions.json").then(r => r.json())
+            // Get the latest commit to desktop-releases.json
+            const commitResponse = await github.repos.listCommits({
+                owner: "obsidianmd", repo: "obsidian-releases",
+                path: "desktop-releases.json", per_page: 1,
+            })
+            const latestCommit = commitResponse.data[0];
+            const versionsJson = await fetch(`https://raw.githubusercontent.com/${context.repository}/HEAD/obsidian-versions.json`).then(r => r.json())
 
-            const latestObsidian = desktopReleasesJson.beta.latestVersion;
-            const ourLatestObsidian = versionsJson.versions.at(-1).version;
+            const outLatestCommit = versionsJson.metadata.commit_sha;
             const ourLatestTimestamp = new Date(versionsJson.metadata.timestamp);
 
-            if (!latestObsidian || !ourLatestObsidian || isNaN(ourLatestTimestamp.getTime())) {
-                throw Error("Failed to parse files");
+            if (!latestCommit || !outLatestCommit || isNaN(ourLatestTimestamp.getTime())) {
+                throw Error("Failed to parse requests");
             }
 
             const now = new Date();
             const timeSinceLastUpdate = (now.getTime() - ourLatestTimestamp.getTime()) / 1000; // convert to seconds
             const needsUpdate = (
-                // if obsidian version has changed
-                latestObsidian != ourLatestObsidian ||
+                // if obsidian the desktop-releases.json file has changed
+                latestCommit != outLatestCommit ||
                 // if more than 30 days since the last obsidian-versions.json update. GitHub disables schedule workflows
                 // after 60 days of repo inactivity, so we want to trigger the obsidian-versions.json update
                 // periodically even if there's no new Obsidian version to make sure there's commit activity.
                 timeSinceLastUpdate >= 30 * 24 * 60 * 60 ||
                 // The desktop-releases.json can be updated a bit before the GitHub release is actually created, which
-                // could cause in obsidian-versions.json to be incomplete. So we'll also re-run it a second time after
-                // an update to make sure that gets corrected.
+                // could cause in obsidian-versions.json to be incomplete. So we'll re-run it a second time after an
+                // update to make sure that gets corrected.
                 timeSinceLastUpdate <= 6 * 60 * 60
             )
             return needsUpdate ? 'true' : 'false';

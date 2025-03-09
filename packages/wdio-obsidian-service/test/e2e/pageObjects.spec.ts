@@ -6,8 +6,11 @@ import obsidianPage from '../../src/pageobjects/obsidianPage.js';
 async function getOpenFiles() {
     return await browser.executeObsidian(({app, obsidian}) => {
         const leaves: string[] = []
-        app.workspace.iterateRootLeaves(l => { 
-            leaves.push((l.getViewState()?.state?.file ?? '') as string);
+        app.workspace.iterateRootLeaves(l => {
+            const file = l.getViewState()?.state?.file;
+            if (file) {
+                leaves.push(file as string);
+            }
         });
         return leaves.sort();
     });
@@ -17,7 +20,7 @@ describe("Test custom browser commands", () => {
     beforeEach(async () => {
         await browser.reloadObsidian({vault: "./test/vaults/basic"});
         await obsidianPage.loadWorkspaceLayout("empty");
-        expect(await getOpenFiles()).to.eql(['']);
+        expect(await getOpenFiles()).to.eql([]);
     })
 
     it('enable/disable plugin', async () => {
@@ -57,7 +60,7 @@ describe("Test custom browser commands", () => {
     })
 
     it("loadWorkspaceLayout", async () => {
-        expect(await getOpenFiles()).to.eql(['']);
+        expect(await getOpenFiles()).to.eql([]);
         await obsidianPage.loadWorkspaceLayout("saved-layout");
         expect(await getOpenFiles()).to.eql(["Goodbye.md", "Welcome.md"]);
     })
