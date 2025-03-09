@@ -13,7 +13,7 @@ const testEnv = process.env['TEST_ENV'] ?? 'local';
 const workspacePath = path.resolve(path.join(fileURLToPath(import.meta.url), "../../.."))
 const obsidianVersionsJson = path.join(workspacePath, "obsidian-versions.json");
 const allVersions: ObsidianVersionInfo[] = JSON.parse(await fsAsync.readFile(obsidianVersionsJson, 'utf-8')).versions;
-const minInstallerVersion = allVersions.find(v => v.version == minAppVersion)!.minInstallerVersion;
+const minInstallerVersion = allVersions.find(v => v.version == minAppVersion)!.minInstallerVersion!;
 const cacheDir = path.join(workspacePath, ".obsidian-cache");
 const obsidianServiceOptions = {
     versionsUrl: pathToFileURL(obsidianVersionsJson).toString(),

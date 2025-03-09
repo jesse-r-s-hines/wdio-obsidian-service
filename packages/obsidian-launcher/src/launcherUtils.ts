@@ -74,8 +74,8 @@ export async function extractObsidianDmg(dmg: string, dest: string) {
 export function parseObsidianDesktopRelease(fileRelease: any, isBeta: boolean): Partial<ObsidianVersionInfo> {
     return {
         version: fileRelease.latestVersion,
-        minInstallerVersion: fileRelease.minimumVersion,
-        maxInstallerVersion: "", // Will be set later
+        minInstallerVersion: fileRelease.minimumVersion != '0.0.0' ? fileRelease.minimumVersion : undefined,
+        maxInstallerVersion: undefined, // Will be set later
         isBeta: isBeta,
         downloads: {
             asar: fileRelease.downloadUrl,

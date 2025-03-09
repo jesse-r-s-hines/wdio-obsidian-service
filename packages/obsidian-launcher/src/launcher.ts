@@ -137,8 +137,8 @@ export class ObsidianLauncher {
     }
 
     /**
-     * Resolves Obsidian version strings to absolute obsidian versions.
-     * @param appVersion Obsidian version string or "latest", "earliest", or "latest-beta". "earliest" will use the 
+     * Resolves Obsidian app and installer version strings to absolute versions.
+     * @param appVersion Obsidian version string or "latest", "latest-beta" or "earliest". "earliest" will use the 
      *     minAppVersion set in your manifest.json.
      * @param installerVersion Obsidian version string or "latest" or "earliest". "earliest" will use the minimum
      *     installer version compatible with the appVersion.
@@ -146,25 +146,11 @@ export class ObsidianLauncher {
      */
     async resolveVersions(appVersion: string, installerVersion = "latest"): Promise<[string, string]> {
         const versions = await this.getVersions();
+        const appVersionInfo = await this.getVersionInfo(appVersion);
 
-        if (appVersion == "latest-beta") {
-            appVersion = versions.at(-1)!.version;
-        } else if (appVersion == "latest") {
-            appVersion = versions.filter(v => !v.isBeta).at(-1)!.version;
-        } else if (appVersion == "earliest") {
-            appVersion = (await this.getRootManifest())?.minAppVersion;
-            if (!appVersion) {
-                throw Error('Unable to resolve Obsidian app version "earliest", no manifest.json or minAppVersion found.')
-            }
-        } else {
-            // if invalid match won't be found and we'll throw error below
-            appVersion = semver.valid(appVersion) ?? appVersion;
+        if (!appVersionInfo.minInstallerVersion || !appVersionInfo.maxInstallerVersion) {
+            throw Error(`No compatible installers available for app version ${appVersion}`);
         }
-        const appVersionInfo = versions.find(v => v.version == appVersion);
-        if (!appVersionInfo) {
-            throw Error(`No Obsidian app version ${appVersion} found`);
-        }
-
         if (installerVersion == "latest") {
             installerVersion = appVersionInfo.maxInstallerVersion;
         } else if (installerVersion == "earliest") {
@@ -176,25 +162,46 @@ export class ObsidianLauncher {
         if (!installerVersionInfo || !installerVersionInfo.chromeVersion) {
             throw Error(`No Obsidian installer for version ${installerVersion} found`);
         }
-
-        if (semver.lt(installerVersionInfo.version, appVersionInfo.minInstallerVersion)) {
+        if (
+            semver.lt(installerVersionInfo.version, appVersionInfo.minInstallerVersion) ||
+            semver.gt(installerVersionInfo.version, appVersionInfo.maxInstallerVersion)
+        ) {
             throw Error(
-                `Installer and app versions incompatible: minInstallerVersion of v${appVersionInfo.version} is ` +
-                `${appVersionInfo.minInstallerVersion}, but v${installerVersionInfo.version} specified`
+                `App and installer versions incompatible: app ${appVersionInfo.version} is compatible with installer ` +
+                `>=${appVersionInfo.minInstallerVersion} <=${appVersionInfo.maxInstallerVersion} but ` +
+                `${installerVersionInfo.version} specified`
             )
         }
 
         return [appVersionInfo.version, installerVersionInfo.version];
     }
 
-    /** Gets details about an Obsidian version */
+    /**
+     * Gets details about an Obsidian version.
+     * @param version Obsidian version string or "latest", "earliest", or "latest-beta". "earliest" will use the 
+     *     minAppVersion set in your manifest.json.
+     */
     async getVersionInfo(version: string): Promise<ObsidianVersionInfo> {
-        version = (await this.resolveVersions(version))[0]
-        const result = (await this.getVersions()).find(v => v.version == version);
-        if (!result) {
-            throw Error(`No Obsidian version ${version} found`);
+        const versions = await this.getVersions();
+        if (version == "latest-beta") {
+            version = versions.at(-1)!.version;
+        } else if (version == "latest") {
+            version = versions.filter(v => !v.isBeta).at(-1)!.version;
+        } else if (version == "earliest") {
+            version = (await this.getRootManifest())?.minAppVersion;
+            if (!version) {
+                throw Error('Unable to resolve Obsidian app version "earliest", no manifest.json or minAppVersion found.')
+            }
+        } else {
+            // if invalid match won't be found and we'll throw error below
+            version = semver.valid(version) ?? version;
         }
-        return result;
+        const versionInfo = versions.find(v => v.version == version);
+        if (!versionInfo) {
+            throw Error(`No Obsidian app version ${version} found`);
+        }
+
+        return versionInfo;
     }
 
     /**
@@ -940,15 +947,24 @@ export class ObsidianLauncher {
             versionMap[deps.version!] = _.merge({}, versionMap[deps.version!], deps);
         }
     
-        // populate maxInstallerVersion and add corrections
-        let maxInstallerVersion = "0.0.0"
+        // populate minInstallerVersion and maxInstallerVersion and add corrections
+        let minInstallerVersion: string|undefined = undefined;
+        let maxInstallerVersion: string|undefined = undefined;
         for (const version of Object.keys(versionMap).sort(semver.compare)) {
+            // older versions have 0.0.0 as there min version, which doesn't exist anywhere we can download.
+            // we'll set those to the first available installer version.
+            if (!minInstallerVersion && versionMap[version].chromeVersion) {
+                minInstallerVersion = version;
+            }
             if (versionMap[version].downloads!.appImage) {
                 maxInstallerVersion = version;
             }
             versionMap[version] = _.merge({}, versionMap[version],
+                {
+                    minInstallerVersion: versionMap[version].minInstallerVersion ?? minInstallerVersion,
+                    maxInstallerVersion: maxInstallerVersion,
+                },
                 correctObsidianVersionInfo(versionMap[version]),
-                { maxInstallerVersion },
             );
         }
     
@@ -980,7 +996,7 @@ export class ObsidianLauncher {
      * Returns true if the Obsidian version is already in the cache.
      */
     async isInCache(type: "app"|"installer", version: string) {
-        version = (await this.resolveVersions(version))[0];
+        version = (await this.getVersionInfo(version)).version;
 
         let dest: string
         if (type == "app") {
