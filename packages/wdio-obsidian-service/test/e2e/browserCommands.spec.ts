@@ -3,6 +3,7 @@ import { expect } from 'chai';
 import path from 'path';
 import fsAsync from "fs/promises"
 import { TFile } from 'obsidian';
+import semver from "semver";
 import { ObsidianPage } from '../../src/pageobjects/obsidianPage.js';
 
 
@@ -26,7 +27,21 @@ describe("Test custom browser commands", () => {
         expect(await browser.execute("return window.doTheThingCalled")).to.eql(1);
     })
 
-    it('windows', async () => {
+    it("getObsidianPage", async () => {
+        const obsidianPage = await browser.getObsidianPage();
+        expect(obsidianPage).to.be.instanceof(ObsidianPage);
+    })
+})
+
+describe("Test windows", () => {
+    before(async function() {
+        if (semver.lt(await browser.getObsidianInstallerVersion(), "0.12.19")) {
+            // Windows don't work on older installer versions
+            this.skip()
+        }
+    })
+
+    it('windows', async function() {
         // pop-out windows have isolated window objects, check that executeObsidian still works and can access the
         // globals.
         await browser.executeObsidian(async ({app}) => {
@@ -50,10 +65,5 @@ describe("Test custom browser commands", () => {
 
         await browser.switchToWindow(mainWindow);
         await browser.executeObsidian(({app}) => { app.workspace.detachLeavesOfType("markdown") })
-    })
-
-    it("getObsidianPage", async () => {
-        const obsidianPage = await browser.getObsidianPage();
-        expect(obsidianPage).to.be.instanceof(ObsidianPage);
     })
 })

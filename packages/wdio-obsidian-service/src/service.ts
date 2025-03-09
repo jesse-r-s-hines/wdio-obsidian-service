@@ -9,6 +9,7 @@ import browserCommands from "./browserCommands.js"
 import { ObsidianCapabilityOptions, ObsidianServiceOptions, OBSIDIAN_CAPABILITY_KEY } from "./types.js"
 import obsidianPage from "./pageobjects/obsidianPage.js"
 import { sleep } from "./utils.js"
+import semver from "semver"
 import _ from "lodash"
 
 
@@ -17,6 +18,12 @@ const log = logger("wdio-obsidian-service");
 function getDefaultCacheDir() {
     return path.resolve(process.env.WEBDRIVER_CACHE_DIR ?? "./.obsidian-cache")
 }
+
+/**
+ * Minimum Obsidian version that wdio-obsidian-service supports.
+ */
+export const minSupportedObsidianVersion: string = "1.0.2"
+
 
 export class ObsidianLauncherService implements Services.ServiceInstance {
     private obsidianLauncher: ObsidianLauncher
@@ -61,6 +68,9 @@ export class ObsidianLauncherService implements Services.ServiceInstance {
                     obsidianOptions.installerVersion ?? "earliest",
                 );
                 const installerVersionInfo = await this.obsidianLauncher.getVersionInfo(installerVersion);
+                if (semver.lt(appVersion, minSupportedObsidianVersion)) {
+                    throw Error(`Minimum supported Obsidian version is ${minSupportedObsidianVersion}`)
+                }
 
                 let installerPath = obsidianOptions.binaryPath;
                 if (!installerPath) {
