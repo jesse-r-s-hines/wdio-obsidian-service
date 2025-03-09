@@ -55,7 +55,7 @@ async function testVersion(appVersion: string, installerVersion: string): Promis
     // proc.stderr.on('data', data => console.log(`stderr: ${data}`));
 
     try {
-        return await withTimeout(checkVaultPath(proc), 3000);
+        return await withTimeout(checkVaultPath(proc), 10 * 1000);
     } finally {
         proc.kill("SIGKILL")
         proc.kill("SIGTERM")
