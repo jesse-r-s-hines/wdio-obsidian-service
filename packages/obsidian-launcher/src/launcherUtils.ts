@@ -111,6 +111,13 @@ export function correctObsidianVersionInfo(versionInfo: Partial<ObsidianVersionI
         {version: '0.12.16', downloads: { asar: undefined }},
         {version: '1.4.7', downloads: { asar: undefined }},
         {version: '1.4.8', downloads: { asar: undefined }},
+        
+        // The minInstallerVersion here is incorrect
+        {version: "1.3.4", minInstallerVersion: "0.14.5"},
+        {version: "1.3.3", minInstallerVersion: "0.14.5"},
+        {version: "1.3.2", minInstallerVersion: "0.14.5"},
+        {version: "1.3.1", minInstallerVersion: "0.14.5"},
+        {version: "1.3.0", minInstallerVersion: "0.14.5"},
     ]
 
     const result = corrections.find(v => v.version == versionInfo.version) ?? {};
