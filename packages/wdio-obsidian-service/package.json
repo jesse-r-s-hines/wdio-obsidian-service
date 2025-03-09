@@ -49,14 +49,15 @@
     },
     "dependencies": {
         "lodash": "^4.17.21",
-        "obsidian-launcher": "^0.2.0"
+        "obsidian-launcher": "^0.2.0",
+        "semver": "^7.7.1"
     },
     "peerDependencies": {
         "@wdio/cli": "^9.5.0",
         "@wdio/local-runner": "^9.5.0",
+        "@wdio/logger": "^9.4.4",
         "@wdio/mocha-framework": "^9.5.0",
         "@wdio/spec-reporter": "^9.5.0",
-        "@wdio/logger": "^9.4.4",
         "obsidian": ">=1.7.2",
         "webdriverio": "^9.5.0"
     },
