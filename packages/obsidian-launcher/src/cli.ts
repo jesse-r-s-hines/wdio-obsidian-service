@@ -175,9 +175,11 @@ program
             plugins: [...plugins, {repo: "pjeby/hot-reload"}],
             spawnOptions: {
                 detached: false,
-                stdio: "overlapped",
+                stdio: "pipe",
             }
         })
+        proc.stdout!.on('data', data => console.log(data.toString()));
+        proc.stderr!.on('data', data => console.log(data.toString()));
         const procExit = new Promise<number>((resolve) => proc.on('exit', (code) => resolve(code ?? -1)));
 
         for (const plugin of plugins) {
@@ -222,8 +224,6 @@ program
         }
         process.on('SIGINT', cleanup);
         process.on('exit', cleanup);
-        // process.stdout.on('data', data => console.log(data));
-        // process.stderr.on('data', data => console.log(data));
 
         console.log("Watching for changes to plugins and themes...")
         await procExit;
