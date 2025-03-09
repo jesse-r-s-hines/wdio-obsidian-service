@@ -222,6 +222,8 @@ program
         }
         process.on('SIGINT', cleanup);
         process.on('exit', cleanup);
+        // process.stdout.on('data', data => console.log(data));
+        // process.stderr.on('data', data => console.log(data));
 
         console.log("Watching for changes to plugins and themes...")
         await procExit;
