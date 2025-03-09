@@ -835,7 +835,6 @@ export class ObsidianLauncher {
             '--test-type=webdriver',
             `--user-data-dir=${configDir}`,
             '--no-sandbox', // Workaround for SUID issue, see https://github.com/electron/electron/issues/42510
-            '--headless',
         ]);
         const procExit = new Promise<number>((resolve) => proc.on('exit', (code) => resolve(code ?? -1)));
         // proc.stdout.on('data', data => console.log(`stdout: ${data}`));
