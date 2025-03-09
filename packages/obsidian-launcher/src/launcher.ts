@@ -826,7 +826,7 @@ export class ObsidianLauncher {
         versionInfo: Partial<ObsidianVersionInfo>,
     ): Promise<Partial<ObsidianVersionInfo>> {
         const binary = await this.downloadInstallerFromVersionInfo(versionInfo as ObsidianVersionInfo);
-        console.log(`${versionInfo.version!}: Extracting electron & chrome versions...`);
+        console.log(`${versionInfo.version!}: Retrieving electron & chrome versions...`);
 
         const configDir = await fsAsync.mkdtemp(path.join(os.tmpdir(), `fetch-obsidian-versions-`));
 

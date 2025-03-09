@@ -243,7 +243,7 @@ program
     )
     .argument('dest', 'Path to output. If it already exists, it will update the information instead of creating it from scratch.')
     .option(...cacheOptionArgs)
-    .option('--max-instances <version>', "Number of parallel Obsidian instances to launch when checking Electron versions", "1")
+    .option('--max-instances <count>', "Number of parallel Obsidian instances to launch when checking Electron versions", "1")
     .action(async (dest, opts) => {
         let versionInfos: any;
         try {
