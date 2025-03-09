@@ -55,7 +55,7 @@ async function testVersion(appVersion: string, installerVersion: string): Promis
     // proc.stderr.on('data', data => console.log(`stderr: ${data}`));
 
     try {
-        return await withTimeout(checkVaultPath(proc), 3000);
+        return await withTimeout(checkVaultPath(proc), 10 * 1000);
     } finally {
         proc.kill("SIGKILL")
         proc.kill("SIGTERM")
@@ -71,10 +71,10 @@ async function main() {
     const allVersions: ObsidianVersionInfo[] = JSON.parse(await fsAsync.readFile(obsidianVersionsJson, 'utf-8')).versions;
 
     const versions = allVersions
-        .filter(v => v.maxInstallerVersion != '0.0.0' && !['0.12.16', '1.4.7', '1.4.8'].includes(v.version))
+        .filter(v => v.minInstallerVersion && v.maxInstallerVersion && v.downloads.asar)
         .flatMap(v => [
-            [v.version, v.minInstallerVersion],
-            [v.version, v.maxInstallerVersion],
+            [v.version, v.minInstallerVersion!],
+            [v.version, v.maxInstallerVersion!],
         ])
         .reverse()
     

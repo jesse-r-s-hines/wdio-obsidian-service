@@ -12,8 +12,8 @@ export type ObsidianVersionInfos = {
 
 export type ObsidianVersionInfo = {
     version: string,
-    minInstallerVersion: string,
-    maxInstallerVersion: string,
+    minInstallerVersion?: string,
+    maxInstallerVersion?: string,
     isBeta: boolean,
     gitHubRelease?: string,
     downloads: {

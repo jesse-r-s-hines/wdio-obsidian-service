@@ -3,7 +3,7 @@ import { expect } from "chai";
 import fsAsync from "fs/promises";
 import path from "path"
 import { createDirectory } from "./helpers.js";
-import { fileExists, withTmpDir, linkOrCp, sleep, withTimeout, pool, maybe } from "../src/utils.js";
+import { fileExists, withTmpDir, linkOrCp, sleep, withTimeout, pool, maybe, mergeKeepUndefined } from "../src/utils.js";
 
 
 describe("fileExists", () => {
@@ -162,3 +162,20 @@ describe("maybe", () => {
         expect(result.error.message).to.eql("foo");
     });
 });
+
+describe("mergeKeepUndefined", () => {
+    it("mergeKeepUndefined", () => {
+        expect(mergeKeepUndefined({a: 1}, {a: 2})).to.eql({a: 2});
+        expect(mergeKeepUndefined({a: 1}, {a: undefined})).to.eql({a: undefined});
+        expect(mergeKeepUndefined({a: undefined}, {a: 1})).to.eql({a: 1});
+        expect(mergeKeepUndefined({a: 1}, {c: {x: 1}})).to.eql({a: 1, c: {x: 1}});
+        expect(mergeKeepUndefined(
+            {a: 1, c: {y: 2, x: undefined}},
+            {a: 2, c: {x: 1}},
+        )).to.eql({a: 2, c: {x: 1, y: 2}});
+        expect(mergeKeepUndefined(
+            {a: 1, c: {y: 2, x: 1}},
+            {a: 2, c: {x: undefined}},
+        )).to.eql({a: 2, c: {x: undefined, y: 2}});
+    });
+})

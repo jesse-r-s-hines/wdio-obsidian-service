@@ -74,8 +74,8 @@ export async function extractObsidianDmg(dmg: string, dest: string) {
 export function parseObsidianDesktopRelease(fileRelease: any, isBeta: boolean): Partial<ObsidianVersionInfo> {
     return {
         version: fileRelease.latestVersion,
-        minInstallerVersion: fileRelease.minimumVersion,
-        maxInstallerVersion: "", // Will be set later
+        minInstallerVersion: fileRelease.minimumVersion != '0.0.0' ? fileRelease.minimumVersion : undefined,
+        maxInstallerVersion: undefined, // Will be set later
         isBeta: isBeta,
         downloads: {
             asar: fileRelease.downloadUrl,
@@ -106,12 +106,26 @@ export function parseObsidianGithubRelease(gitHubRelease: any): Partial<Obsidian
  * Add some corrections to the Obsidian version data.
  */
 export function correctObsidianVersionInfo(versionInfo: Partial<ObsidianVersionInfo>): Partial<ObsidianVersionInfo> {
-    const corrections: Partial<ObsidianVersionInfo> = {}
+    const corrections: Partial<ObsidianVersionInfo>[] = [
+        // These version's downloads are missing or broken.
+        {version: '0.12.16', downloads: { asar: undefined }},
+        {version: '1.4.7', downloads: { asar: undefined }},
+        {version: '1.4.8', downloads: { asar: undefined }},
+        
+        // The minInstallerVersion here is incorrect
+        {version: "1.3.4", minInstallerVersion: "0.14.5"},
+        {version: "1.3.3", minInstallerVersion: "0.14.5"},
+        {version: "1.3.2", minInstallerVersion: "0.14.5"},
+        {version: "1.3.1", minInstallerVersion: "0.14.5"},
+        {version: "1.3.0", minInstallerVersion: "0.14.5"},
+    ]
+
+    const result = corrections.find(v => v.version == versionInfo.version) ?? {};
     // minInstallerVersion is incorrect, running Obsidian with installer older than 1.1.9 won't boot with errors like
     // `(node:11592) electron: Failed to load URL: app://obsidian.md/starter.html with error: ERR_BLOCKED_BY_CLIENT`
     if (semver.gte(versionInfo.version!, "1.5.3") && semver.lt(versionInfo.minInstallerVersion!, "1.1.9")) {
-        corrections.minInstallerVersion = "1.1.9"
+        result.minInstallerVersion = "1.1.9"
     }
 
-    return corrections;
+    return result;
 }

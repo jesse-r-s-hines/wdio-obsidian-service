@@ -1,7 +1,7 @@
 import fsAsync from "fs/promises"
 import path from "path"
 import { PromisePool } from '@supercharge/promise-pool'
-
+import _ from "lodash"
 
 /// Files ///
 
@@ -97,4 +97,18 @@ export async function maybe<T>(promise: Promise<T>): Promise<Maybe<T>> {
     return promise
         .then(r => ({success: true, result: r, error: undefined} as const))
         .catch(e => ({success: false, result: undefined, error: e} as const));
+}
+
+
+/**
+ * Lodash _.merge but overwrites values with undefined if present, instead of ignoring undefined.
+ */
+export function mergeKeepUndefined(object: any, ...sources: any[]) {
+    return _.mergeWith(object, ...sources,
+        (objValue: any, srcValue: any, key: any, obj: any) => {
+            if (_.isPlainObject(obj) && objValue !== srcValue && srcValue === undefined) {
+                obj[key] = srcValue
+            }
+        }
+    );
 }

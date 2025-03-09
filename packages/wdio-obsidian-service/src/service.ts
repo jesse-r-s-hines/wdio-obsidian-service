@@ -9,6 +9,7 @@ import browserCommands from "./browserCommands.js"
 import { ObsidianCapabilityOptions, ObsidianServiceOptions, OBSIDIAN_CAPABILITY_KEY } from "./types.js"
 import obsidianPage from "./pageobjects/obsidianPage.js"
 import { sleep } from "./utils.js"
+import semver from "semver"
 import _ from "lodash"
 
 
@@ -17,6 +18,12 @@ const log = logger("wdio-obsidian-service");
 function getDefaultCacheDir() {
     return path.resolve(process.env.WEBDRIVER_CACHE_DIR ?? "./.obsidian-cache")
 }
+
+/**
+ * Minimum Obsidian version that wdio-obsidian-service supports.
+ */
+export const minSupportedObsidianVersion: string = "1.0.2"
+
 
 export class ObsidianLauncherService implements Services.ServiceInstance {
     private obsidianLauncher: ObsidianLauncher
@@ -61,6 +68,9 @@ export class ObsidianLauncherService implements Services.ServiceInstance {
                     obsidianOptions.installerVersion ?? "earliest",
                 );
                 const installerVersionInfo = await this.obsidianLauncher.getVersionInfo(installerVersion);
+                if (semver.lt(appVersion, minSupportedObsidianVersion)) {
+                    throw Error(`Minimum supported Obsidian version is ${minSupportedObsidianVersion}`)
+                }
 
                 let installerPath = obsidianOptions.binaryPath;
                 if (!installerPath) {
@@ -276,8 +286,9 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
                 }
                 // Obsidian debounces saves to the config dir, and so changes to plugin list, themes, and anything else
                 // you set in your tests may not get saved to disk before the reboot. I haven't found a better way to
-                // make sure everything's saved then just waiting a bit.
-                await sleep(2000);
+                // make sure everything's saved then just waiting a bit. Maybe we could mock setTimeout? wdio has ways
+                // to mock the clock, but they only work when using BiDi, which I can't get working on Obsidian.
+                await sleep(3000);
             }
 
             const sessionId = await browser.reloadSession({

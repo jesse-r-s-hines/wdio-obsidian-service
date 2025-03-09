@@ -1,19 +1,20 @@
 import ObsidianWorkerService, { launcher as ObsidianLauncherService, obsidianBetaAvailable } from "./src/index.js"
+import { minSupportedObsidianVersion } from "./src/service.js"
 import ObsidianReporter from "./src/obsidianReporter.js"
-import { pathToFileURL } from "url"
+import { pathToFileURL, fileURLToPath } from "url"
 import path from "path"
 import fsAsync from "fs/promises"
 import semver from "semver";
 import { ObsidianVersionInfo } from "obsidian-launcher"
 import _ from "lodash"
 
-const minAppVersion = "1.5.3";
 const maxInstances = Number(process.env['WDIO_MAX_INSTANCES'] ?? 4);
 const testEnv = process.env['TEST_ENV'] ?? 'local';
-const obsidianVersionsJson = path.resolve("../../obsidian-versions.json");
+const workspacePath = path.resolve(path.join(fileURLToPath(import.meta.url), "../../.."))
+const obsidianVersionsJson = path.join(workspacePath, "obsidian-versions.json");
 const allVersions: ObsidianVersionInfo[] = JSON.parse(await fsAsync.readFile(obsidianVersionsJson, 'utf-8')).versions;
-const minInstallerVersion = allVersions.find(v => v.version == minAppVersion)!.minInstallerVersion;
-const cacheDir = path.resolve(".obsidian-cache");
+const minInstallerVersion = allVersions.find(v => v.version == minSupportedObsidianVersion)!.minInstallerVersion!;
+const cacheDir = path.join(workspacePath, ".obsidian-cache");
 const obsidianServiceOptions = {
     versionsUrl: pathToFileURL(obsidianVersionsJson).toString(),
 }
@@ -26,14 +27,17 @@ if (process.env['OBSIDIAN_VERSIONS']) {
     const installerVersions = process.env['OBSIDIAN_INSTALLER_VERSIONS']?.trim().split(/[ ,]+/) ?? [];
     versionsToTest = appVersions.map((v, i) => [v, installerVersions[i] ?? 'earliest']);
 } else if (['local', 'ubuntu-latest'].includes(testEnv)) {
-    // Test every minor installer version since minInstallerVersion and every minor appVersion since minAppVersion
+    // Test every minor installer version and every minor appVersion since minSupportedObsidianVersion
     const versionMap = _(allVersions)
         .filter(v => !!v.electronVersion && !v.isBeta && semver.gte(v.version, minInstallerVersion))
         .map(v => v.version)
         .keyBy(v => minorVersion(v)) // keyBy keeps last
         .value();
     versionMap[minorVersion(minInstallerVersion)] = minInstallerVersion;
-    versionsToTest =  _.values(versionMap).map(v => [semver.gte(v, minAppVersion) ? v : minAppVersion, v]);
+    versionsToTest =  _.values(versionMap).map(v => [
+        semver.gte(v, minSupportedObsidianVersion) ? v : minSupportedObsidianVersion,
+        v,
+    ]);
 
     // And test latest beta
     const betaExists = allVersions.at(-1)!.isBeta;
@@ -50,7 +54,7 @@ if (process.env['OBSIDIAN_VERSIONS']) {
     }
 } else if (["windows-latest", "macos-latest"].includes(testEnv)) {
     // Windows costs 2x and MacOS cost 10x of our GitHub actions quota compared to ubuntu, so only run min and latest.
-    versionsToTest = [[minAppVersion, "earliest"], ["latest", "latest"]];
+    versionsToTest = [[minSupportedObsidianVersion, "earliest"], ["latest", "latest"]];
 } else {
     throw Error(`Unknown TEST_ENV ${testEnv}`)
 }
