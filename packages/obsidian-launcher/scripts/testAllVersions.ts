@@ -71,7 +71,7 @@ async function main() {
     const allVersions: ObsidianVersionInfo[] = JSON.parse(await fsAsync.readFile(obsidianVersionsJson, 'utf-8')).versions;
 
     const versions = allVersions
-        .filter(v => v.minInstallerVersion && v.maxInstallerVersion && !['0.12.16', '1.4.7', '1.4.8'].includes(v.version))
+        .filter(v => v.minInstallerVersion && v.maxInstallerVersion && v.downloads.asar)
         .flatMap(v => [
             [v.version, v.minInstallerVersion!],
             [v.version, v.maxInstallerVersion!],

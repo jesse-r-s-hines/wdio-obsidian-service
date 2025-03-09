@@ -2,7 +2,7 @@
     "metadata": {
         "commit_date": "2025-03-05T15:47:44Z",
         "commit_sha": "2b6b513e8e1acc17a9fdeef68461337e34692a3f",
-        "timestamp": "2025-03-09T18:26:58.635Z"
+        "timestamp": "2025-03-09T19:22:53.295Z"
     },
     "versions": [
         {
@@ -1274,9 +1274,7 @@
             "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.12.15",
             "isBeta": true,
-            "downloads": {
-                "asar": "https://releases.obsidian.md/release/obsidian-0.12.16.asar.gz"
-            },
+            "downloads": {},
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.12.16"
         },
         {
@@ -2523,18 +2521,14 @@
             "minInstallerVersion": "0.14.5",
             "maxInstallerVersion": "1.4.5",
             "isBeta": true,
-            "downloads": {
-                "asar": "https://releases.obsidian.md/release/obsidian-1.4.7.asar.gz"
-            }
+            "downloads": {}
         },
         {
             "version": "1.4.8",
             "minInstallerVersion": "0.14.5",
             "maxInstallerVersion": "1.4.5",
             "isBeta": true,
-            "downloads": {
-                "asar": "https://releases.obsidian.md/release/obsidian-1.4.8.asar.gz"
-            }
+            "downloads": {}
         },
         {
             "version": "1.4.9",

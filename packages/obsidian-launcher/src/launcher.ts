@@ -11,7 +11,7 @@ import { downloadArtifact } from '@electron/get';
 import child_process from "child_process"
 import semver from "semver"
 import CDP from 'chrome-remote-interface'
-import { fileExists, withTmpDir, linkOrCp, maybe, pool, withTimeout, sleep } from "./utils.js";
+import { fileExists, withTmpDir, linkOrCp, maybe, pool, withTimeout, sleep, mergeKeepUndefined } from "./utils.js";
 import {
     ObsidianVersionInfo, ObsidianCommunityPlugin, ObsidianCommunityTheme,
     PluginEntry, DownloadedPluginEntry, ThemeEntry, DownloadedThemeEntry,
@@ -959,7 +959,7 @@ export class ObsidianLauncher {
             if (versionMap[version].downloads!.appImage) {
                 maxInstallerVersion = version;
             }
-            versionMap[version] = _.merge({}, versionMap[version],
+            versionMap[version] = mergeKeepUndefined({}, versionMap[version],
                 {
                     minInstallerVersion: versionMap[version].minInstallerVersion ?? minInstallerVersion,
                     maxInstallerVersion: maxInstallerVersion,
