@@ -954,12 +954,14 @@ export class ObsidianLauncher {
      */
     async isAvailable(version: string): Promise<boolean> {
         const versionInfo = await this.getVersionInfo(version);
+        const versionExists = !!(versionInfo.downloads.asar && versionInfo.minInstallerVersion)
+
         if (versionInfo.isBeta) {
             const hasCreds = !!(process.env['OBSIDIAN_USERNAME'] && process.env['OBSIDIAN_PASSWORD']);
             const inCache = await this.isInCache('app', versionInfo.version);
-            return hasCreds || inCache;
+            return versionExists && (hasCreds || inCache);
         } else {
-            return !!versionInfo.downloads.asar;
+            return versionExists;
         }
     }
 }
