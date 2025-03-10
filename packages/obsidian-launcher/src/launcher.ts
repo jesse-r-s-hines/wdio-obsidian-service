@@ -10,8 +10,7 @@ import { pipeline } from "stream/promises";
 import { downloadArtifact } from '@electron/get';
 import child_process from "child_process"
 import semver from "semver"
-import CDP from 'chrome-remote-interface'
-import { fileExists, withTmpDir, linkOrCp, maybe, pool, withTimeout, sleep, mergeKeepUndefined } from "./utils.js";
+import { fileExists, withTmpDir, linkOrCp, maybe, pool, mergeKeepUndefined } from "./utils.js";
 import {
     ObsidianVersionInfo, ObsidianCommunityPlugin, ObsidianCommunityTheme,
     PluginEntry, DownloadedPluginEntry, ThemeEntry, DownloadedThemeEntry,
@@ -22,6 +21,7 @@ import ChromeLocalStorage from "./chromeLocalStorage.js";
 import {
     normalizeGitHubRepo, extractObsidianAppImage, extractObsidianExe, extractObsidianDmg,
     parseObsidianDesktopRelease, parseObsidianGithubRelease, correctObsidianVersionInfo,
+    getElectronVersionInfo,
 } from "./launcherUtils.js";
 import _ from "lodash"
 
@@ -827,73 +827,6 @@ export class ObsidianLauncher {
         return {proc, configDir, vault};
     }
 
-
-    /**
-     * Extract electron and chrome versions for an Obsidian version.
-     */
-    private async getDependencyVersions(
-        versionInfo: Partial<ObsidianVersionInfo>,
-    ): Promise<Partial<ObsidianVersionInfo>> {
-        const binary = await this.downloadInstallerFromVersionInfo(versionInfo as ObsidianVersionInfo);
-        console.log(`${versionInfo.version!}: Retrieving electron & chrome versions...`);
-
-        const configDir = await fsAsync.mkdtemp(path.join(os.tmpdir(), `fetch-obsidian-versions-`));
-
-        const proc = child_process.spawn(binary, [
-            `--remote-debugging-port=0`, // 0 will make it choose a random available port
-            '--test-type=webdriver',
-            `--user-data-dir=${configDir}`,
-            '--no-sandbox', // Workaround for SUID issue, see https://github.com/electron/electron/issues/42510
-        ]);
-        const procExit = new Promise<number>((resolve) => proc.on('exit', (code) => resolve(code ?? -1)));
-        // proc.stdout.on('data', data => console.log(`stdout: ${data}`));
-        // proc.stderr.on('data', data => console.log(`stderr: ${data}`));
-
-        let dependencyVersions: any;
-        try {
-            // Wait for the logs showing that Obsidian is ready, and pull the chosen DevTool Protocol port from it
-            const portPromise = new Promise<number>((resolve, reject) => {
-                procExit.then(() => reject("Processed ended without opening a port"))
-                proc.stderr.on('data', data => {
-                    const port = data.toString().match(/ws:\/\/[\w.]+?:(\d+)/)?.[1];
-                    if (port) {
-                        resolve(Number(port));
-                    }
-                });
-            })
-
-            const port = await maybe(withTimeout(portPromise, 10 * 1000));
-            if (!port.success) {
-                throw new Error("Timed out waiting for Chrome DevTools protocol port");
-            }
-            const client = await CDP({port: port.result});
-            const response = await client.Runtime.evaluate({ expression: "JSON.stringify(process.versions)" });
-            dependencyVersions = JSON.parse(response.result.value);
-            await client.close();
-        } finally {
-            proc.kill("SIGTERM");
-            const timeout = await maybe(withTimeout(procExit, 4 * 1000));
-            if (!timeout.success) {
-                console.log(`${versionInfo.version!}: Stuck process ${proc.pid}, using SIGKILL`);
-                proc.kill("SIGKILL");
-            }
-            await procExit;
-            await sleep(1000); // Need to wait a bit or sometimes the rm fails because something else is writing to it
-            await fsAsync.rm(configDir, { recursive: true, force: true });
-        }
-
-        if (!dependencyVersions?.electron || !dependencyVersions?.chrome) {
-            throw Error(`Failed to extract electron and chrome versions for ${versionInfo.version!}`)
-        }
-
-        return {
-            ...versionInfo,
-            electronVersion: dependencyVersions.electron,
-            chromeVersion: dependencyVersions.chrome,
-            nodeVersion: dependencyVersions.node,
-        };
-    }
-
     /** 
      * Updates the info obsidian-versions.json. The obsidian-versions.json file is used in other launcher commands
      * and in wdio-obsidian-service to get metadata about Obsidian versions in one place such as minInstallerVersion and
@@ -943,7 +876,11 @@ export class ObsidianLauncher {
     
         const dependencyVersions = await pool(maxInstances,
             Object.values(versionMap).filter(v => v.downloads?.appImage && !v.chromeVersion),
-            (v) => this.getDependencyVersions(v),
+            async (v) => {
+                const binaryPath = await this.downloadInstallerFromVersionInfo(v as ObsidianVersionInfo);
+                const electronVersionInfo = await getElectronVersionInfo(v.version!, binaryPath);
+                return {...v, ...electronVersionInfo};
+            },
         )
         for (const deps of dependencyVersions) {
             versionMap[deps.version!] = _.merge({}, versionMap[deps.version!], deps);

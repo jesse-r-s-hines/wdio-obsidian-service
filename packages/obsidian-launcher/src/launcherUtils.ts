@@ -1,11 +1,13 @@
 import fsAsync from "fs/promises"
 import path from "path"
+import os from "os"
 import { promisify } from "util";
 import child_process from "child_process"
 import which from "which"
 import semver from "semver"
 import _ from "lodash"
-import { withTmpDir } from "./utils.js";
+import CDP from 'chrome-remote-interface'
+import { withTmpDir, maybe, withTimeout, sleep } from "./utils.js";
 import { ObsidianVersionInfo } from "./types.js";
 const execFile = promisify(child_process.execFile);
 
@@ -100,6 +102,70 @@ export function parseObsidianGithubRelease(gitHubRelease: any): Partial<Obsidian
         gitHubRelease: gitHubRelease.html_url,
         downloads: _.pickBy(downloads, x => x !== undefined),
     }
+}
+
+/**
+ * Extract electron and chrome versions for an Obsidian version.
+ */
+export async function getElectronVersionInfo(
+    version:string, binaryPath: string,
+):  Promise<Partial<ObsidianVersionInfo>> {
+    console.log(`${version}: Retrieving electron & chrome versions...`);
+
+    const configDir = await fsAsync.mkdtemp(path.join(os.tmpdir(), `fetch-obsidian-versions-`));
+
+    const proc = child_process.spawn(binaryPath, [
+        `--remote-debugging-port=0`, // 0 will make it choose a random available port
+        '--test-type=webdriver',
+        `--user-data-dir=${configDir}`,
+        '--no-sandbox', // Workaround for SUID issue, see https://github.com/electron/electron/issues/42510
+    ]);
+    const procExit = new Promise<number>((resolve) => proc.on('exit', (code) => resolve(code ?? -1)));
+    // proc.stdout.on('data', data => console.log(`stdout: ${data}`));
+    // proc.stderr.on('data', data => console.log(`stderr: ${data}`));
+
+    let dependencyVersions: any;
+    try {
+        // Wait for the logs showing that Obsidian is ready, and pull the chosen DevTool Protocol port from it
+        const portPromise = new Promise<number>((resolve, reject) => {
+            procExit.then(() => reject("Processed ended without opening a port"))
+            proc.stderr.on('data', data => {
+                const port = data.toString().match(/ws:\/\/[\w.]+?:(\d+)/)?.[1];
+                if (port) {
+                    resolve(Number(port));
+                }
+            });
+        })
+
+        const port = await maybe(withTimeout(portPromise, 10 * 1000));
+        if (!port.success) {
+            throw new Error("Timed out waiting for Chrome DevTools protocol port");
+        }
+        const client = await CDP({port: port.result});
+        const response = await client.Runtime.evaluate({ expression: "JSON.stringify(process.versions)" });
+        dependencyVersions = JSON.parse(response.result.value);
+        await client.close();
+    } finally {
+        proc.kill("SIGTERM");
+        const timeout = await maybe(withTimeout(procExit, 4 * 1000));
+        if (!timeout.success) {
+            console.log(`${version}: Stuck process ${proc.pid}, using SIGKILL`);
+            proc.kill("SIGKILL");
+        }
+        await procExit;
+        await sleep(1000); // Need to wait a bit or sometimes the rm fails because something else is writing to it
+        await fsAsync.rm(configDir, { recursive: true, force: true });
+    }
+
+    if (!dependencyVersions?.electron || !dependencyVersions?.chrome) {
+        throw Error(`Failed to extract electron and chrome versions for ${version}`)
+    }
+
+    return {
+        electronVersion: dependencyVersions.electron,
+        chromeVersion: dependencyVersions.chrome,
+        nodeVersion: dependencyVersions.node,
+    };
 }
 
 /**
