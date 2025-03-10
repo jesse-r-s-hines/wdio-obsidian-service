@@ -81,7 +81,7 @@ const program = new Command("obsidian-launcher");
 
 program
     .command("download")
-    .description("download Obsidian to the cache")
+    .description("Download Obsidian to the cache")
     .option(...cacheOptionArgs)
     .option(...versionOptionArgs)
     .option(...installerVersionOptionArgs)
@@ -96,7 +96,7 @@ program
 
 program
     .command("install")
-    .description("install plugins and themes into an Obsidian vault")
+    .description("Install plugins and themes into an Obsidian vault")
     .argument('<vault>', 'Vault to install into')
     .option(...cacheOptionArgs)
     .option(...pluginOptionArgs)
@@ -113,7 +113,7 @@ program
     .command("launch")
     .summary("Download and launch Obsidian")
     .description(
-        "download and launch Obsidian, opening the specified vault. The Obsidian instance will have a sandboxed " +
+        "Download and launch Obsidian, opening the specified vault. The Obsidian instance will have a sandboxed " +
         "configuration directory."
     )
     .argument('[vault]', 'Vault to open')
@@ -142,7 +142,7 @@ program
 
 program
     .command("watch")
-    .summary("launch Obsidian and watch for changes to plugins and themes")
+    .summary("Launch Obsidian and watch for changes to plugins and themes")
     .description(
         "Downloads Obsidian and opens a vault, then watches for changes to plugins and themes.\n" +
         "\n" +
@@ -231,7 +231,7 @@ program
 
 program
     .command("create-versions-list")
-    .summary("collect Obsidian version information into a single file")
+    .summary("Collect Obsidian version information into a single file")
     .description(
         "Collect Obsidian version information into a single file.\n" +
         "\n" +
