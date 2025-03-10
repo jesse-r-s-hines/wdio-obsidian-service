@@ -16,7 +16,7 @@ async function getOpenFiles() {
     });
 }
 
-describe("Test custom browser commands", () => {
+describe("Test page object", () => {
     beforeEach(async () => {
         await browser.reloadObsidian({vault: "./test/vaults/basic"});
         await obsidianPage.loadWorkspaceLayout("empty");
