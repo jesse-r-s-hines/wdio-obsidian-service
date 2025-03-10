@@ -17,10 +17,10 @@ export type ObsidianVersionInfo = {
     isBeta: boolean,
     gitHubRelease?: string,
     downloads: {
+        asar?: string,
         appImage?: string,
         appImageArm?: string,
         apk?: string,
-        asar?: string,
         dmg?: string,
         exe?: string,
     },

@@ -21,7 +21,7 @@ import ChromeLocalStorage from "./chromeLocalStorage.js";
 import {
     normalizeGitHubRepo, extractObsidianAppImage, extractObsidianExe, extractObsidianDmg,
     parseObsidianDesktopRelease, parseObsidianGithubRelease, correctObsidianVersionInfo,
-    getElectronVersionInfo,
+    getElectronVersionInfo, normalizeObsidianVersionInfo,
 } from "./launcherUtils.js";
 import _ from "lodash"
 
@@ -907,16 +907,15 @@ export class ObsidianLauncher {
             );
         }
     
-        const versionInfos = Object.values(versionMap) as ObsidianVersionInfo[]
-        versionInfos.sort((a, b) => semver.compare(a.version, b.version));
-    
         const result: ObsidianVersionInfos = {
             metadata: {
                 commit_date: commitHistory.at(-1)?.commit.committer.date ?? original?.metadata.commit_date,
                 commit_sha: commitHistory.at(-1)?.sha ?? original?.metadata.commit_sha,
                 timestamp: original?.metadata.timestamp ?? "", // set down below
             },
-            versions: versionInfos,
+            versions: Object.values(versionMap)
+                .map(normalizeObsidianVersionInfo)
+                .sort((a, b) => semver.compare(a.version, b.version)),
         }
 
         // Update timestamp if anything has changed. Also, GitHub will cancel scheduled workflows if the repository is

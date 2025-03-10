@@ -77,7 +77,6 @@ export function parseObsidianDesktopRelease(fileRelease: any, isBeta: boolean): 
     return {
         version: fileRelease.latestVersion,
         minInstallerVersion: fileRelease.minimumVersion != '0.0.0' ? fileRelease.minimumVersion : undefined,
-        maxInstallerVersion: undefined, // Will be set later
         isBeta: isBeta,
         downloads: {
             asar: fileRelease.downloadUrl,
@@ -194,4 +193,31 @@ export function correctObsidianVersionInfo(versionInfo: Partial<ObsidianVersionI
     }
 
     return result;
+}
+
+/**
+ * Normalize order and remove undefined values.
+ */
+export function normalizeObsidianVersionInfo(versionInfo: Partial<ObsidianVersionInfo>): ObsidianVersionInfo {
+    versionInfo = {
+        version: versionInfo.version,
+        minInstallerVersion: versionInfo.minInstallerVersion,
+        maxInstallerVersion: versionInfo.maxInstallerVersion,
+        isBeta: versionInfo.isBeta,
+        gitHubRelease: versionInfo.gitHubRelease,
+        downloads: {
+            asar: versionInfo.downloads?.asar,
+            appImage: versionInfo.downloads?.appImage,
+            appImageArm: versionInfo.downloads?.appImageArm,
+            apk: versionInfo.downloads?.apk,
+            dmg: versionInfo.downloads?.dmg,
+            exe: versionInfo.downloads?.exe,
+        },
+        electronVersion: versionInfo.electronVersion,
+        chromeVersion: versionInfo.chromeVersion,
+        nodeVersion: versionInfo.nodeVersion,
+    };
+    versionInfo.downloads = _.omitBy(versionInfo.downloads, _.isUndefined);
+    versionInfo = _.omitBy(versionInfo, _.isUndefined);
+    return versionInfo as ObsidianVersionInfo;
 }
