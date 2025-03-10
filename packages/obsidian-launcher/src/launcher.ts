@@ -696,7 +696,7 @@ export class ObsidianLauncher {
      *
      * @param appVersion Obsidian version string.
      * @param installerVersion Obsidian version string.
-     * @param appPath Path to the asar file to install.
+     * @param appPath Path to the asar file to install. Will download if omitted.
      * @param vault Path to the vault to open in Obsidian.
      * @param dest Destination path for the config dir. If omitted it will create it under `/tmp`.
      */
@@ -737,11 +737,13 @@ export class ObsidianLauncher {
         }
 
         await fsAsync.writeFile(path.join(configDir, 'obsidian.json'), JSON.stringify(obsidianJson));
-        if (params.appPath) {
-            await linkOrCp(params.appPath, path.join(configDir, path.basename(params.appPath)));
-        } else if (appVersion != installerVersion) {
-            throw Error("You must specify app path if appVersion != installerVersion");
+
+        let appPath = params.appPath;
+        if (!appPath) {
+            appPath = await this.downloadApp(appVersion);
         }
+        await linkOrCp(appPath, path.join(configDir, path.basename(appPath)));
+
         const localStorage = new ChromeLocalStorage(configDir);
         await localStorage.setItems("app://obsidian.md", localStorageData)
         await localStorage.close();
