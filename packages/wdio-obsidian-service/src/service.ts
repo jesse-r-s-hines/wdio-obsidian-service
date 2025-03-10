@@ -64,7 +64,7 @@ export class ObsidianLauncherService implements Services.ServiceInstance {
                 const vault = obsidianOptions.vault != undefined ? path.resolve(obsidianOptions.vault) : undefined;
     
                 const [appVersion, installerVersion] = await this.obsidianLauncher.resolveVersions(
-                    cap.browserVersion ?? "latest",
+                    cap.browserVersion ?? cap[OBSIDIAN_CAPABILITY_KEY]?.appVersion ?? "latest",
                     obsidianOptions.installerVersion ?? "earliest",
                 );
                 const installerVersionInfo = await this.obsidianLauncher.getVersionInfo(installerVersion);
