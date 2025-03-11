@@ -21,7 +21,7 @@ jobs:
           - os: macos-latest
             node-version: "18.x"
             test-preset: "first-and-last"
-            max-instances: 2
+            max-instances: 1
           # Also test other node versions
           - os: ubuntu-latest
             node-version: "20.x"
