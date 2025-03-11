@@ -8,8 +8,11 @@ import semver from "semver";
 import { ObsidianVersionInfo } from "obsidian-launcher"
 import _ from "lodash"
 
+// Select which Obsidian versions to run. Available options
+// all, sample, first-and-last, last
+const testPreset = process.env['TEST_PRESET'] ?? 'first-and-last';
+
 const maxInstances = Number(process.env['WDIO_MAX_INSTANCES'] ?? 4);
-const testEnv = process.env['TEST_ENV'] ?? 'local';
 const workspacePath = path.resolve(path.join(fileURLToPath(import.meta.url), "../../.."))
 const obsidianVersionsJson = path.join(workspacePath, "obsidian-versions.json");
 const allVersions: ObsidianVersionInfo[] = JSON.parse(await fsAsync.readFile(obsidianVersionsJson, 'utf-8')).versions;
@@ -26,7 +29,7 @@ if (process.env['OBSIDIAN_VERSIONS']) {
     const appVersions = process.env['OBSIDIAN_VERSIONS'].trim().split(/[ ,]+/);
     const installerVersions = process.env['OBSIDIAN_INSTALLER_VERSIONS']?.trim().split(/[ ,]+/) ?? [];
     versionsToTest = appVersions.map((v, i) => [v, installerVersions[i] ?? 'earliest']);
-} else if (['local', 'ubuntu-latest'].includes(testEnv)) {
+} else if (['all', 'sample'].includes(testPreset)) {
     // Test every minor installer version and every minor appVersion since minSupportedObsidianVersion
     const versionMap = _(allVersions)
         .filter(v => !!v.electronVersion && !v.isBeta && semver.gte(v.version, minInstallerVersion))
@@ -38,26 +41,24 @@ if (process.env['OBSIDIAN_VERSIONS']) {
         semver.gte(v, minSupportedObsidianVersion) ? v : minSupportedObsidianVersion,
         v,
     ]);
-
-    // And test latest beta
-    const betaExists = allVersions.at(-1)!.isBeta;
-    const betaRequired = (testEnv != 'local');
-    const betaAvailable = await obsidianBetaAvailable(cacheDir);
-    if (betaExists && (betaAvailable || betaRequired)) {
-        versionsToTest.push(["latest-beta", "latest"]);
-        if (!betaAvailable) {
-            console.error('\x1b[31m%s\x1b[0m', // red ANSI codes
-                "WARNING: Workflows run on PRs don't have the credentials to download Obsidian beta versions and the " +
-                "beta is not in the workflow cache. Try again in an hour or two and the cache should be initialied."
-            );
-        }
+    // Only test first and last 4 minor versions
+    if (testPreset == "sample" && versionsToTest.length > 5) {
+        versionsToTest = [versionsToTest[0], ...versionsToTest.slice(-4)];
     }
-} else if (["windows-latest", "macos-latest"].includes(testEnv)) {
-    // Windows costs 2x and MacOS cost 10x of our GitHub actions quota compared to ubuntu, so only run min and latest.
+
+    // And test latest beta if available
+    if (await obsidianBetaAvailable(cacheDir)) {
+        versionsToTest.push(["latest-beta", "latest"]);
+    }
+} else if (testPreset == "first-and-last") {
     versionsToTest = [[minSupportedObsidianVersion, "earliest"], ["latest", "latest"]];
+} else if (testPreset == "last") {
+    versionsToTest = [["latest", "latest"]]
 } else {
-    throw Error(`Unknown TEST_ENV ${testEnv}`)
+    throw Error(`Unknown TEST_PRESET ${testPreset}`)
 }
+
+console.log(`Testing Obsidian versions: ${versionsToTest.map(v => v[0] + '/' + v[1]).join(", ")}`);
 
 export const config: WebdriverIO.Config = {
     runner: 'local',

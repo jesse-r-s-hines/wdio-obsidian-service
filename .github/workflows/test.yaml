@@ -11,12 +11,26 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: 
-          - ubuntu-latest
-          - windows-latest
-          - macos-latest
-        node-version: ["18.x"]
+        include:
+          - os: ubuntu-latest
+            node-version: "18.x"
+            test-preset: "sample"
+          - os: windows-latest
+            node-version: "18.x"
+            test-preset: "first-and-last"
+          - os: macos-latest
+            node-version: "18.x"
+            test-preset: "first-and-last"
+            max-instances: 2
+          # Also test other node versions
+          - os: ubuntu-latest
+            node-version: "20.x"
+            test-preset: "last"
+          - os: ubuntu-latest
+            node-version: "22.x"
+            test-preset: "last"
     runs-on: ${{ matrix.os }}
+    name: e2e-test-${{ matrix.os }}-node-${{ matrix.node-version }}
     steps:
       - uses: actions/checkout@v4
       - name: Use Node.js ${{ matrix.node-version }}
@@ -46,8 +60,8 @@ jobs:
           ${{ matrix.os == 'ubuntu-latest' && 'xvfb-run --server-args="-screen 0 1280x1024x24"  \' || '' }}
           npm run test:e2e
         env:
-          TEST_ENV: ${{matrix.os}}
-          WDIO_MAX_INSTANCES: ${{matrix.os == 'macos-latest' && '2' || '4'}}
+          TEST_PRESET: ${{matrix.test-preset}}
+          WDIO_MAX_INSTANCES: ${{matrix.max-instances || '2'}}
           # Secrets won't be available when run as on a PR
           OBSIDIAN_USERNAME: ${{ secrets.OBSIDIAN_USERNAME }}
           OBSIDIAN_PASSWORD: ${{ secrets.OBSIDIAN_PASSWORD }}
