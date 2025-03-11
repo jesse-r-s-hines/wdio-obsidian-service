@@ -13,6 +13,8 @@ export type {
     LocalThemeEntry, GitHubThemeEntry, CommunityThemeEntry, ThemeEntry,
 } from "obsidian-launcher";
 
+export { default as ObsidianReporter } from "./obsidianReporter.js";
+
 /**
  * Returns true if there's currently an Obsidian beta and we have the credentials to download it or it's already in the
  * cache.
