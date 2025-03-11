@@ -1,8 +1,8 @@
 # yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
 name: Update Obsidian Versions
 on:
-  schedule: # Run every 4 hours at minute 22
-    - cron: '22 */4 * * *'
+  schedule: # Run every 6 hours at minute 22
+    - cron: '22 */6 * * *'
   workflow_dispatch:
 
 jobs:
@@ -46,7 +46,7 @@ jobs:
                 // The desktop-releases.json can be updated a bit before the GitHub release is actually created, which
                 // could cause in obsidian-versions.json to be incomplete. So we'll re-run it a second time after an
                 // update to make sure that gets corrected.
-                timeSinceLastUpdate <= 6 * 60 * 60
+                timeSinceLastUpdate <= 9 * 60 * 60
             );
             return needsUpdate ? 'true' : 'false';
 
