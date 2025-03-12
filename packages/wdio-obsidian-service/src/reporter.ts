@@ -7,6 +7,10 @@ import { Reporters } from "@wdio/types"
  * Simple extension of SpecReporter that print the Obsidian version instead of the Chrome version.
  */
 class ObsidianReporter extends SpecReporter {
+    constructor(options: any) {
+        super({showPreface: false, ...options})
+    }
+
     // Override this method to change the label shown for each capability 
     getHeaderDisplay(runner: RunnerStats) {
         const obsidianOptions = (runner.config as any).capabilities?.['wdio:obsidianOptions']

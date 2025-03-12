@@ -5,6 +5,10 @@
     "type": "module",
     "main": "./dist/index.js",
     "types": "./dist/index.d.ts",
+    "exports": {
+        ".": "./dist/index.js",
+        "./reporter": "./dist/reporter.js"
+    },
     "files": [
         "dist",
         "helper-plugin"
