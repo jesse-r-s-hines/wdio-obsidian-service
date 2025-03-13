@@ -1,6 +1,6 @@
 import ObsidianWorkerService, { launcher as ObsidianLauncherService, obsidianBetaAvailable } from "./src/index.js"
 import { minSupportedObsidianVersion } from "./src/service.js"
-import ObsidianReporter from "./src/obsidianReporter.js"
+import ObsidianReporter from "./src/reporter.js"
 import { pathToFileURL, fileURLToPath } from "url"
 import path from "path"
 import fsAsync from "fs/promises"
@@ -57,8 +57,6 @@ if (process.env['OBSIDIAN_VERSIONS']) {
 } else {
     throw Error(`Unknown TEST_PRESET ${testPreset}`)
 }
-
-console.log(`Testing Obsidian versions: ${versionsToTest.map(v => v[0] + '/' + v[1]).join(", ")}`);
 
 export const config: WebdriverIO.Config = {
     runner: 'local',

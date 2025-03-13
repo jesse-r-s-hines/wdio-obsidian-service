@@ -1,10 +1,20 @@
 {
     "name": "wdio-obsidian-service",
-    "version": "0.2.2",
+    "version": "0.2.3",
     "description": "TODO",
     "type": "module",
     "main": "./dist/index.js",
     "types": "./dist/index.d.ts",
+    "exports": {
+        ".": {
+            "import": "./dist/index.js",
+            "require": "./dist/index.cjs"
+        },
+        "./reporter": {
+            "import": "./dist/reporter.js",
+            "require": "./dist/reporter.cjs"
+        }
+    },
     "files": [
         "dist",
         "helper-plugin"
@@ -49,7 +59,7 @@
     },
     "dependencies": {
         "lodash": "^4.17.21",
-        "obsidian-launcher": "^0.2.2",
+        "obsidian-launcher": "^0.2.3",
         "semver": "^7.7.1"
     },
     "peerDependencies": {
