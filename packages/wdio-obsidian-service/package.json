@@ -6,8 +6,14 @@
     "main": "./dist/index.js",
     "types": "./dist/index.d.ts",
     "exports": {
-        ".": "./dist/index.js",
-        "./reporter": "./dist/reporter.js"
+        ".": {
+            "import": "./dist/index.js",
+            "require": "./dist/index.cjs"
+        },
+        "./reporter": {
+            "import": "./dist/reporter.js",
+            "require": "./dist/reporter.cjs"
+        }
     },
     "files": [
         "dist",
