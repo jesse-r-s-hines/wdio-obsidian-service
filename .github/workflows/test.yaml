@@ -43,8 +43,8 @@ jobs:
         uses: actions/cache@v4
         with:
           path: .obsidian-cache
-          key: obsidian-cache-${{matrix.os}}-${{ hashFiles('./obsidian-versions.json') }}
-          restore-keys: obsidian-cache-${{matrix.os}}-
+          key: obsidian-cache-${{ matrix.os }}-${{ matrix.node-version }}-${{ hashFiles('./obsidian-versions.json') }}
+          restore-keys: obsidian-cache-${{matrix.os}}-${{ matrix.node-version }}
 
       - name: Build
         run: |
