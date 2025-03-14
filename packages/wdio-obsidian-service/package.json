@@ -1,6 +1,6 @@
 {
     "name": "wdio-obsidian-service",
-    "version": "0.2.4",
+    "version": "0.2.5",
     "description": "TODO",
     "type": "module",
     "main": "./dist/index.js",
@@ -53,7 +53,7 @@
     },
     "dependencies": {
         "lodash": "^4.17.21",
-        "obsidian-launcher": "^0.2.4",
+        "obsidian-launcher": "^0.2.5",
         "semver": "^7.7.1"
     },
     "peerDependencies": {
