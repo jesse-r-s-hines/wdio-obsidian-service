@@ -2,7 +2,6 @@ import fsAsync from "fs/promises"
 import fs from "fs"
 import zlib from "zlib"
 import path from "path"
-import os from "os";
 import crypto from "crypto";
 import fetch from "node-fetch"
 import extractZip from "extract-zip"
@@ -10,7 +9,7 @@ import { pipeline } from "stream/promises";
 import { downloadArtifact } from '@electron/get';
 import child_process from "child_process"
 import semver from "semver"
-import { fileExists, withTmpDir, linkOrCp, maybe, pool, mergeKeepUndefined } from "./utils.js";
+import { fileExists, makeTmpDir, withTmpDir, linkOrCp, maybe, pool, mergeKeepUndefined } from "./utils.js";
 import {
     ObsidianVersionInfo, ObsidianCommunityPlugin, ObsidianCommunityTheme,
     PluginEntry, DownloadedPluginEntry, ThemeEntry, DownloadedThemeEntry,
@@ -709,7 +708,7 @@ export class ObsidianLauncher {
         const [appVersion, installerVersion] = await this.resolveVersions(params.appVersion, params.installerVersion);
         // configDir will be passed to --user-data-dir, so Obsidian is somewhat sandboxed. We set up "obsidian.json" so
         // that Obsidian opens the vault by default and doesn't check for updates.
-        const configDir = params.dest ?? await fsAsync.mkdtemp(path.join(os.tmpdir(), 'obs-launcher-config-'));
+        const configDir = params.dest ?? await makeTmpDir('obs-launcher-config-');
     
         let obsidianJson: any = {
             updateDisabled: true, // Prevents Obsidian trying to auto-update on boot.
@@ -767,7 +766,7 @@ export class ObsidianLauncher {
     }): Promise<string> {
         let vault = params.vault;
         if (params.copy) {
-            const dest = await fsAsync.mkdtemp(path.join(os.tmpdir(), 'obs-launcher-vault-'));
+            const dest = await makeTmpDir('obs-launcher-vault-');
             await fsAsync.cp(vault, dest, { recursive: true });
             vault = dest;
         }

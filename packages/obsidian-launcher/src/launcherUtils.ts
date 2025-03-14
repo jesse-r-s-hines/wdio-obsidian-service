@@ -1,13 +1,12 @@
 import fsAsync from "fs/promises"
 import path from "path"
-import os from "os"
 import { promisify } from "util";
 import child_process from "child_process"
 import which from "which"
 import semver from "semver"
 import _ from "lodash"
 import CDP from 'chrome-remote-interface'
-import { withTmpDir, maybe, withTimeout, sleep } from "./utils.js";
+import { makeTmpDir, withTmpDir, maybe, withTimeout, sleep } from "./utils.js";
 import { ObsidianVersionInfo } from "./types.js";
 const execFile = promisify(child_process.execFile);
 
@@ -111,7 +110,7 @@ export async function getElectronVersionInfo(
 ):  Promise<Partial<ObsidianVersionInfo>> {
     console.log(`${version}: Retrieving electron & chrome versions...`);
 
-    const configDir = await fsAsync.mkdtemp(path.join(os.tmpdir(), `fetch-obsidian-versions-`));
+    const configDir = await makeTmpDir('fetch-obsidian-versions-');
 
     const proc = child_process.spawn(binaryPath, [
         `--remote-debugging-port=0`, // 0 will make it choose a random available port
