@@ -1,13 +1,11 @@
 /**
  * Script to test downloading and launching all listed Obsidian versions.
  */
-
-import os from "os"
 import { pathToFileURL, fileURLToPath } from "url"
 import path from "path"
 import fsAsync from "fs/promises"
 import CDP from 'chrome-remote-interface'
-import { withTimeout, pool, maybe, sleep, Maybe } from "../src/utils.js"
+import { makeTmpDir, withTimeout, pool, maybe, sleep, Maybe } from "../src/utils.js"
 import { ObsidianLauncher } from "../src/launcher.js"
 import { ChildProcess } from "child_process"
 import { ObsidianVersionInfo } from "../src/types.js"
@@ -39,7 +37,7 @@ async function testVersion(appVersion: string, installerVersion: string): Promis
         versionsUrl: pathToFileURL(obsidianVersionsJson).toString(),
     })
 
-    const vault = await fsAsync.mkdtemp(path.join(os.tmpdir(), 'obs-launcher-vault-'));
+    const vault = await makeTmpDir('obs-launcher-vault-');
     
     const { proc, configDir } = await launcher.launch({
         appVersion, installerVersion,

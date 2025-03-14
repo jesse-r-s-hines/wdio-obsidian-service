@@ -1,5 +1,6 @@
 import fsAsync from "fs/promises"
 import path from "path"
+import os from "os"
 import { PromisePool } from '@supercharge/promise-pool'
 import _ from "lodash"
 
@@ -12,6 +13,15 @@ export async function fileExists(path: string) {
     } catch {
         return false;
     }
+}
+
+/**
+ * Create tmpdir under the system temporary directory.
+ * @param prefix 
+ * @returns 
+ */
+export async function makeTmpDir(prefix?: string) {
+    return fsAsync.mkdtemp(path.join(os.tmpdir(), prefix ?? 'tmp-'));
 }
 
 /**
