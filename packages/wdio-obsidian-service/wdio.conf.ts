@@ -26,9 +26,17 @@ const minorVersion = (v: string) => v.split(".").slice(0, 2).join('.');
 
 let versionsToTest: [string, string][]
 if (process.env['OBSIDIAN_VERSIONS']) {
-    const appVersions = process.env['OBSIDIAN_VERSIONS'].trim().split(/[ ,]+/);
-    const installerVersions = process.env['OBSIDIAN_INSTALLER_VERSIONS']?.trim().split(/[ ,]+/) ?? [];
-    versionsToTest = appVersions.map((v, i) => [v, installerVersions[i] ?? 'earliest']);
+    const appVersions = process.env['OBSIDIAN_VERSIONS'].split(/[ ,]+/);
+    let installerVersions: string[];
+    if (process.env['OBSIDIAN_INSTALLER_VERSIONS']) {
+        installerVersions = process.env['OBSIDIAN_INSTALLER_VERSIONS'].split(/[ ,]+/);
+    } else {
+        installerVersions = appVersions.map(() => "earliest");
+    }
+    if (installerVersions.length != appVersions.length) {
+        throw Error("OBSIDIAN_VERSIONS and OBSIDIAN_INSTALLER_VERSIONS must be the same length");
+    }
+    versionsToTest = appVersions.map((v, i) => [v, installerVersions[i]]);
 } else if (['all', 'sample'].includes(testPreset)) {
     // Test every minor installer version and every minor appVersion since minSupportedObsidianVersion
     const versionMap = _(allVersions)
@@ -41,6 +49,9 @@ if (process.env['OBSIDIAN_VERSIONS']) {
         semver.gte(v, minSupportedObsidianVersion) ? v : minSupportedObsidianVersion,
         v,
     ]);
+    // test latest/earliest combination to make sure that minInstallerVersion is correct
+    versionsToTest.push(["latest", "earliest"]);
+
     // Only test first and last 4 minor versions
     if (testPreset == "sample" && versionsToTest.length > 5) {
         versionsToTest = [versionsToTest[0], ...versionsToTest.slice(-4)];

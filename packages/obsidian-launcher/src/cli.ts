@@ -8,7 +8,7 @@ import path from "path"
 import fsAsync from "fs/promises";
 
 
-function parsePlugins(plugins: string[]): PluginEntry[] {
+function parsePlugins(plugins: string[] = []): PluginEntry[] {
     return plugins.map((p: string) => {
         if (p.startsWith("id:")) {
             return {id: p.slice(3)}
@@ -20,7 +20,7 @@ function parsePlugins(plugins: string[]): PluginEntry[] {
     })
 }
 
-function parseThemes(themes: string[]): ThemeEntry[] {
+function parseThemes(themes: string[] = []): ThemeEntry[] {
     return themes.map((t: string, i: number) => {
         let result: ThemeEntry
         if (t.startsWith("name:")) {
@@ -52,13 +52,15 @@ function watchFiles(
     }
 }
 
+const collectOpt = (curr: string, prev?: string[]) => [...(prev ?? []), curr];
+
 const versionOptionArgs = [
     '-v, --version <version>',
     "Obsidian version to run",
     "latest",
 ] as const
-const installerVersionOptionArgs = [
-    '--installer-version <version>',
+const installerOptionArgs = [
+    '-i, --installer <version>',
     "Obsidian installer version to run",
     "latest",
 ] as const
@@ -69,12 +71,12 @@ const cacheOptionArgs = [
 const pluginOptionArgs = [
     '-p, --plugin <plugin>',
     `Plugin to install. Format: "<path>" or "repo:<github-repo>" or "id:<community-id>". Can be repeated.`,
-    (curr: string, prev: string[]) => [...prev, curr], [] as string[],
+    collectOpt,
 ] as const
 const themeOptionArgs = [
     '-t, --theme <plugin>',
     `Theme to install. Format: "<path>" or "repo:<github-repo>" or "name:<community-name>". Can be repeated but only last will be enabled.`,
-    (curr: string, prev: string[]) => [...prev, curr], [] as string[],
+    collectOpt,
 ] as const
 
 const program = new Command("obsidian-launcher");
@@ -84,7 +86,7 @@ program
     .description("Download Obsidian to the cache")
     .option(...cacheOptionArgs)
     .option(...versionOptionArgs)
-    .option(...installerVersionOptionArgs)
+    .option(...installerOptionArgs)
     .action(async (opts) => {
         const launcher = new ObsidianLauncher({cacheDir: opts.cache});
         const [appVersion, installerVersion] = await launcher.resolveVersions(opts.version, opts.installerVersion);
@@ -119,7 +121,7 @@ program
     .argument('[vault]', 'Vault to open')
     .option(...cacheOptionArgs)
     .option(...versionOptionArgs)
-    .option(...installerVersionOptionArgs)
+    .option(...installerOptionArgs)
     .option(...pluginOptionArgs)
     .option(...themeOptionArgs)
     .option('--copy', "Copy the vault first")
@@ -153,7 +155,7 @@ program
     .argument('[vault]', 'Vault to open')
     .option(...cacheOptionArgs)
     .option(...versionOptionArgs)
-    .option(...installerVersionOptionArgs)
+    .option(...installerOptionArgs)
     .option(...pluginOptionArgs)
     .option(...themeOptionArgs)
     .option('--copy', "Copy the vault first")
@@ -162,10 +164,11 @@ program
         // Normalize the plugins and themes
         const plugins = await launcher.downloadPlugins(parsePlugins(opts.plugin));
         const themes = await launcher.downloadThemes(parseThemes(opts.theme));
+        const copy: boolean = opts.copy ?? false;
         const launchArgs = {
             appVersion: opts.version, installerVersion: opts.installerVersion,
             vault: vault,
-            copy: opts.copy ?? false,
+            copy: copy,
             plugins: plugins,
             themes: themes,
         } as const
@@ -178,6 +181,9 @@ program
                 stdio: "pipe",
             }
         })
+        if (copy) {
+            console.log(`Vault copied to ${vaultCopy}`);
+        }
         proc.stdout!.on('data', data => console.log(data.toString()));
         proc.stderr!.on('data', data => console.log(data.toString()));
         const procExit = new Promise<number>((resolve) => proc.on('exit', (code) => resolve(code ?? -1)));
@@ -219,7 +225,6 @@ program
             proc.kill("SIGTERM");
             await procExit;
             await fsAsync.rm(configDir, {recursive: true, force: true});
-            await fsAsync.rm(vaultCopy!, {recursive: true, force: true});
             process.exit(1);
         }
         process.on('SIGINT', cleanup);
@@ -262,4 +267,9 @@ program
         console.log(`Wrote updated version information to ${dest}`)
     })
 
-program.parse();
+program
+    .parseAsync()
+    .catch((err) => {
+        console.log(err?.message ?? err.toString())
+        process.exit(1);
+    });
