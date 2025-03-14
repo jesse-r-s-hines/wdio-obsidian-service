@@ -284,11 +284,16 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
                 if (theme) {
                     await obsidianPage.setTheme(theme);
                 }
-                // Obsidian debounces saves to the config dir, and so changes to plugin list, themes, and anything else
-                // you set in your tests may not get saved to disk before the reboot. I haven't found a better way to
-                // make sure everything's saved then just waiting a bit. Maybe we could mock setTimeout? wdio has ways
-                // to mock the clock, but they only work when using BiDi, which I can't get working on Obsidian.
-                await sleep(3000);
+                // Obsidian debounces saves to the config dir, and so changes to configuration made in the tests may not
+                // get saved to disk before the reboot. Here I manually trigger save for plugins and themes, but other
+                // configurations might not get saved. I haven't found a better way to flush everything than just
+                // waiting a bit. Wdio has ways to mock the clock, which might work, but it's only supported when using
+                // BiDi, which I can't get working on Obsidian.
+                await browser.executeObsidian(async ({app}) => await Promise.all([
+                    (app as any).plugins.saveConfig(),
+                    (app.vault as any).saveConfig(),
+                ]))
+                await sleep(2000);
             }
 
             const sessionId = await browser.reloadSession({

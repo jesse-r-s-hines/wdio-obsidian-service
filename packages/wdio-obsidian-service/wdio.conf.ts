@@ -25,18 +25,12 @@ const obsidianServiceOptions = {
 const minorVersion = (v: string) => v.split(".").slice(0, 2).join('.');
 
 let versionsToTest: [string, string][]
-if (process.env['OBSIDIAN_VERSIONS']) {
-    const appVersions = process.env['OBSIDIAN_VERSIONS'].split(/[ ,]+/);
-    let installerVersions: string[];
-    if (process.env['OBSIDIAN_INSTALLER_VERSIONS']) {
-        installerVersions = process.env['OBSIDIAN_INSTALLER_VERSIONS'].split(/[ ,]+/);
-    } else {
-        installerVersions = appVersions.map(() => "earliest");
-    }
-    if (installerVersions.length != appVersions.length) {
-        throw Error("OBSIDIAN_VERSIONS and OBSIDIAN_INSTALLER_VERSIONS must be the same length");
-    }
-    versionsToTest = appVersions.map((v, i) => [v, installerVersions[i]]);
+if (process.env.OBSIDIAN_VERSIONS) {
+    // Space separated list of appVersion/installerVersion, e.g. "1.7.7/latest latest/earliest"
+    versionsToTest = process.env.OBSIDIAN_VERSIONS.split(/[ ,]+/).map(v => {
+        const [app, installer = "earliest"] = v.split("/"); // default to earliest installer
+        return [app, installer] as [string, string]
+    })
 } else if (['all', 'sample'].includes(testPreset)) {
     // Test every minor installer version and every minor appVersion since minSupportedObsidianVersion
     const versionMap = _(allVersions)
