@@ -1,5 +1,6 @@
 {
     "name": "wdio-obsidian-service-workspace",
+    "version": "3.0.0",
     "private": true,
     "workspaces": [
         "packages/*"
@@ -9,6 +10,8 @@
     },
     "scripts": {
         "build": "npm run --workspaces build",
+        "version": "node scripts/bumpVersions.mjs",
+        "postversion": "git add package*.json **/package*.json && git commit -m \"Bump $npm_package_version\"",
         "lint": "eslint packages/*/src packages/*/test",
         "test": "run-s test:*",
         "test:unit": "npm run --workspaces --if-present test:unit",

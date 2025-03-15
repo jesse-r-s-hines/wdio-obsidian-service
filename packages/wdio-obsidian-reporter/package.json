@@ -36,8 +36,7 @@
         "@wdio/reporter": "^9.5.0",
         "@wdio/spec-reporter": "^9.5.0"
     },
-    "peerDependencies": {
-    },
+    "peerDependencies": {},
     "engines": {
         "node": ">=18"
     }
