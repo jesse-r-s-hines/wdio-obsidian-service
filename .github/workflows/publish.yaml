@@ -25,12 +25,14 @@ jobs:
             const fs = require("fs")
             const launcherPackageJson = fs.readFileSync("packages/obsidian-launcher/package.json", 'utf-8');
             const launcherVersion = JSON.parse(launcherPackageJson).version;
+            const reporterPackageJson = fs.readFileSync("packages/wdio-obsidian-reporter/package.json", 'utf-8');
+            const reporterVersion = JSON.parse(reporterPackageJson).version;
             const servicePackageJson = fs.readFileSync("packages/wdio-obsidian-service/package.json", 'utf-8');
             const serviceVersion = JSON.parse(servicePackageJson).version;
             const registryJson = await fetch('https://registry.npmjs.org/wdio-obsidian-service/latest').then(r => r.json());
             const registryVersion = registryJson.version;
 
-            if (serviceVersion != launcherVersion) {
+            if (serviceVersion != launcherVersion || serviceVersion != reporterVersion) {
               throw Error("Package versions must match")
             }
 
