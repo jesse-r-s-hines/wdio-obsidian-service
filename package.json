@@ -11,7 +11,7 @@
         "build": "npm run --workspaces build",
         "lint": "eslint packages/*/src packages/*/test",
         "test": "run-s test:*",
-        "test:unit": "npm run --workspaces test:unit",
+        "test:unit": "npm run --workspaces --if-present test:unit",
         "test:e2e": "npm run --workspaces --if-present test:e2e",
         "doc": "typedoc"
     },

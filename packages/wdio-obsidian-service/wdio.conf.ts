@@ -1,6 +1,5 @@
 import ObsidianWorkerService, { launcher as ObsidianLauncherService, obsidianBetaAvailable } from "./src/index.js"
 import { minSupportedObsidianVersion } from "./src/service.js"
-import ObsidianReporter from "./src/reporter.js"
 import { pathToFileURL, fileURLToPath } from "url"
 import path from "path"
 import fsAsync from "fs/promises"
@@ -93,7 +92,7 @@ export const config: WebdriverIO.Config = {
 
     framework: 'mocha',
     
-    reporters: [ObsidianReporter],
+    reporters: ["obsidian"],
 
     mochaOpts: {
         ui: 'bdd',
