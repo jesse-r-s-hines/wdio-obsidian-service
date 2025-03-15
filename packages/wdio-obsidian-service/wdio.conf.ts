@@ -29,7 +29,7 @@ if (process.env.OBSIDIAN_VERSIONS) {
     // Space separated list of appVersion/installerVersion, e.g. "1.7.7/latest latest/earliest"
     versionsToTest = process.env.OBSIDIAN_VERSIONS.split(/[ ,]+/).map(v => {
         const [app, installer = "earliest"] = v.split("/"); // default to earliest installer
-        return [app, installer] as [string, string]
+        return [app, installer];
     })
 } else if (['all', 'sample'].includes(testPreset)) {
     // Test every minor installer version and every minor appVersion since minSupportedObsidianVersion
