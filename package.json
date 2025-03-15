@@ -9,15 +9,19 @@
     },
     "scripts": {
         "build": "npm run --workspaces build",
-        "lint": "npm run --workspaces lint",
+        "lint": "eslint packages/*/src packages/*/test",
         "test": "run-s test:*",
         "test:unit": "npm run --workspaces test:unit",
         "test:e2e": "npm run --workspaces --if-present test:e2e",
         "doc": "typedoc"
     },
     "devDependencies": {
+        "@eslint/js": "^9.22.0",
+        "eslint": "^9.22.0",
         "npm-run-all": "^4.1.5",
-        "typedoc": "^0.27.8"
+        "typedoc": "^0.28.0",
+        "typescript": "^5.8.2",
+        "typescript-eslint": "^8.26.1"
     },
     "engines": {
         "node": ">=18"
