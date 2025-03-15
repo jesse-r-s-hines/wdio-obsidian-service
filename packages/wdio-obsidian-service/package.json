@@ -22,7 +22,7 @@
         "type": "git",
         "url": "git+https://github.com/jesse-r-s-hines/wdio-obsidian-service.git"
     },
-    "author": "",
+    "author": "jesse-r-s-hines",
     "license": "MIT",
     "bugs": {
         "url": "https://github.com/jesse-r-s-hines/wdio-obsidian-service/issues"
