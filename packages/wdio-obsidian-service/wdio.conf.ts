@@ -1,6 +1,5 @@
 import ObsidianWorkerService, { launcher as ObsidianLauncherService, obsidianBetaAvailable } from "./src/index.js"
 import { minSupportedObsidianVersion } from "./src/service.js"
-import ObsidianReporter from "./src/reporter.js"
 import { pathToFileURL, fileURLToPath } from "url"
 import path from "path"
 import fsAsync from "fs/promises"
@@ -29,7 +28,7 @@ if (process.env.OBSIDIAN_VERSIONS) {
     // Space separated list of appVersion/installerVersion, e.g. "1.7.7/latest latest/earliest"
     versionsToTest = process.env.OBSIDIAN_VERSIONS.split(/[ ,]+/).map(v => {
         const [app, installer = "earliest"] = v.split("/"); // default to earliest installer
-        return [app, installer] as [string, string]
+        return [app, installer];
     })
 } else if (['all', 'sample'].includes(testPreset)) {
     // Test every minor installer version and every minor appVersion since minSupportedObsidianVersion
@@ -93,7 +92,7 @@ export const config: WebdriverIO.Config = {
 
     framework: 'mocha',
     
-    reporters: [ObsidianReporter],
+    reporters: ["obsidian"],
 
     mochaOpts: {
         ui: 'bdd',

@@ -4,7 +4,7 @@ import obsidianPage from '../../src/pageobjects/obsidianPage.js';
 
 
 async function getOpenFiles() {
-    return await browser.executeObsidian(({app, obsidian}) => {
+    return await browser.executeObsidian(({app}) => {
         const leaves: string[] = []
         app.workspace.iterateRootLeaves(l => {
             const file = l.getViewState()?.state?.file;

@@ -127,7 +127,7 @@ program
     .option('--copy', "Copy the vault first")
     .action(async (vault: string|undefined, opts) => {
         const launcher = new ObsidianLauncher({cacheDir: opts.cache});
-        const {proc, configDir, vault: vaultCopy} = await launcher.launch({
+        const {proc} = await launcher.launch({
             appVersion: opts.version, installerVersion: opts.installerVersion,
             vault: vault,
             copy: opts.copy ?? false,
