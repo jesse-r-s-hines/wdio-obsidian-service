@@ -10,6 +10,7 @@ export { minSupportedObsidianVersion } from "./service.js";
 export type { ObsidianServiceOptions, ObsidianCapabilityOptions } from "./types.js";
 
 export { default as obsidianPage } from "./pageobjects/obsidianPage.js";
+export type { ObsidianPage } from "./pageobjects/obsidianPage.js";
 
 export type {
     PluginEntry, DownloadedPluginEntry, ThemeEntry, DownloadedThemeEntry,

@@ -87,17 +87,7 @@ class ObsidianPage {
 }
 
 /**
- * Helper object with various methods for writing Obsidian tests using the
- * [page object pattern](https://webdriver.io/docs/pageobjects).
- * 
- * You can get an instance of this class either by running
- * ```ts
- * const obsidianPage = await browser.getObsidianPage();
- * ```
- * or just importing it directly with
- * ```ts
- * import { obsidianPage } from "wdio-obsidian-service";
- * ```
+ * Instance of ObsidianPage with helper methods for writing Obsidian tests
  */
 const obsidianPage = new ObsidianPage()
 export default obsidianPage;

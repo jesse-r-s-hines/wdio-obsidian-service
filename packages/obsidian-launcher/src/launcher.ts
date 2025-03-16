@@ -42,11 +42,11 @@ export class ObsidianLauncher {
 
     /**
      * Construct an ObsidianLauncher.
-     * @param cacheDir Path to the cache directory. Defaults to "OBSIDIAN_CACHE" env var or ".obsidian-cache".
-     * @param versionsUrl Custom `obsidian-versions.json` url. Can be a file URL.
-     * @param communityPluginsUrl Custom `community-plugins.json` url. Can be a file URL.
-     * @param communityThemes Custom `community-css-themes.json` url. Can be a file URL.
-     * @param cacheDuration If the cached version list is older than this (in ms), refetch it. Defaults to 30 minutes.
+     * @param options.cacheDir Path to the cache directory. Defaults to "OBSIDIAN_CACHE" env var or ".obsidian-cache".
+     * @param options.versionsUrl Custom `obsidian-versions.json` url. Can be a file URL.
+     * @param options.communityPluginsUrl Custom `community-plugins.json` url. Can be a file URL.
+     * @param options.communityThemesUrl Custom `community-css-themes.json` url. Can be a file URL.
+     * @param options.cacheDuration If the cached version list is older than this (in ms), refetch it. Defaults to 30 minutes.
      */
     constructor(options: {
         cacheDir?: string,
@@ -671,7 +671,7 @@ export class ObsidianLauncher {
     /** 
      * Installs themes into an obsidian vault
      * @param vault Path to the theme to install the themes in
-     * @param themes: List of themes to install
+     * @param themes List of themes to install
      */
     async installThemes(vault: string, themes: ThemeEntry[]) {
         const downloadedThemes = await this.downloadThemes(themes);
@@ -720,11 +720,11 @@ export class ObsidianLauncher {
     /**
      * Sets up the config dir to use for the --user-data-dir in obsidian. Returns the path to the created config dir.
      *
-     * @param appVersion Obsidian version string.
-     * @param installerVersion Obsidian version string.
-     * @param appPath Path to the asar file to install. Will download if omitted.
-     * @param vault Path to the vault to open in Obsidian.
-     * @param dest Destination path for the config dir. If omitted it will create it under `/tmp`.
+     * @param params.appVersion Obsidian version string.
+     * @param params.installerVersion Obsidian version string.
+     * @param params.appPath Path to the asar file to install. Will download if omitted.
+     * @param params.vault Path to the vault to open in Obsidian.
+     * @param params.dest Destination path for the config dir. If omitted it will create it under `/tmp`.
      */
     async setupConfigDir(params: {
         appVersion: string, installerVersion: string,
@@ -783,10 +783,10 @@ export class ObsidianLauncher {
     /**
      * Sets up a vault for Obsidian, installing plugins and themes and optionally copying the vault to a temporary
      * directory first.
-     * @param vault Path to the vault to open in Obsidian
-     * @param copy Whether to copy the vault to a tmpdir first. Default false
-     * @param plugins List of plugins to install in the vault
-     * @param themes List of themes to install in the vault
+     * @param params.vault Path to the vault to open in Obsidian
+     * @param params.copy Whether to copy the vault to a tmpdir first. Default false
+     * @param params.plugins List of plugins to install in the vault
+     * @param params.themes List of themes to install in the vault
      * @returns Path to the copied vault (or just the path to the vault if copy is false)
      */
     async setupVault(params: {
@@ -812,14 +812,14 @@ export class ObsidianLauncher {
      * 
      * This is just a shortcut for calling downloadApp, downloadInstaller, setupVault and setupConfDir.
      *
-     * @param appVersion Obsidian version string
-     * @param installerVersion Obsidian version string
-     * @param vault Path to the vault to open in Obsidian
-     * @param copy Whether to copy the vault to a tmpdir first. Default false
-     * @param plugins List of plugins to install in the vault
-     * @param themes List of themes to install in the vault
-     * @param args CLI args to pass to Obsidian
-     * @param spawnOptions Options to pass to `spawn`
+     * @param params.appVersion Obsidian version string
+     * @param params.installerVersion Obsidian version string
+     * @param params.vault Path to the vault to open in Obsidian
+     * @param params.copy Whether to copy the vault to a tmpdir first. Default false
+     * @param params.plugins List of plugins to install in the vault
+     * @param params.themes List of themes to install in the vault
+     * @param params.args CLI args to pass to Obsidian
+     * @param params.spawnOptions Options to pass to `spawn`
      * @returns The launched child process and the created tmpdirs
      */
     async launch(params: {
