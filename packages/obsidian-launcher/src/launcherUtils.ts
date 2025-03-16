@@ -98,7 +98,7 @@ export function parseObsidianGithubRelease(gitHubRelease: any): Partial<Obsidian
     return {
         version: version,
         gitHubRelease: gitHubRelease.html_url,
-        downloads: _.pickBy(downloads, x => x !== undefined),
+        downloads: downloads,
     }
 }
 
