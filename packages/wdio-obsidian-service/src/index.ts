@@ -1,21 +1,17 @@
 import ObsidianLauncher from "obsidian-launcher";
 import { ObsidianLauncherService, ObsidianWorkerService } from "./service.js";
-
 /** @hidden */
 export default ObsidianWorkerService;
 /** @hidden */
 export const launcher = ObsidianLauncherService;
-
 export { minSupportedObsidianVersion } from "./service.js";
-export type { ObsidianServiceOptions, ObsidianCapabilityOptions } from "./types.js";
 
+export type { ObsidianServiceOptions, ObsidianCapabilityOptions } from "./types.js";
+export type { ObsidianBrowserCommands, ExecuteObsidianArg } from "./browserCommands.js";
 export { default as obsidianPage } from "./pageobjects/obsidianPage.js";
 export type { ObsidianPage } from "./pageobjects/obsidianPage.js";
 
-export type {
-    PluginEntry, DownloadedPluginEntry, ThemeEntry, DownloadedThemeEntry,
-} from "obsidian-launcher";
-
+export type { PluginEntry, DownloadedPluginEntry, ThemeEntry, DownloadedThemeEntry } from "obsidian-launcher";
 
 // Some convenience helpers for use in wdio.conf.ts
 

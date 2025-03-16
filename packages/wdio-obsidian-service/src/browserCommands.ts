@@ -2,8 +2,10 @@ import { OBSIDIAN_CAPABILITY_KEY } from "./types.js";
 import type * as obsidian from "obsidian"
 import obsidianPage, { ObsidianPage } from "./pageobjects/obsidianPage.js"
 
-
-type ExecuteObsidianArg = {
+/**
+ * Argument passed to the `executeObsidian` browser command.
+ */
+export type ExecuteObsidianArg = {
     /**
      * There is a global "app" instance, but that may be removed in the future so you can use this to access it from
      * tests. See https://docs.obsidian.md/Plugins/Releasing/Plugin+guidelines#Avoid+using+global+app+instance
@@ -118,5 +120,37 @@ const browserCommands = {
     }
 } as const
 
-export type ObsidianBrowserCommands = typeof browserCommands;
+/** Define this type separately so we can @inline it in typedoc */
+type PlainObsidianBrowserCommands = typeof browserCommands;
+
+/**
+ * Extra commands added to the WDIO Browser instance.
+ * See also: https://webdriver.io/docs/api/browser#custom-commands
+ * @interface
+ */
+export type ObsidianBrowserCommands = PlainObsidianBrowserCommands & {
+    // This command is implemented in the service hooks.
+    /**
+     * Relaunch obsidian. Can be used to switch to a new vault, change the plugin list, or just to reboot
+     * Obsidian.
+     * 
+     * As this does a full reboot of Obsidian, avoid calling this too often so you don't slow your tests down.
+     * You can also set the vault in the `wdio.conf.ts` capabilities section which may be useful if all your
+     * tests use the same vault.
+     * 
+     * @param params.vault Path to the vault to open. The vault will be copied, so any changes made in your tests won't
+     *     be persited to the original. If omitted, it will reboot Obsidian with the current vault, without
+     *     creating a new copy of the vault.
+     * @param params.plugins List of plugin ids to enable. If omitted it will keep current plugin list. Note, all the
+     *     plugins must be defined in your wdio.conf.ts capabilities. You can also use the enablePlugin and 
+     *     disablePlugin commands to change plugins without relaunching Obsidian.
+     * @param params.theme Name of the theme to enable. If omitted it will keep the current theme. Pass "default" to
+     *     switch back to the default theme. Like with plugins, the theme must be defined in wdio.conf.ts.
+     * @returns Returns the new sessionId (same as browser.reloadSession()).
+     */
+    reloadObsidian(params?: {
+        vault?: string,
+        plugins?: string[], theme?: string,
+    }): Promise<string>;
+};
 export default browserCommands;
