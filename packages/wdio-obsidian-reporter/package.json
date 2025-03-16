@@ -1,7 +1,7 @@
 {
     "name": "wdio-obsidian-reporter",
     "version": "0.3.1",
-    "description": "TODO",
+    "description": "Wrapper around @wdio/spec-reporter that displays Obsidian version info",
     "type": "module",
     "main": "./dist/index.js",
     "types": "./dist/index.d.ts",
