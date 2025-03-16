@@ -718,6 +718,9 @@ export class ObsidianLauncher {
         }
 
         if (params.vault !== undefined) {
+            if (!await fileExists(params.vault)) {
+                throw Error(`Vault path ${params.vault} doesn't exist.`)
+            }
             const vaultId = crypto.randomBytes(8).toString("hex");
             obsidianJson = {
                 ...obsidianJson,

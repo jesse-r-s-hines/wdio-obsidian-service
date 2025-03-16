@@ -1,3 +1,4 @@
+import fs from "fs"
 import fsAsync from "fs/promises"
 import path from "path"
 import { SevereServiceError } from 'webdriverio'
@@ -91,6 +92,10 @@ export class ObsidianLauncherService implements Services.ServiceInstance {
                 plugins = await this.obsidianLauncher.downloadPlugins(plugins);
 
                 const themes = await this.obsidianLauncher.downloadThemes(obsidianOptions.themes ?? []);
+
+                if (obsidianOptions.vault != undefined && !fs.existsSync(obsidianOptions.vault)) {
+                    throw Error(`Vault "${obsidianOptions.vault}" doesn't exist`)
+                }
 
                 const args = [
                     // Workaround for SUID issue on AppImages. See https://github.com/electron/electron/issues/42510
