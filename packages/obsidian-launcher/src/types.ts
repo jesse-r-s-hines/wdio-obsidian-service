@@ -10,6 +10,10 @@ export type ObsidianVersionInfos = {
     versions: ObsidianVersionInfo[],
 }
 
+/**
+ * Metadata about a specific Obsidian version, including the min/max compatible installer versions, download urls, and
+ * the internal electron version.
+ */
 export type ObsidianVersionInfo = {
     version: string,
     minInstallerVersion?: string,
@@ -29,6 +33,9 @@ export type ObsidianVersionInfo = {
     nodeVersion?: string,
 }
 
+/**
+ * Schema of entries in https://github.com/obsidianmd/obsidian-releases/HEAD/community-plugins.json
+ */
 export type ObsidianCommunityPlugin = {
     id: string,
     name: string
@@ -37,6 +44,9 @@ export type ObsidianCommunityPlugin = {
     repo: string,
 }
 
+/**
+ * Schema of entries in https://github.com/obsidianmd/obsidian-releases/HEAD/community-css-themes.json
+ */
 export type ObsidianCommunityTheme = {
     name: string,
     author: string,
@@ -45,26 +55,30 @@ export type ObsidianCommunityTheme = {
     modes: string[],
 }
 
+/** @inline */
 type BasePluginEntry = {
     /** Set false to install the plugin but start it disabled. Default true. */
     enabled?: boolean,
 }
-export type LocalPluginEntry = BasePluginEntry & {
+/** @inline */
+type LocalPluginEntry = BasePluginEntry & {
     /** Path on disk to the plugin to install. */
     path: string,
 }
-export type DownloadedPluginEntry = LocalPluginEntry & {
+export type DownloadedPluginEntry = BasePluginEntry & LocalPluginEntry & {
     id: string,
     /** Type of the plugin entry before downloading */
     originalType: "local"|"github"|"community",
 }
-export type GitHubPluginEntry = BasePluginEntry & {
+/** @inline */
+type GitHubPluginEntry = BasePluginEntry & {
     /** Github repo of the plugin to install, e.g. "some-user/some-plugin". */
     repo: string,
     /** Version of the plugin to install. Defaults to latest. */
     version?: string,
 }
-export type CommunityPluginEntry = BasePluginEntry & {
+/** @inline */
+type CommunityPluginEntry = BasePluginEntry & {
     /** Plugin ID to install from Obsidian community plugins. */
     id: string,
     /** Version of the plugin to install. Defaults to latest. */
@@ -79,6 +93,7 @@ export type CommunityPluginEntry = BasePluginEntry & {
 export type PluginEntry = string|LocalPluginEntry|GitHubPluginEntry|CommunityPluginEntry
 
 
+/** @inline */
 type BaseThemeEntry = {
     /**
      * Set false to install the theme but not enable it. Defaults to true.
@@ -86,20 +101,23 @@ type BaseThemeEntry = {
      */
     enabled?: boolean,
 }
-export type LocalThemeEntry = BaseThemeEntry & {
+/** @inline */
+type LocalThemeEntry = BaseThemeEntry & {
     /** Path on disk to the theme to install. */
     path: string,
 }
-export type DownloadedThemeEntry = LocalPluginEntry & {
+export type DownloadedThemeEntry = LocalThemeEntry & {
     name: string,
     /** Type of the plugin entry before downloading */
     originalType: "local"|"github"|"community",
 }
-export type GitHubThemeEntry = BaseThemeEntry & {
+/** @inline */
+type GitHubThemeEntry = BaseThemeEntry & {
     /** Github repo of the theme to install, e.g. "some-user/some-theme". */
     repo: string,
 }
-export type CommunityThemeEntry = BaseThemeEntry & {
+/** @inline */
+type CommunityThemeEntry = BaseThemeEntry & {
     /** Theme name to install from Obsidian community themes. */
     name: string,
 }

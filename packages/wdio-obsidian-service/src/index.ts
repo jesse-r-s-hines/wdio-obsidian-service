@@ -12,8 +12,7 @@ export type { ObsidianServiceOptions, ObsidianCapabilityOptions } from "./types.
 export { default as obsidianPage } from "./pageobjects/obsidianPage.js";
 
 export type {
-    LocalPluginEntry, GitHubPluginEntry, CommunityPluginEntry, PluginEntry,
-    LocalThemeEntry, GitHubThemeEntry, CommunityThemeEntry, ThemeEntry,
+    PluginEntry, DownloadedPluginEntry, ThemeEntry, DownloadedThemeEntry,
 } from "obsidian-launcher";
 
 
