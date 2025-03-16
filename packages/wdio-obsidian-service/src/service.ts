@@ -17,7 +17,7 @@ import _ from "lodash"
 const log = logger("wdio-obsidian-service");
 
 function getDefaultCacheDir() {
-    return path.resolve(process.env.WEBDRIVER_CACHE_DIR ?? "./.obsidian-cache")
+    return path.resolve(process.env.WEBDRIVER_CACHE_DIR ?? process.env.OBSIDIAN_CACHE ?? "./.obsidian-cache")
 }
 
 /**
