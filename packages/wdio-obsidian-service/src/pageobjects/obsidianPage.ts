@@ -4,9 +4,20 @@ import * as fsAsync from "fs/promises"
 /**
  * Class with various helper methods for writing Obsidian tests using the
  * [page object pattern](https://webdriver.io/docs/pageobjects).
+ * 
+ * You can get an instance of this class either by running
+ * ```ts
+ * const obsidianPage = await browser.getObsidianPage();
+ * ```
+ * or just importing it directly with
+ * ```ts
+ * import { obsidianPage } from "wdio-obsidian-service";
+ * ```
  */
 class ObsidianPage {
-    /** Enables a plugin */
+    /**
+     * Enables a plugin by ID
+     */
     async enablePlugin(pluginId: string): Promise<void> {
         await browser.executeObsidian(
             async ({app}, pluginId) => await (app as any).plugins.enablePluginAndSave(pluginId),
@@ -14,7 +25,9 @@ class ObsidianPage {
         );
     }
 
-    /** Disables a plugin */
+    /**
+     * Disables a plugin by ID
+     */
     async disablePlugin(pluginId: string): Promise<void> {
         await browser.executeObsidian(
             async ({app}, pluginId) => await (app as any).plugins.disablePluginAndSave(pluginId),
@@ -22,7 +35,9 @@ class ObsidianPage {
         );
     }
 
-    /** Sets the theme. Pass "default" to reset to the Obsidian theme. */
+    /**
+     * Sets the theme. Pass "default" to reset to the Obsidian theme.
+     */
     async setTheme(themeName: string): Promise<void> {
         themeName = themeName == 'default' ? '' : themeName;
         await browser.executeObsidian(
@@ -69,9 +84,21 @@ class ObsidianPage {
             await app.workspace.changeLayout(layout)
         }, layout)
     }
-    
 }
 
+/**
+ * Helper object with various methods for writing Obsidian tests using the
+ * [page object pattern](https://webdriver.io/docs/pageobjects).
+ * 
+ * You can get an instance of this class either by running
+ * ```ts
+ * const obsidianPage = await browser.getObsidianPage();
+ * ```
+ * or just importing it directly with
+ * ```ts
+ * import { obsidianPage } from "wdio-obsidian-service";
+ * ```
+ */
 const obsidianPage = new ObsidianPage()
 export default obsidianPage;
 export { ObsidianPage };

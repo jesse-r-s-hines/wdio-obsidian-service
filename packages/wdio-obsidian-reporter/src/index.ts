@@ -3,7 +3,7 @@ import { RunnerStats } from "@wdio/reporter"
 import { Reporters } from "@wdio/types"
 
 /**
- * Simple extension of @wdio/spec-reporter that prints the Obsidian version instead of the Chrome version.
+ * Simple wrapper around @wdio/spec-reporter that prints the Obsidian version instead of the Chrome version.
  */
 class ObsidianReporter extends SpecReporter {
     constructor(options: any) {

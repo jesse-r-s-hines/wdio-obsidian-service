@@ -10,8 +10,7 @@
     "navigationLinks": {
         "GitHub": "https://github.com/jesse-r-s-hines/wdio-obsidian-service"
     },
-    "visibilityFilters": {
-    },
+    "visibilityFilters": {},
     "packageOptions": {
         "entryPoints": ["src/index.ts"],
         "readme": "./README.md"

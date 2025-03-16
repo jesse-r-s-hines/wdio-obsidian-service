@@ -26,6 +26,14 @@ function getDefaultCacheDir() {
 export const minSupportedObsidianVersion: string = "1.0.2"
 
 
+/**
+ * wdio launcher service.
+ * Use in wdio.conf.ts like so:
+ * ```ts
+ * services: ['obsidian'],
+ * ```
+ * @hidden
+ */
 export class ObsidianLauncherService implements Services.ServiceInstance {
     private obsidianLauncher: ObsidianLauncher
     private readonly helperPluginPath: string
@@ -43,6 +51,9 @@ export class ObsidianLauncherService implements Services.ServiceInstance {
         this.helperPluginPath = path.resolve(path.join(fileURLToPath(import.meta.url), '../../helper-plugin'));
     }
 
+    /**
+     * Validates wdio:obsidianOptions and downloads Obsidian, plugins, and themes.
+     */
     async onPrepare(config: Options.Testrunner, capabilities: Capabilities.TestrunnerCapabilities) {
         if (!Array.isArray(capabilities)) {
             capabilities = Object.values(capabilities as Capabilities.RequestedMultiremoteCapabilities).map(
@@ -139,6 +150,15 @@ export class ObsidianLauncherService implements Services.ServiceInstance {
     }
 }
 
+
+/**
+ * wdio worker service.
+ * Use in wdio.conf.ts like so:
+ * ```ts
+ * services: ['obsidian'],
+ * ```
+ * @hidden
+ */
 export class ObsidianWorkerService implements Services.ServiceInstance {
     private obsidianLauncher: ObsidianLauncher
     /** Directories to clean up after the tests */
@@ -157,6 +177,9 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
         this.tmpDirs = [];
     }
 
+    /**
+     * Setup vault and config dir for a sandboxed Obsidian instance.
+     */
     private async setupObsidian(obsidianOptions: ObsidianCapabilityOptions) {
         let vault = obsidianOptions.vault;
         if (vault != undefined) {
@@ -182,6 +205,9 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
         return configDir;
     }
 
+    /**
+     * Wait for Obsidian to fully boot.
+     */
     private async waitForReady(browser: WebdriverIO.Browser) {
         if (browser.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].vault != undefined) {
             await browser.waitUntil( // wait until the helper plugin is loaded
@@ -194,6 +220,9 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
         }
     }
 
+    /**
+     * Handles vault and sandboxed config directory setup.
+     */
     async beforeSession(config: Options.Testrunner, capabilities: WebdriverIO.Capabilities) {
         if (!capabilities[OBSIDIAN_CAPABILITY_KEY]) return;
 
@@ -205,6 +234,9 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
         ];
     }
 
+    /**
+     * Returns a plugin list with only the selected plugin ids enabled.
+     */
     private selectPlugins(currentPlugins: DownloadedPluginEntry[], selection?: string[]) {
         if (selection !== undefined) {
             const unknownPlugins = _.difference(selection, currentPlugins.map(p => p.id));
@@ -220,6 +252,9 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
         }
     }
 
+    /**
+     * Returns a theme list with only the selected theme enabled.
+     */
     private selectThemes(currentThemes: DownloadedThemeEntry[], selection?: string) {
         if (selection !== undefined) {
             if (selection != "default" && currentThemes.every((t: any) => t.name != selection)) {
@@ -231,6 +266,9 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
         }
     }
 
+    /**
+     * Setup custom browser commands.
+     */
     async before(capabilities: WebdriverIO.Capabilities, specs: never, browser: WebdriverIO.Browser) {
         // There's a slow event listener link on the browser "command" event when you reloadSession that causes some
         // warnings. This will silence them. TODO: Make issue or PR to wdio to fix this.
@@ -319,6 +357,9 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
         await service.waitForReady(browser);
     }
 
+    /**
+     * Cleanup
+     */
     async afterSession() {
         for (const tmpDir of this.tmpDirs) {
             await fsAsync.rm(tmpDir, { recursive: true, force: true });

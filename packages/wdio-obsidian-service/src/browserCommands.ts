@@ -17,12 +17,16 @@ type ExecuteObsidianArg = {
 }
 
 const browserCommands = {
-    /** Returns the Obsidian version this test is running under. */
+    /**
+     * Returns the Obsidian app version this test is running under.
+     */
     async getObsidianVersion(this: WebdriverIO.Browser): Promise<string> {
         return this.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].appVersion;
     },
 
-    /** Returns the Obsidian installer version this test is running under. */
+    /**
+     * Returns the Obsidian installer version this test is running under.
+     */
     async getObsidianInstallerVersion(this: WebdriverIO.Browser): Promise<string> {
         return this.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].installerVersion;
     },
@@ -37,7 +41,7 @@ const browserCommands = {
      * Example usage
      * ```ts
      * const file = browser.executeObsidian(({app, obsidian}, path) => {
-     *      return app.vault.getMarkdownFiles().find(f => f.path == path)
+     *      return app.vault.getMarkdownFiles().find(f => f.path == path);
      * })
      * ```
      * 
@@ -67,7 +71,7 @@ const browserCommands = {
         ...params: Params
     ): Promise<Return> {
         return await browser.execute<Return, Params>(
-            `return (${func.toString()}).call(null, {...window.wdioObsidianService}, ...arguments )`,
+            `return (${func.toString()}).call(null, {...window.wdioObsidianService}, ...arguments)`,
             ...params,
         )
     },
@@ -83,7 +87,11 @@ const browserCommands = {
         }
     },
 
-    /** Returns the path to the vault opened in Obsidian */
+    /**
+     * Returns the path to the vault opened in Obsidian.
+     * 
+     * wdio-obsidian-service copies your vault before running tests, so this is the path to the temporary copy.
+     */
     async getVaultPath(this: WebdriverIO.Browser): Promise<string|undefined> {
         if (this.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].vault == undefined) {
             return undefined; // no vault open
@@ -100,7 +108,7 @@ const browserCommands = {
 
     /**
      * Returns the Workspace page object with convenience helper functions.
-     * You can also import the page object directly with
+     * You can also just import the page object directly with
      * ```ts
      * import { obsidianPage } from "wdio-obsidian-service"
      * ```

@@ -23,29 +23,37 @@ export interface ObsidianServiceOptions {
 
 export interface ObsidianCapabilityOptions {
     /**
-     * Version of Obsidian to run.
+     * Version of Obsidian to download and run.
      * 
-     * Can be set to "latest", "latest-beta", or a specific version. Defaults to "latest". To download beta versions
-     * you'll need to be an Obsidian insider and set the OBSIDIAN_USERNAME and OBSIDIAN_PASSWORD environment
-     * variables.
+     * Can be set to a specific version or one of:
+     * - "latest": Run the current latest non-beta Obsidian version
+     * - "latest-beta": Run the current latest beta Obsidian version (or latest is there is no current beta)
+     * - "earliest": Run the `minAppVersion` set in set in your `manifest.json`
+     * 
+     * Defaults to "latest".
+     * 
+     * To download beta versions you'll need to be an Obsidian account with Catalyst and set the `OBSIDIAN_USERNAME`
+     * and `OBSIDIAN_PASSWORD` environment variables. 2FA needs to be disabled.
      * 
      * You can also use the wdio capability `browserVersion` field to set the Obsidian version.
      */
     appVersion?: string
 
     /**
-     * Version of the Obsidian Installer to download.
+     * Version of the Obsidian installer to download and run.
      * 
-     * Note that Obsidian is distributed in two parts, the "installer", which is the executable containing Electron, and
+     * Note that Obsidian is distributed in two parts, the "installer" which is the executable containing Electron, and
      * the "app" which is a bundle of JavaScript containing the Obsidian code. Obsidian's self-update system only
      * updates the JavaScript bundle, and not the base installer/Electron version. This makes Obsidian's auto-update
      * fast as it only needs to download a few MiB of JS instead of all of Electron. But, it means different users with
-     * the same Obsidian version may be running on different versions of Electron, which could cause subtle differences
-     * in plugin behavior if you are using newer JavaScript features and the like in your plugin.
+     * the same Obsidian app version may be running on different versions of Electron, which can cause subtle
+     * differences in plugin behavior if you are using newer JavaScript features and the like in your plugin.
      * 
-     * If passed "latest", it will use the maximum installer version compatible with the selected Obsidian version. If
-     * passed "earliest" it will use the oldest installer version compatible with the selected Obsidian version. The 
-     * default is "earliest".
+     * Can be set to a specific version string or one of:
+     * - "latest": Run the latest Obsidian installer.
+     * - "earliest": Run the oldest Obsidian installer compatible with the specified Obsidian app version.
+     * 
+     * Defaults to "earliest".
      */
     installerVersion?: string,
 
@@ -78,10 +86,14 @@ export interface ObsidianCapabilityOptions {
      */
     vault?: string,
 
-    /** Path to the Obsidian binary to use. If omitted it will download Obsidian automatically. */
+    /**
+     * Path to the Obsidian binary to use. If omitted it will be downloaded automatically.
+     */
     binaryPath?: string,
 
-    /** Path to the app asar to load into obsidian. If omitted it will be downloaded automatically. */
+    /**
+     * Path to the app asar to load into obsidian. If omitted it will be downloaded automatically.
+     */
     appPath?: string,
 }
 
@@ -98,8 +110,8 @@ declare global {
              * Obsidian.
              * 
              * As this does a full reboot of Obsidian, avoid calling this too often so you don't slow your tests down.
-             * You can also set the vault in the `wdio.conf.ts` capabilities section which may be useful if all
-             * your tests use the same vault.
+             * You can also set the vault in the `wdio.conf.ts` capabilities section which may be useful if all your
+             * tests use the same vault.
              * 
              * @param vault Path to the vault to open. The vault will be copied, so any changes made in your tests won't
              *     be persited to the original. If omitted, it will reboot Obsidian with the current vault, without
