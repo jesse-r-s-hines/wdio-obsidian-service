@@ -46,22 +46,23 @@ class ObsidianPage {
     }
 
     /**
-     * Loads a saved workspace from `workspaces.json` by name. You can use the core "Workspaces" plugin to create the
-     * layouts.
+     * Loads a saved workspace layout from `.obsidian/workspaces.json` by name. Use the core "Workspaces"
+     * plugin to create the layouts. You can also pass the layout object directly.
      */
-    async loadWorkspaceLayout(layoutName: string): Promise<void> {
-        // read from .obsidian/workspaces.json like the built-in workspaces plugin does
-        const vaultPath = (await browser.getVaultPath())!;
-        const workspacesPath = path.join(vaultPath, '.obsidian/workspaces.json');
-    
-        let layout: any = undefined
-        try {
-            layout = await fsAsync.readFile(workspacesPath, 'utf-8')
-        } catch {
-            throw new Error(`No workspace ${layout} found in .obsidian/workspaces.json`);
+    async loadWorkspaceLayout(layout: any): Promise<void> {
+        if (typeof layout == "string") {
+            // read from .obsidian/workspaces.json like the built-in workspaces plugin does
+            const vaultPath = (await browser.getVaultPath())!;
+            const workspacesPath = path.join(vaultPath, '.obsidian/workspaces.json');
+            const layoutName = layout;
+            try {
+                const fileContent = await fsAsync.readFile(workspacesPath, 'utf-8');
+                layout = JSON.parse(fileContent)?.workspaces?.[layoutName];
+            } catch {
+                throw new Error(`No workspace ${layoutName} found in .obsidian/workspaces.json`);
+            }
         }
-        layout = JSON.parse(layout).workspaces?.[layoutName];
-    
+
         // Click on the status-bar to focus the main window in case there are multiple Obsidian windows panes
         await $(".status-bar").click();
         await browser.executeObsidian(async ({app}, layout) => {

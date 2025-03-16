@@ -1,5 +1,6 @@
 import { browser } from '@wdio/globals'
 import { expect } from 'chai';
+import fsAsync from "fs/promises"
 import obsidianPage from '../../src/pageobjects/obsidianPage.js';
 
 
@@ -62,6 +63,15 @@ describe("Test page object", () => {
     it("loadWorkspaceLayout", async () => {
         expect(await getOpenFiles()).to.eql([]);
         await obsidianPage.loadWorkspaceLayout("saved-layout");
+        expect(await getOpenFiles()).to.eql(["Goodbye.md", "Welcome.md"]);
+    })
+
+    it("loadWorkspaceLayout object", async () => {
+        const workspacesPath = 'test/vaults/basic/.obsidian/workspaces.json';
+        const workspaces = JSON.parse(await fsAsync.readFile(workspacesPath, 'utf-8'))
+        const workspace = workspaces.workspaces['saved-layout'];
+        expect(await getOpenFiles()).to.eql([]);
+        await obsidianPage.loadWorkspaceLayout(workspace);
         expect(await getOpenFiles()).to.eql(["Goodbye.md", "Welcome.md"]);
     })
 })
