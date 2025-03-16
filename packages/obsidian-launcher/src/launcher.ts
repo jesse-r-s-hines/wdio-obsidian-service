@@ -26,7 +26,8 @@ import _ from "lodash"
 
 
 /**
- * Handles downloading Obsidian versions, plugins, and themes and launching obsidian with sandboxed configuration.
+ * Helper class that handles downloading and installing Obsidian versions, plugins, and themes and launching Obsidian
+ * with sandboxed configuration directories.
  */
 export class ObsidianLauncher {
     readonly cacheDir: string
@@ -34,6 +35,7 @@ export class ObsidianLauncher {
     readonly versionsUrl: string
     readonly communityPluginsUrl: string
     readonly communityThemesUrl: string
+    readonly cacheDuration: number
 
     /** Cached metadata files and requests */
     private metadataCache: Record<string, any>
@@ -44,12 +46,14 @@ export class ObsidianLauncher {
      * @param versionsUrl Custom `obsidian-versions.json` url. Can be a file URL.
      * @param communityPluginsUrl Custom `community-plugins.json` url. Can be a file URL.
      * @param communityThemes Custom `community-css-themes.json` url. Can be a file URL.
+     * @param cacheDuration If the cached version list is older than this (in ms), refetch it. Defaults to 30 minutes.
      */
     constructor(options: {
         cacheDir?: string,
         versionsUrl?: string,
         communityPluginsUrl?: string,
         communityThemesUrl?: string,
+        cacheDuration?: number,
     } = {}) {
         this.cacheDir = path.resolve(options.cacheDir ?? process.env.OBSIDIAN_CACHE ?? "./.obsidian-cache");
         
@@ -62,6 +66,8 @@ export class ObsidianLauncher {
         const defaultCommunityThemesUrl = "https://raw.githubusercontent.com/obsidianmd/obsidian-releases/HEAD/community-css-themes.json";
         this.communityThemesUrl = options.communityThemesUrl ?? defaultCommunityThemesUrl;
 
+        this.cacheDuration = options.cacheDuration ?? (30 * 60 * 1000);
+
         this.metadataCache = {};
     }
 
@@ -69,13 +75,13 @@ export class ObsidianLauncher {
      * Returns file content fetched from url as JSON. Caches content to dest and uses that cache if its more recent than
      * cacheDuration ms or if there are network errors.
      */
-    private async cachedFetch(url: string, dest: string, { cacheDuration = 30 * 60 * 1000 } = {}): Promise<any> {
+    private async cachedFetch(url: string, dest: string): Promise<any> {
         dest = path.resolve(dest);
         if (!(dest in this.metadataCache)) {
             let fileContent: string|undefined;
             const mtime = await fileExists(dest) ? (await fsAsync.stat(dest)).mtime : undefined;
 
-            if (mtime && new Date().getTime() - mtime.getTime() < cacheDuration) { // read from cache if its recent
+            if (mtime && new Date().getTime() - mtime.getTime() < this.cacheDuration) { // read from cache if its recent
                 fileContent = await fsAsync.readFile(dest, 'utf-8');
             } else { // otherwise try to fetch the url
                 const request = await maybe(fetchWithFileUrl(url));
