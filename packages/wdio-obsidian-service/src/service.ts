@@ -23,7 +23,7 @@ function getDefaultCacheDir() {
 /**
  * Minimum Obsidian version that wdio-obsidian-service supports.
  */
-export const minSupportedObsidianVersion: string = "1.0.2"
+export const minSupportedObsidianVersion: string = "1.0.3"
 
 
 /**
