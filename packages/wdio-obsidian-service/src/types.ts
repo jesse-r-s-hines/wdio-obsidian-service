@@ -32,7 +32,7 @@ export interface ObsidianCapabilityOptions {
      * 
      * Defaults to "latest".
      * 
-     * To download beta versions you'll need to be an Obsidian account with Catalyst and set the `OBSIDIAN_USERNAME`
+     * To download beta versions you'll need to have an Obsidian account with Catalyst and set the `OBSIDIAN_USERNAME`
      * and `OBSIDIAN_PASSWORD` environment variables. 2FA needs to be disabled.
      * 
      * You can also use the wdio capability `browserVersion` field to set the Obsidian version.

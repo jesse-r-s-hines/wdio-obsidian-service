@@ -125,6 +125,7 @@ type PlainObsidianBrowserCommands = typeof browserCommands;
 
 /**
  * Extra commands added to the WDIO Browser instance.
+ * 
  * See also: https://webdriver.io/docs/api/browser#custom-commands
  * @interface
  */

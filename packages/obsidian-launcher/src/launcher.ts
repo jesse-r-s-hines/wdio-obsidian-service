@@ -309,7 +309,7 @@ export class ObsidianLauncher {
     /**
      * Downloads the Obsidian asar for the given version and platform. Returns the file path.
      * 
-     * To download beta versions you'll need to be an Obsidian account with Catalyst and set the `OBSIDIAN_USERNAME`
+     * To download beta versions you'll need to have an Obsidian account with Catalyst and set the `OBSIDIAN_USERNAME`
      * and `OBSIDIAN_PASSWORD` environment variables. 2FA needs to be disabled.
      * 
      * @param appVersion Version to download
@@ -345,10 +345,9 @@ export class ObsidianLauncher {
      * 
      * wdio will download chromedriver from the Chrome for Testing API automatically (see
      * https://github.com/GoogleChromeLabs/chrome-for-testing#json-api-endpoints). However, Google has only put
-     * chromedriver since v115.0.5763.0 in that API, so wdio can't download older versions of chromedriver. As of
-     * Obsidian v1.7.7, minInstallerVersion is v0.14.5 which runs on chromium v100.0.4896.75. Here we download
-     * chromedriver for older versions ourselves using the @electron/get package which fetches it from
-     * https://github.com/electron/electron/releases.
+     * chromedriver since v115.0.5763.0 in that API, so wdio can't automatically download older versions of chromedriver
+     * for old Electron versions. Here we download chromedriver for older versions ourselves using the @electron/get
+     * package which fetches chromedriver from https://github.com/electron/electron/releases.
      * 
      * @param installerVersion Obsidian installer version
      */
@@ -448,7 +447,7 @@ export class ObsidianLauncher {
     }
 
     /**
-     * Downloads a list of plugins to the cache and returns a list of DownloadedPluginEntry with the downloaded paths.
+     * Downloads a list of plugins to the cache and returns a list of `DownloadedPluginEntry` with the downloaded paths.
      * Also adds the `id` property to the plugins based on the manifest.
      * 
      * You can download plugins from GitHub using `{repo: "org/repo"}` and community plugins using `{id: 'plugin-id'}`.
@@ -491,7 +490,13 @@ export class ObsidianLauncher {
                         throw Error(`${pluginPath}/manifest.json malformed.`);
                     }
                 }
-                const enabled = typeof plugin == "string" ? true : plugin.enabled;
+
+                let enabled: boolean
+                if (typeof plugin == "string") {
+                    enabled = true
+                } else {
+                    enabled = plugin.enabled ?? true;
+                }
                 return {path: pluginPath, id: pluginId, enabled, originalType}
             })
         );
@@ -556,7 +561,7 @@ export class ObsidianLauncher {
     }
 
     /**
-     * Downloads a list of themes to the cache and returns a list of DownloadedThemeEntry with the downloaded paths.
+     * Downloads a list of themes to the cache and returns a list of `DownloadedThemeEntry` with the downloaded paths.
      * Also adds the `name` property to the plugins based on the manifest.
      * 
      * You can download themes from GitHub using `{repo: "org/repo"}` and community themes using `{name: 'theme-name'}`.
@@ -600,7 +605,13 @@ export class ObsidianLauncher {
                         throw Error(`${themePath}/manifest.json malformed.`);
                     }
                 }
-                const enabled = typeof theme == "string" ? true : theme.enabled;
+
+                let enabled: boolean
+                if (typeof theme == "string") {
+                    enabled = true
+                } else {
+                    enabled = theme.enabled ?? true;
+                }
                 return {path: themePath, name: themeName, enabled: enabled, originalType};
             })
         );
@@ -669,7 +680,7 @@ export class ObsidianLauncher {
     }
 
     /** 
-     * Installs themes into an obsidian vault
+     * Installs themes into an Obsidian vault
      * @param vault Path to the theme to install the themes in
      * @param themes List of themes to install
      */
@@ -718,13 +729,13 @@ export class ObsidianLauncher {
     }
 
     /**
-     * Sets up the config dir to use for the --user-data-dir in obsidian. Returns the path to the created config dir.
+     * Sets up the config dir to use for the `--user-data-dir` in obsidian. Returns the path to the created config dir.
      *
      * @param params.appVersion Obsidian version string.
      * @param params.installerVersion Obsidian version string.
      * @param params.appPath Path to the asar file to install. Will download if omitted.
      * @param params.vault Path to the vault to open in Obsidian.
-     * @param params.dest Destination path for the config dir. If omitted it will create it under `/tmp`.
+     * @param params.dest Destination path for the config dir. If omitted it will create a temporary directory.
      */
     async setupConfigDir(params: {
         appVersion: string, installerVersion: string,
@@ -810,7 +821,7 @@ export class ObsidianLauncher {
      * Downloads and launches Obsidian with a sandboxed config dir and a specifc vault open. Optionally install plugins
      * and themes first.
      * 
-     * This is just a shortcut for calling downloadApp, downloadInstaller, setupVault and setupConfDir.
+     * This is just a shortcut for calling `downloadApp`, `downloadInstaller`, `setupVault` and `setupConfDir`.
      *
      * @param params.appVersion Obsidian version string
      * @param params.installerVersion Obsidian version string
