@@ -23,7 +23,7 @@
     "bugs": {
         "url": "https://github.com/jesse-r-s-hines/wdio-obsidian-service/issues"
     },
-    "homepage": "https://github.com/jesse-r-s-hines/wdio-obsidian-service#readme",
+    "homepage": "https://jesse-r-s-hines.github.io/wdio-obsidian-service/modules/wdio-obsidian-reporter.html",
     "devDependencies": {
         "@types/node": "^18.11.9",
         "@wdio/types": "^9.5.0",

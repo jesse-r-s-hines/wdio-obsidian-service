@@ -35,7 +35,7 @@
     "bugs": {
         "url": "https://github.com/jesse-r-s-hines/wdio-obsidian-service/issues"
     },
-    "homepage": "https://github.com/jesse-r-s-hines/wdio-obsidian-service#readme",
+    "homepage": "https://jesse-r-s-hines.github.io/wdio-obsidian-service/modules/obsidian-launcher.html",
     "devDependencies": {
         "@types/chai": "^5.0.1",
         "@types/chrome-remote-interface": "^0.31.14",
