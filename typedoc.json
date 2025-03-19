@@ -2,11 +2,12 @@
     "$schema": "https://typedoc.org/schema.json",
     "entryPointStrategy": "packages",
     "entryPoints": ["packages/*"],
-    "out": "./docs",
+    "out": "./generated-docs",
     "readme": "./README.md",
     "sourceLinkExternal": true,
     "githubPages": true,
     "searchInComments": true,
+    "searchInDocuments": true,
     "navigationLinks": {
         "GitHub": "https://github.com/jesse-r-s-hines/wdio-obsidian-service"
     },
