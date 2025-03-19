@@ -823,8 +823,8 @@ export class ObsidianLauncher {
      * 
      * This is just a shortcut for calling `downloadApp`, `downloadInstaller`, `setupVault` and `setupConfDir`.
      *
-     * @param params.appVersion Obsidian version string
-     * @param params.installerVersion Obsidian version string. Defaults to "latest".
+     * @param params.appVersion Obsidian version string. Default "latest"
+     * @param params.installerVersion Obsidian version string. Default "latest"
      * @param params.vault Path to the vault to open in Obsidian
      * @param params.copy Whether to copy the vault to a tmpdir first. Default false
      * @param params.plugins List of plugins to install in the vault
@@ -834,14 +834,17 @@ export class ObsidianLauncher {
      * @returns The launched child process and the created tmpdirs
      */
     async launch(params: {
-        appVersion: string, installerVersion?: string,
+        appVersion?: string, installerVersion?: string,
         copy?: boolean,
         vault?: string,
         plugins?: PluginEntry[], themes?: ThemeEntry[],
         args?: string[],
         spawnOptions?: child_process.SpawnOptions,
     }): Promise<{proc: child_process.ChildProcess, configDir: string, vault?: string}> {
-        const [appVersion, installerVersion] = await this.resolveVersions(params.appVersion, params.installerVersion);
+        const [appVersion, installerVersion] = await this.resolveVersions(
+            params.appVersion ?? "latest",
+            params.installerVersion ?? "latest",
+        );
         const appPath = await this.downloadApp(appVersion);
         const installerPath = await this.downloadInstaller(installerVersion);
 
