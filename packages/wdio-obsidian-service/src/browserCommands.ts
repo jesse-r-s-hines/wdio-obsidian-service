@@ -90,25 +90,6 @@ const browserCommands = {
     },
 
     /**
-     * Returns the path to the vault opened in Obsidian.
-     * 
-     * wdio-obsidian-service copies your vault before running tests, so this is the path to the temporary copy.
-     */
-    async getVaultPath(this: WebdriverIO.Browser): Promise<string|undefined> {
-        if (this.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].vault == undefined) {
-            return undefined; // no vault open
-        } else { // return the actual path to the vault
-            return await this.executeObsidian(({app, obsidian}) => {
-                if (app.vault.adapter instanceof obsidian.FileSystemAdapter) {
-                    return app.vault.adapter.getBasePath()
-                } else { // TODO handle CapacitorAdapater
-                    throw new Error(`Unrecognized DataAdapater type`)
-                };
-            })
-        }
-    },
-
-    /**
      * Returns the Workspace page object with convenience helper functions.
      * You can also just import the page object directly with
      * ```ts

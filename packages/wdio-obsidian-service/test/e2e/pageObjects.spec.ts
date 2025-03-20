@@ -26,6 +26,15 @@ describe("Test page object", () => {
         expect(await getOpenFiles()).to.eql([]);
     })
 
+    it('getVaultPath', async () => {
+        const originalVaultPath = path.resolve("./test/vaults/basic");
+        const vaultPath = (await obsidianPage.getVaultPath())!;
+        
+        // vault should be copied
+        expect(path.resolve(vaultPath)).to.not.eql(originalVaultPath)
+        expect(await fsAsync.readdir(vaultPath)).to.include.members(["Goodbye.md", "Welcome.md"]);
+    })
+
     it('enable/disable plugin', async () => {
         let plugins: string[] = await browser.executeObsidian(({app}) =>
             [...(app as any).plugins.enabledPlugins].sort() 
@@ -98,7 +107,7 @@ describe("resetVault", async () => {
 
         // Make sure it didn't update the files
         const vaultOrigPath = path.resolve("./test/vaults/basic");
-        const vaultCopyPath = (await browser.getVaultPath())!;
+        const vaultCopyPath = (await obsidianPage.getVaultPath())!;
         console.log({vaultOrigPath, vaultCopyPath});
         for (const file of await fsAsync.readdir(vaultOrigPath)) {
             if (!file.startsWith(".obsidian")) {

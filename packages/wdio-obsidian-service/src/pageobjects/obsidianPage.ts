@@ -18,6 +18,25 @@ import { TFile } from "obsidian";
  */
 class ObsidianPage {
     /**
+     * Returns the path to the vault opened in Obsidian.
+     * 
+     * wdio-obsidian-service copies your vault before running tests, so this is the path to the temporary copy.
+     */
+    async getVaultPath(): Promise<string|undefined> {
+        if (browser.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].vault == undefined) {
+            return undefined; // no vault open
+        } else { // return the actual path to the vault
+            return await browser.executeObsidian(({app, obsidian}) => {
+                if (app.vault.adapter instanceof obsidian.FileSystemAdapter) {
+                    return app.vault.adapter.getBasePath()
+                } else { // TODO handle CapacitorAdapater
+                    throw new Error(`Unrecognized DataAdapater type`)
+                };
+            })
+        }
+    }
+
+    /**
      * Enables a plugin by ID
      */
     async enablePlugin(pluginId: string): Promise<void> {
@@ -69,7 +88,7 @@ class ObsidianPage {
     async loadWorkspaceLayout(layout: any): Promise<void> {
         if (typeof layout == "string") {
             // read from .obsidian/workspaces.json like the built-in workspaces plugin does
-            const vaultPath = (await browser.getVaultPath())!;
+            const vaultPath = (await this.getVaultPath())!;
             const workspacesPath = path.join(vaultPath, '.obsidian/workspaces.json');
             const layoutName = layout;
             try {
