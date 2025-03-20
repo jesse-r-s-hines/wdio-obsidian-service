@@ -1,5 +1,7 @@
 import * as path from "path"
 import * as fsAsync from "fs/promises"
+import { OBSIDIAN_CAPABILITY_KEY } from "../types.js";
+import { TFile } from "obsidian";
 
 /**
  * Class with various helper methods for writing Obsidian tests using the
@@ -83,6 +85,56 @@ class ObsidianPage {
         await browser.executeObsidian(async ({app}, layout) => {
             await app.workspace.changeLayout(layout)
         }, layout)
+    }
+
+    /** Cache mtimes of original vault files */
+    private originalVaults: Record<string, Record<string, number>> = {};
+
+    /**
+     * Resets vault files to the initial state of the vault without reloading Obsidian.
+     * Does not reset any `.obsidian` configuration. Can be a faster alternative to "reloadObsidian" if you only need
+     * to reset normal vault files between tests.
+     */
+    async resetVaultFiles() {
+        const origVaultPath = browser.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].vault;
+
+        // Get the mtimes of the original vault (the vault copy preserves timestamps)
+        if (!this.originalVaults[origVaultPath]) {
+            const files = await fsAsync.readdir(origVaultPath, { recursive: true, withFileTypes: true });
+            const mtimes: Record<string, number> = {};
+            for (const file of files) {
+                const absPath = path.join(file.parentPath, file.name);
+                // Obsidian always uses "/" for paths
+                const obsPath = path.relative(origVaultPath, absPath).replace(path.sep, "/");
+                if (file.isFile() && !obsPath.startsWith(".obsidian/")) {
+                    mtimes[obsPath] = (await fsAsync.stat(absPath)).mtime.getTime();
+                }
+            }
+            this.originalVaults[origVaultPath] = mtimes;
+        }
+
+        const originalMtimes = this.originalVaults[origVaultPath];
+        await browser.executeObsidian(async ({app}, origVaultPath, originalMtimes) => {
+            const fs = require('fs');
+            const path = require('path');
+
+            for (const file of app.vault.getFiles()) {
+                // Fetch the file again to make sure mtime is up to date (not sure this is necessary)
+                const mtime = (app.vault.getAbstractFileByPath(file.path) as TFile).stat.mtime;
+                if (originalMtimes[file.path]) {
+                    if (mtime > originalMtimes[file.path]) {
+                        app.vault.modify(file, fs.readFileSync(path.join(origVaultPath, file.path), 'utf-8'));
+                    }
+                    delete originalMtimes[file.path];
+                } else {
+                    app.vault.delete(file);
+                }
+            }
+            // Any files still left in originalMtimes need to be created
+            for (const file of Object.keys(originalMtimes)) {
+                app.vault.create(file, fs.readFileSync(path.join(origVaultPath, file), 'utf-8'))
+            }
+        }, origVaultPath, originalMtimes);
     }
 }
 
