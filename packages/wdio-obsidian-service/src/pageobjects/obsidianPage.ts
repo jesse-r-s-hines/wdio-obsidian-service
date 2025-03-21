@@ -2,6 +2,7 @@ import * as path from "path"
 import * as fsAsync from "fs/promises"
 import { OBSIDIAN_CAPABILITY_KEY } from "../types.js";
 import { TFile } from "obsidian";
+import _ from "lodash";
 
 /**
  * Class with various helper methods for writing Obsidian tests using the
@@ -106,54 +107,103 @@ class ObsidianPage {
         }, layout)
     }
 
-    /** Cache mtimes of original vault files */
-    private originalVaults: Record<string, Record<string, number>> = {};
-
     /**
-     * Resets vault files to the initial state of the vault without reloading Obsidian.
-     * Does not reset any `.obsidian` configuration. Can be a faster alternative to "reloadObsidian" if you only need
-     * to reset normal vault files between tests.
+     * Resets the vault files to the original state by deleting/creating/modifying vault files in place without
+     * reloading Obsidian.
+     * 
+     * This will only reset regular vault files, it won't touch anything under `.obsidian`, and it won't reset any
+     * config and app state you've set in Obsidian. But if all you need is to reset the vault files, this can be used as
+     * a faster alternative to reloadObsidian.
+     * 
+     * If no vault is passed, it resets the vault back to the oringal vault opened by the tests. You can also pass a
+     * path to an different vault, and it will sync the current vault to match that one (similar to "rsync"). Or,
+     * instead of passing a vault path you can pass an object mapping vault file paths to file content. E.g.
+     * ```ts
+     * obsidianPage.resetVault({
+     *     'path/in/vault.md': "Hello World",
+     * })
+     * ```
+     * 
+     * You can also pass multiple vaults and the files will be merged. This can be useful if you want to add a few small
+     * modifications to the base vault. e.g:
+     * ```ts
+     * obsidianPage.resetVault('./path/to/vault', {
+     *    "books/leviathan-wakes.md": "...",
+     * })
+     * ```
      */
-    async resetVaultFiles() {
-        const origVaultPath = browser.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].vault;
+    async resetVaultFiles(...vaults: (string|Record<string, string>)[]) {
+        const origVaultPath: string = browser.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].vault;
+        vaults = vaults.length == 0 ? [origVaultPath] : vaults;
 
-        // Get the mtimes of the original vault (the vault copy preserves timestamps)
-        if (!this.originalVaults[origVaultPath]) {
-            const files = await fsAsync.readdir(origVaultPath, { recursive: true, withFileTypes: true });
-            const mtimes: Record<string, number> = {};
-            for (const file of files) {
-                const absPath = path.join(file.parentPath, file.name);
-                // Obsidian always uses "/" for paths
-                const obsPath = path.relative(origVaultPath, absPath).replace(path.sep, "/");
-                if (file.isFile() && !obsPath.startsWith(".obsidian/")) {
-                    mtimes[obsPath] = (await fsAsync.stat(absPath)).mtime.getTime();
+        const newVaultFiles: Record<string, {content?: string, path?: string}> = {};
+        for (let vault of vaults) {
+            if (typeof vault == "string") {
+                vault = path.resolve(vault);
+                const files = await fsAsync.readdir(vault, { recursive: true, withFileTypes: true });
+                for (const file of files) {
+                    const absPath = path.join(file.parentPath, file.name);
+                    const obsPath = path.relative(vault, absPath).split(path.sep).join("/");
+                    if (file.isFile() && !obsPath.startsWith(".obsidian/")) {
+                        newVaultFiles[obsPath] = {path: absPath};
+                    }
+                }
+            } else {
+                for (const [file, content] of Object.entries(vault)) {
+                    newVaultFiles[file] = {content};
                 }
             }
-            this.originalVaults[origVaultPath] = mtimes;
         }
 
-        const originalMtimes = this.originalVaults[origVaultPath];
-        await browser.executeObsidian(async ({app}, origVaultPath, originalMtimes) => {
-            const fs = require('fs');
-            const path = require('path');
+        // Get all subfolders in the new vault, sort parents are before children
+        const newVaultFolders = _(newVaultFiles)
+            .keys()
+            .map(p => path.dirname(p))
+            .filter(p => p != ".")
+            .sort().uniq()
+            .value();
 
-            for (const file of app.vault.getFiles()) {
-                // Fetch the file again to make sure mtime is up to date (not sure this is necessary)
-                const mtime = (app.vault.getAbstractFileByPath(file.path) as TFile).stat.mtime;
-                if (originalMtimes[file.path]) {
-                    if (mtime > originalMtimes[file.path]) {
-                        app.vault.modify(file, fs.readFileSync(path.join(origVaultPath, file.path), 'utf-8'));
-                    }
-                    delete originalMtimes[file.path];
-                } else {
-                    app.vault.delete(file);
+        await browser.executeObsidian(async ({app, obsidian}, newVaultFolders, newVaultFiles) => {
+            const fs = require('fs');
+
+            // "rsync" the vault
+            for (const newFolder of newVaultFolders) {
+                let currFile = app.vault.getAbstractFileByPath(newFolder);
+                if (currFile && currFile instanceof obsidian.TFile) {
+                    await app.vault.delete(currFile);
+                    currFile = null;
+                }
+                if (!currFile) {
+                    await app.vault.createFolder(newFolder);
                 }
             }
-            // Any files still left in originalMtimes need to be created
-            for (const file of Object.keys(originalMtimes)) {
-                app.vault.create(file, fs.readFileSync(path.join(origVaultPath, file), 'utf-8'))
+            // sort reversed, so children are before parents
+            const currVaultFolders = app.vault.getAllLoadedFiles()
+                .filter(f => f instanceof obsidian.TFolder)
+                .sort((a, b) => b.path.localeCompare(a.path));
+            const newVaultFoldersSet = new Set(newVaultFolders)
+            for (const currFolder of currVaultFolders) {
+                if (!newVaultFoldersSet.has(currFolder.path)) {
+                    await app.vault.delete(currFolder, true);
+                }
             }
-        }, origVaultPath, originalMtimes);
+
+            for (let [newFilePath, newFileSource] of Object.entries(newVaultFiles)) {
+                let currFile = app.vault.getAbstractFileByPath(newFilePath);
+                const content = newFileSource.content ?? await fs.readFileSync(newFileSource.path!, 'utf-8');
+                if (currFile) {
+                    await app.vault.modify(currFile as TFile, content);
+                } else {
+                    await app.vault.create(newFilePath, content);
+                }
+            }
+            const newVaultFilesSet = new Set(Object.keys(newVaultFiles));
+            for (const currVaultFile of app.vault.getFiles()) {
+                if (!newVaultFilesSet.has(currVaultFile.path)) {
+                    await app.vault.delete(currVaultFile);
+                }
+            }
+        }, newVaultFolders, newVaultFiles);
     }
 }
 
