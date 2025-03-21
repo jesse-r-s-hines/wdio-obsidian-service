@@ -19,7 +19,7 @@
         "dist"
     ],
     "bin": {
-        "obsidian-launcher": "dist/cli.js"
+        "obsidian-launcher": "./dist/cli.js"
     },
     "scripts": {
         "build": "tsup",
