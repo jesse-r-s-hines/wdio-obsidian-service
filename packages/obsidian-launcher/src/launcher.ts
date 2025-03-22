@@ -26,7 +26,8 @@ import _ from "lodash"
 
 
 /**
- * Handles downloading Obsidian versions, plugins, and themes and launching obsidian with sandboxed configuration.
+ * Helper class that handles downloading and installing Obsidian versions, plugins, and themes and launching Obsidian
+ * with sandboxed configuration directories.
  */
 export class ObsidianLauncher {
     readonly cacheDir: string
@@ -34,22 +35,25 @@ export class ObsidianLauncher {
     readonly versionsUrl: string
     readonly communityPluginsUrl: string
     readonly communityThemesUrl: string
+    readonly cacheDuration: number
 
     /** Cached metadata files and requests */
     private metadataCache: Record<string, any>
 
     /**
      * Construct an ObsidianLauncher.
-     * @param cacheDir Path to the cache directory. Defaults to "OBSIDIAN_CACHE" env var or ".obsidian-cache".
-     * @param versionsUrl Custom `obsidian-versions.json` url. Can be a file URL.
-     * @param communityPluginsUrl Custom `community-plugins.json` url. Can be a file URL.
-     * @param communityThemes Custom `community-css-themes.json` url. Can be a file URL.
+     * @param options.cacheDir Path to the cache directory. Defaults to "OBSIDIAN_CACHE" env var or ".obsidian-cache".
+     * @param options.versionsUrl Custom `obsidian-versions.json` url. Can be a file URL.
+     * @param options.communityPluginsUrl Custom `community-plugins.json` url. Can be a file URL.
+     * @param options.communityThemesUrl Custom `community-css-themes.json` url. Can be a file URL.
+     * @param options.cacheDuration If the cached version list is older than this (in ms), refetch it. Defaults to 30 minutes.
      */
     constructor(options: {
         cacheDir?: string,
         versionsUrl?: string,
         communityPluginsUrl?: string,
         communityThemesUrl?: string,
+        cacheDuration?: number,
     } = {}) {
         this.cacheDir = path.resolve(options.cacheDir ?? process.env.OBSIDIAN_CACHE ?? "./.obsidian-cache");
         
@@ -62,6 +66,8 @@ export class ObsidianLauncher {
         const defaultCommunityThemesUrl = "https://raw.githubusercontent.com/obsidianmd/obsidian-releases/HEAD/community-css-themes.json";
         this.communityThemesUrl = options.communityThemesUrl ?? defaultCommunityThemesUrl;
 
+        this.cacheDuration = options.cacheDuration ?? (30 * 60 * 1000);
+
         this.metadataCache = {};
     }
 
@@ -69,13 +75,13 @@ export class ObsidianLauncher {
      * Returns file content fetched from url as JSON. Caches content to dest and uses that cache if its more recent than
      * cacheDuration ms or if there are network errors.
      */
-    private async cachedFetch(url: string, dest: string, { cacheDuration = 30 * 60 * 1000 } = {}): Promise<any> {
+    private async cachedFetch(url: string, dest: string): Promise<any> {
         dest = path.resolve(dest);
         if (!(dest in this.metadataCache)) {
             let fileContent: string|undefined;
             const mtime = await fileExists(dest) ? (await fsAsync.stat(dest)).mtime : undefined;
 
-            if (mtime && new Date().getTime() - mtime.getTime() < cacheDuration) { // read from cache if its recent
+            if (mtime && new Date().getTime() - mtime.getTime() < this.cacheDuration) { // read from cache if its recent
                 fileContent = await fsAsync.readFile(dest, 'utf-8');
             } else { // otherwise try to fetch the url
                 const request = await maybe(fetchWithFileUrl(url));
@@ -100,6 +106,9 @@ export class ObsidianLauncher {
         return this.metadataCache[dest];
     }
 
+    /**
+     * Get parsed content of the current project's manifest.json
+     */
     private async getRootManifest(): Promise<any> {
         if (!('manifest.json' in this.metadataCache)) {
             const root = path.parse(process.cwd()).root;
@@ -117,19 +126,25 @@ export class ObsidianLauncher {
         return this.metadataCache['manifest.json'];
     }
 
-    /** Get information about all available Obsidian versions. */
+    /**
+     * Get information about all available Obsidian versions.
+     */
     async getVersions(): Promise<ObsidianVersionInfo[]> {
         const dest = path.join(this.cacheDir, "obsidian-versions.json");
         return (await this.cachedFetch(this.versionsUrl, dest)).versions;
     }
 
-    /** Get information about all available community plugins. */
+    /**
+     * Get information about all available community plugins.
+     */
     async getCommunityPlugins(): Promise<ObsidianCommunityPlugin[]> {
         const dest = path.join(this.cacheDir, "obsidian-community-plugins.json");
         return await this.cachedFetch(this.communityPluginsUrl, dest);
     }
 
-    /** Get information about all available community themes. */
+    /**
+     * Get information about all available community themes.
+     */
     async getCommunityThemes(): Promise<ObsidianCommunityTheme[]> {
         const dest = path.join(this.cacheDir, "obsidian-community-css-themes.json");
         return await this.cachedFetch(this.communityThemesUrl, dest);
@@ -137,10 +152,13 @@ export class ObsidianLauncher {
 
     /**
      * Resolves Obsidian app and installer version strings to absolute versions.
-     * @param appVersion Obsidian version string or "latest", "latest-beta" or "earliest". "earliest" will use the 
-     *     minAppVersion set in your manifest.json.
-     * @param installerVersion Obsidian version string or "latest" or "earliest". "earliest" will use the minimum
-     *     installer version compatible with the appVersion.
+     * @param appVersion Obsidian version string or one of 
+     *   - "latest": Get the current latest non-beta Obsidian version
+     *   - "latest-beta": Get the current latest beta Obsidian version (or latest is there is no current beta)
+     *   - "earliest": Get the `minAppVersion` set in set in your `manifest.json`
+     * @param installerVersion Obsidian version string or one of 
+     *   - "latest": Get the latest Obsidian installer
+     *   - "earliest": Get the oldest Obsidian installer compatible with the specified Obsidian app version
      * @returns [appVersion, installerVersion] with any "latest" etc. resolved to specific versions.
      */
     async resolveVersions(appVersion: string, installerVersion = "latest"): Promise<[string, string]> {
@@ -177,27 +195,26 @@ export class ObsidianLauncher {
 
     /**
      * Gets details about an Obsidian version.
-     * @param version Obsidian version string or "latest", "earliest", or "latest-beta". "earliest" will use the 
-     *     minAppVersion set in your manifest.json.
+     * @param appVersion Obsidian app version (see {@link resolveVersions} for format)
      */
-    async getVersionInfo(version: string): Promise<ObsidianVersionInfo> {
+    async getVersionInfo(appVersion: string): Promise<ObsidianVersionInfo> {
         const versions = await this.getVersions();
-        if (version == "latest-beta") {
-            version = versions.at(-1)!.version;
-        } else if (version == "latest") {
-            version = versions.filter(v => !v.isBeta).at(-1)!.version;
-        } else if (version == "earliest") {
-            version = (await this.getRootManifest())?.minAppVersion;
-            if (!version) {
-                throw Error('Unable to resolve Obsidian app version "earliest", no manifest.json or minAppVersion found.')
+        if (appVersion == "latest-beta") {
+            appVersion = versions.at(-1)!.version;
+        } else if (appVersion == "latest") {
+            appVersion = versions.filter(v => !v.isBeta).at(-1)!.version;
+        } else if (appVersion == "earliest") {
+            appVersion = (await this.getRootManifest())?.minAppVersion;
+            if (!appVersion) {
+                throw Error('Unable to resolve Obsidian app appVersion "earliest", no manifest.json or minAppVersion found.')
             }
         } else {
             // if invalid match won't be found and we'll throw error below
-            version = semver.valid(version) ?? version;
+            appVersion = semver.valid(appVersion) ?? appVersion;
         }
-        const versionInfo = versions.find(v => v.version == version);
+        const versionInfo = versions.find(v => v.version == appVersion);
         if (!versionInfo) {
-            throw Error(`No Obsidian app version ${version} found`);
+            throw Error(`No Obsidian app version ${appVersion} found`);
         }
 
         return versionInfo;
@@ -205,7 +222,7 @@ export class ObsidianLauncher {
 
     /**
      * Downloads the Obsidian installer for the given version and platform. Returns the file path.
-     * @param installerVersion Version to download.
+     * @param installerVersion Obsidian installer version to download. (see {@link resolveVersions} for format)
      */
     async downloadInstaller(installerVersion: string): Promise<string> {
         const installerVersionInfo = await this.getVersionInfo(installerVersion);
@@ -291,7 +308,11 @@ export class ObsidianLauncher {
 
     /**
      * Downloads the Obsidian asar for the given version and platform. Returns the file path.
-     * @param appVersion Version to download.
+     * 
+     * To download beta versions you'll need to have an Obsidian account with Catalyst and set the `OBSIDIAN_USERNAME`
+     * and `OBSIDIAN_PASSWORD` environment variables. 2FA needs to be disabled.
+     * 
+     * @param appVersion Obsidian version to download (see {@link resolveVersions} for format)
      */
     async downloadApp(appVersion: string): Promise<string> {
         const appVersionInfo = await this.getVersionInfo(appVersion);
@@ -324,10 +345,11 @@ export class ObsidianLauncher {
      * 
      * wdio will download chromedriver from the Chrome for Testing API automatically (see
      * https://github.com/GoogleChromeLabs/chrome-for-testing#json-api-endpoints). However, Google has only put
-     * chromedriver since v115.0.5763.0 in that API, so wdio can't download older versions of chromedriver. As of
-     * Obsidian v1.7.7, minInstallerVersion is v0.14.5 which runs on chromium v100.0.4896.75. Here we download
-     * chromedriver for older versions ourselves using the @electron/get package which fetches it from
-     * https://github.com/electron/electron/releases.
+     * chromedriver since v115.0.5763.0 in that API, so wdio can't automatically download older versions of chromedriver
+     * for old Electron versions. Here we download chromedriver for older versions ourselves using the @electron/get
+     * package which fetches chromedriver from https://github.com/electron/electron/releases.
+     * 
+     * @param installerVersion Obsidian installer version (see {@link resolveVersions} for format)
      */
     async downloadChromedriver(installerVersion: string): Promise<string> {
         const versionInfo = await this.getVersionInfo(installerVersion);
@@ -425,11 +447,13 @@ export class ObsidianLauncher {
     }
 
     /**
-     * Downloads a list of plugins to the cache and returns a list of LocalPluginEntry with the downloaded paths.
+     * Downloads a list of plugins to the cache and returns a list of `DownloadedPluginEntry` with the downloaded paths.
      * Also adds the `id` property to the plugins based on the manifest.
      * 
      * You can download plugins from GitHub using `{repo: "org/repo"}` and community plugins using `{id: 'plugin-id'}`.
      * Local plugins will just be passed through.
+     * 
+     * @param plugins List of plugins to download.
      */
     async downloadPlugins(plugins: PluginEntry[]): Promise<DownloadedPluginEntry[]> {
         return await Promise.all(
@@ -466,7 +490,13 @@ export class ObsidianLauncher {
                         throw Error(`${pluginPath}/manifest.json malformed.`);
                     }
                 }
-                const enabled = typeof plugin == "string" ? true : plugin.enabled;
+
+                let enabled: boolean
+                if (typeof plugin == "string") {
+                    enabled = true
+                } else {
+                    enabled = plugin.enabled ?? true;
+                }
                 return {path: pluginPath, id: pluginId, enabled, originalType}
             })
         );
@@ -531,11 +561,13 @@ export class ObsidianLauncher {
     }
 
     /**
-     * Downloads a list of themes to the cache and returns a list of LocalThemeEntry with the downloaded paths.
+     * Downloads a list of themes to the cache and returns a list of `DownloadedThemeEntry` with the downloaded paths.
      * Also adds the `name` property to the plugins based on the manifest.
      * 
      * You can download themes from GitHub using `{repo: "org/repo"}` and community themes using `{name: 'theme-name'}`.
      * Local themes will just be passed through.
+     * 
+     * @param themes List of themes to download
      */
     async downloadThemes(themes: ThemeEntry[]): Promise<DownloadedThemeEntry[]> {
         return await Promise.all(
@@ -573,16 +605,22 @@ export class ObsidianLauncher {
                         throw Error(`${themePath}/manifest.json malformed.`);
                     }
                 }
-                const enabled = typeof theme == "string" ? true : theme.enabled;
+
+                let enabled: boolean
+                if (typeof theme == "string") {
+                    enabled = true
+                } else {
+                    enabled = theme.enabled ?? true;
+                }
                 return {path: themePath, name: themeName, enabled: enabled, originalType};
             })
         );
     }
 
     /**
-     * Installs plugins into an Obsidian vault.
-     * @param vault Path to the vault to install the plugin in.
-     * @param plugins List plugins paths to install.
+     * Installs plugins into an Obsidian vault
+     * @param vault Path to the vault to install the plugins in
+     * @param plugins List plugins to install
      */
     async installPlugins(vault: string, plugins: PluginEntry[]) {
         const downloadedPlugins = await this.downloadPlugins(plugins);
@@ -642,9 +680,9 @@ export class ObsidianLauncher {
     }
 
     /** 
-     * Installs themes into an obsidian vault.
-     * @param vault Path to the theme to install the plugin in.
-     * @param themes: List of themes to install.
+     * Installs themes into an Obsidian vault
+     * @param vault Path to the theme to install the themes in
+     * @param themes List of themes to install
      */
     async installThemes(vault: string, themes: ThemeEntry[]) {
         const downloadedThemes = await this.downloadThemes(themes);
@@ -691,13 +729,13 @@ export class ObsidianLauncher {
     }
 
     /**
-     * Sets up the config dir to use for the --user-data-dir in obsidian. Returns the path to the created config dir.
+     * Sets up the config dir to use for the `--user-data-dir` in obsidian. Returns the path to the created config dir.
      *
-     * @param appVersion Obsidian version string.
-     * @param installerVersion Obsidian version string.
-     * @param appPath Path to the asar file to install. Will download if omitted.
-     * @param vault Path to the vault to open in Obsidian.
-     * @param dest Destination path for the config dir. If omitted it will create it under `/tmp`.
+     * @param params.appVersion Obsidian app version (see {@link resolveVersions} for format)
+     * @param params.installerVersion Obsidian version string.
+     * @param params.appPath Path to the asar file to install. Will download if omitted.
+     * @param params.vault Path to the vault to open in Obsidian.
+     * @param params.dest Destination path for the config dir. If omitted it will create a temporary directory.
      */
     async setupConfigDir(params: {
         appVersion: string, installerVersion: string,
@@ -718,6 +756,9 @@ export class ObsidianLauncher {
         }
 
         if (params.vault !== undefined) {
+            if (!await fileExists(params.vault)) {
+                throw Error(`Vault path ${params.vault} doesn't exist.`)
+            }
             const vaultId = crypto.randomBytes(8).toString("hex");
             obsidianJson = {
                 ...obsidianJson,
@@ -753,10 +794,10 @@ export class ObsidianLauncher {
     /**
      * Sets up a vault for Obsidian, installing plugins and themes and optionally copying the vault to a temporary
      * directory first.
-     * @param vault Path to the vault to open in Obsidian.
-     * @param copy Whether to copy the vault to a tmpdir first. Default false.
-     * @param plugins List of plugins to install in the vault.
-     * @param themes List of themes to install in the vault.
+     * @param params.vault Path to the vault to open in Obsidian
+     * @param params.copy Whether to copy the vault to a tmpdir first. Default false
+     * @param params.plugins List of plugins to install in the vault
+     * @param params.themes List of themes to install in the vault
      * @returns Path to the copied vault (or just the path to the vault if copy is false)
      */
     async setupVault(params: {
@@ -767,7 +808,7 @@ export class ObsidianLauncher {
         let vault = params.vault;
         if (params.copy) {
             const dest = await makeTmpDir('obs-launcher-vault-');
-            await fsAsync.cp(vault, dest, { recursive: true });
+            await fsAsync.cp(vault, dest, { recursive: true, preserveTimestamps: true });
             vault = dest;
         }
         await this.installPlugins(vault, params.plugins ?? []);
@@ -780,27 +821,31 @@ export class ObsidianLauncher {
      * Downloads and launches Obsidian with a sandboxed config dir and a specifc vault open. Optionally install plugins
      * and themes first.
      * 
-     * This is just a shortcut for calling downloadApp, downloadInstaller, setupVault and setupConfDir.
+     * This is just a shortcut for calling `downloadApp`, `downloadInstaller`, `setupVault` and `setupConfDir`.
      *
-     * @param appVersion Obsidian version string.
-     * @param installerVersion Obsidian version string.
-     * @param vault Path to the vault to open in Obsidian.
-     * @param copy Whether to copy the vault to a tmpdir first. Default false.
-     * @param plugins List of plugins to install in the vault.
-     * @param themes List of themes to install in the vault.
-     * @param args CLI args to pass to Obsidian
-     * @param spawnOptions Options to pass to `spawn`.
-     * @returns The launched child process and the created tmpdirs.
+     * @param params.appVersion Obsidian app version (see {@link resolveVersions} for format). Default "latest"
+     * @param params.installerVersion Obsidian installer version (see {@link resolveVersions} for format).
+     *   Default "latest"
+     * @param params.vault Path to the vault to open in Obsidian
+     * @param params.copy Whether to copy the vault to a tmpdir first. Default false
+     * @param params.plugins List of plugins to install in the vault
+     * @param params.themes List of themes to install in the vault
+     * @param params.args CLI args to pass to Obsidian
+     * @param params.spawnOptions Options to pass to `spawn`
+     * @returns The launched child process and the created tmpdirs
      */
     async launch(params: {
-        appVersion: string, installerVersion: string,
+        appVersion?: string, installerVersion?: string,
         copy?: boolean,
         vault?: string,
         plugins?: PluginEntry[], themes?: ThemeEntry[],
         args?: string[],
         spawnOptions?: child_process.SpawnOptions,
     }): Promise<{proc: child_process.ChildProcess, configDir: string, vault?: string}> {
-        const [appVersion, installerVersion] = await this.resolveVersions(params.appVersion, params.installerVersion);
+        const [appVersion, installerVersion] = await this.resolveVersions(
+            params.appVersion ?? "latest",
+            params.installerVersion ?? "latest",
+        );
         const appPath = await this.downloadApp(appVersion);
         const installerPath = await this.downloadInstaller(installerVersion);
 
@@ -931,6 +976,8 @@ export class ObsidianLauncher {
 
     /**
      * Returns true if the Obsidian version is already in the cache.
+     * @param type on of "app" or "installer"
+     * @param version Obsidian app/installer version (see {@link resolveVersions} for format)
      */
     async isInCache(type: "app"|"installer", version: string) {
         version = (await this.getVersionInfo(version)).version;
@@ -947,8 +994,9 @@ export class ObsidianLauncher {
     }
 
     /**
-     * Returns true if we either have the credentails to download the version or it's already in cache.
+     * Returns true if we either have the credentials to download the version or it's already in cache.
      * This is only relevant for Obsidian beta versions, as they require Obsidian insider credentials to download.
+     * @param version Obsidian version (see {@link resolveVersions} for format)
      */
     async isAvailable(version: string): Promise<boolean> {
         const versionInfo = await this.getVersionInfo(version);

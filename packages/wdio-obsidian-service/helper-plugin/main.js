@@ -1,11 +1,20 @@
 /** Plugin that is automatically loaded during tests and sets up some global variables. */
 const obsidian = require('obsidian');
 
+function toCamelCase(s) {
+    return s.replace(/-\w/g, m => m[1].toUpperCase());
+}
+
 class WdioObsidianServicePlugin extends obsidian.Plugin {
     async onload() {
         const globals = {
             app: this.app,
             obsidian: obsidian,
+            plugins: Object.fromEntries(
+                Object.entries(this.app.plugins.plugins)
+                    .filter(([id, plugin]) => id != "wdio-obsidian-service-plugin")
+                    .map(([id, plugin]) => [toCamelCase(id), plugin])
+            ),
         }
 
         window.wdioObsidianService = globals;

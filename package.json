@@ -6,7 +6,6 @@
         "packages/*"
     ],
     "bin": {
-        "obsidian-launcher": "packages/obsidian-launcher/dist/cli.js"
     },
     "scripts": {
         "build": "npm run --workspaces build",

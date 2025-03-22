@@ -1,4 +1,4 @@
-#!/bin/env node
+#!/usr/bin/env node
 import { Command } from 'commander';
 import _ from "lodash";
 import { ObsidianLauncher } from "./launcher.js"
@@ -116,7 +116,8 @@ program
     .summary("Download and launch Obsidian")
     .description(
         "Download and launch Obsidian, opening the specified vault. The Obsidian instance will have a sandboxed " +
-        "configuration directory."
+        "configuration directory. You can use this option to easily compare plugin behavior on different versions of " +
+        "Obsidian without messing with your system installation of Obsidian."
     )
     .argument('[vault]', 'Vault to open')
     .option(...cacheOptionArgs)
@@ -149,8 +150,8 @@ program
         "Downloads Obsidian and opens a vault, then watches for changes to plugins and themes.\n" +
         "\n" +
         'Takes the same arguments as the "launch" command but watches for changes to any local plugins or themes and ' +
-        'updates the copies in the vault. Automatically installs the "pjeby/hot-reload" so plugins will hot reload ' +
-        'as they are updated.'
+        'updates the the vault. Automatically installs "pjeby/hot-reload" so plugins will hot reload as they are ' +
+        'updated.'
     )
     .argument('[vault]', 'Vault to open')
     .option(...cacheOptionArgs)

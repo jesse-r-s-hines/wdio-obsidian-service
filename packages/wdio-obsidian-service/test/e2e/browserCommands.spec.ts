@@ -1,7 +1,5 @@
 import { browser } from '@wdio/globals'
 import { expect } from 'chai';
-import path from 'path';
-import fsAsync from "fs/promises"
 import { TFile } from 'obsidian';
 import semver from "semver";
 import { ObsidianPage } from '../../src/pageobjects/obsidianPage.js';
@@ -12,15 +10,21 @@ describe("Test custom browser commands", () => {
         await browser.reloadObsidian({vault: "./test/vaults/basic"});
     })
 
-    it('getVaultPath', async () => {
-        const originalVaultPath = path.resolve("./test/vaults/basic");
-        const vaultPath = (await browser.getVaultPath())!;
-        
-        // vault should be copied
-        expect(path.resolve(vaultPath)).to.not.eql(originalVaultPath)
-        expect(await fsAsync.readdir(vaultPath)).to.include.members(["Goodbye.md", "Welcome.md"]);
+    it("executeObsidian", async () => {
+        const result = await browser.executeObsidian((arg) => {
+            return Object.keys(arg).sort();
+        });
+        expect(result).to.be.eql(['app', 'obsidian', 'plugins']);
+        const plugins = await browser.executeObsidian(({obsidian, plugins}) => {
+            return Object.fromEntries(Object.entries(plugins)
+                .map(([k, v]) => [k, v instanceof obsidian.Plugin])
+            );
+        });
+        expect(plugins).to.eql({
+            basicPlugin: true,
+        })
     })
-    
+
     it('runObsidianCommand', async () => {
         expect(await browser.execute("return window.doTheThingCalled ?? 0")).to.eql(0);
         await browser.executeObsidianCommand("basic-plugin:do-the-thing");

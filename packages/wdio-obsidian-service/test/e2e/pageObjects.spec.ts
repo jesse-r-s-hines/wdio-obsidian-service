@@ -1,5 +1,7 @@
 import { browser } from '@wdio/globals'
 import { expect } from 'chai';
+import fsAsync from "fs/promises";
+import path from "path";
 import obsidianPage from '../../src/pageobjects/obsidianPage.js';
 
 
@@ -21,6 +23,15 @@ describe("Test page object", () => {
         await browser.reloadObsidian({vault: "./test/vaults/basic"});
         await obsidianPage.loadWorkspaceLayout("empty");
         expect(await getOpenFiles()).to.eql([]);
+    })
+
+    it('getVaultPath', async () => {
+        const originalVaultPath = path.resolve("./test/vaults/basic");
+        const vaultPath = (await obsidianPage.getVaultPath())!;
+        
+        // vault should be copied
+        expect(path.resolve(vaultPath)).to.not.eql(originalVaultPath)
+        expect(await fsAsync.readdir(vaultPath)).to.include.members(["Goodbye.md", "Welcome.md"]);
     })
 
     it('enable/disable plugin', async () => {
@@ -62,6 +73,15 @@ describe("Test page object", () => {
     it("loadWorkspaceLayout", async () => {
         expect(await getOpenFiles()).to.eql([]);
         await obsidianPage.loadWorkspaceLayout("saved-layout");
+        expect(await getOpenFiles()).to.eql(["Goodbye.md", "Welcome.md"]);
+    })
+
+    it("loadWorkspaceLayout object", async () => {
+        const workspacesPath = 'test/vaults/basic/.obsidian/workspaces.json';
+        const workspaces = JSON.parse(await fsAsync.readFile(workspacesPath, 'utf-8'))
+        const workspace = workspaces.workspaces['saved-layout'];
+        expect(await getOpenFiles()).to.eql([]);
+        await obsidianPage.loadWorkspaceLayout(workspace);
         expect(await getOpenFiles()).to.eql(["Goodbye.md", "Welcome.md"]);
     })
 })
