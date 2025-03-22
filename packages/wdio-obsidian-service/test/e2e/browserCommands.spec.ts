@@ -14,7 +14,7 @@ describe("Test custom browser commands", () => {
         const result = await browser.executeObsidian((arg) => {
             return Object.keys(arg).sort();
         });
-        expect(result).to.be.eql(['app', 'obsidian', 'plugins']);
+        expect(result).to.be.eql(['app', 'obsidian', 'plugins', 'require']);
         const plugins = await browser.executeObsidian(({obsidian, plugins}) => {
             return Object.fromEntries(Object.entries(plugins)
                 .map(([k, v]) => [k, v instanceof obsidian.Plugin])

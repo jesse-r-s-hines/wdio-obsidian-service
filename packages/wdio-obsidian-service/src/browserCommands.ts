@@ -46,6 +46,8 @@ const browserCommands = {
      * - obsidian: Full Obsidian API
      * - plugins: Object of all installed plugins, mapped by plugin id converted to camelCase.
      * 
+     * You can use `require` inside the function to fetch Obsidian modules, same as you can inside plugins.
+     * 
      * See also: https://webdriver.io/docs/api/browser/execute
      * 
      * Example usage
@@ -80,10 +82,10 @@ const browserCommands = {
         func: (obs: ExecuteObsidianArg, ...params: Params) => Return,
         ...params: Params
     ): Promise<Return> {
-        return await browser.execute<Return, Params>(
-            `return (${func.toString()}).call(null, {...window.wdioObsidianService}, ...arguments)`,
-            ...params,
-        )
+        return await browser.execute<Return, Params>(`
+            const require = window.wdioObsidianService.require;
+            return (${func.toString()}).call(null, {...window.wdioObsidianService}, ...arguments)
+        `, ...params)
     },
 
     /**
