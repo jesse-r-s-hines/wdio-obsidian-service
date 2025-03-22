@@ -488,8 +488,11 @@ export class ObsidianLauncher {
                 if (!pluginId) {
                     pluginId = JSON.parse(await fsAsync.readFile(manifestPath, 'utf8').catch(() => "{}")).id;
                     if (!pluginId) {
-                        throw Error(`${pluginPath}/manifest.json malformed.`);
+                        throw Error(`${manifestPath} malformed.`);
                     }
+                }
+                if (!(await fileExists(path.join(pluginPath, "main.js")))) {
+                    throw Error(`No main.js found under ${pluginPath}`)
                 }
 
                 let enabled: boolean
@@ -605,6 +608,9 @@ export class ObsidianLauncher {
                     if (!themeName) {
                         throw Error(`${themePath}/manifest.json malformed.`);
                     }
+                }
+                if (!(await fileExists(path.join(themePath, "theme.css")))) {
+                    throw Error(`No theme.css found under ${themePath}`)
                 }
 
                 let enabled: boolean

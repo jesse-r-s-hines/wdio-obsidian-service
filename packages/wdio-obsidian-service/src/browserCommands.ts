@@ -85,10 +85,14 @@ const browserCommands = {
      * ```
      */
     async executeObsidian<Return, Params extends unknown[]>(
+        this: WebdriverIO.Browser,
         func: (obs: ExecuteObsidianArg, ...params: Params) => Return,
         ...params: Params
     ): Promise<Return> {
-        return await browser.execute<Return, Params>(`
+        if (this.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].vault == undefined) {
+            throw Error("No vault open")
+        }
+        return await this.execute<Return, Params>(`
             const require = window.wdioObsidianService.require;
             return (${func.toString()}).call(null, {...window.wdioObsidianService}, ...arguments)
         `, ...params)
@@ -114,7 +118,7 @@ const browserCommands = {
      */
     async getObsidianPage(this: WebdriverIO.Browser): Promise<ObsidianPage> {
         return obsidianPage;
-    }
+    },
 } as const
 
 /** Define this type separately so we can @inline it in typedoc */
