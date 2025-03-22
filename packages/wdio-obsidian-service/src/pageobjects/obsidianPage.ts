@@ -132,7 +132,7 @@ class ObsidianPage {
      * })
      * ```
      */
-    async resetVaultFiles(...vaults: (string|Record<string, string>)[]) {
+    async resetVault(...vaults: (string|Record<string, string>)[]) {
         const origVaultPath: string = browser.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].vault;
         vaults = vaults.length == 0 ? [origVaultPath] : vaults;
 
