@@ -10,6 +10,21 @@ describe("Test custom browser commands", () => {
         await browser.reloadObsidian({vault: "./test/vaults/basic"});
     })
 
+    it("executeObsidian", async () => {
+        const result = await browser.executeObsidian((arg) => {
+            return Object.keys(arg).sort();
+        });
+        expect(result).to.be.eql(['app', 'obsidian', 'plugins']);
+        const plugins = await browser.executeObsidian(({obsidian, plugins}) => {
+            return Object.fromEntries(Object.entries(plugins)
+                .map(([k, v]) => [k, v instanceof obsidian.Plugin])
+            );
+        });
+        expect(plugins).to.eql({
+            basicPlugin: true,
+        })
+    })
+
     it('runObsidianCommand', async () => {
         expect(await browser.execute("return window.doTheThingCalled ?? 0")).to.eql(0);
         await browser.executeObsidianCommand("basic-plugin:do-the-thing");

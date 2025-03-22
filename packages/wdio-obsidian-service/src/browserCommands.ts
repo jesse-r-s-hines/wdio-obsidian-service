@@ -5,7 +5,7 @@ import obsidianPage, { ObsidianPage } from "./pageobjects/obsidianPage.js"
 /**
  * Argument passed to the `executeObsidian` browser command.
  */
-export type ExecuteObsidianArg = {
+export interface ExecuteObsidianArg {
     /**
      * There is a global "app" instance, but that may be removed in the future so you can use this to access it from
      * tests. See https://docs.obsidian.md/Plugins/Releasing/Plugin+guidelines#Avoid+using+global+app+instance
@@ -16,6 +16,12 @@ export type ExecuteObsidianArg = {
      * The full obsidian API. See https://github.com/obsidianmd/obsidian-api/blob/master/obsidian.d.ts
      */
     obsidian: typeof obsidian,
+
+    /**
+     * Object containing all installed plugins mapped by their id. Plugin ids are converted to converted to camelCase
+     * for ease of destructuring.
+     */
+    plugins: Record<string, obsidian.Plugin>,
 }
 
 const browserCommands = {
@@ -38,6 +44,8 @@ const browserCommands = {
      * is an object containing keys:
      * - app: Obsidian app instance
      * - obsidian: Full Obsidian API
+     * - plugins: Object of all installed plugins, mapped by plugin id converted to camelCase.
+     * 
      * See also: https://webdriver.io/docs/api/browser/execute
      * 
      * Example usage
