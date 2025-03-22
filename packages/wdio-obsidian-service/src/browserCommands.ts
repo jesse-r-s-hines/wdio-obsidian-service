@@ -2,6 +2,10 @@ import { OBSIDIAN_CAPABILITY_KEY } from "./types.js";
 import type * as obsidian from "obsidian"
 import obsidianPage, { ObsidianPage } from "./pageobjects/obsidianPage.js"
 
+/** Installed plugins, mapped by their id converted to camelCase */
+export interface InstalledPlugins extends Record<string, obsidian.Plugin> {
+}
+
 /**
  * Argument passed to the `executeObsidian` browser command.
  */
@@ -21,7 +25,7 @@ export interface ExecuteObsidianArg {
      * Object containing all installed plugins mapped by their id. Plugin ids are converted to converted to camelCase
      * for ease of destructuring.
      */
-    plugins: Record<string, obsidian.Plugin>,
+    plugins: InstalledPlugins,
 }
 
 const browserCommands = {
@@ -45,6 +49,8 @@ const browserCommands = {
      * - app: Obsidian app instance
      * - obsidian: Full Obsidian API
      * - plugins: Object of all installed plugins, mapped by plugin id converted to camelCase.
+     * 
+     * You can use `require` inside the function to fetch Obsidian modules, same as you can inside plugins.
      * 
      * See also: https://webdriver.io/docs/api/browser/execute
      * 
@@ -80,10 +86,10 @@ const browserCommands = {
         func: (obs: ExecuteObsidianArg, ...params: Params) => Return,
         ...params: Params
     ): Promise<Return> {
-        return await browser.execute<Return, Params>(
-            `return (${func.toString()}).call(null, {...window.wdioObsidianService}, ...arguments)`,
-            ...params,
-        )
+        return await browser.execute<Return, Params>(`
+            const require = window.wdioObsidianService.require;
+            return (${func.toString()}).call(null, {...window.wdioObsidianService}, ...arguments)
+        `, ...params)
     },
 
     /**

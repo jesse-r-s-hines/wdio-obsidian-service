@@ -1,6 +1,6 @@
 import { browser } from '@wdio/globals'
 import { expect } from 'chai';
-import obsidianPage from '../../src/pageobjects/obsidianPage.js';
+import { obsidianPage } from 'wdio-obsidian-service';
 import { TFile } from 'obsidian';
 
 
@@ -20,7 +20,7 @@ describe("resetVault", async () => {
         await browser.reloadObsidian({vault: "./test/vaults/basic"});
         const contentBefore = await getAllFiles();
         expect(Object.keys(contentBefore).sort()).to.eql(["Goodbye.md", "Welcome.md"]);
-        await obsidianPage.resetVaultFiles();
+        await obsidianPage.resetVault();
         expect(await getAllFiles()).to.eql(contentBefore);
     })
 
@@ -32,7 +32,7 @@ describe("resetVault", async () => {
             await app.vault.modify(app.vault.getAbstractFileByPath("Welcome.md") as TFile, "changed");
         })
 
-        await obsidianPage.resetVaultFiles();
+        await obsidianPage.resetVault();
         expect(await getAllFiles()).to.eql(contentBefore);
     })
 
@@ -45,7 +45,7 @@ describe("resetVault", async () => {
             await app.vault.create("New.md", "A new file");
         })
 
-        await obsidianPage.resetVaultFiles();
+        await obsidianPage.resetVault();
         expect(await getAllFiles()).to.eql(contentBefore);
     })
 
@@ -57,7 +57,7 @@ describe("resetVault", async () => {
             await app.vault.modify(app.vault.getAbstractFileByPath("B/C.md") as TFile, "changed");
         })
 
-        await obsidianPage.resetVaultFiles();
+        await obsidianPage.resetVault();
         expect(await getAllFiles()).to.eql(contentBefore);
     })
 
@@ -70,26 +70,26 @@ describe("resetVault", async () => {
             await app.vault.create("New.md", "A new file");
         })
 
-        await obsidianPage.resetVaultFiles();
+        await obsidianPage.resetVault();
         expect(await getAllFiles()).to.eql(contentBefore);
     })
 
     it("empty vault", async () => {
         await browser.reloadObsidian({vault: "./test/vaults/empty"});
-        await obsidianPage.resetVaultFiles();
+        await obsidianPage.resetVault();
         expect(await getAllFiles()).to.eql({});
 
         await browser.executeObsidian(async ({app}) => {
             await app.vault.create("New.md", "A new file");
         })
 
-        await obsidianPage.resetVaultFiles();
+        await obsidianPage.resetVault();
         expect(await getAllFiles()).to.eql({});
     })
 
     it("new vault", async () => {
         await browser.reloadObsidian({vault: "./test/vaults/basic"});
-        await obsidianPage.resetVaultFiles("./test/vaults/nested");
+        await obsidianPage.resetVault("./test/vaults/nested");
         expect(await getAllFiles()).to.eql({
             'A.md': "File A\n",
             'B/C.md': "File C\n",
@@ -104,13 +104,13 @@ describe("resetVault", async () => {
             "Calibans War.md": "2012",
             "Abaddons Gate.md": "2013",
         }
-        await obsidianPage.resetVaultFiles(vault);
+        await obsidianPage.resetVault(vault);
         expect(await getAllFiles()).to.eql(vault);
     })
 
     it("merge", async () => {
         await browser.reloadObsidian({vault: "./test/vaults/basic"});
-        await obsidianPage.resetVaultFiles("./test/vaults/nested", {
+        await obsidianPage.resetVault("./test/vaults/nested", {
             "B/C.md": "updated",
             "Z.md": "new",
         });

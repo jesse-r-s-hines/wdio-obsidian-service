@@ -2,7 +2,7 @@ import { browser } from '@wdio/globals'
 import { expect } from 'chai';
 import { TFile } from 'obsidian';
 import semver from "semver";
-import { ObsidianPage } from '../../src/pageobjects/obsidianPage.js';
+import { obsidianPage } from 'wdio-obsidian-service';
 
 
 describe("Test custom browser commands", () => {
@@ -14,7 +14,7 @@ describe("Test custom browser commands", () => {
         const result = await browser.executeObsidian((arg) => {
             return Object.keys(arg).sort();
         });
-        expect(result).to.be.eql(['app', 'obsidian', 'plugins']);
+        expect(result).to.be.eql(['app', 'obsidian', 'plugins', 'require']);
         const plugins = await browser.executeObsidian(({obsidian, plugins}) => {
             return Object.fromEntries(Object.entries(plugins)
                 .map(([k, v]) => [k, v instanceof obsidian.Plugin])
@@ -32,8 +32,8 @@ describe("Test custom browser commands", () => {
     })
 
     it("getObsidianPage", async () => {
-        const obsidianPage = await browser.getObsidianPage();
-        expect(obsidianPage).to.be.instanceof(ObsidianPage);
+        const commandObsidianPage = await browser.getObsidianPage();
+        expect(commandObsidianPage).to.eql(obsidianPage);
     })
 })
 

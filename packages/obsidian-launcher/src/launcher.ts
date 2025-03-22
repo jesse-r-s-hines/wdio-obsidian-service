@@ -3,7 +3,6 @@ import fs from "fs"
 import zlib from "zlib"
 import path from "path"
 import crypto from "crypto";
-import fetch from "node-fetch"
 import extractZip from "extract-zip"
 import { pipeline } from "stream/promises";
 import { downloadArtifact } from '@electron/get';
@@ -26,6 +25,8 @@ import _ from "lodash"
 
 
 /**
+ * The `ObsidianLauncher` class.
+ * 
  * Helper class that handles downloading and installing Obsidian versions, plugins, and themes and launching Obsidian
  * with sandboxed configuration directories.
  */

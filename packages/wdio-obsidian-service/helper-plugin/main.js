@@ -15,6 +15,8 @@ class WdioObsidianServicePlugin extends obsidian.Plugin {
                     .filter(([id, plugin]) => id != "wdio-obsidian-service-plugin")
                     .map(([id, plugin]) => [toCamelCase(id), plugin])
             ),
+            // Obsidian uses a magic wrapper for the require seen by plugins that can import Obsidian modules
+            require: require,
         }
 
         window.wdioObsidianService = globals;
