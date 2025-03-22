@@ -2,6 +2,10 @@ import { OBSIDIAN_CAPABILITY_KEY } from "./types.js";
 import type * as obsidian from "obsidian"
 import obsidianPage, { ObsidianPage } from "./pageobjects/obsidianPage.js"
 
+/** Installed plugins, mapped by their id converted to camelCase */
+export interface InstalledPlugins extends Record<string, obsidian.Plugin> {
+}
+
 /**
  * Argument passed to the `executeObsidian` browser command.
  */
@@ -21,7 +25,7 @@ export interface ExecuteObsidianArg {
      * Object containing all installed plugins mapped by their id. Plugin ids are converted to converted to camelCase
      * for ease of destructuring.
      */
-    plugins: Record<string, obsidian.Plugin>,
+    plugins: InstalledPlugins,
 }
 
 const browserCommands = {
