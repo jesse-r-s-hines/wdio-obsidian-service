@@ -100,8 +100,6 @@ class ObsidianPage {
             }
         }
 
-        // Click on the status-bar to focus the main window in case there are multiple Obsidian windows panes
-        await $(".status-bar").click();
         await browser.executeObsidian(async ({app}, layout) => {
             await app.workspace.changeLayout(layout)
         }, layout)

@@ -52,6 +52,8 @@ const browserCommands = {
      * 
      * You can use `require` inside the function to fetch Obsidian modules, same as you can inside plugins.
      * 
+     * Like `brower.execute`, you can pass other extra arguments to the function.
+     * 
      * See also: https://webdriver.io/docs/api/browser/execute
      * 
      * Example usage
