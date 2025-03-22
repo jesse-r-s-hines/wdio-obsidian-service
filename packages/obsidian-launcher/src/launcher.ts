@@ -26,6 +26,8 @@ import _ from "lodash"
 
 
 /**
+ * The `ObsidianLauncher` class.
+ * 
  * Helper class that handles downloading and installing Obsidian versions, plugins, and themes and launching Obsidian
  * with sandboxed configuration directories.
  */
