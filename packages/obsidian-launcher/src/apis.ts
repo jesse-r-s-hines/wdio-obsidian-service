@@ -1,5 +1,4 @@
 import _ from "lodash"
-import fetch from "node-fetch";
 import fsAsync from "fs/promises";
 import { fileURLToPath } from "url";
 
