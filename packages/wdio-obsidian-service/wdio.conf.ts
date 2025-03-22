@@ -1,5 +1,4 @@
-import ObsidianWorkerService, { launcher as ObsidianLauncherService, obsidianBetaAvailable } from "./src/index.js"
-import { minSupportedObsidianVersion } from "./src/service.js"
+import { obsidianBetaAvailable, minSupportedObsidianVersion } from "wdio-obsidian-service"
 import { pathToFileURL, fileURLToPath } from "url"
 import path from "path"
 import fsAsync from "fs/promises"
@@ -86,13 +85,15 @@ export const config: WebdriverIO.Config = {
         }
     })),
 
-    services: [[ObsidianWorkerService, obsidianServiceOptions], [ObsidianLauncherService, obsidianServiceOptions]],
+    services: [["obsidian", obsidianServiceOptions]],
 
     cacheDir: cacheDir,
 
     framework: 'mocha',
     
     reporters: ["obsidian"],
+
+    bail: 4,
 
     mochaOpts: {
         ui: 'bdd',

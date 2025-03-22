@@ -1,6 +1,7 @@
 {
     "compilerOptions": {
         /* Visit https://aka.ms/tsconfig to read more about this file */
+        "rootDir": ".",
         "target": "es2020",
         "lib": ["es2020", "dom"],
         "module": "node16",

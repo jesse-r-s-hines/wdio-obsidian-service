@@ -1,6 +1,6 @@
 import { browser } from '@wdio/globals'
 import { expect } from 'chai';
-import obsidianPage from '../../src/pageobjects/obsidianPage.js';
+import { obsidianPage } from 'wdio-obsidian-service';
 import { TFile } from 'obsidian';
 
 

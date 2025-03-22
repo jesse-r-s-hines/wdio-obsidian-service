@@ -1,7 +1,7 @@
 import { browser } from '@wdio/globals'
 import { expect } from 'chai';
 import { OBSIDIAN_CAPABILITY_KEY } from '../../src/types.js';
-import { obsidianPage } from '../../src/index.js';
+import { obsidianPage } from 'wdio-obsidian-service';
 
 
 describe("Basic obsidian launch", () => {

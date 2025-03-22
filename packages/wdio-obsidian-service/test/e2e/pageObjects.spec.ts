@@ -2,7 +2,7 @@ import { browser } from '@wdio/globals'
 import { expect } from 'chai';
 import fsAsync from "fs/promises";
 import path from "path";
-import obsidianPage from '../../src/pageobjects/obsidianPage.js';
+import { obsidianPage } from 'wdio-obsidian-service';
 
 
 async function getOpenFiles() {
