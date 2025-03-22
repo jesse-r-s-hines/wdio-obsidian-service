@@ -164,7 +164,8 @@ class ObsidianPage {
             .value();
 
         await browser.executeObsidian(async ({app, obsidian}, newVaultFolders, newVaultFiles) => {
-            const fs = require('fs');
+            // the require is getting transpiled by tsup, so pull it directly from wdioObsidianService
+            const fs = (window as any).wdioObsidianService.require('fs');
 
             // "rsync" the vault
             for (const newFolder of newVaultFolders) {
