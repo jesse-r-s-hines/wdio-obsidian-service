@@ -2,6 +2,12 @@
     "name": "wdio-obsidian-reporter",
     "version": "1.0.1",
     "description": "Wrapper around @wdio/spec-reporter that displays Obsidian version info",
+    "keywords": [
+        "obsidian",
+        "webdriverio",
+        "wdio",
+        "wdio-reporter"
+    ],
     "type": "module",
     "main": "./dist/index.js",
     "types": "./dist/index.d.ts",

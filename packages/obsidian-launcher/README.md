@@ -17,7 +17,7 @@ const launcher = new ObsidianLauncher();
 const {proc} = await launcher.launch({
     appVersion: "1.7.7",
     vault: "path/to/my/vault",
-    copy: true, // copy the vault before installing plugins and opening in Obsidian
+    copy: true, // open a copy of the vault in Obsidian
     plugins: [
         "path/to/my/plugin", // install a local plugin
         {id: "dataview"}, // install a community plugin
@@ -41,8 +41,8 @@ same Obsidian app version on different versions of Electron.
 
 `appVersion` can be set to one of:
 - a specific version string like "1.7.7"
-- "latest": run the current latest non-beta Obsidian version
-- "latest-beta": run the current latest beta Obsidian version (or latest is there is no current beta)
+- "latest": run the latest non-beta Obsidian version
+- "latest-beta": run the latest beta Obsidian version (or latest is there is no current beta)
     - To download Obsidian beta versions you'll need to have an Obsidian account with Catalyst and set the 
       `OBSIDIAN_USERNAME` and `OBSIDIAN_PASSWORD` environment variables. 2FA needs to be disabled.
 - "earliest": run the `minAppVersion` set in your plugin's `manifest.json`

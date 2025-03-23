@@ -26,8 +26,8 @@ export interface ObsidianCapabilityOptions {
      * Version of Obsidian to download and run.
      * 
      * Can be set to a specific version or one of:
-     * - "latest": Run the current latest non-beta Obsidian version
-     * - "latest-beta": Run the current latest beta Obsidian version (or latest is there is no current beta)
+     * - "latest": Run the latest non-beta Obsidian version
+     * - "latest-beta": Run the latest beta Obsidian version (or latest is there is no current beta)
      *   - To download Obsidian beta versions you'll need to have an Obsidian account with Catalyst and set the 
      *     `OBSIDIAN_USERNAME` and `OBSIDIAN_PASSWORD` environment variables. 2FA needs to be disabled.
      * - "earliest": Run the `minAppVersion` set in set in your `manifest.json`

@@ -4,6 +4,7 @@
 [WebdriverIO](https://webdriver.io). The service will handle:
 - Downloading and installing Obsidian
 - Testing your plugin on different Obsidian app versions and installer/electron versions
+- Opening and switching between test vaults during your tests
 - Downloading Chromedriver matching the Obsidian electron version
 - Sandboxing Obsidian so tests don't interfere with your system Obsidian installation
 - Provides helper functions for common testing tasks
@@ -64,9 +65,9 @@ export const config: WebdriverIO.Config = {
 
     framework: 'mocha',
     services: ["obsidian"],
-    // You can use any wdio reporter, but by default they show the Chromium version instead of the
-    // Obsidian version. obsidian-reporter is just a wrapper around spec-reporter that shows the
-    // Obsidian version.
+    // You can use any wdio reporter, but they show the Chromium version
+    // instead of the Obsidian version. obsidian reporter just wraps
+    // spec reporter to show the Obsidian version.
     reporters: ['obsidian'],
 
     mochaOpts: {
@@ -94,9 +95,12 @@ describe('Test my plugin', function() {
         await browser.reloadObsidian({vault: "./test/vaults/simple"});
     })
     it('test command open-sample-modal-simple', async () => {
-        await browser.executeObsidianCommand("sample-plugin:open-sample-modal-simple");
-        expect(await browser.$(".modal-container .modal-content").isExisting()).to.equal(true);
-        expect(await browser.$(".modal-container .modal-content").getText()).to.equal("Woah!");
+        await browser.executeObsidianCommand(
+            "sample-plugin:open-sample-modal-simple",
+        );
+        const modalEl = browser.$(".modal-container .modal-content");
+        expect(await modalEl.isExisting()).to.equal(true);
+        expect(await modalEl.getText()).to.equal("Woah!");
     })
 })
 ```
@@ -130,16 +134,19 @@ You can specify both `appVersion` and `installerVersion` in your `wdio.conf.ts` 
 
 To set the app version use `browserVersion` or `'wdio:obsidianOptions'.appVersion`. It can be set to one of:
 - a specific version string like "1.7.7"
-- "latest": run the current latest non-beta Obsidian version
-- "latest-beta": run the current latest beta Obsidian version (or latest is there is no current beta)
+- "latest": run the latest non-beta Obsidian version
+- "latest-beta": run the latest beta Obsidian version (or latest is there is no current beta)
     - To download Obsidian beta versions you'll need to have an Obsidian account with Catalyst and set the 
       `OBSIDIAN_USERNAME` and `OBSIDIAN_PASSWORD` environment variables. 2FA needs to be disabled.
 - "earliest": run the `minAppVersion` set in your plugin's `manifest.json`
 
-To set the installer version use `'wdio:obsidianOptions'.appVersioninstallerVersion`. It can be set to one of:
+To set the installer version use `'wdio:obsidianOptions'.installerVersion`. It can be set to one of:
 - a specific version string like "1.7.7"
 - "latest": run the latest Obsidian installer compatible with `appVersion`
 - "earliest": run the oldest Obsidian installer compatible with `appVersion`
+
+You can see more configuration options for the capabilities
+[here](https://jesse-r-s-hines.github.io/wdio-obsidian-service/interfaces/wdio-obsidian-service.ObsidianCapabilityOptions.html)
 
 ### Opening and Switching between Vaults
 If all your tests use the same vault, you can set the vault in the `wdio:obsidianOptions` capabilities section. If you

@@ -2,6 +2,13 @@
     "name": "wdio-obsidian-service",
     "version": "1.0.1",
     "description": "A WebdriverIO service for end-to-end testing of Obsidian plugins",
+    "keywords": [
+        "obsidian",
+        "webdriverio",
+        "wdio",
+        "wdio-service",
+        "tests"
+    ],
     "type": "module",
     "main": "./dist/index.js",
     "types": "./dist/index.d.ts",

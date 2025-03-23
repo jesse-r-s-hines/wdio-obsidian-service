@@ -9,6 +9,7 @@
     "searchInComments": true,
     "searchInDocuments": true,
     "navigationLinks": {
+        "Example": "https://github.com/jesse-r-s-hines/wdio-obsidian-service-sample-plugin",
         "GitHub": "https://github.com/jesse-r-s-hines/wdio-obsidian-service"
     },
     "visibilityFilters": {},

@@ -114,7 +114,7 @@ class ObsidianPage {
      * a faster alternative to reloadObsidian.
      * 
      * If no vault is passed, it resets the vault back to the oringal vault opened by the tests. You can also pass a
-     * path to an different vault, and it will sync the current vault to match that one (similar to "rsync"). Or,
+     * path to a different vault, and it will sync the current vault to match that one (similar to "rsync"). Or,
      * instead of passing a vault path you can pass an object mapping vault file paths to file content. E.g.
      * ```ts
      * obsidianPage.resetVault({

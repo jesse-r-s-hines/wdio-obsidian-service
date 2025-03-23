@@ -2,6 +2,9 @@
     "name": "obsidian-launcher",
     "version": "1.0.1",
     "description": "Download and launch sandboxed Obsidian instances",
+    "keywords": [
+        "obsidian"
+    ],
     "type": "module",
     "main": "./dist/index.js",
     "types": "./dist/index.d.ts",
