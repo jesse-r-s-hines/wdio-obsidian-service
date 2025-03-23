@@ -160,6 +160,9 @@ export class ObsidianLauncher {
      * @param installerVersion Obsidian version string or one of 
      *   - "latest": Get the latest Obsidian installer
      *   - "earliest": Get the oldest Obsidian installer compatible with the specified Obsidian app version
+     * 
+     * See also: "Obsidian App vs Installer Versions" {@link obsidian-launcher! | README.md}
+     *
      * @returns [appVersion, installerVersion] with any "latest" etc. resolved to specific versions.
      */
     async resolveVersions(appVersion: string, installerVersion = "latest"): Promise<[string, string]> {
@@ -196,7 +199,7 @@ export class ObsidianLauncher {
 
     /**
      * Gets details about an Obsidian version.
-     * @param appVersion Obsidian app version (see {@link resolveVersions} for format)
+     * @param appVersion Obsidian app version
      */
     async getVersionInfo(appVersion: string): Promise<ObsidianVersionInfo> {
         const versions = await this.getVersions();
@@ -223,7 +226,7 @@ export class ObsidianLauncher {
 
     /**
      * Downloads the Obsidian installer for the given version and platform. Returns the file path.
-     * @param installerVersion Obsidian installer version to download. (see {@link resolveVersions} for format)
+     * @param installerVersion Obsidian installer version to download
      */
     async downloadInstaller(installerVersion: string): Promise<string> {
         const installerVersionInfo = await this.getVersionInfo(installerVersion);
@@ -313,7 +316,7 @@ export class ObsidianLauncher {
      * To download beta versions you'll need to have an Obsidian account with Catalyst and set the `OBSIDIAN_USERNAME`
      * and `OBSIDIAN_PASSWORD` environment variables. 2FA needs to be disabled.
      * 
-     * @param appVersion Obsidian version to download (see {@link resolveVersions} for format)
+     * @param appVersion Obsidian version to download
      */
     async downloadApp(appVersion: string): Promise<string> {
         const appVersionInfo = await this.getVersionInfo(appVersion);
@@ -350,7 +353,7 @@ export class ObsidianLauncher {
      * for old Electron versions. Here we download chromedriver for older versions ourselves using the @electron/get
      * package which fetches chromedriver from https://github.com/electron/electron/releases.
      * 
-     * @param installerVersion Obsidian installer version (see {@link resolveVersions} for format)
+     * @param installerVersion Obsidian installer version
      */
     async downloadChromedriver(installerVersion: string): Promise<string> {
         const versionInfo = await this.getVersionInfo(installerVersion);
@@ -738,7 +741,7 @@ export class ObsidianLauncher {
     /**
      * Sets up the config dir to use for the `--user-data-dir` in obsidian. Returns the path to the created config dir.
      *
-     * @param params.appVersion Obsidian app version (see {@link resolveVersions} for format)
+     * @param params.appVersion Obsidian app version
      * @param params.installerVersion Obsidian version string.
      * @param params.appPath Path to the asar file to install. Will download if omitted.
      * @param params.vault Path to the vault to open in Obsidian.
@@ -830,9 +833,8 @@ export class ObsidianLauncher {
      * 
      * This is just a shortcut for calling `downloadApp`, `downloadInstaller`, `setupVault` and `setupConfDir`.
      *
-     * @param params.appVersion Obsidian app version (see {@link resolveVersions} for format). Default "latest"
-     * @param params.installerVersion Obsidian installer version (see {@link resolveVersions} for format).
-     *   Default "latest"
+     * @param params.appVersion Obsidian app version. Default "latest"
+     * @param params.installerVersion Obsidian installer version. Default "latest"
      * @param params.vault Path to the vault to open in Obsidian
      * @param params.copy Whether to copy the vault to a tmpdir first. Default false
      * @param params.plugins List of plugins to install in the vault
@@ -984,7 +986,7 @@ export class ObsidianLauncher {
     /**
      * Returns true if the Obsidian version is already in the cache.
      * @param type on of "app" or "installer"
-     * @param version Obsidian app/installer version (see {@link resolveVersions} for format)
+     * @param version Obsidian app/installer version
      */
     async isInCache(type: "app"|"installer", version: string) {
         version = (await this.getVersionInfo(version)).version;
@@ -1003,10 +1005,10 @@ export class ObsidianLauncher {
     /**
      * Returns true if we either have the credentials to download the version or it's already in cache.
      * This is only relevant for Obsidian beta versions, as they require Obsidian insider credentials to download.
-     * @param version Obsidian version (see {@link resolveVersions} for format)
+     * @param appVersion Obsidian app version
      */
-    async isAvailable(version: string): Promise<boolean> {
-        const versionInfo = await this.getVersionInfo(version);
+    async isAvailable(appVersion: string): Promise<boolean> {
+        const versionInfo = await this.getVersionInfo(appVersion);
         const versionExists = !!(versionInfo.downloads.asar && versionInfo.minInstallerVersion)
 
         if (versionInfo.isBeta) {

@@ -24,6 +24,16 @@ export interface ExecuteObsidianArg {
     /**
      * Object containing all installed plugins mapped by their id. Plugin ids are converted to converted to camelCase
      * for ease of destructuring.
+     * 
+     * You can add types for your plugin(s) here with:
+     * ```ts
+     * import type MyPlugin from "../src/main.js"
+     * declare module "wdio-obsidian-service" {
+     *     interface InstalledPlugins {
+     *         openTabSettingsPlugin: MyPlugin,
+     *     }
+     * }
+     * ```
      */
     plugins: InstalledPlugins,
 }
