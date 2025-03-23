@@ -72,7 +72,7 @@ export const config: WebdriverIO.Config = {
     mochaOpts: {
         ui: 'bdd',
         timeout: 60000,
-        // You can set mocha settings like "retry and "bail"
+        // You can set mocha settings like "retry" and "bail"
     },
 
     cacheDir: path.resolve(".obsidian-cache"),
@@ -178,7 +178,7 @@ API docs, including all configuration options and helper functions, are availabl
 The sample plugin has workflows already setup to release and test your plugin, which you can see
 [here](https://github.com/jesse-r-s-hines/wdio-obsidian-service-sample-plugin/tree/main/.github/workflows).
 
-### `obsidian-launcher` CLI
+### obsidian-launcher CLI
 `wdio-obsidian-service` depends on `obsidian-launcher` so the `obsidian-launcher` CLI is also available, with some 
 commands for launching different Obsidian versions. CLI docs available
 [here](https://jesse-r-s-hines.github.io/wdio-obsidian-service/modules/obsidian-launcher.html#cli).

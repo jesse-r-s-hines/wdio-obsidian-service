@@ -30,7 +30,7 @@ export interface ExecuteObsidianArg {
      * import type MyPlugin from "../src/main.js"
      * declare module "wdio-obsidian-service" {
      *     interface InstalledPlugins {
-     *         openTabSettingsPlugin: MyPlugin,
+     *         myPlugin: MyPlugin,
      *     }
      * }
      * ```
