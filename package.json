@@ -1,6 +1,6 @@
 {
     "name": "wdio-obsidian-service-workspace",
-    "version": "0.5.2",
+    "version": "1.0.0",
     "private": true,
     "workspaces": [
         "packages/*"
