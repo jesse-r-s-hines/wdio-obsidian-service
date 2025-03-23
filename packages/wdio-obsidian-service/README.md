@@ -1,7 +1,7 @@
 # WDIO Obsidian Service
 
-`wdio-obsidian-service` lets you test Obsidian plugins end-to-end using [WebdriverIO](https://webdriver.io). The service
-will handle:
+`wdio-obsidian-service` lets you test [Obsidian](https://obsidian.md) plugins end-to-end using
+[WebdriverIO](https://webdriver.io). The service will handle:
 - Downloading and installing Obsidian
 - Testing your plugin on different Obsidian app versions and installer/electron versions
 - Downloading Chromedriver matching the Obsidian electron version
@@ -64,7 +64,7 @@ export const config: WebdriverIO.Config = {
 
     framework: 'mocha',
     services: ["obsidian"],
-    // You can use any wdio reporter, but by default they show the chromium version instead of the
+    // You can use any wdio reporter, but by default they show the Chromium version instead of the
     // Obsidian version. obsidian-reporter is just a wrapper around spec-reporter that shows the
     // Obsidian version.
     reporters: ['obsidian'],
