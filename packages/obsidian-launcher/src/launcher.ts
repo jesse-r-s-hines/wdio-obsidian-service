@@ -161,7 +161,7 @@ export class ObsidianLauncher {
      *   - "latest": Get the latest Obsidian installer
      *   - "earliest": Get the oldest Obsidian installer compatible with the specified Obsidian app version
      * 
-     * See also: "Obsidian App vs Installer Versions"
+     * See also: "Obsidian App vs Installer Versions" {@link obsidian-launcher! | README.md}
      *
      * @returns [appVersion, installerVersion] with any "latest" etc. resolved to specific versions.
      */
@@ -1005,7 +1005,7 @@ export class ObsidianLauncher {
     /**
      * Returns true if we either have the credentials to download the version or it's already in cache.
      * This is only relevant for Obsidian beta versions, as they require Obsidian insider credentials to download.
-     * @param version Obsidian app version
+     * @param appVersion Obsidian app version
      */
     async isAvailable(appVersion: string): Promise<boolean> {
         const versionInfo = await this.getVersionInfo(appVersion);

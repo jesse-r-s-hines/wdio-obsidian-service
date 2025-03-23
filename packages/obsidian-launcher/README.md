@@ -36,27 +36,21 @@ different versions of Electron, which can cause subtle differences in plugin beh
 
 You can check your current Obsidian app and installer versions in the General settings tab.
 
-Most ObsidianLauncher commands will take both an `appVersion` and an `installerVersion` parameter, allowing you to test
-the same Obsidian app version on different versions of electron.
+Most ObsidianLauncher methods take both an `appVersion` and an `installerVersion` parameter, allowing you to test the
+same Obsidian app version on different versions of Electron.
 
 `appVersion` can be set to one of:
 - a specific version string like "1.7.7"
 - "latest": run the current latest non-beta Obsidian version
 - "latest-beta": run the current latest beta Obsidian version (or latest is there is no current beta)
-  - This requires setting up Obsidian Insider's credentials, see below.
-- "earliest": run the `minAppVersion` set in set in your plugin's `manifest.json`
+    - To download Obsidian beta versions you'll need to have an Obsidian account with Catalyst and set the 
+      `OBSIDIAN_USERNAME` and `OBSIDIAN_PASSWORD` environment variables. 2FA needs to be disabled.
+- "earliest": run the `minAppVersion` set in your plugin's `manifest.json`
 
 `installerVersion` can be set to one of:
 - a specific version string like "1.7.7"
 - "latest": run the latest Obsidian installer compatible with `appVersion`
 - "earliest": run the oldest Obsidian installer compatible with `appVersion`
-     * To download beta versions you'll need to have an Obsidian account with Catalyst and set the `OBSIDIAN_USERNAME`
-     * and `OBSIDIAN_PASSWORD` environment variables. 2FA needs to be disabled.
-
-## Obsidian Beta Versions
-Obsidian beta versions require require authentication to download, so if you want to run them, you'll need to have an
-Obsidian account with Catalyst. Set the `OBSIDIAN_USERNAME` and `OBSIDIAN_PASSWORD` environment variables and
-ObsidianLauncher will use them to download beta versions. 2FA needs to be disabled.
 
 ## API Docs
 API docs for the package are available [here](https://jesse-r-s-hines.github.io/wdio-obsidian-service/modules/obsidian-launcher.html).
@@ -69,11 +63,11 @@ npx obsidian-launcher [subcommand] ...
 
 ### Plugin and Theme format
 Several commands can take a list of plugins and themes to install. You can specify the `--plugin` and `--theme`
-arguments multiple times to install multiple plugins/themes. For both `--plugin` and `--theme` the format should be one
-of:
+arguments multiple times to install multiple plugins/themes. The format should be one of:
 - `<path>`: Path to a local plugin/theme to install
 - `repo:<github-repo>`: GitHub repo of the plugin/theme to install, e.g. `repo:SilentVoid13/Templater`
-- `id:<community-id>`: Id of a community plugin or theme, e.g. `id:templater-obsidian`
+- `id:<community-id>`: For plugins, id of a community plugin, e.g. `id:templater-obsidian`
+- `name:<community-name>`: For themes, name of a community theme, e.g. `name:Minimal`
 
 ### download
 Download Obsidian to the cache without launching.

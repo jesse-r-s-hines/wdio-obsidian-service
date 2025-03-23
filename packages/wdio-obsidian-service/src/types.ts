@@ -28,27 +28,27 @@ export interface ObsidianCapabilityOptions {
      * Can be set to a specific version or one of:
      * - "latest": Run the current latest non-beta Obsidian version
      * - "latest-beta": Run the current latest beta Obsidian version (or latest is there is no current beta)
+     *   - To download Obsidian beta versions you'll need to have an Obsidian account with Catalyst and set the 
+     *     `OBSIDIAN_USERNAME` and `OBSIDIAN_PASSWORD` environment variables. 2FA needs to be disabled.
      * - "earliest": Run the `minAppVersion` set in set in your `manifest.json`
      * 
      * Defaults to "latest".
      * 
-     * To download beta versions you'll need to have an Obsidian account with Catalyst and set the `OBSIDIAN_USERNAME`
-     * and `OBSIDIAN_PASSWORD` environment variables. 2FA needs to be disabled.
-     * 
      * You can also use the wdio capability `browserVersion` field to set the Obsidian version.
+     * 
+     * See also: "Obsidian App vs Installer Versions" {@link wdio-obsidian-service! | README.md}
      */
     appVersion?: string
 
     /**
      * Version of the Obsidian installer to download and run.
      * 
-     * Note that Obsidian is distributed in two parts, the "installer" which is the executable containing Electron, and
-     * the "app" which is a bundle of JavaScript containing the Obsidian code. Obsidian's self-update system only
-     * updates the JavaScript bundle, and not the base installer/Electron version. This makes Obsidian's auto-update
-     * fast as it only needs to download a few MiB of JS instead of all of Electron. But, it means different users with
-     * the same Obsidian app version may be running on different versions of Electron, which can cause subtle
-     * differences in plugin behavior if you are using newer JavaScript features and the like in your plugin.
+     * Obsidian is distributed in two parts, the app which contains the JS, and the installer which is the binary with
+     * electron. Obsidian's auto update only updates the app, so users on the same Obsidian version can be running
+     * different Electron versions. You can use this to test your plugin against different installer/electron versions.
      * 
+     * See also: "Obsidian App vs Installer Versions" {@link wdio-obsidian-service! | README.md}
+     *
      * Can be set to a specific version string or one of:
      * - "latest": Run the latest Obsidian installer.
      * - "earliest": Run the oldest Obsidian installer compatible with the specified Obsidian app version.
