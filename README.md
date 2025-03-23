@@ -7,16 +7,17 @@ This is a collection of npm packages for end to end testing [Obsidian](https://o
 - [wdio-obsidian-reporter](packages/wdio-obsidian-reporter/README.md): Wrapper around [@wdio/spec-reporter](https://www.npmjs.com/package/@wdio/spec-reporter) that logs Obsidian version instead of Chromium version
 
 For how to set up e2e tests for Obsidian plugins see
-[`wdio-obsidian-service`](https://jesse-r-s-hines.github.io/wdio-obsidian-service/modules/wdio-obsidian-service.html) or
+[wdio-obsidian-service](https://jesse-r-s-hines.github.io/wdio-obsidian-service/modules/wdio-obsidian-service.html) or
 the [sample plugin](https://github.com/jesse-r-s-hines/wdio-obsidian-service-sample-plugin).
 
 API docs for all the packages are available [here](https://jesse-r-s-hines.github.io/wdio-obsidian-service/index.html).
 
 ## Contributing
 PRs and issues welcome! To setup local development just clone the repo and run:
-```
+```bash
 npm install
-npm run build // make sure to re-build before re-running tests
+npm run build
+// make sure to re-build after any codes changes before running the tests
 npm test
 ```
 
