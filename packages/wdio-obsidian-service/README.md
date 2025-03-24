@@ -1,3 +1,4 @@
+[![NPM](https://img.shields.io/npm/v/wdio-obsidian-service)](https://www.npmjs.com/package/wdio-obsidian-service)
 # WDIO Obsidian Service
 
 `wdio-obsidian-service` lets you test [Obsidian](https://obsidian.md) plugins end-to-end using

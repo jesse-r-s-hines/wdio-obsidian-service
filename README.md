@@ -2,9 +2,9 @@
 # WDIO Obsidian Service
 
 This is a collection of npm packages for end to end testing [Obsidian](https://obsidian.md) plugins:
-- [wdio-obsidian-service](packages/wdio-obsidian-service/README.md): A [WebdriverIO](https://webdriver.io) service to test Obsidian plugins
-- [obsidian-launcher](packages/obsidian-launcher/README.md): package for downloading and launching different versions of Obsidian
-- [wdio-obsidian-reporter](packages/wdio-obsidian-reporter/README.md): Wrapper around [@wdio/spec-reporter](https://www.npmjs.com/package/@wdio/spec-reporter) that logs Obsidian version instead of Chromium version
+- [wdio-obsidian-service](https://jesse-r-s-hines.github.io/wdio-obsidian-service/modules/wdio-obsidian-service.html): A [WebdriverIO](https://webdriver.io) service to test Obsidian plugins
+- [obsidian-launcher](https://jesse-r-s-hines.github.io/wdio-obsidian-service/modules/obsidian-launcher.html): package for downloading and launching different versions of Obsidian
+- [wdio-obsidian-reporter](https://jesse-r-s-hines.github.io/wdio-obsidian-service/modules/wdio-obsidian-reporter.html): Wrapper around [@wdio/spec-reporter](https://www.npmjs.com/package/@wdio/spec-reporter) that logs Obsidian version instead of Chromium version
 
 For how to set up e2e tests for Obsidian plugins see
 [wdio-obsidian-service](https://jesse-r-s-hines.github.io/wdio-obsidian-service/modules/wdio-obsidian-service.html) or

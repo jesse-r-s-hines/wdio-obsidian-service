@@ -1,3 +1,4 @@
+[![NPM](https://img.shields.io/npm/v/obsidian-launcher)](https://www.npmjs.com/package/obsidian-launcher)
 # Obsidian Launcher
 
 `obsidian-launcher` is a package for downloading and launching different versions of [Obsidian](https://obsidian.md)
