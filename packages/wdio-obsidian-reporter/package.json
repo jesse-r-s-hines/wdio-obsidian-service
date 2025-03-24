@@ -22,7 +22,8 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/jesse-r-s-hines/wdio-obsidian-service.git"
+        "url": "git+https://github.com/jesse-r-s-hines/wdio-obsidian-service.git",
+        "directory": "packages/wdio-obsidian-reporter"
     },
     "author": "jesse-r-s-hines",
     "license": "MIT",

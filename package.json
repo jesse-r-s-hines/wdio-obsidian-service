@@ -6,6 +6,10 @@
         "packages/*"
     ],
     "bin": {},
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/jesse-r-s-hines/wdio-obsidian-service.git"
+    },
     "scripts": {
         "build": "npm run --workspaces build",
         "version": "node scripts/bumpVersions.mjs",
