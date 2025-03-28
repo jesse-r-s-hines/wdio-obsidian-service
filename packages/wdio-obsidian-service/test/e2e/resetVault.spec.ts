@@ -2,6 +2,8 @@ import { browser } from '@wdio/globals'
 import { expect } from 'chai';
 import { obsidianPage } from 'wdio-obsidian-service';
 import { TFile } from 'obsidian';
+import fsAsync from "fs/promises"
+import path from "path"
 
 
 describe("resetVault", async () => {
@@ -16,12 +18,40 @@ describe("resetVault", async () => {
         })
     }
 
+    async function getFileMtimes() {
+        return await browser.executeObsidian(async ({app}) => {
+            const result: Record<string, number> = {};
+            for (const file of app.vault.getFiles()) {
+                result[file.path] = file.stat.mtime;
+            }
+            return result;
+        })
+    }
+
+    async function getAllFilesFromDisk() {
+        const result: Record<string, string> = {};
+        const vault = (await obsidianPage.getVaultPath())!;
+        for (const file of await fsAsync.readdir(vault, {recursive: true, withFileTypes: true})) {
+            if (file.isFile()) {
+                const absPath = path.join(file.parentPath, file.name);
+                const relPath = path.relative(vault, absPath);
+                const content = await fsAsync.readFile(absPath, 'utf-8');
+                if (!relPath.startsWith(".obsidian")) {
+                    result[relPath] = content.replace(/\r\n/g, '\n');
+                }
+            }
+        }
+        return result;
+    }
+
     it("no change", async () => {
         await browser.reloadObsidian({vault: "./test/vaults/basic"});
         const contentBefore = await getAllFiles();
+        const mtimesBefore = await getFileMtimes();
         expect(Object.keys(contentBefore).sort()).to.eql(["Goodbye.md", "Welcome.md"]);
         await obsidianPage.resetVault();
         expect(await getAllFiles()).to.eql(contentBefore);
+        expect(await getFileMtimes()).to.eql(mtimesBefore);
     })
 
     it("update file", async () => {
@@ -119,6 +149,27 @@ describe("resetVault", async () => {
             'B/C.md': "updated",
             'B/D/E.md': "File E\n",
             "Z.md": "new",
+        });
+    })
+
+    it("hidden files", async () => {
+        await browser.reloadObsidian({vault: "./test/vaults/basic"});
+        await obsidianPage.resetVault("./test/vaults/nested", {
+            ".file": "hidden file",
+            ".folder/bar.md": "hidden folder",
+        });
+        expect(await getAllFilesFromDisk()).to.eql({
+            'A.md': "File A\n",
+            'B/C.md': "File C\n",
+            'B/D/E.md': "File E\n",
+            ".file": "hidden file",
+            ".folder/bar.md": "hidden folder",
+        });
+        await obsidianPage.resetVault("./test/vaults/nested");
+        expect(await getAllFilesFromDisk()).to.eql({
+            'A.md': "File A\n",
+            'B/C.md': "File C\n",
+            'B/D/E.md': "File E\n",
         });
     })
 })
