@@ -36,6 +36,8 @@ export interface ExecuteObsidianArg {
      * ```
      */
     plugins: InstalledPlugins,
+
+    require: NodeJS.Require,
 }
 
 const browserCommands = {
@@ -59,8 +61,8 @@ const browserCommands = {
      * - app: Obsidian app instance
      * - obsidian: Full Obsidian API
      * - plugins: Object of all installed plugins, mapped by plugin id converted to camelCase.
-     * 
-     * You can use `require` inside the function to fetch Obsidian modules, same as you can inside plugins.
+     * - require: The customized require function Obsidian makes available to plugins. This is also made available
+     *            globally, so you can just use `require` directly instead of from ExecuteObsidianArg if you prefer.
      * 
      * Like `brower.execute`, you can pass other extra arguments to the function.
      * 

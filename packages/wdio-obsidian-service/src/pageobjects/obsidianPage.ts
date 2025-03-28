@@ -209,9 +209,9 @@ class ObsidianPage {
             }
         }
 
-        await browser.executeObsidian(async ({app}, instructions) => {
-            // the require is getting transpiled by tsup, so pull it directly from wdioObsidianService
-            const fs = (window as any).wdioObsidianService.require('fs');
+        await browser.executeObsidian(async ({app, require}, instructions) => {
+            // the require is getting transpiled by tsup, so use it from args instead of globally
+            const fs = require('fs');
     
             for (const {action, path, sourcePath, sourceContent} of instructions) {
                 const isHidden = path.split("/").some(p => p.startsWith("."));
