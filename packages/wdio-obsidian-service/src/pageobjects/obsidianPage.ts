@@ -39,6 +39,15 @@ class ObsidianPage {
     }
 
     /**
+     * Return the path to the Obsidian config dir (".obsidian" unless you've changed it explicitly)
+     */
+    async getConfigDir(): Promise<string> {
+        return await browser.executeObsidian(({app}) => {
+            return app.vault.configDir;
+        })
+    }
+
+    /**
      * Enables a plugin by ID
      */
     async enablePlugin(pluginId: string): Promise<void> {
@@ -91,13 +100,14 @@ class ObsidianPage {
         if (typeof layout == "string") {
             // read from .obsidian/workspaces.json like the built-in workspaces plugin does
             const vaultPath = (await this.getVaultPath())!;
-            const workspacesPath = path.join(vaultPath, '.obsidian/workspaces.json');
+            const configDir = await this.getConfigDir();
+            const workspacesPath = path.join(vaultPath, configDir, 'workspaces.json');
             const layoutName = layout;
             try {
                 const fileContent = await fsAsync.readFile(workspacesPath, 'utf-8');
                 layout = JSON.parse(fileContent)?.workspaces?.[layoutName];
             } catch {
-                throw new Error(`No workspace ${layoutName} found in .obsidian/workspaces.json`);
+                throw new Error(`No workspace ${layoutName} found in ${configDir}/workspaces.json`);
             }
         }
 
@@ -134,13 +144,14 @@ class ObsidianPage {
     async resetVault(...vaults: (string|Record<string, string>)[]) {
         const origVaultPath: string = browser.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].vault;
         vaults = vaults.length == 0 ? [origVaultPath] : vaults;
+        const configDir = await this.getConfigDir();
 
         async function readVaultFiles(vault: string): Promise<Map<string, fs.Stats>> {
             const files = await fsAsync.readdir(vault, { recursive: true, withFileTypes: true });
             const paths = files
                 .filter(f => f.isFile())
                 .map(f => path.relative(vault, path.join(f.parentPath, f.name)).split(path.sep).join("/"))
-                .filter(f => !f.startsWith(".obsidian/"));
+                .filter(f => !f.startsWith(configDir + "/"));
             const promises = paths.map(async (p) => [p, await fsAsync.stat(path.join(vault, p))] as const);
             return new Map(await Promise.all(promises));
         }
