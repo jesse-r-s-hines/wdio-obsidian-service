@@ -1,3 +1,7 @@
+/**
+ * @module
+ * @document ../README.md
+ */
 import SpecReporter from '@wdio/spec-reporter';
 import { RunnerStats } from "@wdio/reporter"
 import { Reporters } from "@wdio/types"

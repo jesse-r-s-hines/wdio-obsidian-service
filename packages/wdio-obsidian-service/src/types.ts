@@ -36,7 +36,7 @@ export interface ObsidianCapabilityOptions {
      * 
      * You can also use the wdio capability `browserVersion` field to set the Obsidian version.
      * 
-     * See also: "Obsidian App vs Installer Versions" {@link wdio-obsidian-service! | README.md}
+     * See also: [Obsidian App vs Installer Versions](../README.md#obsidian-app-vs-installer-versions)
      */
     appVersion?: string
 
@@ -47,7 +47,7 @@ export interface ObsidianCapabilityOptions {
      * electron. Obsidian's auto update only updates the app, so users on the same Obsidian version can be running
      * different Electron versions. You can use this to test your plugin against different installer/electron versions.
      * 
-     * See also: "Obsidian App vs Installer Versions" {@link wdio-obsidian-service! | README.md}
+     * See also: [Obsidian App vs Installer Versions](../README.md#obsidian-app-vs-installer-versions)
      *
      * Can be set to a specific version string or one of:
      * - "latest": Run the latest Obsidian installer.

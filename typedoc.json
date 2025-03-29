@@ -1,5 +1,6 @@
 {
     "$schema": "https://typedoc.org/schema.json",
+    "name": "WDIO Obsidian Service",
     "entryPointStrategy": "packages",
     "entryPoints": ["packages/*"],
     "out": "./generated-docs",
@@ -13,9 +14,14 @@
         "GitHub": "https://github.com/jesse-r-s-hines/wdio-obsidian-service"
     },
     "visibilityFilters": {},
+    "headings": {
+        "readme": false,
+        "document": false
+    },
+    "router": "structure",
     "packageOptions": {
         "entryPoints": ["src/index.ts"],
-        "readme": "./README.md",
+        "readme": "none",
         "sort": [
             "kind",
             "instance-first",

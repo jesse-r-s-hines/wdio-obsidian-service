@@ -1,3 +1,7 @@
+/**
+ * @module
+ * @document ../README.md
+ */
 import ObsidianLauncher from "obsidian-launcher";
 import { ObsidianLauncherService, ObsidianWorkerService } from "./service.js";
 /** @hidden */
@@ -13,7 +17,7 @@ export type { PluginEntry, DownloadedPluginEntry, ThemeEntry, DownloadedThemeEnt
 
 export { minSupportedObsidianVersion } from "./service.js";
 
-// Some convenience helpers for use in wdio.conf.ts
+// Some convenience helpers for use in wdio.conf.(m)ts
 
 /**
  * Returns true if there is a current Obsidian beta and we have the credentials to download it, or its already in cache.

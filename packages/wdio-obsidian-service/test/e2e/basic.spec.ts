@@ -1,5 +1,6 @@
 import { browser } from '@wdio/globals'
 import { expect } from 'chai';
+import path from "path"
 import { OBSIDIAN_CAPABILITY_KEY } from '../../src/types.js';
 import { obsidianPage } from 'wdio-obsidian-service';
 
@@ -25,8 +26,12 @@ describe("Basic obsidian launch", () => {
 
     it('Vault opened', async () => {
         const vaultPath = await browser.executeObsidian(({app}) => (app.vault.adapter as any).getBasePath());
+        await browser.executeObsidian(({app}) => {
+            require('fs')
+        });
+
         // Should have created a copy of vault
-        expect(vaultPath).to.contain("obs-launcher-vault-");
+        expect(path.basename(vaultPath).startsWith("basic-")).to.eql(true);
 
         const vaultFiles = await browser.executeObsidian(({app}) =>
             app.vault.getMarkdownFiles().map(x => x.path).sort()

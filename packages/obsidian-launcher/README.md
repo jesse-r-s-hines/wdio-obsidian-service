@@ -7,7 +7,7 @@ vaults, and launch sandboxed Obsidian instances with isolated user configuration
 a JavaScript package or as a command line interface.
 
 The primary use case for this package is downloading and launching Obsidian for testing Obsidian plugins in WebdriverIO
-with [wdio-obsidian-service](https://jesse-r-s-hines.github.io/wdio-obsidian-service/modules/wdio-obsidian-service.html). 
+with [wdio-obsidian-service](../wdio-obsidian-service/README.md). 
 However, it can also be used as a stand-alone package, for instance if you want to test plugins with a different 
 testing framework, or just want to use the provided CLI.
 
@@ -54,7 +54,7 @@ same Obsidian app version on different versions of Electron.
 - "earliest": run the oldest Obsidian installer compatible with `appVersion`
 
 ## API Docs
-API docs for the package are available [here](https://jesse-r-s-hines.github.io/wdio-obsidian-service/modules/obsidian-launcher.html).
+API docs for the package are available [here](https://jesse-r-s-hines.github.io/wdio-obsidian-service/obsidian-launcher/README.html).
 
 ## CLI
 `obsidian-launcher` also provides a CLI interface which can be used via `npx`

@@ -185,8 +185,8 @@ program
         if (copy) {
             console.log(`Vault copied to ${vaultCopy}`);
         }
-        proc.stdout!.on('data', data => console.log(data.toString()));
-        proc.stderr!.on('data', data => console.log(data.toString()));
+        proc.stdout!.on('data', data => console.log(`obsidian: ${data}`));
+        proc.stderr!.on('data', data => console.log(`obsidian: ${data}`));
         const procExit = new Promise<number>((resolve) => proc.on('exit', (code) => resolve(code ?? -1)));
 
         for (const plugin of plugins) {

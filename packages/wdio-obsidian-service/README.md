@@ -2,18 +2,21 @@
 # WDIO Obsidian Service
 
 `wdio-obsidian-service` lets you test [Obsidian](https://obsidian.md) plugins end-to-end using
-[WebdriverIO](https://webdriver.io). The service will handle:
+[WebdriverIO](https://webdriver.io). The service handles:
 - Downloading and installing Obsidian
 - Testing your plugin on different Obsidian app versions and installer/electron versions
 - Opening and switching between test vaults during your tests
 - Downloading Chromedriver matching the Obsidian electron version
-- Sandboxing Obsidian so tests don't interfere with your system Obsidian installation
+- Sandboxing Obsidian so tests don't interfere with your system Obsidian installation or each other
+- Running tests in parallel
 - Provides helper functions for common testing tasks
 
 ## Installation and Setup
-If you want to get going quickly, you can checkout the
+If you want to get going quickly, you can use the
 [wdio-obsidian-service sample plugin](https://github.com/jesse-r-s-hines/wdio-obsidian-service-sample-plugin) which has
-all the setup you need to build and e2e test Obsidian plugins, including GitHub CI workflows.
+all the setup you need to build and end-to-end test Obsidian plugins, including GitHub CI workflows.
+
+See also: [WebdriverIO | Getting Started](https://webdriver.io/docs/gettingstarted).
 
 To setup wdio-obsidian-service manually, run the WebdriverIO Starter Toolkit:
 ```bash
@@ -41,7 +44,7 @@ And add this `tsconfig.json`:
 }
 ```
 
-Setup `wdio.conf.ts`  like so:
+Setup your `wdio.conf.ts` like so:
 ```ts
 import * as path from "path"
 
@@ -57,10 +60,16 @@ export const config: WebdriverIO.Config = {
 
     capabilities: [{
         browserName: 'obsidian',
+        // obsidian app version to download
         browserVersion: "latest",
         'wdio:obsidianOptions': {
+            // obsidian installer version
+            // (see "Obsidian App vs Installer Versions" below)
             installerVersion: "earliest",
             plugins: ["."],
+            // If you need to switch between multiple vaults, you can omit
+            // this and use reloadObsidian to open vaults during the tests
+            vault: "test/vaults/simple",
         },
     }],
 
@@ -106,10 +115,40 @@ describe('Test my plugin', function() {
 })
 ```
 
-You can see the [sample plugin](https://github.com/jesse-r-s-hines/wdio-obsidian-service-sample-plugin) for more
-examples of how to write `wdio.conf.ts` and your e2e tests.
+`wdio-obsidian-service` has a few helper functions that can be useful in your wdio conf, such as `obsidianBetaAvailable`
+which checks if there's a current Obsidian beta and you have the credentials to download it. E.g. to test your
+`minAppVersion`, `latest`, and `latest-beta` if it's available use:
+```ts
+import { obsidianBetaAvailable } from "wdio-obsidian-service";
+const cacheDir = path.resolve(".obsidian-cache");
 
-See also: [WebdriverIO | Getting Started](https://webdriver.io/docs/gettingstarted).
+const versions: [string, string][] = [
+    ["earliest", "earliest"],
+    ["latest", "latest"],
+];
+if (await obsidianBetaAvailable(cacheDir)) {
+    versions.push(["latest-beta", "latest"]);
+}
+
+export const config: WebdriverIO.Config = {
+    cacheDir: cacheDir,
+
+    capabilities: versions.map(([appVersion, installerVersion]) => ({
+        browserName: 'obsidian',
+        browserVersion: appVersion,
+        'wdio:obsidianOptions': {
+            installerVersion: installerVersion,
+            plugins: ["."],
+        },
+    })),
+
+    // ...
+}
+```
+Note, to use top-level await you'll need to rename `wdio.conf.ts` to `wdio.conf.mts` so it's loaded as an ESM module.
+
+You can see the [sample plugin](https://github.com/jesse-r-s-hines/wdio-obsidian-service-sample-plugin) for more
+examples of how to write your wdio conf and e2e tests.
 
 ### Platform Support
 `wdio-obsidian-service` works on Windows, Linux, and MacOS.
@@ -131,7 +170,7 @@ different versions of Electron, which can cause subtle differences in plugin beh
 
 You can check your current Obsidian app and installer versions in the General settings tab.
 
-You can specify both `appVersion` and `installerVersion` in your `wdio.conf.ts` capabilities section.
+You can specify both `appVersion` and `installerVersion` in your `wdio.conf.mts` capabilities section.
 
 To set the app version use `browserVersion` or `'wdio:obsidianOptions'.appVersion`. It can be set to one of:
 - a specific version string like "1.7.7"
@@ -147,7 +186,7 @@ To set the installer version use `'wdio:obsidianOptions'.installerVersion`. It c
 - "earliest": run the oldest Obsidian installer compatible with `appVersion`
 
 You can see more configuration options for the capabilities
-[here](https://jesse-r-s-hines.github.io/wdio-obsidian-service/interfaces/wdio-obsidian-service.ObsidianCapabilityOptions.html)
+[here](https://jesse-r-s-hines.github.io/wdio-obsidian-service/wdio-obsidian-service/ObsidianCapabilityOptions.html)
 
 ### Opening and Switching between Vaults
 If all your tests use the same vault, you can set the vault in the `wdio:obsidianOptions` capabilities section. If you
@@ -180,13 +219,13 @@ it("test the thing", async function() {
 
 ### API Docs
 API docs, including all configuration options and helper functions, are available
-[here](https://jesse-r-s-hines.github.io/wdio-obsidian-service/modules/wdio-obsidian-service.html).
+[here](https://jesse-r-s-hines.github.io/wdio-obsidian-service/wdio-obsidian-service/README.html).
 
 ### GitHub CI Workflows
-The sample plugin has workflows already setup to release and test your plugin, which you can see
-[here](https://github.com/jesse-r-s-hines/wdio-obsidian-service-sample-plugin/tree/main/.github/workflows).
+The sample plugin has workflows setup to release and test your plugin, which you can see
+[here](https://github.com/jesse-r-s-hines/wdio-obsidian-service-sample-plugin#github-workflows).
 
 ### obsidian-launcher CLI
 `wdio-obsidian-service` depends on `obsidian-launcher` so the `obsidian-launcher` CLI is also available, with some 
 commands for launching different Obsidian versions. CLI docs available
-[here](https://jesse-r-s-hines.github.io/wdio-obsidian-service/modules/obsidian-launcher.html#cli).
+[here](https://jesse-r-s-hines.github.io/wdio-obsidian-service/obsidian-launcher/README.html#cli).

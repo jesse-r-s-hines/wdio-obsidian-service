@@ -1,4 +1,5 @@
 import * as path from "path"
+import * as fs from "fs"
 import * as fsAsync from "fs/promises"
 import { OBSIDIAN_CAPABILITY_KEY } from "../types.js";
 import { TFile } from "obsidian";
@@ -16,6 +17,8 @@ import _ from "lodash";
  * ```ts
  * import { obsidianPage } from "wdio-obsidian-service";
  * ```
+ * 
+ * @hideconstructor
  */
 class ObsidianPage {
     /**
@@ -35,6 +38,15 @@ class ObsidianPage {
                 };
             })
         }
+    }
+
+    /**
+     * Return the path to the Obsidian config dir (".obsidian" unless you've changed it explicitly)
+     */
+    async getConfigDir(): Promise<string> {
+        return await browser.executeObsidian(({app}) => {
+            return app.vault.configDir;
+        })
     }
 
     /**
@@ -90,13 +102,14 @@ class ObsidianPage {
         if (typeof layout == "string") {
             // read from .obsidian/workspaces.json like the built-in workspaces plugin does
             const vaultPath = (await this.getVaultPath())!;
-            const workspacesPath = path.join(vaultPath, '.obsidian/workspaces.json');
+            const configDir = await this.getConfigDir();
+            const workspacesPath = path.join(vaultPath, configDir, 'workspaces.json');
             const layoutName = layout;
             try {
                 const fileContent = await fsAsync.readFile(workspacesPath, 'utf-8');
                 layout = JSON.parse(fileContent)?.workspaces?.[layoutName];
             } catch {
-                throw new Error(`No workspace ${layoutName} found in .obsidian/workspaces.json`);
+                throw new Error(`No workspace ${layoutName} found in ${configDir}/workspaces.json`);
             }
         }
 
@@ -133,76 +146,120 @@ class ObsidianPage {
     async resetVault(...vaults: (string|Record<string, string>)[]) {
         const origVaultPath: string = browser.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].vault;
         vaults = vaults.length == 0 ? [origVaultPath] : vaults;
+        const configDir = await this.getConfigDir();
 
-        const newVaultFiles: Record<string, {content?: string, path?: string}> = {};
+        async function readVaultFiles(vault: string): Promise<Map<string, fs.Stats>> {
+            const files = await fsAsync.readdir(vault, { recursive: true, withFileTypes: true });
+            const paths = files
+                .filter(f => f.isFile())
+                .map(f => path.relative(vault, path.join(f.parentPath, f.name)).split(path.sep).join("/"))
+                .filter(f => !f.startsWith(configDir + "/"));
+            const promises = paths.map(async (p) => [p, await fsAsync.stat(path.join(vault, p))] as const);
+            return new Map(await Promise.all(promises));
+        }
+
+        function getFolders(files: Iterable<string>): Set<string> {
+            return new Set([...files].map(p => path.dirname(p)).filter(p => p != '.'));
+        }
+
+        // merge the vaults
+        const newFiles: Map<string, {stat?: fs.Stats, sourcePath?: string, sourceContent?: string}> = new Map();
         for (let vault of vaults) {
             if (typeof vault == "string") {
                 vault = path.resolve(vault);
-                const files = await fsAsync.readdir(vault, { recursive: true, withFileTypes: true });
-                for (const file of files) {
-                    const absPath = path.join(file.parentPath, file.name);
-                    const obsPath = path.relative(vault, absPath).split(path.sep).join("/");
-                    if (file.isFile() && !obsPath.startsWith(".obsidian/")) {
-                        newVaultFiles[obsPath] = {path: absPath};
-                    }
+                for (const [file, stat] of await readVaultFiles(vault)) {
+                    newFiles.set(file, {stat, sourcePath: path.join(vault, file)});
                 }
             } else {
-                for (const [file, content] of Object.entries(vault)) {
-                    newVaultFiles[file] = {content};
+                for (const [file, sourceContent] of Object.entries(vault)) {
+                    newFiles.set(file, {sourceContent});
                 }
             }
         }
 
-        // Get all subfolders in the new vault, sort parents are before children
-        const newVaultFolders = _(newVaultFiles)
-            .keys()
-            .map(p => path.dirname(p))
-            .filter(p => p != ".")
-            .sort().uniq()
-            .value();
+        // calculate the changes needed to the current vault
+        const newFolders = getFolders(newFiles.keys());
+        const currFiles = await readVaultFiles((await obsidianPage.getVaultPath())!);
+        const currFolders = getFolders(currFiles.keys());
 
-        await browser.executeObsidian(async ({app, obsidian}, newVaultFolders, newVaultFiles) => {
-            // the require is getting transpiled by tsup, so pull it directly from wdioObsidianService
-            const fs = (window as any).wdioObsidianService.require('fs');
+        type FileUpdateInstruction = {
+            action: string, path: string,
+            sourcePath?: string, sourceContent?: string,
+        };
+        const instructions: FileUpdateInstruction[] = [];
 
-            // "rsync" the vault
-            for (const newFolder of newVaultFolders) {
-                let currFile = app.vault.getAbstractFileByPath(newFolder);
-                if (currFile && currFile instanceof obsidian.TFile) {
-                    await app.vault.delete(currFile);
-                    currFile = null;
-                }
-                if (!currFile) {
-                    await app.vault.createFolder(newFolder);
-                }
+        // delete files
+        for (const currFile of currFiles.keys()) {
+            if (!newFiles.has(currFile)) {
+                instructions.push({action: "delete-file", path: currFile});
             }
-            // sort reversed, so children are before parents
-            const currVaultFolders = app.vault.getAllLoadedFiles()
-                .filter(f => f instanceof obsidian.TFolder)
-                .sort((a, b) => b.path.localeCompare(a.path));
-            const newVaultFoldersSet = new Set(newVaultFolders)
-            for (const currFolder of currVaultFolders) {
-                if (!newVaultFoldersSet.has(currFolder.path)) {
-                    await app.vault.delete(currFolder, true);
-                }
+        }
+        // delete folders, sort so children are before parents
+        for (const currFolder of [...currFolders].sort().reverse()) {
+            if (!newFolders.has(currFolder)) {
+                instructions.push({action: "delete-folder", path: currFolder});
             }
+        }
+        // create folders, sort so parents are before children
+        for (const newFolder of [...newFolders].sort()) {
+            if (!currFolders.has(newFolder)) {
+                instructions.push({action: "create-folder", path: newFolder});
+            }
+        }
+        // create/modify files
+        for (let [newFile, newFileInfo] of newFiles.entries()) {
+            const {stat: newStat, sourcePath, sourceContent} = newFileInfo;
+            const args = {path: newFile, sourcePath, sourceContent};
+            const currStat = currFiles.get(newFile);
+            if (!currStat) {
+                instructions.push({action: "create-file", ...args});
+            } else if ( // check if file has changed (setupVault preserves mtimes)
+                !newStat ||
+                currStat.mtime.getTime() != newStat.mtime.getTime() ||
+                currStat.size != newStat.size
+            ) {
+                instructions.push({action: "modify-file", ...args});
+            }
+        }
 
-            for (let [newFilePath, newFileSource] of Object.entries(newVaultFiles)) {
-                let currFile = app.vault.getAbstractFileByPath(newFilePath);
-                const content = newFileSource.content ?? await fs.readFileSync(newFileSource.path!, 'utf-8');
-                if (currFile) {
-                    await app.vault.modify(currFile as TFile, content);
+        await browser.executeObsidian(async ({app, require}, instructions) => {
+            // the require is getting transpiled by tsup, so use it from args instead of globally
+            const fs = require('fs');
+    
+            for (const {action, path, sourcePath, sourceContent} of instructions) {
+                const isHidden = path.split("/").some(p => p.startsWith("."));
+                if (action == "delete-file") {
+                    if (isHidden) {
+                        await app.vault.adapter.remove(path);
+                    } else {
+                        await app.vault.delete(app.vault.getAbstractFileByPath(path)!);
+                    }
+                } else if (action == "delete-folder") {
+                    if (isHidden) {
+                        await app.vault.adapter.rmdir(path, true);
+                    } else {
+                        await app.vault.delete(app.vault.getAbstractFileByPath(path)!, true);
+                    }
+                } else if (action == "create-folder") {
+                    if (isHidden) {
+                        await app.vault.adapter.mkdir(path);
+                    } else {
+                        await app.vault.createFolder(path);
+                    }
+                } else if (action == "create-file" || action == "modify-file") {
+                    const content = sourceContent ?? await fs.readFileSync(sourcePath!, 'utf-8');
+                    if (isHidden) {
+                        await app.vault.adapter.write(path, content);
+                    } else if (action == "modify-file") {
+                        await app.vault.modify(app.vault.getAbstractFileByPath(path) as TFile, content);
+                    } else { // action == "create-file"
+                        await app.vault.create(path, content);
+                    }
                 } else {
-                    await app.vault.create(newFilePath, content);
+                    throw Error(`Unknown action ${action}`)
                 }
             }
-            const newVaultFilesSet = new Set(Object.keys(newVaultFiles));
-            for (const currVaultFile of app.vault.getFiles()) {
-                if (!newVaultFilesSet.has(currVaultFile.path)) {
-                    await app.vault.delete(currVaultFile);
-                }
-            }
-        }, newVaultFolders, newVaultFiles);
+        }, instructions);
     }
 }
 

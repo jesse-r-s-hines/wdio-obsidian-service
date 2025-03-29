@@ -31,14 +31,15 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/jesse-r-s-hines/wdio-obsidian-service.git"
+        "url": "git+https://github.com/jesse-r-s-hines/wdio-obsidian-service.git",
+        "directory": "packages/obsidian-launcher"
     },
     "author": "jesse-r-s-hines",
     "license": "MIT",
     "bugs": {
         "url": "https://github.com/jesse-r-s-hines/wdio-obsidian-service/issues"
     },
-    "homepage": "https://jesse-r-s-hines.github.io/wdio-obsidian-service/modules/obsidian-launcher.html",
+    "homepage": "https://jesse-r-s-hines.github.io/wdio-obsidian-service/obsidian-launcher/README.html",
     "devDependencies": {
         "@types/chai": "^5.0.1",
         "@types/chrome-remote-interface": "^0.31.14",
