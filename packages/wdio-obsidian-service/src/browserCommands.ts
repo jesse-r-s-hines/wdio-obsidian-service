@@ -149,7 +149,7 @@ export type ObsidianBrowserCommands = PlainObsidianBrowserCommands & {
      * Obsidian.
      * 
      * As this does a full reboot of Obsidian, avoid calling this too often so you don't slow your tests down.
-     * You can also set the vault in the `wdio.conf.ts` capabilities section which may be useful if all your
+     * You can also set the vault in the `wdio.conf.(m)ts` capabilities section which may be useful if all your
      * tests use the same vault.
      * 
      * @param params.vault Path to the vault to open. The vault will be copied, so any changes made in your tests won't

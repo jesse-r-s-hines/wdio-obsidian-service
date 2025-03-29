@@ -1,8 +1,9 @@
 [![Test](https://github.com/jesse-r-s-hines/wdio-obsidian-service/actions/workflows/test.yaml/badge.svg?branch=main)](https://github.com/jesse-r-s-hines/wdio-obsidian-service/actions/workflows/test.yaml)
 # WDIO Obsidian Service
 
-This is a collection of npm packages for end to end testing [Obsidian](https://obsidian.md) plugins:
-- [wdio-obsidian-service](./packages/wdio-obsidian-service/README.md): A [WebdriverIO](https://webdriver.io) service to test Obsidian plugins
+This is a collection of npm packages for end to end testing [Obsidian](https://obsidian.md) plugins with
+[WebdriverIO](https://webdriver.io):
+- [wdio-obsidian-service](./packages/wdio-obsidian-service/README.md): A WebdriverIO service to test Obsidian plugins
 - [obsidian-launcher](./packages/obsidian-launcher/README.md): Package for downloading and launching different versions of Obsidian
 - [wdio-obsidian-reporter](./packages/wdio-obsidian-reporter/README.md): Wrapper around [@wdio/spec-reporter](https://www.npmjs.com/package/@wdio/spec-reporter) that logs Obsidian version instead of Chromium version
 
