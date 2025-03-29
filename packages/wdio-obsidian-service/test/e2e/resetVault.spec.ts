@@ -34,7 +34,7 @@ describe("resetVault", async () => {
         for (const file of await fsAsync.readdir(vault, {recursive: true, withFileTypes: true})) {
             if (file.isFile()) {
                 const absPath = path.join(file.parentPath, file.name);
-                const relPath = path.relative(vault, absPath);
+                const relPath = path.relative(vault, absPath).split(path.sep).join('/');
                 const content = await fsAsync.readFile(absPath, 'utf-8');
                 if (!relPath.startsWith(".obsidian")) {
                     result[relPath] = content.replace(/\r\n/g, '\n');
