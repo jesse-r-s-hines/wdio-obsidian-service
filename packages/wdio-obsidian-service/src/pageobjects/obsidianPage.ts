@@ -17,6 +17,8 @@ import _ from "lodash";
  * ```ts
  * import { obsidianPage } from "wdio-obsidian-service";
  * ```
+ * 
+ * @hideconstructor
  */
 class ObsidianPage {
     /**
