@@ -817,7 +817,7 @@ export class ObsidianLauncher {
     }): Promise<string> {
         let vault = params.vault;
         if (params.copy) {
-            const dest = await makeTmpDir('obs-launcher-vault-');
+            const dest = await makeTmpDir(`${path.basename(vault)}-`);
             await fsAsync.cp(vault, dest, { recursive: true, preserveTimestamps: true });
             vault = dest;
         }
