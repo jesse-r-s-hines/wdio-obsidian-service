@@ -18,9 +18,10 @@
         "readme": false,
         "document": false
     },
+    "router": "structure",
     "packageOptions": {
         "entryPoints": ["src/index.ts"],
-        "readme": "./README.md",
+        "readme": "none",
         "sort": [
             "kind",
             "instance-first",

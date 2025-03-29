@@ -147,7 +147,7 @@ To set the installer version use `'wdio:obsidianOptions'.installerVersion`. It c
 - "earliest": run the oldest Obsidian installer compatible with `appVersion`
 
 You can see more configuration options for the capabilities
-[here](https://jesse-r-s-hines.github.io/wdio-obsidian-service/interfaces/wdio-obsidian-service.ObsidianCapabilityOptions.html)
+[here](https://jesse-r-s-hines.github.io/wdio-obsidian-service/wdio-obsidian-service/ObsidianCapabilityOptions.html)
 
 ### Opening and Switching between Vaults
 If all your tests use the same vault, you can set the vault in the `wdio:obsidianOptions` capabilities section. If you
@@ -180,7 +180,7 @@ it("test the thing", async function() {
 
 ### API Docs
 API docs, including all configuration options and helper functions, are available
-[here](https://jesse-r-s-hines.github.io/wdio-obsidian-service/modules/wdio-obsidian-service.html).
+[here](https://jesse-r-s-hines.github.io/wdio-obsidian-service/wdio-obsidian-service/README.html).
 
 ### GitHub CI Workflows
 The sample plugin has workflows already setup to release and test your plugin, which you can see
@@ -189,4 +189,4 @@ The sample plugin has workflows already setup to release and test your plugin, w
 ### obsidian-launcher CLI
 `wdio-obsidian-service` depends on `obsidian-launcher` so the `obsidian-launcher` CLI is also available, with some 
 commands for launching different Obsidian versions. CLI docs available
-[here](https://jesse-r-s-hines.github.io/wdio-obsidian-service/modules/obsidian-launcher.html#cli).
+[here](https://jesse-r-s-hines.github.io/wdio-obsidian-service/obsidian-launcher/README.html#cli).

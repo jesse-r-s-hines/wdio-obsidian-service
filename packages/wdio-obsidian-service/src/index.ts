@@ -1,3 +1,7 @@
+/**
+ * @module
+ * @document ../README.md
+ */
 import ObsidianLauncher from "obsidian-launcher";
 import { ObsidianLauncherService, ObsidianWorkerService } from "./service.js";
 /** @hidden */

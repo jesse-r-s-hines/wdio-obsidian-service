@@ -161,7 +161,7 @@ export class ObsidianLauncher {
      *   - "latest": Get the latest Obsidian installer
      *   - "earliest": Get the oldest Obsidian installer compatible with the specified Obsidian app version
      * 
-     * See also: "Obsidian App vs Installer Versions" {@link obsidian-launcher! | README.md}
+     * See also: [Obsidian App vs Installer Versions](../README.md#obsidian-app-vs-installer-versions)
      *
      * @returns [appVersion, installerVersion] with any "latest" etc. resolved to specific versions.
      */

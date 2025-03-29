@@ -35,7 +35,7 @@
     "bugs": {
         "url": "https://github.com/jesse-r-s-hines/wdio-obsidian-service/issues"
     },
-    "homepage": "https://jesse-r-s-hines.github.io/wdio-obsidian-service/modules/wdio-obsidian-service.html",
+    "homepage": "https://jesse-r-s-hines.github.io/wdio-obsidian-service/wdio-obsidian-service/README.html",
     "devDependencies": {
         "@types/chai": "^5.0.1",
         "@types/lodash": "^4.17.14",
