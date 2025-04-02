@@ -50,8 +50,8 @@ export interface ObsidianCapabilityOptions {
      * See also: [Obsidian App vs Installer Versions](../README.md#obsidian-app-vs-installer-versions)
      *
      * Can be set to a specific version string or one of:
-     * - "latest": Run the latest Obsidian installer.
-     * - "earliest": Run the oldest Obsidian installer compatible with the specified Obsidian app version.
+     * - "latest": Run the latest Obsidian installer compatible with `appVersion`.
+     * - "earliest": Run the oldest Obsidian installer compatible with `appVersion`.
      * 
      * Defaults to "earliest".
      */

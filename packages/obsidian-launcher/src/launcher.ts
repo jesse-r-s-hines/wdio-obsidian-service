@@ -158,8 +158,8 @@ export class ObsidianLauncher {
      *   - "latest-beta": Get the current latest beta Obsidian version (or latest is there is no current beta)
      *   - "earliest": Get the `minAppVersion` set in set in your `manifest.json`
      * @param installerVersion Obsidian version string or one of 
-     *   - "latest": Get the latest Obsidian installer
-     *   - "earliest": Get the oldest Obsidian installer compatible with the specified Obsidian app version
+     *   - "latest": Get the latest Obsidian installer compatible with `appVersion`
+     *   - "earliest": Get the oldest Obsidian installer compatible with `appVersion`
      * 
      * See also: [Obsidian App vs Installer Versions](../README.md#obsidian-app-vs-installer-versions)
      *
@@ -225,7 +225,7 @@ export class ObsidianLauncher {
     }
 
     /**
-     * Downloads the Obsidian installer for the given version and platform. Returns the file path.
+     * Downloads the Obsidian installer for the given version and current platform. Returns the file path.
      * @param installerVersion Obsidian installer version to download
      */
     async downloadInstaller(installerVersion: string): Promise<string> {
@@ -311,7 +311,7 @@ export class ObsidianLauncher {
     }
 
     /**
-     * Downloads the Obsidian asar for the given version and platform. Returns the file path.
+     * Downloads the Obsidian asar for the given version. Returns the file path.
      * 
      * To download beta versions you'll need to have an Obsidian account with Catalyst and set the `OBSIDIAN_USERNAME`
      * and `OBSIDIAN_PASSWORD` environment variables. 2FA needs to be disabled.
