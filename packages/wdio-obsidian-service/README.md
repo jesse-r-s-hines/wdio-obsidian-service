@@ -27,7 +27,7 @@ Delete the generated `pageobjects` dir for now, or replace it with a stub for la
 
 Then install `wdio-obsidian-service` and other deps:
 ```bash
-npm install --save-dev wdio-obsidian-service wdio-obsidian-reporter mocha @types/mocha chai @types/chai @types/node
+npm install --save-dev wdio-obsidian-service wdio-obsidian-reporter mocha @types/mocha @types/node
 ```
 
 And add this `tsconfig.json`:
@@ -95,7 +95,6 @@ export const config: WebdriverIO.Config = {
 Create a file `test/specs/test.e2e.ts` with something like:
 ```ts
 import { browser } from '@wdio/globals'
-import { expect } from 'chai';
 
 describe('Test my plugin', function() {
     before(async function() {
@@ -109,8 +108,8 @@ describe('Test my plugin', function() {
             "sample-plugin:open-sample-modal-simple",
         );
         const modalEl = browser.$(".modal-container .modal-content");
-        expect(await modalEl.isExisting()).to.equal(true);
-        expect(await modalEl.getText()).to.equal("Woah!");
+        await expect(modalEl).toExist();
+        await expect(modalEl).toHaveText("Woah!");
     })
 })
 ```

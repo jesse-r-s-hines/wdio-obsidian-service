@@ -1,5 +1,4 @@
 import { browser } from '@wdio/globals'
-import { expect } from 'chai';
 import { TFile } from 'obsidian';
 import semver from "semver";
 import { obsidianPage } from 'wdio-obsidian-service';
@@ -14,26 +13,26 @@ describe("Test custom browser commands", () => {
         const result = await browser.executeObsidian((arg) => {
             return Object.keys(arg).sort();
         });
-        expect(result).to.be.eql(['app', 'obsidian', 'plugins', 'require']);
+        expect(result).toEqual(['app', 'obsidian', 'plugins', 'require']);
         const plugins = await browser.executeObsidian(({obsidian, plugins}) => {
             return Object.fromEntries(Object.entries(plugins)
                 .map(([k, v]) => [k, v instanceof obsidian.Plugin])
             );
         });
-        expect(plugins).to.eql({
+        expect(plugins).toEqual({
             basicPlugin: true,
         })
     })
 
     it('runObsidianCommand', async () => {
-        expect(await browser.execute("return window.doTheThingCalled ?? 0")).to.eql(0);
+        expect(await browser.execute("return window.doTheThingCalled ?? 0")).toEqual(0);
         await browser.executeObsidianCommand("basic-plugin:do-the-thing");
-        expect(await browser.execute("return window.doTheThingCalled")).to.eql(1);
+        expect(await browser.execute("return window.doTheThingCalled")).toEqual(1);
     })
 
     it("getObsidianPage", async () => {
         const commandObsidianPage = await browser.getObsidianPage();
-        expect(commandObsidianPage).to.eql(obsidianPage);
+        expect(commandObsidianPage).toBe(obsidianPage);
     })
 })
 
@@ -65,7 +64,7 @@ describe("Test windows", () => {
                 obj?.obsidian.App
             )
         })
-        expect(response).to.eql(true);
+        expect(response).toEqual(true);
 
         await browser.switchToWindow(mainWindow);
         await browser.executeObsidian(({app}) => { app.workspace.detachLeavesOfType("markdown") })

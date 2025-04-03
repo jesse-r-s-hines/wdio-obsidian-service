@@ -1,5 +1,4 @@
 import { browser } from '@wdio/globals'
-import { expect } from 'chai';
 import { obsidianPage } from 'wdio-obsidian-service';
 import { TFile } from 'obsidian';
 import fsAsync from "fs/promises"
@@ -48,10 +47,10 @@ describe("resetVault", async () => {
         await browser.reloadObsidian({vault: "./test/vaults/basic"});
         const contentBefore = await getAllFiles();
         const mtimesBefore = await getFileMtimes();
-        expect(Object.keys(contentBefore).sort()).to.eql(["Goodbye.md", "Welcome.md"]);
+        expect(Object.keys(contentBefore).sort()).toEqual(["Goodbye.md", "Welcome.md"]);
         await obsidianPage.resetVault();
-        expect(await getAllFiles()).to.eql(contentBefore);
-        expect(await getFileMtimes()).to.eql(mtimesBefore);
+        expect(await getAllFiles()).toEqual(contentBefore);
+        expect(await getFileMtimes()).toEqual(mtimesBefore);
     })
 
     it("update file", async () => {
@@ -63,7 +62,7 @@ describe("resetVault", async () => {
         })
 
         await obsidianPage.resetVault();
-        expect(await getAllFiles()).to.eql(contentBefore);
+        expect(await getAllFiles()).toEqual(contentBefore);
     })
 
     it("remove and create files", async () => {
@@ -76,7 +75,7 @@ describe("resetVault", async () => {
         })
 
         await obsidianPage.resetVault();
-        expect(await getAllFiles()).to.eql(contentBefore);
+        expect(await getAllFiles()).toEqual(contentBefore);
     })
 
     it("update file nested", async () => {
@@ -88,7 +87,7 @@ describe("resetVault", async () => {
         })
 
         await obsidianPage.resetVault();
-        expect(await getAllFiles()).to.eql(contentBefore);
+        expect(await getAllFiles()).toEqual(contentBefore);
     })
 
     it("remove and create files nested", async () => {
@@ -101,26 +100,26 @@ describe("resetVault", async () => {
         })
 
         await obsidianPage.resetVault();
-        expect(await getAllFiles()).to.eql(contentBefore);
+        expect(await getAllFiles()).toEqual(contentBefore);
     })
 
     it("empty vault", async () => {
         await browser.reloadObsidian({vault: "./test/vaults/empty"});
         await obsidianPage.resetVault();
-        expect(await getAllFiles()).to.eql({});
+        expect(await getAllFiles()).toEqual({});
 
         await browser.executeObsidian(async ({app}) => {
             await app.vault.create("New.md", "A new file");
         })
 
         await obsidianPage.resetVault();
-        expect(await getAllFiles()).to.eql({});
+        expect(await getAllFiles()).toEqual({});
     })
 
     it("new vault", async () => {
         await browser.reloadObsidian({vault: "./test/vaults/basic"});
         await obsidianPage.resetVault("./test/vaults/nested");
-        expect(await getAllFiles()).to.eql({
+        expect(await getAllFiles()).toEqual({
             'A.md': "File A\n",
             'B/C.md': "File C\n",
             'B/D/E.md': "File E\n",
@@ -135,7 +134,7 @@ describe("resetVault", async () => {
             "Abaddons Gate.md": "2013",
         }
         await obsidianPage.resetVault(vault);
-        expect(await getAllFiles()).to.eql(vault);
+        expect(await getAllFiles()).toEqual(vault);
     })
 
     it("merge", async () => {
@@ -144,7 +143,7 @@ describe("resetVault", async () => {
             "B/C.md": "updated",
             "Z.md": "new",
         });
-        expect(await getAllFiles()).to.eql({
+        expect(await getAllFiles()).toEqual({
             'A.md': "File A\n",
             'B/C.md': "updated",
             'B/D/E.md': "File E\n",
@@ -158,7 +157,7 @@ describe("resetVault", async () => {
             ".file": "hidden file",
             ".folder/bar.md": "hidden folder",
         });
-        expect(await getAllFilesFromDisk()).to.eql({
+        expect(await getAllFilesFromDisk()).toEqual({
             'A.md': "File A\n",
             'B/C.md': "File C\n",
             'B/D/E.md': "File E\n",
@@ -166,7 +165,7 @@ describe("resetVault", async () => {
             ".folder/bar.md": "hidden folder",
         });
         await obsidianPage.resetVault("./test/vaults/nested");
-        expect(await getAllFilesFromDisk()).to.eql({
+        expect(await getAllFilesFromDisk()).toEqual({
             'A.md': "File A\n",
             'B/C.md': "File C\n",
             'B/D/E.md': "File E\n",
