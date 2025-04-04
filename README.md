@@ -3,7 +3,7 @@
 
 Test your [Obsidian](https://obsidian.md) plugins end-to-end using [WebdriverIO](https://webdriver.io)!
 
-For instructions on how to set up e2e tests using `wdio-obsidian-service` see the
+For instructions on how to set up e2e tests using WDIO Obsidian Service see the
 [wdio-obsidian-service README](./packages/wdio-obsidian-service/README.md) or get started quickly by using the 
 [sample plugin](https://github.com/jesse-r-s-hines/wdio-obsidian-service-sample-plugin) as a template.
 
