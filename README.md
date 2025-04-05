@@ -1,26 +1,19 @@
 [![Test](https://github.com/jesse-r-s-hines/wdio-obsidian-service/actions/workflows/test.yaml/badge.svg?branch=main)](https://github.com/jesse-r-s-hines/wdio-obsidian-service/actions/workflows/test.yaml)
 # WDIO Obsidian Service
 
-This is a collection of npm packages for end to end testing [Obsidian](https://obsidian.md) plugins with
-[WebdriverIO](https://webdriver.io):
+Test your [Obsidian](https://obsidian.md) plugins end-to-end using [WebdriverIO](https://webdriver.io)!
+
+For instructions on how to set up e2e tests using WDIO Obsidian Service see the
+[wdio-obsidian-service README](./packages/wdio-obsidian-service/README.md) or get started quickly by using the 
+[sample plugin](https://github.com/jesse-r-s-hines/wdio-obsidian-service-sample-plugin) as a template.
+
+This project is split into several NPM packages:
 - [wdio-obsidian-service](./packages/wdio-obsidian-service/README.md): A WebdriverIO service to test Obsidian plugins
 - [obsidian-launcher](./packages/obsidian-launcher/README.md): Package for downloading and launching different versions of Obsidian
 - [wdio-obsidian-reporter](./packages/wdio-obsidian-reporter/README.md): Wrapper around [@wdio/spec-reporter](https://www.npmjs.com/package/@wdio/spec-reporter) that logs Obsidian version instead of Chromium version
 
-For how to set up e2e tests for Obsidian plugins see
-[wdio-obsidian-service](./packages/wdio-obsidian-service/README.md) or
-the [sample plugin](https://github.com/jesse-r-s-hines/wdio-obsidian-service-sample-plugin).
-
 API docs for all the packages are available [here](https://jesse-r-s-hines.github.io/wdio-obsidian-service).
 
 ## Contributing
-PRs and issues welcome! To setup local development just clone the repo and run:
-```bash
-npm install
-npm run build
-// make sure to re-build after any codes changes before running the tests
-npm test
-```
+PRs and issues welcome! See [CONTRIBUTING.md](./CONTRIBUTING.md) for instructions on how to setup local development.
 
-Sometimes you need to install a second time after the build to get the binaries to setup right. You'll need Node 18 or
-higher.

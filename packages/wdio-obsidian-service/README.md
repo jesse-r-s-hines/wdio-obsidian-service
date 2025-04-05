@@ -2,14 +2,15 @@
 # WDIO Obsidian Service
 
 `wdio-obsidian-service` lets you test [Obsidian](https://obsidian.md) plugins end-to-end using
-[WebdriverIO](https://webdriver.io). The service handles:
-- Downloading and installing Obsidian
-- Testing your plugin on different Obsidian app versions and installer/electron versions
-- Opening and switching between test vaults during your tests
-- Downloading Chromedriver matching the Obsidian electron version
-- Sandboxing Obsidian so tests don't interfere with your system Obsidian installation or each other
-- Running tests in parallel
-- Provides helper functions for common testing tasks
+[WebdriverIO](https://webdriver.io). The service can:
+- Download and install Obsidian
+- Test your plugin on different Obsidian app versions and installer/electron versions
+- Download Chromedriver matching the Obsidian electron version
+- Sandbox Obsidian so tests don't interfere with your system Obsidian installation or each other
+- Run tests in parallel
+- Open and switch between test vaults during your tests
+- Provide helper functions for common testing tasks
+- Run tests in GitHub CI
 
 ## Installation and Setup
 If you want to get going quickly, you can use the
@@ -18,7 +19,7 @@ all the setup you need to build and end-to-end test Obsidian plugins, including 
 
 See also: [WebdriverIO | Getting Started](https://webdriver.io/docs/gettingstarted).
 
-To setup wdio-obsidian-service manually, run the WebdriverIO Starter Toolkit:
+To set up wdio-obsidian-service manually, run the WebdriverIO Starter Toolkit:
 ```bash
 npm init wdio@latest .
 ```
@@ -27,10 +28,10 @@ Delete the generated `pageobjects` dir for now, or replace it with a stub for la
 
 Then install `wdio-obsidian-service` and other deps:
 ```bash
-npm install --save-dev wdio-obsidian-service wdio-obsidian-reporter mocha @types/mocha chai @types/chai @types/node
+npm install --save-dev wdio-obsidian-service wdio-obsidian-reporter mocha @types/mocha
 ```
 
-And add this `tsconfig.json`:
+And add this to `tsconfig.json`:
 ```json
 {
   "compilerOptions": {
@@ -44,7 +45,7 @@ And add this `tsconfig.json`:
 }
 ```
 
-Setup your `wdio.conf.ts` like so:
+Set up your `wdio.conf.ts` like so:
 ```ts
 import * as path from "path"
 
@@ -92,10 +93,9 @@ export const config: WebdriverIO.Config = {
 }
 ```
 
-Create a file `test/specs/test.e2e.ts` with something like:
+And create a file `test/specs/test.e2e.ts` with something like:
 ```ts
 import { browser } from '@wdio/globals'
-import { expect } from 'chai';
 
 describe('Test my plugin', function() {
     before(async function() {
@@ -109,15 +109,14 @@ describe('Test my plugin', function() {
             "sample-plugin:open-sample-modal-simple",
         );
         const modalEl = browser.$(".modal-container .modal-content");
-        expect(await modalEl.isExisting()).to.equal(true);
-        expect(await modalEl.getText()).to.equal("Woah!");
+        await expect(modalEl).toExist();
+        await expect(modalEl).toHaveText("Woah!");
     })
 })
 ```
 
 `wdio-obsidian-service` has a few helper functions that can be useful in your wdio conf, such as `obsidianBetaAvailable`
-which checks if there's a current Obsidian beta and you have the credentials to download it. E.g. to test your
-`minAppVersion`, `latest`, and `latest-beta` if it's available use:
+which checks if there's a current Obsidian beta and you have the credentials to download it. E.g. to test on your `minAppVersion`, `latest`, and `latest-beta` if it's available, use:
 ```ts
 import { obsidianBetaAvailable } from "wdio-obsidian-service";
 const cacheDir = path.resolve(".obsidian-cache");
@@ -159,6 +158,15 @@ Obsidian installer. Windows firewall will sometimes complain about NodeJS, you c
 Currently `wdio-obsidian-service` only works for Obsidian Desktop. Testing Obsidian Mobile may be added in the future
 using WDIO + Appium.
 
+### Test Frameworks
+WebdriverIO can run tests using [Mocha](https://mochajs.org), [Jasmine](https://jasmine.github.io), and
+[Cucumber](https://cucumber.io/). Mocha is the easiest to set up and is used in all the wdio-obsidian-service examples.
+Mocha can also run your unit tests, typically with the addition of an assertion library like
+[Chai](https://www.chaijs.com). You can't run WebdriverIO using [Jest](https://jestjs.io), but if you already have Jest
+unit tests (or just prefer Jest) you can easily continue using Jest for your unit tests and Mocha just for your e2e
+tests. The built-in WebdriverIO [expect](https://webdriver.io/docs/api/expect-webdriverio) is very similar to Jest
+matchers, so should be familiar to use.
+
 ## Usage
 
 ### Obsidian App vs Installer Versions
@@ -186,12 +194,13 @@ To set the installer version use `'wdio:obsidianOptions'.installerVersion`. It c
 - "earliest": run the oldest Obsidian installer compatible with `appVersion`
 
 You can see more configuration options for the capabilities
-[here](https://jesse-r-s-hines.github.io/wdio-obsidian-service/wdio-obsidian-service/ObsidianCapabilityOptions.html)
+[here](https://jesse-r-s-hines.github.io/wdio-obsidian-service/wdio-obsidian-service/ObsidianCapabilityOptions.html).
 
 ### Opening and Switching between Vaults
 If all your tests use the same vault, you can set the vault in the `wdio:obsidianOptions` capabilities section. If you
-want to switch between vaults you can use `reloadObsidian` or `resetVault` during your tests. These can also be useful
-for reseting state between tests to avoid tests affecting each other (such as in Mocha `before` and `beforeEach` hooks).
+need to switch between vaults during your test you can use the `reloadObsidian` or `resetVault` functions. These can
+also be useful for reseting state between tests to avoid tests affecting each other (such as in Mocha `before` and
+`beforeEach` hooks).
 
 `browser.reloadObsidian` completely reboots Obsidian with a fresh copy of the vault. This will clear all state, but is
 quite slow so avoid calling it too often.
@@ -222,7 +231,7 @@ API docs, including all configuration options and helper functions, are availabl
 [here](https://jesse-r-s-hines.github.io/wdio-obsidian-service/wdio-obsidian-service/README.html).
 
 ### GitHub CI Workflows
-The sample plugin has workflows setup to release and test your plugin, which you can see
+The sample plugin has workflows set up to release and test your plugin, which you can see
 [here](https://github.com/jesse-r-s-hines/wdio-obsidian-service-sample-plugin#github-workflows).
 
 ### obsidian-launcher CLI

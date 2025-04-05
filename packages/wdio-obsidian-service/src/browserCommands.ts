@@ -22,10 +22,10 @@ export interface ExecuteObsidianArg {
     obsidian: typeof obsidian,
 
     /**
-     * Object containing all installed plugins mapped by their id. Plugin ids are converted to converted to camelCase
-     * for ease of destructuring.
+     * Object containing all installed plugins mapped by their id. Plugin ids are converted to camelCase for ease of
+     * destructuring.
      * 
-     * You can add types for your plugin(s) here with:
+     * If you want to add typings for your plugin(s) you can use something like this in a `.d.ts`:
      * ```ts
      * import type MyPlugin from "../src/main.js"
      * declare module "wdio-obsidian-service" {
@@ -37,6 +37,10 @@ export interface ExecuteObsidianArg {
      */
     plugins: InstalledPlugins,
 
+    /**
+     * The customized require function Obsidian makes available to plugins. This is also available globally, so you can
+     * just use `require` directly instead of from `ExecuteObsidianArg` if you prefer.
+     */
     require: NodeJS.Require,
 }
 
@@ -61,8 +65,8 @@ const browserCommands = {
      * - app: Obsidian app instance
      * - obsidian: Full Obsidian API
      * - plugins: Object of all installed plugins, mapped by plugin id converted to camelCase.
-     * - require: The customized require function Obsidian makes available to plugins. This is also made available
-     *            globally, so you can just use `require` directly instead of from ExecuteObsidianArg if you prefer.
+     * - require: The customized require function Obsidian makes available to plugins. This is also available globally,
+     *            so you can just use `require` directly instead of from {@link ExecuteObsidianArg} if you prefer.
      * 
      * Like `brower.execute`, you can pass other extra arguments to the function.
      * 
