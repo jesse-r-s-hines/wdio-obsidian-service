@@ -1,8 +1,8 @@
 {
     "metadata": {
-        "commit_date": "2025-03-05T15:47:44Z",
-        "commit_sha": "2b6b513e8e1acc17a9fdeef68461337e34692a3f",
-        "timestamp": "2025-03-10T23:11:53.772Z"
+        "commit_date": "2025-04-10T17:11:43Z",
+        "commit_sha": "ca9d58f77a6973a398b52e6ee15d9bee8809c734",
+        "timestamp": "2025-04-10T23:44:21.977Z"
     },
     "versions": [
         {
@@ -3143,6 +3143,15 @@
             "electronVersion": "34.3.0",
             "chromeVersion": "132.0.6834.210",
             "nodeVersion": "20.18.3"
+        },
+        {
+            "version": "1.8.10",
+            "minInstallerVersion": "1.1.9",
+            "maxInstallerVersion": "1.8.9",
+            "isBeta": true,
+            "downloads": {
+                "asar": "https://releases.obsidian.md/release/obsidian-1.8.10.asar.gz"
+            }
         }
     ]
 }
