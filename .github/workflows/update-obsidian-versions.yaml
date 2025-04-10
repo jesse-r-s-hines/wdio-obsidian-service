@@ -66,10 +66,12 @@ jobs:
           node-version: 18
           cache: 'npm'
       - if: ${{ steps.check.outputs.result == 'true' }}
+        name: "Update obsidian-versions.json"
         run: |
           npm ci
-          npm run -w packages/obsidian-launcher build
-          xvfb-run npx obsidian-launcher create-versions-list obsidian-versions.json
+          cd packages/obsidian-launcher
+          npm run build
+          xvfb-run npx obsidian-launcher create-versions-list ../../obsidian-versions.json
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - if: ${{ steps.check.outputs.result == 'true' }}
