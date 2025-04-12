@@ -1,13 +1,12 @@
 import { browser } from '@wdio/globals'
 import path from "path"
 import { OBSIDIAN_CAPABILITY_KEY } from '../../src/types.js';
-import { obsidianPage } from 'wdio-obsidian-service';
 
 
 describe("Basic obsidian launch", () => {
     before(async () => {
         // Obsidian should start with no vault open
-        expect(await obsidianPage.getVaultPath()).toEqual(undefined);
+        expect(browser.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].vault).toEqual(undefined);
         await browser.reloadObsidian({vault: "./test/vaults/basic"});
     })
     

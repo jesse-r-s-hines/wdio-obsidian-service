@@ -63,9 +63,7 @@ const browserCommands = {
         func: (obs: ExecuteObsidianArg, ...params: Params) => Return,
         ...params: Params
     ): Promise<Return> {
-        if (this.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].vault == undefined) {
-            throw Error("No vault open")
-        }
+        obsidianPage.getVaultPath(); // checks and throws if no vault is open
         return await this.execute<Return, Params>(`
             const require = window.wdioObsidianService.require;
             return (${func.toString()}).call(null, {...window.wdioObsidianService}, ...arguments)
