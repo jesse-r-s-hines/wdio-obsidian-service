@@ -1,8 +1,6 @@
 import _ from "lodash"
 import fs from "fs";
-import fsAsync from "fs/promises";
 import { finished } from 'stream/promises';
-import { fileURLToPath } from "url";
 import { Readable } from 'stream';
 import { ReadableStream } from "stream/web"
 
@@ -103,24 +101,6 @@ export async function fetchObsidianAPI(url: string) {
         },
     })
     return response;
-}
-
-
-/**
- * Fetches a URL returning its content as a string. Throws if response is not OK.
- * URL can be a file url.
- */
-export async function fetchWithFileUrl(url: string) {
-    if (url.startsWith("file:")) {
-        return await fsAsync.readFile(fileURLToPath(url), 'utf-8');
-    } else {
-        const response = await fetch(url);
-        if (response.ok) {
-            return response.text()
-        } else {
-            throw Error(`Request failed with ${response.status}: ${response.text()}`)
-        }
-    }
 }
 
 /**
