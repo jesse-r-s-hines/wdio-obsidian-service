@@ -156,7 +156,7 @@ export class ObsidianLauncher {
      * @param appVersion Obsidian version string or one of 
      *   - "latest": Get the current latest non-beta Obsidian version
      *   - "latest-beta": Get the current latest beta Obsidian version (or latest is there is no current beta)
-     *   - "earliest": Get the `minAppVersion` set in set in your `manifest.json`
+     *   - "earliest": Get the `minAppVersion` set in your `manifest.json`
      * @param installerVersion Obsidian version string or one of 
      *   - "latest": Get the latest Obsidian installer compatible with `appVersion`
      *   - "earliest": Get the oldest Obsidian installer compatible with `appVersion`
