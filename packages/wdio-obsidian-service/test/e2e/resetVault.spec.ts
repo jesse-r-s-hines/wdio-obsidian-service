@@ -29,7 +29,7 @@ describe("resetVault", async () => {
 
     async function getAllFilesFromDisk() {
         const result: Record<string, string> = {};
-        const vault = (await obsidianPage.getVaultPath())!;
+        const vault = obsidianPage.getVaultPath();
         for (const file of await fsAsync.readdir(vault, {recursive: true, withFileTypes: true})) {
             if (file.isFile()) {
                 const absPath = path.join(file.parentPath, file.name);
