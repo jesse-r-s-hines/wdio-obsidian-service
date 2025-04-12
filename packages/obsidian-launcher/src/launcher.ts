@@ -14,7 +14,7 @@ import {
     PluginEntry, DownloadedPluginEntry, ThemeEntry, DownloadedThemeEntry,
     ObsidianVersionInfos,
 } from "./types.js";
-import { fetchObsidianAPI, fetchGitHubAPIPaginated, fetchWithFileUrl } from "./apis.js";
+import { fetchObsidianAPI, fetchGitHubAPIPaginated, fetchWithFileUrl, downloadResponse } from "./apis.js";
 import ChromeLocalStorage from "./chromeLocalStorage.js";
 import {
     normalizeGitHubRepo, extractObsidianAppImage, extractObsidianExe, extractObsidianDmg,
@@ -256,7 +256,7 @@ export class ObsidianLauncher {
             if (installerUrl) {
                 downloader = async (tmpDir) => {
                     const appImage = path.join(tmpDir, "Obsidian.AppImage");
-                    await fsAsync.writeFile(appImage, (await fetch(installerUrl)).body as any);
+                    await downloadResponse(await fetch(installerUrl), appImage);
                     const obsidianFolder = path.join(tmpDir, "Obsidian");
                     await extractObsidianAppImage(appImage, obsidianFolder);
                     return obsidianFolder;
@@ -276,7 +276,7 @@ export class ObsidianLauncher {
             if (installerUrl && appArch) {
                 downloader = async (tmpDir) => {
                     const installerExecutable = path.join(tmpDir, "Obsidian.exe");
-                    await fsAsync.writeFile(installerExecutable, (await fetch(installerUrl)).body as any);
+                    await downloadResponse(await fetch(installerUrl), installerExecutable);
                     const obsidianFolder = path.join(tmpDir, "Obsidian");
                     await extractObsidianExe(installerExecutable, appArch, obsidianFolder);
                     return obsidianFolder;
@@ -288,7 +288,7 @@ export class ObsidianLauncher {
             if (installerUrl) {
                 downloader = async (tmpDir) => {
                     const dmg = path.join(tmpDir, "Obsidian.dmg");
-                    await fsAsync.writeFile(dmg, (await fetch(installerUrl)).body as any);
+                    await downloadResponse(await fetch(installerUrl), dmg);
                     const obsidianFolder = path.join(tmpDir, "Obsidian");
                     await extractObsidianDmg(dmg, obsidianFolder);
                     return obsidianFolder;
@@ -335,7 +335,7 @@ export class ObsidianLauncher {
                 const response = isInsidersBuild ? await fetchObsidianAPI(appUrl) : await fetch(appUrl);
                 const archive = path.join(tmpDir, 'app.asar.gz');
                 const asar = path.join(tmpDir, 'app.asar')
-                await fsAsync.writeFile(archive, response.body as any);
+                await downloadResponse(response, archive);
                 await pipeline(fs.createReadStream(archive), zlib.createGunzip(), fs.createWriteStream(asar));
                 return asar;
             })
@@ -422,7 +422,7 @@ export class ObsidianLauncher {
                         const url = `https://github.com/${repo}/releases/download/${version}/${file}`;
                         const response = await fetch(url);
                         if (response.ok) {
-                            await fsAsync.writeFile(path.join(tmpDir, file), response.body as any);
+                            await downloadResponse(response, path.join(tmpDir, file));
                         } else if (required) {
                             throw Error(`No ${file} found for ${repo} version ${version}`)
                         }
@@ -540,7 +540,7 @@ export class ObsidianLauncher {
                         const url = `https://raw.githubusercontent.com/${repo}/HEAD/${file}`;
                         const response = await fetch(url);
                         if (response.ok) {
-                            await fsAsync.writeFile(path.join(tmpDir, file), response.body as any);
+                            await downloadResponse(response, path.join(tmpDir, file));
                         } else {
                             throw Error(`No ${file} found for ${repo}`);
                         }
