@@ -180,7 +180,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
     /**
      * Setup vault and config dir for a sandboxed Obsidian instance.
      */
-    private async setupObsidian(obsidianOptions: ObsidianCapabilityOptions) {
+    private async setupObsidian(obsidianOptions: ObsidianCapabilityOptions): Promise<[string, string|undefined]> {
         let vault = obsidianOptions.vault;
         if (vault != undefined) {
             log.info(`Opening vault ${obsidianOptions.vault}`);
@@ -202,7 +202,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
         });
         this.tmpDirs.push(configDir);
 
-        return configDir;
+        return [configDir, vault];
     }
 
     /**
@@ -232,8 +232,10 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
     async beforeSession(config: Options.Testrunner, capabilities: WebdriverIO.Capabilities) {
         if (!capabilities[OBSIDIAN_CAPABILITY_KEY]) return;
 
-        const configDir = await this.setupObsidian(capabilities[OBSIDIAN_CAPABILITY_KEY]);
+        const [configDir, vaultCopy] = await this.setupObsidian(capabilities[OBSIDIAN_CAPABILITY_KEY]);
 
+        // Undocumented field so we can get the path to the vault copy in getVaultPath()
+        (capabilities[OBSIDIAN_CAPABILITY_KEY] as any)['vaultCopy'] = vaultCopy;
         capabilities['goog:chromeOptions']!.args = [
             `--user-data-dir=${configDir}`,
             ...(capabilities['goog:chromeOptions']!.args ?? [])
@@ -298,7 +300,9 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
                     themes: service.selectThemes(oldObsidianOptions.themes, theme),
                 }
     
-                const configDir = await service.setupObsidian(newObsidianOptions);
+                const [configDir, vaultCopy] = await service.setupObsidian(newObsidianOptions);
+                // for use in getVaultPath()
+                newObsidianOptions.vaultCopy = vaultCopy;
                 
                 const newArgs = [
                     `--user-data-dir=${configDir}`,

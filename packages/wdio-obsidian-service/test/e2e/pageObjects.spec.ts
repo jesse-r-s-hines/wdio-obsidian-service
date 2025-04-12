@@ -18,6 +18,10 @@ async function getOpenFiles() {
 }
 
 describe("Test page object", () => {
+    before(() => {
+        expect(() => obsidianPage.getVaultPath()).toThrow("No vault open");
+    })
+
     beforeEach(async () => {
         await browser.reloadObsidian({vault: "./test/vaults/basic"});
         await obsidianPage.loadWorkspaceLayout("empty");
@@ -26,11 +30,22 @@ describe("Test page object", () => {
 
     it('getVaultPath', async () => {
         const originalVaultPath = path.resolve("./test/vaults/basic");
-        const vaultPath = (await obsidianPage.getVaultPath())!;
+        const vaultPath1 = obsidianPage.getVaultPath();
         
         // vault should be copied
-        expect(path.resolve(vaultPath)).not.toEqual(originalVaultPath)
-        expect(await fsAsync.readdir(vaultPath)).toEqual(expect.arrayContaining(["Goodbye.md", "Welcome.md"]));
+        expect(path.resolve(vaultPath1)).not.toEqual(originalVaultPath)
+        expect(await fsAsync.readdir(vaultPath1)).toEqual(expect.arrayContaining(["Goodbye.md", "Welcome.md"]));
+
+        await browser.reloadObsidian({vault: "./test/vaults/basic"});
+
+        // New copy
+        const vaultPath2 = obsidianPage.getVaultPath();
+        expect(path.resolve(vaultPath2)).not.toEqual(path.resolve(vaultPath1));
+
+        // Keeps the same copy
+        await browser.reloadObsidian();
+        const vaultPath3 = obsidianPage.getVaultPath();
+        expect(vaultPath3).toEqual(vaultPath3);
     })
 
     it('enable/disable plugin', async () => {
