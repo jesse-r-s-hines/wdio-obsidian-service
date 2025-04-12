@@ -892,11 +892,11 @@ export class ObsidianLauncher {
 
         let commitHistory = await fetchGitHubAPIPaginated(`repos/${repo}/commits`, {
             path: "desktop-releases.json",
-            since: original?.metadata.commit_date,
+            since: original?.metadata.commitDate,
         });
         commitHistory.reverse();
         if (original) {
-            commitHistory = _.takeRightWhile(commitHistory, c => c.sha != original.metadata.commit_sha);
+            commitHistory = _.takeRightWhile(commitHistory, c => c.sha != original.metadata.commitSha);
         }
     
         const fileHistory: any[] = await pool(8, commitHistory, commit =>
@@ -962,8 +962,8 @@ export class ObsidianLauncher {
     
         const result: ObsidianVersionInfos = {
             metadata: {
-                commit_date: commitHistory.at(-1)?.commit.committer.date ?? original?.metadata.commit_date,
-                commit_sha: commitHistory.at(-1)?.sha ?? original?.metadata.commit_sha,
+                commitDate: commitHistory.at(-1)?.commit.committer.date ?? original?.metadata.commitDate,
+                commitSha: commitHistory.at(-1)?.sha ?? original?.metadata.commitSha,
                 timestamp: original?.metadata.timestamp ?? "", // set down below
             },
             versions: Object.values(versionMap)

@@ -3,8 +3,8 @@
  */
 export type ObsidianVersionInfos = {
     metadata: {
-        commit_date: string,
-        commit_sha: string,
+        commitDate: string,
+        commitSha: string,
         timestamp: string,
     },
     versions: ObsidianVersionInfo[],
