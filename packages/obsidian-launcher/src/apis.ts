@@ -1,7 +1,10 @@
 import _ from "lodash"
+import fs from "fs";
 import fsAsync from "fs/promises";
+import { finished } from 'stream/promises';
 import { fileURLToPath } from "url";
-
+import { Readable } from 'stream';
+import { ReadableStream } from "stream/web"
 
 /**
  * GitHub API stores pagination information in the "Link" header. The header looks like this:
@@ -68,11 +71,11 @@ export async function fetchGitHubAPI(url: string, params: Record<string, any> = 
  * Fetch all data from a paginated GitHub API request.
  */
 export async function fetchGitHubAPIPaginated(url: string, params: Record<string, any> = {}) {
-    const results = [];
+    const results: any[] = [];
     let next: string|undefined = createURL(url, "https://api.github.com", { per_page: 100, ...params });
     while (next) {
         const response = await fetchGitHubAPI(next);
-        results.push(...await response.json() as any);
+        results.push(...await response.json());
         next = parseLinkHeader(response.headers.get('link') ?? '').next?.url;
     }
     return results;
@@ -118,4 +121,14 @@ export async function fetchWithFileUrl(url: string) {
             throw Error(`Request failed with ${response.status}: ${response.text()}`)
         }
     }
+}
+
+/**
+ * Downloads a url to disk.
+ */
+export async function downloadResponse(response: Response, dest: string) {
+    const fileStream = fs.createWriteStream(dest, { flags: 'w' });
+    // not sure why I have to cast this
+    const fetchStream = Readable.fromWeb(response.body as ReadableStream);
+    await finished(fetchStream.pipe(fileStream));
 }
