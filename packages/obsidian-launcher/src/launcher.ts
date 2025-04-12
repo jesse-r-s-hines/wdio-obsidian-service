@@ -8,13 +8,14 @@ import { pipeline } from "stream/promises";
 import { downloadArtifact } from '@electron/get';
 import child_process from "child_process"
 import semver from "semver"
+import { fileURLToPath } from "url";
 import { fileExists, makeTmpDir, withTmpDir, linkOrCp, maybe, pool, mergeKeepUndefined } from "./utils.js";
 import {
     ObsidianVersionInfo, ObsidianCommunityPlugin, ObsidianCommunityTheme,
     PluginEntry, DownloadedPluginEntry, ThemeEntry, DownloadedThemeEntry,
     ObsidianVersionInfos,
 } from "./types.js";
-import { fetchObsidianAPI, fetchGitHubAPIPaginated, fetchWithFileUrl, downloadResponse } from "./apis.js";
+import { fetchObsidianAPI, fetchGitHubAPIPaginated, downloadResponse } from "./apis.js";
 import ChromeLocalStorage from "./chromeLocalStorage.js";
 import {
     normalizeGitHubRepo, extractObsidianAppImage, extractObsidianExe, extractObsidianDmg,
@@ -77,28 +78,34 @@ export class ObsidianLauncher {
      * cacheDuration ms or if there are network errors.
      */
     private async cachedFetch(url: string, dest: string): Promise<any> {
-        dest = path.resolve(dest);
+        dest = path.join(this.cacheDir, dest);
         if (!(dest in this.metadataCache)) {
             let fileContent: string|undefined;
-            const mtime = await fileExists(dest) ? (await fsAsync.stat(dest)).mtime : undefined;
 
-            if (mtime && new Date().getTime() - mtime.getTime() < this.cacheDuration) { // read from cache if its recent
-                fileContent = await fsAsync.readFile(dest, 'utf-8');
-            } else { // otherwise try to fetch the url
-                const request = await maybe(fetchWithFileUrl(url));
-                if (request.success) {
-                    await fsAsync.mkdir(path.dirname(dest), { recursive: true });
-                    await withTmpDir(dest, async (tmpDir) => {
-                        await fsAsync.writeFile(path.join(tmpDir, 'download.json'), request.result);
-                        return path.join(tmpDir, 'download.json');
-                    })
-                    fileContent = request.result;
-                } else if (await fileExists(dest)) { // use cache on network error
-                    console.warn(request.error)
-                    console.warn(`Unable to download ${dest}, using cached file.`);
+            if (url.startsWith("file:")) {
+                fileContent = await fsAsync.readFile(fileURLToPath(url), 'utf-8');
+            } else {
+                const mtime = await fileExists(dest) ? (await fsAsync.stat(dest)).mtime : undefined;
+
+                // read from cache if its recent
+                if (mtime && new Date().getTime() - mtime.getTime() < this.cacheDuration) {
                     fileContent = await fsAsync.readFile(dest, 'utf-8');
-                } else {
-                    throw request.error;
+                } else { // otherwise try to fetch the url
+                    const request = await maybe(fetch(url).then(r => r.text()));
+                    if (request.success) {
+                        await fsAsync.mkdir(path.dirname(dest), { recursive: true });
+                        await withTmpDir(dest, async (tmpDir) => {
+                            await fsAsync.writeFile(path.join(tmpDir, 'download.json'), request.result);
+                            return path.join(tmpDir, 'download.json');
+                        })
+                        fileContent = request.result;
+                    } else if (await fileExists(dest)) { // use cache on network error
+                        console.warn(request.error)
+                        console.warn(`Unable to download ${dest}, using cached file.`);
+                        fileContent = await fsAsync.readFile(dest, 'utf-8');
+                    } else {
+                        throw request.error;
+                    }
                 }
             }
 
