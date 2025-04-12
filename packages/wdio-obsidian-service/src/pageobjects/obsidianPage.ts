@@ -26,18 +26,12 @@ class ObsidianPage {
      * 
      * wdio-obsidian-service copies your vault before running tests, so this is the path to the temporary copy.
      */
-    async getVaultPath(): Promise<string|undefined> {
-        if (browser.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].vault == undefined) {
-            return undefined; // no vault open
-        } else { // return the actual path to the vault
-            return await browser.executeObsidian(({app, obsidian}) => {
-                if (app.vault.adapter instanceof obsidian.FileSystemAdapter) {
-                    return app.vault.adapter.getBasePath()
-                } else { // TODO handle CapacitorAdapater
-                    throw new Error(`Unrecognized DataAdapater type`)
-                };
-            })
+    getVaultPath(): string {
+        const vault = browser.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].vaultCopy;
+        if (vault === undefined) {
+            throw Error("No vault open, set vault in wdio.conf or use reloadObsidian to open a vault dynamically.")
         }
+        return vault;
     }
 
     /**
@@ -101,9 +95,8 @@ class ObsidianPage {
     async loadWorkspaceLayout(layout: any): Promise<void> {
         if (typeof layout == "string") {
             // read from .obsidian/workspaces.json like the built-in workspaces plugin does
-            const vaultPath = (await this.getVaultPath())!;
             const configDir = await this.getConfigDir();
-            const workspacesPath = path.join(vaultPath, configDir, 'workspaces.json');
+            const workspacesPath = path.join(this.getVaultPath(), configDir, 'workspaces.json');
             const layoutName = layout;
             try {
                 const fileContent = await fsAsync.readFile(workspacesPath, 'utf-8');
@@ -179,7 +172,7 @@ class ObsidianPage {
 
         // calculate the changes needed to the current vault
         const newFolders = getFolders(newFiles.keys());
-        const currFiles = await readVaultFiles((await obsidianPage.getVaultPath())!);
+        const currFiles = await readVaultFiles(obsidianPage.getVaultPath());
         const currFolders = getFolders(currFiles.keys());
 
         type FileUpdateInstruction = {
