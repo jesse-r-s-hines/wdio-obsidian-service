@@ -27,7 +27,7 @@ jobs:
             const obsidianVersionsUrl = `https://raw.githubusercontent.com/${context.repo.owner}/${context.repo.repo}/HEAD/obsidian-versions.json`;
             const versionsJson = await fetch(obsidianVersionsUrl).then(r => r.json());
 
-            const ourLatestCommit = versionsJson.metadata.commit_sha;
+            const ourLatestCommit = versionsJson.metadata.commitSha;
             const ourLatestTimestamp = new Date(versionsJson.metadata.timestamp);
 
             if (!latestCommit || !ourLatestCommit || isNaN(ourLatestTimestamp.getTime())) {
