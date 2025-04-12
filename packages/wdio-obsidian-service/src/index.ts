@@ -31,11 +31,17 @@ export async function obsidianBetaAvailable(cacheDir?: string) {
 
 /**
  * Resolves Obsidian app and installer version strings to absolute versions.
- * @param appVersion Obsidian version string or "latest", "latest-beta" or "earliest". "earliest" will use the 
- *     minAppVersion set in your manifest.json.
- * @param installerVersion Obsidian version string or "latest" or "earliest". "earliest" will use the oldest
- *     installer version compatible with the appVersion.
+ * @param appVersion Obsidian version string or one of 
+ *   - "latest": Get the current latest non-beta Obsidian version
+ *   - "latest-beta": Get the current latest beta Obsidian version (or latest is there is no current beta)
+ *   - "earliest": Get the `minAppVersion` set in your `manifest.json`
+ * @param installerVersion Obsidian version string or one of 
+ *   - "latest": Get the latest Obsidian installer compatible with `appVersion`
+ *   - "earliest": Get the oldest Obsidian installer compatible with `appVersion`
  * @param cacheDir Obsidian cache dir, defaults to `.obsidian-cache`.
+ * 
+ * See also: [Obsidian App vs Installer Versions](../README.md#obsidian-app-vs-installer-versions)
+ *
  * @returns [appVersion, installerVersion] with any "latest" etc. resolved to specific versions.
  */
 export async function resolveObsidianVersions(
@@ -43,5 +49,4 @@ export async function resolveObsidianVersions(
 ): Promise<[string, string]> {
     const launcher = new ObsidianLauncher({cacheDir: cacheDir});
     return await launcher.resolveVersions(appVersion, installerVersion);
-
 }
