@@ -1,8 +1,8 @@
 {
     "metadata": {
-        "commit_date": "2025-04-10T17:11:43Z",
-        "commit_sha": "ca9d58f77a6973a398b52e6ee15d9bee8809c734",
-        "timestamp": "2025-04-10T23:44:21.977Z"
+        "commit_date": "2025-04-22T14:52:28Z",
+        "commit_sha": "54750cc3225ead57895584f78572f3c9f306cb34",
+        "timestamp": "2025-04-22T18:32:37.792Z"
     },
     "versions": [
         {
@@ -3147,11 +3147,20 @@
         {
             "version": "1.8.10",
             "minInstallerVersion": "1.1.9",
-            "maxInstallerVersion": "1.8.9",
-            "isBeta": true,
+            "maxInstallerVersion": "1.8.10",
+            "isBeta": false,
+            "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.8.10",
             "downloads": {
-                "asar": "https://releases.obsidian.md/release/obsidian-1.8.10.asar.gz"
-            }
+                "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.8.10/obsidian-1.8.10.asar.gz",
+                "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.8.10/Obsidian-1.8.10.AppImage",
+                "appImageArm": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.8.10/Obsidian-1.8.10-arm64.AppImage",
+                "apk": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.8.10/Obsidian-1.8.10.apk",
+                "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.8.10/Obsidian-1.8.10.dmg",
+                "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.8.10/Obsidian-1.8.10.exe"
+            },
+            "electronVersion": "34.2.0",
+            "chromeVersion": "132.0.6834.196",
+            "nodeVersion": "20.18.2"
         }
     ]
 }
