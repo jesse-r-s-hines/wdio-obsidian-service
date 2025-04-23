@@ -2,7 +2,7 @@
 name: Update Obsidian Versions
 on:
   schedule: # Run every 6 hours at minute 22
-    - cron: '22 */6 * * *'
+    - cron: '22 */12 * * *'
   workflow_dispatch:
 
 jobs:
