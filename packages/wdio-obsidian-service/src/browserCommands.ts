@@ -2,48 +2,6 @@ import { OBSIDIAN_CAPABILITY_KEY } from "./types.js";
 import type * as obsidian from "obsidian"
 import obsidianPage, { ObsidianPage } from "./pageobjects/obsidianPage.js"
 
-/** Installed plugins, mapped by their id converted to camelCase */
-export interface InstalledPlugins extends Record<string, obsidian.Plugin> {
-}
-
-/**
- * Argument passed to the `executeObsidian` browser command.
- */
-export interface ExecuteObsidianArg {
-    /**
-     * There is a global "app" instance, but that may be removed in the future so you can use this to access it from
-     * tests. See https://docs.obsidian.md/Plugins/Releasing/Plugin+guidelines#Avoid+using+global+app+instance
-     */
-    app: obsidian.App,
-
-    /**
-     * The full obsidian API. See https://github.com/obsidianmd/obsidian-api/blob/master/obsidian.d.ts
-     */
-    obsidian: typeof obsidian,
-
-    /**
-     * Object containing all installed plugins mapped by their id. Plugin ids are converted to camelCase for ease of
-     * destructuring.
-     * 
-     * If you want to add typings for your plugin(s) you can use something like this in a `.d.ts`:
-     * ```ts
-     * import type MyPlugin from "../src/main.js"
-     * declare module "wdio-obsidian-service" {
-     *     interface InstalledPlugins {
-     *         myPlugin: MyPlugin,
-     *     }
-     * }
-     * ```
-     */
-    plugins: InstalledPlugins,
-
-    /**
-     * The customized require function Obsidian makes available to plugins. This is also available globally, so you can
-     * just use `require` directly instead of from `ExecuteObsidianArg` if you prefer.
-     */
-    require: NodeJS.Require,
-}
-
 const browserCommands = {
     /**
      * Returns the Obsidian app version this test is running under.
@@ -143,7 +101,7 @@ type PlainObsidianBrowserCommands = typeof browserCommands;
 /**
  * Extra commands added to the WDIO Browser instance.
  * 
- * See also: https://webdriver.io/docs/api/browser#custom-commands
+ * See also: https://webdriver.io/docs/api/browser
  * @interface
  */
 export type ObsidianBrowserCommands = PlainObsidianBrowserCommands & {
@@ -171,4 +129,47 @@ export type ObsidianBrowserCommands = PlainObsidianBrowserCommands & {
         plugins?: string[], theme?: string,
     }): Promise<string>;
 };
+
+/**
+ * Argument passed to the `executeObsidian` browser command.
+ */
+export interface ExecuteObsidianArg {
+    /**
+     * There is a global "app" instance, but that may be removed in the future so you can use this to access it from
+     * tests. See https://docs.obsidian.md/Plugins/Releasing/Plugin+guidelines#Avoid+using+global+app+instance
+     */
+    app: obsidian.App,
+
+    /**
+     * The full obsidian API. See https://github.com/obsidianmd/obsidian-api/blob/master/obsidian.d.ts
+     */
+    obsidian: typeof obsidian,
+
+    /**
+     * Object containing all installed plugins mapped by their id. Plugin ids are converted to camelCase for ease of
+     * destructuring.
+     * 
+     * If you want to add typings for your plugin(s) you can use something like this in a `.d.ts`:
+     * ```ts
+     * import type MyPlugin from "../src/main.js"
+     * declare module "wdio-obsidian-service" {
+     *     interface InstalledPlugins {
+     *         myPlugin: MyPlugin,
+     *     }
+     * }
+     * ```
+     */
+    plugins: InstalledPlugins,
+
+    /**
+     * The customized require function Obsidian makes available to plugins. This is also available globally, so you can
+     * just use `require` directly instead of from `ExecuteObsidianArg` if you prefer.
+     */
+    require: NodeJS.Require,
+}
+
+/** Installed plugins, mapped by their id converted to camelCase */
+export interface InstalledPlugins extends Record<string, obsidian.Plugin> {
+}
+
 export default browserCommands;

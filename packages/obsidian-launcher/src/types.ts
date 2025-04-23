@@ -3,8 +3,8 @@
  */
 export type ObsidianVersionInfos = {
     metadata: {
-        commit_date: string,
-        commit_sha: string,
+        commitDate: string,
+        commitSha: string,
         timestamp: string,
     },
     versions: ObsidianVersionInfo[],
@@ -34,7 +34,7 @@ export type ObsidianVersionInfo = {
 }
 
 /**
- * Schema of entries in https://github.com/obsidianmd/obsidian-releases/HEAD/community-plugins.json
+ * Schema of entries in https://github.com/obsidianmd/obsidian-releases/blob/HEAD/community-plugins.json
  */
 export type ObsidianCommunityPlugin = {
     id: string,
@@ -45,7 +45,7 @@ export type ObsidianCommunityPlugin = {
 }
 
 /**
- * Schema of entries in https://github.com/obsidianmd/obsidian-releases/HEAD/community-css-themes.json
+ * Schema of entries in https://github.com/obsidianmd/obsidian-releases/blob/HEAD/community-css-themes.json
  */
 export type ObsidianCommunityTheme = {
     name: string,
@@ -64,16 +64,6 @@ type BasePluginEntry = {
 type LocalPluginEntry = BasePluginEntry & {
     /** Path on disk to the plugin to install. */
     path: string,
-}
-export type DownloadedPluginEntry = {
-    /** If the plugin is enabled */
-    enabled: boolean,
-    /** Path on disk to the downloaded plugin. */
-    path: string,
-    /** Id of the plugin */
-    id: string,
-    /** Type of the plugin entry before downloading */
-    originalType: "local"|"github"|"community",
 }
 /** @inline */
 type GitHubPluginEntry = BasePluginEntry & {
@@ -100,6 +90,16 @@ type CommunityPluginEntry = BasePluginEntry & {
  */
 export type PluginEntry = string|LocalPluginEntry|GitHubPluginEntry|CommunityPluginEntry
 
+export type DownloadedPluginEntry = {
+    /** If the plugin is enabled */
+    enabled: boolean,
+    /** Path on disk to the downloaded plugin. */
+    path: string,
+    /** Id of the plugin */
+    id: string,
+    /** Type of the plugin entry before downloading */
+    originalType: "local"|"github"|"community",
+}
 
 /** @inline */
 type BaseThemeEntry = {
@@ -114,16 +114,6 @@ type LocalThemeEntry = BaseThemeEntry & {
     /** Path on disk to the theme to install. */
     path: string,
 }
-export type DownloadedThemeEntry = {
-    /** If the theme is enabled */
-    enabled: boolean,
-    /** Path on disk to the downloaded theme. */
-    path: string,
-    /** Name of the theme */
-    name: string,
-    /** Type of the theme entry before downloading */
-    originalType: "local"|"github"|"community",
-}
 /** @inline */
 type GitHubThemeEntry = BaseThemeEntry & {
     /** Github repo of the theme to install, e.g. "some-user/some-theme". */
@@ -134,6 +124,7 @@ type CommunityThemeEntry = BaseThemeEntry & {
     /** Theme name to install from Obsidian community themes. */
     name: string,
 }
+
 /**
  * A theme to install. Can be a simple string path to the local theme to install, or an object.
  * If an object, set one of:
@@ -145,3 +136,14 @@ type CommunityThemeEntry = BaseThemeEntry & {
  * enabled theme, so if you pass multiple you need to disable all but one.
  */
 export type ThemeEntry = string|LocalThemeEntry|GitHubThemeEntry|CommunityThemeEntry
+
+export type DownloadedThemeEntry = {
+    /** If the theme is enabled */
+    enabled: boolean,
+    /** Path on disk to the downloaded theme. */
+    path: string,
+    /** Name of the theme */
+    name: string,
+    /** Type of the theme entry before downloading */
+    originalType: "local"|"github"|"community",
+}

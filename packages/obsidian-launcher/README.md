@@ -6,10 +6,9 @@ for testing and development of Obsidian plugins. It can download Obsidian, insta
 vaults, and launch sandboxed Obsidian instances with isolated user configuration directories. You can use it either as
 a JavaScript package or as a command line interface.
 
-The primary use case for this package is downloading and launching Obsidian for testing Obsidian plugins in WebdriverIO
-with [wdio-obsidian-service](../wdio-obsidian-service/README.md). 
-However, it can also be used as a stand-alone package, for instance if you want to test plugins with a different 
-testing framework, or just want to use the provided CLI.
+The primary use case for this package is to allow [wdio-obsidian-service](../wdio-obsidian-service/README.md) to
+download Obsidian when testing Obsidian plugins with WebdriverIO. However, it can also be used as a stand-alone package,
+for instance if you want to test plugins with a different testing framework, or want to use the provided CLI.
 
 ## Example Usage
 The default export of the package is the `ObsidianLauncher` class, which can be used like so:

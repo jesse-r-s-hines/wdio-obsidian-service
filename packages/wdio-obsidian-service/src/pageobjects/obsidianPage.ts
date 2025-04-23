@@ -264,7 +264,7 @@ class ObsidianPage {
 }
 
 /**
- * Instance of ObsidianPage with helper methods for writing Obsidian tests
+ * Instance of {@link ObsidianPage} with helper methods for writing Obsidian tests.
  */
 const obsidianPage = new ObsidianPage()
 export default obsidianPage;

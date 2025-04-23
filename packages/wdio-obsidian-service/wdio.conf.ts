@@ -1,4 +1,5 @@
-import { obsidianBetaAvailable, minSupportedObsidianVersion } from "wdio-obsidian-service"
+import { minSupportedObsidianVersion } from "wdio-obsidian-service"
+import ObsidianLauncher from "obsidian-launcher";
 import { pathToFileURL, fileURLToPath } from "url"
 import path from "path"
 import fsAsync from "fs/promises"
@@ -20,7 +21,21 @@ const obsidianServiceOptions = {
     versionsUrl: pathToFileURL(obsidianVersionsJson).toString(),
 }
 
-const minorVersion = (v: string) => v.split(".").slice(0, 2).join('.');
+/**
+ * Can't use the regular obsidianBetaAvailable as it fetches the obsidian-versions.json instead of using the local one
+ */
+async function obsidianBetaAvailable(cacheDir?: string) {
+    const launcher = new ObsidianLauncher({
+        cacheDir: cacheDir,
+        versionsUrl: obsidianServiceOptions.versionsUrl,
+    });
+    const versionInfo = await launcher.getVersionInfo("latest-beta");
+    return versionInfo.isBeta && await launcher.isAvailable(versionInfo.version);
+}
+
+function minorVersion(v: string) {
+    return v.split(".").slice(0, 2).join('.')
+};
 
 let versionsToTest: [string, string][]
 if (process.env.OBSIDIAN_VERSIONS) {

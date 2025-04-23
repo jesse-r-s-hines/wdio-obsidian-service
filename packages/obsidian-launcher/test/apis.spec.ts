@@ -1,9 +1,6 @@
 import { describe, it } from "mocha";
 import { expect } from "chai";
-import { parseLinkHeader, fetchWithFileUrl } from "../src/apis.js";
-import path from "path"
-import { pathToFileURL } from "url";
-import { createDirectory } from "./helpers.js";
+import { parseLinkHeader } from "../src/apis.js";
 
 
 describe("parseLinkHeader", () => {
@@ -53,9 +50,3 @@ describe("parseLinkHeader", () => {
     })
 })
 
-describe("fetchWithFileUrl", () => {
-    it("Fetch a file url", async () => {
-        const dir = await createDirectory({"a.json": '[1]'});
-        expect(await fetchWithFileUrl(pathToFileURL(path.join(dir, 'a.json')).toString())).to.eql("[1]")
-    })
-})

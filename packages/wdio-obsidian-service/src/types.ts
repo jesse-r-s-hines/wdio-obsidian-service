@@ -3,24 +3,6 @@ import type { PluginEntry, ThemeEntry } from "obsidian-launcher";
 
 export const OBSIDIAN_CAPABILITY_KEY = "wdio:obsidianOptions" as const;
 
-export interface ObsidianServiceOptions {
-    /**
-     * Override the `obsidian-versions.json` used by the service. Can be a file URL.
-     * This is only really useful for this package's own internal tests.
-     */
-    versionsUrl?: string,
-    /**
-     * Override the `community-plugins.json` used by the service. Can be a file URL.
-     * This is only really useful for this package's own internal tests.
-     */
-    communityPluginsUrl?: string,
-    /**
-     * Override the `community-css-themes.json` used by the service. Can be a file URL.
-     * This is only really useful for this package's own internal tests.
-     */
-    communityThemesUrl?: string,
-}
-
 export interface ObsidianCapabilityOptions {
     /**
      * Version of Obsidian to download and run.
@@ -30,7 +12,7 @@ export interface ObsidianCapabilityOptions {
      * - "latest-beta": Run the latest beta Obsidian version (or latest is there is no current beta)
      *   - To download Obsidian beta versions you'll need to have an Obsidian account with Catalyst and set the 
      *     `OBSIDIAN_USERNAME` and `OBSIDIAN_PASSWORD` environment variables. 2FA needs to be disabled.
-     * - "earliest": Run the `minAppVersion` set in set in your `manifest.json`
+     * - "earliest": Run the `minAppVersion` set in your `manifest.json`
      * 
      * Defaults to "latest".
      * 
@@ -97,6 +79,24 @@ export interface ObsidianCapabilityOptions {
     appPath?: string,
 }
 
+
+export interface ObsidianServiceOptions {
+    /**
+     * Override the `obsidian-versions.json` used by the service. Can be a file URL.
+     * This is only really useful for this package's own internal tests.
+     */
+    versionsUrl?: string,
+    /**
+     * Override the `community-plugins.json` used by the service. Can be a file URL.
+     * This is only really useful for this package's own internal tests.
+     */
+    communityPluginsUrl?: string,
+    /**
+     * Override the `community-css-themes.json` used by the service. Can be a file URL.
+     * This is only really useful for this package's own internal tests.
+     */
+    communityThemesUrl?: string,
+}
 
 declare global {
     namespace WebdriverIO {
