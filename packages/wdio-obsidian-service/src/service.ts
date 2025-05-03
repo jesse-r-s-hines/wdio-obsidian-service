@@ -364,6 +364,14 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
             await browser.addCommand(name, cmd);
         }
 
+        // Add these manually so they can be sync (addCommand is always async)
+        (browser as any).getObsidianVersion = function(this: WebdriverIO.Browser) {
+            return this.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].appVersion;
+        };
+        (browser as any).getObsidianInstallerVersion = function(this: WebdriverIO.Browser) {
+            return this.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].installerVersion;
+        };
+
         await service.waitForReady(browser);
     }
 
