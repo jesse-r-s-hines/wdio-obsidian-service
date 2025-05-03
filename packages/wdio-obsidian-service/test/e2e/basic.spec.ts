@@ -12,12 +12,12 @@ describe("Basic obsidian launch", () => {
     
     it('Obsidian version matches', async () => {
         const expectedAppVersion = browser.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].appVersion;
-        expect(await browser.getObsidianVersion()).toEqual(expectedAppVersion);
+        expect(browser.getObsidianVersion()).toEqual(expectedAppVersion);
         const actualAppVersion = await browser.execute("return electron.ipcRenderer.sendSync('version')");
         expect(actualAppVersion).toEqual(expectedAppVersion);
 
         const expectedInstallerVersion = browser.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].installerVersion;
-        expect(await browser.getObsidianInstallerVersion()).toEqual(expectedInstallerVersion);
+        expect(browser.getObsidianInstallerVersion()).toEqual(expectedInstallerVersion);
         const actualInstallerVersion = await browser.execute("return electron.remote.app.getVersion()");
         expect(actualInstallerVersion).toEqual(expectedInstallerVersion);
     })

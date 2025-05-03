@@ -1,22 +1,7 @@
-import { OBSIDIAN_CAPABILITY_KEY } from "./types.js";
 import type * as obsidian from "obsidian"
 import obsidianPage, { ObsidianPage } from "./pageobjects/obsidianPage.js"
 
 const browserCommands = {
-    /**
-     * Returns the Obsidian app version this test is running under.
-     */
-    async getObsidianVersion(this: WebdriverIO.Browser): Promise<string> {
-        return this.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].appVersion;
-    },
-
-    /**
-     * Returns the Obsidian installer version this test is running under.
-     */
-    async getObsidianInstallerVersion(this: WebdriverIO.Browser): Promise<string> {
-        return this.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].installerVersion;
-    },
-
     /**
      * Wrapper around browser.execute that passes the Obsidian API to the function. The first argument to the function
      * is an object containing keys:
@@ -126,6 +111,16 @@ export type ObsidianBrowserCommands = PlainObsidianBrowserCommands & {
         vault?: string,
         plugins?: string[], theme?: string,
     }): Promise<string>;
+
+    /**
+     * Returns the Obsidian app version this test is running under.
+     */
+    getObsidianVersion(): string;
+    
+    /**
+     * Returns the Obsidian installer version this test is running under.
+        */
+    getObsidianInstallerVersion(): string;
 };
 
 /**
