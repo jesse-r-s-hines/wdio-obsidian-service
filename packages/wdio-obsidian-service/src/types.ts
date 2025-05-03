@@ -3,6 +3,20 @@ import type { PluginEntry, ThemeEntry } from "obsidian-launcher";
 
 export const OBSIDIAN_CAPABILITY_KEY = "wdio:obsidianOptions" as const;
 
+/**
+ * Options passed to an "obsidian" capability in wdio.conf.ts. E.g.
+ * ```ts
+ * // ...
+ * capabilities: [{
+ *     browserName: "obsidian",
+ *     browserVersion: "latest",
+ *     'wdio:obsidianOptions': {
+ *         installerVersion: 'earliest',
+ *         plugins: ["."],
+ *     },
+ * }],
+ * ```
+ */
 export interface ObsidianCapabilityOptions {
     /**
      * Version of Obsidian to download and run.
@@ -80,20 +94,30 @@ export interface ObsidianCapabilityOptions {
 }
 
 
+/**
+ * Options based to the obsidian service in wdio.conf.ts. E.g.
+ * ```js
+ * // ...
+ * services: [["obsidian", {versionsUrl: "file:///path/to/obsidian-versions.json"}]]
+ * ```
+ * You'll usually want to leave these options as the default, they are mostly useful for wdio-obsidian-service's
+ * internal tests.
+ */
 export interface ObsidianServiceOptions {
     /**
      * Override the `obsidian-versions.json` used by the service. Can be a file URL.
-     * This is only really useful for this package's own internal tests.
+     * Defaults to https://github.com/jesse-r-s-hines/wdio-obsidian-service/blob/HEAD/obsidian-versions.json which is
+     * auto-updated to contain information on available Obsidian versions.
      */
     versionsUrl?: string,
     /**
      * Override the `community-plugins.json` used by the service. Can be a file URL.
-     * This is only really useful for this package's own internal tests.
+     * Defaults to https://github.com/obsidianmd/obsidian-releases/blob/HEAD/community-plugins.json
      */
     communityPluginsUrl?: string,
     /**
      * Override the `community-css-themes.json` used by the service. Can be a file URL.
-     * This is only really useful for this package's own internal tests.
+     * Defaults tohttps://github.com/obsidianmd/obsidian-releases/blob/HEAD/community-css-themes.json
      */
     communityThemesUrl?: string,
 }
