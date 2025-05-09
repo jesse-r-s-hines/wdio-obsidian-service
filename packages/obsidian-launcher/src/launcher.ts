@@ -749,20 +749,18 @@ export class ObsidianLauncher {
      * @param params.installerVersion Obsidian version string.
      * @param params.appPath Path to the asar file to install. Will download if omitted.
      * @param params.vault Path to the vault to open in Obsidian.
-     * @param params.dest Destination path for the config dir. If omitted it will create a temporary directory.
      * @param params.localStorage items to add to localStorage. `$vaultId` in the keys will be replaced with the vaultId
      */
     async setupConfigDir(params: {
         appVersion: string, installerVersion: string,
         appPath?: string,
         vault?: string,
-        dest?: string,
         localStorage?: Record<string, string>,
     }): Promise<string> {
         const [appVersion, installerVersion] = await this.resolveVersions(params.appVersion, params.installerVersion);
         // configDir will be passed to --user-data-dir, so Obsidian is somewhat sandboxed. We set up "obsidian.json" so
         // that Obsidian opens the vault by default and doesn't check for updates.
-        const configDir = params.dest ?? await makeTmpDir('obs-launcher-config-');
+        const configDir = await makeTmpDir('obs-launcher-config-');
     
         let obsidianJson: any = {
             updateDisabled: true, // Prevents Obsidian trying to auto-update on boot.
