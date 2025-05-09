@@ -215,9 +215,10 @@ class ObsidianPage {
             }
         }
 
-        await browser.executeObsidian(async ({app, require}, instructions) => {
-            // the require is getting transpiled by tsup, so use it from args instead of globally
-            const fs = require('fs');
+        await browser.executeObsidian(async ({app}, instructions) => {
+            // use window.require so it doesn't get transpiled by tsup, and so that we can access node modules even in
+            // emulateMobile mode (the plugin require blocks node imports when emulating mobile)
+            const fs = window.require('fs');
     
             for (const {action, path, sourcePath, sourceContent} of instructions) {
                 const isHidden = path.split("/").some(p => p.startsWith("."));
