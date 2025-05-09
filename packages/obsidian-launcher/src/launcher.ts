@@ -750,12 +750,14 @@ export class ObsidianLauncher {
      * @param params.appPath Path to the asar file to install. Will download if omitted.
      * @param params.vault Path to the vault to open in Obsidian.
      * @param params.dest Destination path for the config dir. If omitted it will create a temporary directory.
+     * @param params.localStorage items to add to localStorage. `$vaultId` in the keys will be replaced with the vaultId
      */
     async setupConfigDir(params: {
         appVersion: string, installerVersion: string,
         appPath?: string,
         vault?: string,
         dest?: string,
+        localStorage?: Record<string, string>,
     }): Promise<string> {
         const [appVersion, installerVersion] = await this.resolveVersions(params.appVersion, params.installerVersion);
         // configDir will be passed to --user-data-dir, so Obsidian is somewhat sandboxed. We set up "obsidian.json" so
@@ -769,11 +771,12 @@ export class ObsidianLauncher {
             "most-recently-installed-version": appVersion, // prevents the changelog page on boot
         }
 
+        let vaultId: string|undefined = undefined;
         if (params.vault !== undefined) {
             if (!await fileExists(params.vault)) {
                 throw Error(`Vault path ${params.vault} doesn't exist.`)
             }
-            const vaultId = crypto.randomBytes(8).toString("hex");
+            vaultId = crypto.randomBytes(8).toString("hex");
             obsidianJson = {
                 ...obsidianJson,
                 vaults: {
@@ -784,11 +787,13 @@ export class ObsidianLauncher {
                     },
                 },
             };
-            localStorageData = {
-                ...localStorageData,
+            Object.assign(localStorageData, {
                 [`enable-plugin-${vaultId}`]: "true", // Disable "safe mode" and enable plugins
-            }
+            })
         }
+        Object.assign(localStorageData, _.mapKeys(params.localStorage ?? {},
+            (v, k) => k.replace('$vaultId', vaultId ?? ''),
+        ));
 
         await fsAsync.writeFile(path.join(configDir, 'obsidian.json'), JSON.stringify(obsidianJson));
 
@@ -844,6 +849,7 @@ export class ObsidianLauncher {
      * @param params.plugins List of plugins to install in the vault
      * @param params.themes List of themes to install in the vault
      * @param params.args CLI args to pass to Obsidian
+     * @param params.localStorage items to add to localStorage. `$vaultId` in the keys will be replaced with the vaultId
      * @param params.spawnOptions Options to pass to `spawn`
      * @returns The launched child process and the created tmpdirs
      */
@@ -853,6 +859,7 @@ export class ObsidianLauncher {
         vault?: string,
         plugins?: PluginEntry[], themes?: ThemeEntry[],
         args?: string[],
+        localStorage?: Record<string, string>,
         spawnOptions?: child_process.SpawnOptions,
     }): Promise<{proc: child_process.ChildProcess, configDir: string, vault?: string}> {
         const [appVersion, installerVersion] = await this.resolveVersions(
@@ -871,7 +878,10 @@ export class ObsidianLauncher {
             })
         }
 
-        const configDir = await this.setupConfigDir({ appVersion, installerVersion, appPath, vault });
+        const configDir = await this.setupConfigDir({
+            appVersion, installerVersion, appPath, vault,
+            localStorage: params.localStorage,
+        });
 
         // Spawn child.
         const proc = child_process.spawn(installerPath, [
