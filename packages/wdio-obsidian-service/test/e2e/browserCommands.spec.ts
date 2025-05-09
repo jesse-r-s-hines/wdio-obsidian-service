@@ -22,6 +22,10 @@ describe("Test custom browser commands", () => {
         expect(plugins).toEqual({
             basicPlugin: true,
         })
+
+        await browser.executeObsidian(() => {
+            require('obsidian'); // test that require global is set up
+        });
     })
 
     it('runObsidianCommand', async () => {

@@ -24,9 +24,6 @@ describe("Basic obsidian launch", () => {
 
     it('Vault opened', async () => {
         const vaultPath = await browser.executeObsidian(({app}) => (app.vault.adapter as any).getBasePath());
-        await browser.executeObsidian(({app}) => {
-            require('fs')
-        });
 
         // Should have created a copy of vault
         expect(path.basename(vaultPath)).toMatch(/^basic-/)
