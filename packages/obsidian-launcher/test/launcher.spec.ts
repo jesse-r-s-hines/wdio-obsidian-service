@@ -8,6 +8,7 @@ import { createDirectory } from "./helpers.js"
 import { ObsidianLauncher } from "../src/launcher.js";
 import { fileExists } from "../src/utils.js";
 import { ObsidianVersionInfo } from "../src/types.js";
+import ChromeLocalStorage from "../src/chromeLocalStorage.js";
 
 
 const obsidianLauncherOpts = {
@@ -321,7 +322,7 @@ describe("ObsidianLauncher download, install and setup", () => {
             appPath: `${tmpDir}/obsidian-1.7.7.asar`,
             vault: vault,
         })
-        after(() => { fsAsync.rm(configDir, { recursive: true, force: true}) });
+        after(() => fsAsync.rm(configDir, { recursive: true, force: true}) );
 
         expect(await fileExists(`${configDir}/obsidian-1.7.7.asar`)).to.eql(true);
         const obsidianJson = JSON.parse(await fsAsync.readFile(`${configDir}/obsidian.json`, 'utf-8'));
@@ -337,11 +338,36 @@ describe("ObsidianLauncher download, install and setup", () => {
             appVersion: "1.7.7", installerVersion: "1.7.7",
             appPath: `${tmpDir}/obsidian-1.7.7.asar`,
         })
-        after(() => { fsAsync.rm(configDir, { recursive: true, force: true}) });
+        after(() => fsAsync.rm(configDir, { recursive: true, force: true}) );
 
         expect(await fileExists(`${configDir}/obsidian-1.7.7.asar`)).to.eql(true);
         const obsidianJson = JSON.parse(await fsAsync.readFile(`${configDir}/obsidian.json`, 'utf-8'));
         expect(obsidianJson).to.not.have.key("vaults");
+    })
+
+    it(`setupConfigDir localStorage`, async () => {
+        const tmpDir = await createDirectory({
+            "obsidian-1.7.7.asar": "stuff",
+            "my-vault/A.md": "This is a file",
+        });
+        const vault = path.join(tmpDir, "my-vault");
+
+        const configDir = await launcher.setupConfigDir({
+            appVersion: "1.7.7", installerVersion: "1.7.7",
+            appPath: `${tmpDir}/obsidian-1.7.7.asar`,
+            vault: vault,
+            localStorage: {"$vaultId-foo": "bar"},
+        })
+        after(() => fsAsync.rm(configDir, { recursive: true, force: true}) );
+
+        const obsidianJson = JSON.parse(await fsAsync.readFile(`${configDir}/obsidian.json`, 'utf-8'));
+        const vaultId = Object.keys(obsidianJson.vaults)[0];
+
+        const localStorage = new ChromeLocalStorage(configDir);
+        after(() => localStorage.close());
+
+        const value = await localStorage.getItem("app://obsidian.md", `${vaultId}-foo`);
+        expect(value).to.equal('bar');
     })
 
     it(`setupVault basic`, async () => {
@@ -357,7 +383,7 @@ describe("ObsidianLauncher download, install and setup", () => {
             copy: true,
             plugins: [{path: `${tmpDir}/my-plugin`, enabled: true}],
         })
-        after(() => { fsAsync.rm(vaultCopy, { recursive: true, force: true}) });
+        after(() => fsAsync.rm(vaultCopy, { recursive: true, force: true}) );
 
         expect(vaultCopy).to.not.eql(vault);
         expect((await fsAsync.readdir(vaultCopy)).sort()).to.eql(['.obsidian', 'A.md']);
