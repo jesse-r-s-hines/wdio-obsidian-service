@@ -1,33 +1,29 @@
 import { browser } from '@wdio/globals'
 import path from "path"
 import { OBSIDIAN_CAPABILITY_KEY } from '../../src/types.js';
-import { obsidianPage } from 'wdio-obsidian-service';
 
 
 describe("Basic obsidian launch", () => {
     before(async () => {
         // Obsidian should start with no vault open
-        expect(await obsidianPage.getVaultPath()).toEqual(undefined);
+        expect(browser.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].vault).toEqual(undefined);
         await browser.reloadObsidian({vault: "./test/vaults/basic"});
     })
     
     it('Obsidian version matches', async () => {
         const expectedAppVersion = browser.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].appVersion;
-        expect(await browser.getObsidianVersion()).toEqual(expectedAppVersion);
+        expect(browser.getObsidianVersion()).toEqual(expectedAppVersion);
         const actualAppVersion = await browser.execute("return electron.ipcRenderer.sendSync('version')");
         expect(actualAppVersion).toEqual(expectedAppVersion);
 
         const expectedInstallerVersion = browser.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].installerVersion;
-        expect(await browser.getObsidianInstallerVersion()).toEqual(expectedInstallerVersion);
+        expect(browser.getObsidianInstallerVersion()).toEqual(expectedInstallerVersion);
         const actualInstallerVersion = await browser.execute("return electron.remote.app.getVersion()");
         expect(actualInstallerVersion).toEqual(expectedInstallerVersion);
     })
 
     it('Vault opened', async () => {
         const vaultPath = await browser.executeObsidian(({app}) => (app.vault.adapter as any).getBasePath());
-        await browser.executeObsidian(({app}) => {
-            require('fs')
-        });
 
         // Should have created a copy of vault
         expect(path.basename(vaultPath)).toMatch(/^basic-/)

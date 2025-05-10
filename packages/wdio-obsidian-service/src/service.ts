@@ -180,7 +180,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
     /**
      * Setup vault and config dir for a sandboxed Obsidian instance.
      */
-    private async setupObsidian(obsidianOptions: ObsidianCapabilityOptions) {
+    private async setupObsidianDirs(obsidianOptions: ObsidianCapabilityOptions): Promise<[string, string|undefined]> {
         let vault = obsidianOptions.vault;
         if (vault != undefined) {
             log.info(`Opening vault ${obsidianOptions.vault}`);
@@ -199,24 +199,28 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
             appVersion: obsidianOptions.appVersion!, installerVersion: obsidianOptions.installerVersion!,
             appPath: obsidianOptions.appPath!,
             vault: vault,
+            // `app.emulateMobile` just sets this localStorage variable. Setting it ourselves here instead of calling
+            // the function simplifies the boot/plugin load sequence and makes sure plugins load in mobile mode.
+            localStorage: obsidianOptions.emulateMobile ? {"EmulateMobile": "1"} : {},
         });
         this.tmpDirs.push(configDir);
 
-        return configDir;
+        return [configDir, vault];
     }
 
     /**
-     * Wait for Obsidian to fully boot.
+     * Wait for Obsidian to fully boot and do some final set up steps before running the tests.
      */
-    private async waitForReady(browser: WebdriverIO.Browser) {
-        if (browser.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].vault != undefined) {
+    private async setupObsidianApp(browser: WebdriverIO.Browser) {
+        const obsidianOptions: ObsidianCapabilityOptions = browser.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY];
+        if (obsidianOptions.vault != undefined) {
             await browser.waitUntil( // wait until the helper plugin is loaded
                 () => browser.execute(() => !!(window as any).wdioObsidianService),
                 {timeout: 30 * 1000, interval: 100},
             );
             await browser.executeObsidian(async ({app}) => {
                 await new Promise<void>((resolve) => app.workspace.onLayoutReady(resolve) );
-            })
+            });
         } else {
             await browser.execute(async () => {
                 if (document.readyState === "loading") {
@@ -224,6 +228,19 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
                 }
             })
         }
+
+        if (obsidianOptions.emulateMobile) {
+            // change the screen size for mobile. Most of the normal ways to do this don't work on Electron/Obsidian.
+            // Obsidian doesn't respect the `--window-size` argument. wdio setViewport and setWindowSize don't work
+            // without BiDi. Using `(await puppeteer.pages())[0].setViewPort` sorta works but it only sets the internal
+            // page size not the window size and won't expand the window if needed. However just calling resizeTo
+            // actually works in Electron.
+            const [width, height] = [412, 914];
+            await browser.execute((w, h) => { window.resizeTo(w, h) }, width, height);
+            // await browser.waitUntil(async () =>
+            //     await browser.execute(() => `${window.innerWidth},${window.innerHeight}`) == `${width},${height}`
+            // );
+        };
     }
 
     /**
@@ -232,8 +249,10 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
     async beforeSession(config: Options.Testrunner, capabilities: WebdriverIO.Capabilities) {
         if (!capabilities[OBSIDIAN_CAPABILITY_KEY]) return;
 
-        const configDir = await this.setupObsidian(capabilities[OBSIDIAN_CAPABILITY_KEY]);
+        const [configDir, vaultCopy] = await this.setupObsidianDirs(capabilities[OBSIDIAN_CAPABILITY_KEY]);
 
+        // Undocumented field so we can get the path to the vault copy in getVaultPath()
+        (capabilities[OBSIDIAN_CAPABILITY_KEY] as any)['vaultCopy'] = vaultCopy;
         capabilities['goog:chromeOptions']!.args = [
             `--user-data-dir=${configDir}`,
             ...(capabilities['goog:chromeOptions']!.args ?? [])
@@ -298,7 +317,9 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
                     themes: service.selectThemes(oldObsidianOptions.themes, theme),
                 }
     
-                const configDir = await service.setupObsidian(newObsidianOptions);
+                const [configDir, vaultCopy] = await service.setupObsidianDirs(newObsidianOptions);
+                // for use in getVaultPath()
+                newObsidianOptions.vaultCopy = vaultCopy;
                 
                 const newArgs = [
                     `--user-data-dir=${configDir}`,
@@ -350,7 +371,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
                 ..._.omit(this.requestedCapabilities, ['browserName', 'browserVersion']),
                 ...newCapabilities,
             });
-            await service.waitForReady(this);
+            await service.setupObsidianApp(this);
             return sessionId;
         }
 
@@ -360,7 +381,15 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
             await browser.addCommand(name, cmd);
         }
 
-        await service.waitForReady(browser);
+        // Add these manually so they can be sync (addCommand is always async)
+        (browser as any).getObsidianVersion = function(this: WebdriverIO.Browser) {
+            return this.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].appVersion;
+        };
+        (browser as any).getObsidianInstallerVersion = function(this: WebdriverIO.Browser) {
+            return this.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].installerVersion;
+        };
+
+        await service.setupObsidianApp(browser);
     }
 
     /**
