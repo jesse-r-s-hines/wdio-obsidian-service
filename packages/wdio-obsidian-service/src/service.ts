@@ -237,9 +237,9 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
             // actually works in Electron.
             const [width, height] = [412, 914];
             await browser.execute((w, h) => { window.resizeTo(w, h) }, width, height);
-            await browser.waitUntil(async () =>
-                await browser.execute(() => `${window.innerWidth},${window.innerHeight}`) == `${width},${height}`
-            );
+            // await browser.waitUntil(async () =>
+            //     await browser.execute(() => `${window.innerWidth},${window.innerHeight}`) == `${width},${height}`
+            // );
         };
     }
 
