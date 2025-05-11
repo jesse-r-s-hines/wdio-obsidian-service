@@ -19,7 +19,12 @@ class ObsidianReporter extends SpecReporter {
         if (obsidianOptions) {
             const appVersion = obsidianOptions.appVersion;
             const installerVersion = obsidianOptions.installerVersion;
-            combo = `obsidian v${appVersion} (installer: v${installerVersion})`
+            const emulateMobile = !!obsidianOptions.emulateMobile;
+            combo = `obsidian v${appVersion} (installer: v${installerVersion}`
+            if (emulateMobile) {
+                combo += ', emulateMobile: true';
+            }
+            combo += ")"
         } else { // fall back to SpecReporter behavior
             combo = this.getEnviromentCombo(runner.capabilities, undefined, runner.isMultiremote).trim()
         }
