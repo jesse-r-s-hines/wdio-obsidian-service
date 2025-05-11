@@ -180,7 +180,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
     /**
      * Setup vault and config dir for a sandboxed Obsidian instance.
      */
-    private async setupObsidian(obsidianOptions: ObsidianCapabilityOptions): Promise<[string, string|undefined]> {
+    private async setupObsidianDirs(obsidianOptions: ObsidianCapabilityOptions): Promise<[string, string|undefined]> {
         let vault = obsidianOptions.vault;
         if (vault != undefined) {
             log.info(`Opening vault ${obsidianOptions.vault}`);
@@ -199,6 +199,9 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
             appVersion: obsidianOptions.appVersion!, installerVersion: obsidianOptions.installerVersion!,
             appPath: obsidianOptions.appPath!,
             vault: vault,
+            // `app.emulateMobile` just sets this localStorage variable. Setting it ourselves here instead of calling
+            // the function simplifies the boot/plugin load sequence and makes sure plugins load in mobile mode.
+            localStorage: obsidianOptions.emulateMobile ? {"EmulateMobile": "1"} : {},
         });
         this.tmpDirs.push(configDir);
 
@@ -206,17 +209,18 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
     }
 
     /**
-     * Wait for Obsidian to fully boot.
+     * Wait for Obsidian to fully boot and do some final set up steps before running the tests.
      */
-    private async waitForReady(browser: WebdriverIO.Browser) {
-        if (browser.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].vault != undefined) {
+    private async setupObsidianApp(browser: WebdriverIO.Browser) {
+        const obsidianOptions: ObsidianCapabilityOptions = browser.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY];
+        if (obsidianOptions.vault != undefined) {
             await browser.waitUntil( // wait until the helper plugin is loaded
                 () => browser.execute(() => !!(window as any).wdioObsidianService),
                 {timeout: 30 * 1000, interval: 100},
             );
             await browser.executeObsidian(async ({app}) => {
                 await new Promise<void>((resolve) => app.workspace.onLayoutReady(resolve) );
-            })
+            });
         } else {
             await browser.execute(async () => {
                 if (document.readyState === "loading") {
@@ -224,6 +228,11 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
                 }
             })
         }
+
+        if (obsidianOptions.emulateMobile) {
+            // change the screen size for mobile.
+            await obsidianPage.setWindowSize({width: 412, height: 914});
+        };
     }
 
     /**
@@ -232,7 +241,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
     async beforeSession(config: Options.Testrunner, capabilities: WebdriverIO.Capabilities) {
         if (!capabilities[OBSIDIAN_CAPABILITY_KEY]) return;
 
-        const [configDir, vaultCopy] = await this.setupObsidian(capabilities[OBSIDIAN_CAPABILITY_KEY]);
+        const [configDir, vaultCopy] = await this.setupObsidianDirs(capabilities[OBSIDIAN_CAPABILITY_KEY]);
 
         // Undocumented field so we can get the path to the vault copy in getVaultPath()
         (capabilities[OBSIDIAN_CAPABILITY_KEY] as any)['vaultCopy'] = vaultCopy;
@@ -300,7 +309,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
                     themes: service.selectThemes(oldObsidianOptions.themes, theme),
                 }
     
-                const [configDir, vaultCopy] = await service.setupObsidian(newObsidianOptions);
+                const [configDir, vaultCopy] = await service.setupObsidianDirs(newObsidianOptions);
                 // for use in getVaultPath()
                 newObsidianOptions.vaultCopy = vaultCopy;
                 
@@ -354,7 +363,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
                 ..._.omit(this.requestedCapabilities, ['browserName', 'browserVersion']),
                 ...newCapabilities,
             });
-            await service.waitForReady(this);
+            await service.setupObsidianApp(this);
             return sessionId;
         }
 
@@ -372,7 +381,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
             return this.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].installerVersion;
         };
 
-        await service.waitForReady(browser);
+        await service.setupObsidianApp(browser);
     }
 
     /**

@@ -98,4 +98,12 @@ describe("Test page object", () => {
         await obsidianPage.loadWorkspaceLayout(workspace);
         expect(await getOpenFiles()).toEqual(["Goodbye.md", "Welcome.md"]);
     })
+
+    it("setWindowSize", async () => {
+        await obsidianPage.setWindowSize({width: 600, height: 700});
+        const [width, height] = await browser.executeObsidian(({}) => {
+            return [window.innerWidth, window.innerHeight];
+        })
+        expect([width, height]).toEqual([600, 700]);
+    })
 })

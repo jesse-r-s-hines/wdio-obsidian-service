@@ -59,9 +59,9 @@ if (process.env.OBSIDIAN_VERSIONS) {
     // test latest/earliest combination to make sure that minInstallerVersion is correct
     versionsToTest.push(["latest", "earliest"]);
 
-    // Only test first and last 4 minor versions
-    if (testPreset == "sample" && versionsToTest.length > 5) {
-        versionsToTest = [versionsToTest[0], ...versionsToTest.slice(-4)];
+    // Only test first and last 3 minor versions
+    if (testPreset == "sample" && versionsToTest.length > 4) {
+        versionsToTest = [versionsToTest[0], ...versionsToTest.slice(-3)];
     }
 
     // And test latest beta if available
@@ -86,19 +86,22 @@ export const config: WebdriverIO.Config = {
     // How many instances of Obsidian should be launched in parallel during testing.
     maxInstances: maxInstances,
 
-    capabilities: versionsToTest.map(([appVersion, installerVersion]) => ({
-        browserName: "obsidian",
-        browserVersion: appVersion,
-        'wdio:obsidianOptions': {
-            installerVersion: installerVersion,
-            plugins: [
-                "./test/plugins/basic-plugin",
-            ],
-            themes: [
-                "./test/themes/basic-theme",
-            ],
-        }
-    })),
+    capabilities: versionsToTest
+        .flatMap(v => [[...v, true], [...v, false]] as const)
+        .map(([appVersion, installerVersion, emulateMobile]) => ({
+            browserName: "obsidian",
+            browserVersion: appVersion,
+            'wdio:obsidianOptions': {
+                installerVersion: installerVersion,
+                emulateMobile: emulateMobile,
+                plugins: [
+                    "./test/plugins/basic-plugin",
+                ],
+                themes: [
+                    "./test/themes/basic-theme",
+                ],
+            },
+        })),
 
     services: [["obsidian", obsidianServiceOptions]],
 
