@@ -215,9 +215,10 @@ class ObsidianPage {
             }
         }
 
-        await browser.executeObsidian(async ({app, require}, instructions) => {
-            // the require is getting transpiled by tsup, so use it from args instead of globally
-            const fs = require('fs');
+        await browser.executeObsidian(async ({app}, instructions) => {
+            // use window.require so it doesn't get transpiled by tsup, and so that we can access node modules even in
+            // emulateMobile mode (the plugin require blocks node imports when emulating mobile)
+            const fs = window.require('fs');
     
             for (const {action, path, sourcePath, sourceContent} of instructions) {
                 const isHidden = path.split("/").some(p => p.startsWith("."));
@@ -253,6 +254,24 @@ class ObsidianPage {
                 }
             }
         }, instructions);
+    }
+
+    /**
+     * Sets the Obsidian window size.
+     * 
+     * Most of the normal ways to do this don't work on Electron/Obsidian. Obsidian doesn't respect the `--window-size`
+     * argument and wdio setViewport and setWindowSize don't work without BiDi. This method resizes the window via
+     * electron APIs.
+     */
+    async setWindowSize({width, height}: {width: number, height: number}) {
+        // Using `(await puppeteer.pages())[0].setViewPort` sorta works but it only sets the internal page size and
+        // doesn't actually resize the window. It also doesn't work at all on older Obsidian versions.
+        await browser.execute(async (width, height) => {
+            await (window as any).electron.remote.getCurrentWindow().setSize(width, height);
+        }, width, height);
+        await browser.waitUntil(async () =>
+            await browser.execute(() => `${window.innerWidth},${window.innerHeight}`) == `${width},${height}`
+        );
     }
 }
 
