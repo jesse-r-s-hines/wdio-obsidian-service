@@ -2,6 +2,7 @@ import { browser } from '@wdio/globals'
 import { TFile } from 'obsidian';
 import semver from "semver";
 import { obsidianPage } from 'wdio-obsidian-service';
+import { OBSIDIAN_CAPABILITY_KEY } from '../../src/types.js';
 
 
 describe("Test custom browser commands", () => {
@@ -42,9 +43,10 @@ describe("Test custom browser commands", () => {
 
 describe("Test windows", () => {
     before(async function() {
-        if (semver.lt(browser.getObsidianInstallerVersion(), "0.12.19")) {
-            // Windows don't work on older installer versions
-            this.skip()
+        const installerVersion = browser.getObsidianInstallerVersion();
+        const isMobile = !!browser.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].emulateMobile;
+        if (semver.lt(installerVersion, "0.12.19") || isMobile) {
+            this.skip() // Windows don't work on older installer versions or mobile
         }
     })
 
