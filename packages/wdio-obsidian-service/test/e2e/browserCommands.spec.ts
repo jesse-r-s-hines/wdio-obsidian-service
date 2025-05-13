@@ -1,4 +1,4 @@
-import { browser } from '@wdio/globals'
+import { browser, expect } from '@wdio/globals'
 import { TFile } from 'obsidian';
 import semver from "semver";
 import { obsidianPage } from 'wdio-obsidian-service';
