@@ -1,3 +1,4 @@
+import { browser } from "@wdio/globals"
 import * as path from "path"
 import * as fs from "fs"
 import * as fsAsync from "fs/promises"

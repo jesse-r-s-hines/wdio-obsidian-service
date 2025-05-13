@@ -1,5 +1,6 @@
 import type * as obsidian from "obsidian"
 import obsidianPage, { ObsidianPage } from "./pageobjects/obsidianPage.js"
+import { OBSIDIAN_CAPABILITY_KEY } from "./types.js";
 
 const browserCommands = {
     /**
@@ -48,7 +49,9 @@ const browserCommands = {
         func: (obs: ExecuteObsidianArg, ...params: Params) => Return,
         ...params: Params
     ): Promise<Return> {
-        obsidianPage.getVaultPath(); // checks and throws if no vault is open
+        if (this.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].vaultCopy === undefined) {
+            throw Error("No vault open, set vault in wdio.conf or use reloadObsidian to open a vault dynamically.")
+        }
         return await this.execute<Return, Params>(`
             const require = window.wdioObsidianService().require;
             return (${func.toString()}).call(null, {...window.wdioObsidianService()}, ...arguments)
@@ -67,7 +70,7 @@ const browserCommands = {
     },
 
     /**
-     * Returns the Workspace page object with convenience helper functions.
+     * Returns the ObsidianPage object with convenience helper functions.
      * You can also just import the page object directly with
      * ```ts
      * import { obsidianPage } from "wdio-obsidian-service"

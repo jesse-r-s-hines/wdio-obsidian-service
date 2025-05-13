@@ -1,4 +1,4 @@
-import { browser } from '@wdio/globals'
+import { browser, expect } from '@wdio/globals'
 import fsAsync from "fs/promises";
 import path from "path";
 import { obsidianPage } from 'wdio-obsidian-service';
