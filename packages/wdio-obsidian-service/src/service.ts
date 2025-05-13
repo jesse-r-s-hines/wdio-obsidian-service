@@ -6,9 +6,8 @@ import type { Capabilities, Options, Services } from '@wdio/types'
 import logger from '@wdio/logger'
 import { fileURLToPath } from "url"
 import ObsidianLauncher, { DownloadedPluginEntry, DownloadedThemeEntry } from "obsidian-launcher"
-import browserCommands from "./browserCommands.js"
+import { asyncBrowserCommands, syncBrowserCommands } from "./browserCommands.js"
 import { ObsidianCapabilityOptions, ObsidianServiceOptions, OBSIDIAN_CAPABILITY_KEY } from "./types.js"
-import obsidianPage from "./pageobjects/obsidianPage.js"
 import { sleep } from "./utils.js"
 import semver from "semver"
 import _ from "lodash"
@@ -231,7 +230,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
 
         if (obsidianOptions.emulateMobile && obsidianOptions.vault) {
             // change the screen size for mobile.
-            await obsidianPage.setWindowSize({width: 412, height: 914});
+            await browser.getObsidianPage().setWindowSize({width: 412, height: 914});
         };
     }
 
@@ -330,6 +329,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
                 };
             } else {
                 // preserve vault and config dir
+                const obsidianPage = browser.getObsidianPage();
                 newCapabilities = {};
                 // Since we aren't recreating the vault, we'll need to reset plugins and themes here if specified.
                 if (plugins) {
@@ -369,17 +369,13 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
 
         await browser.addCommand("reloadObsidian", reloadObsidian);
 
-        for (const [name, cmd] of Object.entries(browserCommands)) {
+        for (const [name, cmd] of Object.entries(asyncBrowserCommands)) {
             await browser.addCommand(name, cmd);
         }
-
-        // Add these manually so they can be sync (addCommand is always async)
-        (browser as any).getObsidianVersion = function(this: WebdriverIO.Browser) {
-            return this.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].appVersion;
-        };
-        (browser as any).getObsidianInstallerVersion = function(this: WebdriverIO.Browser) {
-            return this.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].installerVersion;
-        };
+        // Hack to allow adding a few sync methods to browser
+        for (const [name, cmd] of Object.entries(syncBrowserCommands)) {
+            (browser as any)[name] = cmd;
+        }
 
         await service.setupObsidianApp(browser);
     }

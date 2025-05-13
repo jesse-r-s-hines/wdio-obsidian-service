@@ -1,8 +1,8 @@
 import type * as obsidian from "obsidian"
-import obsidianPage, { ObsidianPage } from "./pageobjects/obsidianPage.js"
+import { ObsidianPage } from "./pageobjects/obsidianPage.js"
 import { OBSIDIAN_CAPABILITY_KEY } from "./types.js";
 
-const browserCommands = {
+export const asyncBrowserCommands = {
     /**
      * Wrapper around browser.execute that passes the Obsidian API to the function. The first argument to the function
      * is an object containing keys:
@@ -68,6 +68,29 @@ const browserCommands = {
             throw Error(`Obsidian command ${id} not found or failed.`);
         }
     },
+} as const
+
+/** Define this type separately so we can @inline it in typedoc */
+type AsyncObsidianBrowserCommands = typeof asyncBrowserCommands;
+
+/**
+ * addCommand always makes the command async, we manually add these methods to the browser instance so they can be
+ * sync.
+ */
+export const syncBrowserCommands = {
+    /**
+     * Returns the Obsidian app version this test is running under.
+     */
+    getObsidianVersion(this: WebdriverIO.Browser): string {
+        return this.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].appVersion;
+    },
+    
+    /**
+     * Returns the Obsidian installer version this test is running under.
+     */
+    getObsidianInstallerVersion(this: WebdriverIO.Browser): string {
+        return this.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].installerVersion;
+    },
 
     /**
      * Returns the ObsidianPage object with convenience helper functions.
@@ -76,13 +99,13 @@ const browserCommands = {
      * import { obsidianPage } from "wdio-obsidian-service"
      * ```
      */
-    async getObsidianPage(this: WebdriverIO.Browser): Promise<ObsidianPage> {
-        return obsidianPage;
+    getObsidianPage(this: WebdriverIO.Browser): ObsidianPage {
+        return new ObsidianPage(this);
     },
-} as const
+}
 
 /** Define this type separately so we can @inline it in typedoc */
-type PlainObsidianBrowserCommands = typeof browserCommands;
+type SyncObsidianBrowserCommands = typeof syncBrowserCommands;
 
 /**
  * Extra commands added to the WDIO Browser instance.
@@ -90,7 +113,7 @@ type PlainObsidianBrowserCommands = typeof browserCommands;
  * See also: https://webdriver.io/docs/api/browser
  * @interface
  */
-export type ObsidianBrowserCommands = PlainObsidianBrowserCommands & {
+export type ObsidianBrowserCommands = AsyncObsidianBrowserCommands & SyncObsidianBrowserCommands & {
     // This command is implemented in the service hooks.
     /**
      * Relaunch obsidian. Can be used to switch to a new vault, change the plugin list, or just to reboot
@@ -114,16 +137,6 @@ export type ObsidianBrowserCommands = PlainObsidianBrowserCommands & {
         vault?: string,
         plugins?: string[], theme?: string,
     }): Promise<string>;
-
-    /**
-     * Returns the Obsidian app version this test is running under.
-     */
-    getObsidianVersion(): string;
-    
-    /**
-     * Returns the Obsidian installer version this test is running under.
-        */
-    getObsidianInstallerVersion(): string;
 };
 
 /**
@@ -167,5 +180,3 @@ export interface ExecuteObsidianArg {
 /** Installed plugins, mapped by their id converted to camelCase */
 export interface InstalledPlugins extends Record<string, obsidian.Plugin> {
 }
-
-export default browserCommands;
