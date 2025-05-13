@@ -1,8 +1,8 @@
-import { browser } from "@wdio/globals"
 import * as path from "path"
 import * as fs from "fs"
 import * as fsAsync from "fs/promises"
 import { OBSIDIAN_CAPABILITY_KEY } from "../types.js";
+import { BasePage } from "./basePage.js";
 import { TFile } from "obsidian";
 import _ from "lodash";
 
@@ -21,14 +21,14 @@ import _ from "lodash";
  * 
  * @hideconstructor
  */
-class ObsidianPage {
+class ObsidianPage extends BasePage {
     /**
      * Returns the path to the vault opened in Obsidian.
      * 
      * wdio-obsidian-service copies your vault before running tests, so this is the path to the temporary copy.
      */
     getVaultPath(): string {
-        const vault = browser.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].vaultCopy;
+        const vault = this.browser.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].vaultCopy;
         if (vault === undefined) {
             throw Error("No vault open, set vault in wdio.conf or use reloadObsidian to open a vault dynamically.")
         }
@@ -39,7 +39,7 @@ class ObsidianPage {
      * Return the path to the Obsidian config dir (".obsidian" unless you've changed it explicitly)
      */
     async getConfigDir(): Promise<string> {
-        return await browser.executeObsidian(({app}) => {
+        return await this.browser.executeObsidian(({app}) => {
             return app.vault.configDir;
         })
     }
@@ -48,7 +48,7 @@ class ObsidianPage {
      * Enables a plugin by ID
      */
     async enablePlugin(pluginId: string): Promise<void> {
-        await browser.executeObsidian(
+        await this.browser.executeObsidian(
             async ({app}, pluginId) => await (app as any).plugins.enablePluginAndSave(pluginId),
             pluginId,
         );
@@ -58,7 +58,7 @@ class ObsidianPage {
      * Disables a plugin by ID
      */
     async disablePlugin(pluginId: string): Promise<void> {
-        await browser.executeObsidian(
+        await this.browser.executeObsidian(
             async ({app}, pluginId) => await (app as any).plugins.disablePluginAndSave(pluginId),
             pluginId,
         );
@@ -69,7 +69,7 @@ class ObsidianPage {
      */
     async setTheme(themeName: string): Promise<void> {
         themeName = themeName == 'default' ? '' : themeName;
-        await browser.executeObsidian(
+        await this.browser.executeObsidian(
             async ({app}, themeName) => await (app as any).customCss.setTheme(themeName),
             themeName,
         )
@@ -79,7 +79,7 @@ class ObsidianPage {
      * Opens a file in a new tab.
      */
     async openFile(path: string) {
-        await browser.executeObsidian(async ({app, obsidian}, path) => {
+        await this.browser.executeObsidian(async ({app, obsidian}, path) => {
             const file = app.vault.getAbstractFileByPath(path);
             if (file instanceof obsidian.TFile) {
                 await app.workspace.getLeaf('tab').openFile(file);
@@ -107,7 +107,7 @@ class ObsidianPage {
             }
         }
 
-        await browser.executeObsidian(async ({app}, layout) => {
+        await this.browser.executeObsidian(async ({app}, layout) => {
             await app.workspace.changeLayout(layout)
         }, layout)
     }
@@ -138,7 +138,7 @@ class ObsidianPage {
      * ```
      */
     async resetVault(...vaults: (string|Record<string, string>)[]) {
-        const origVaultPath: string = browser.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].vault;
+        const origVaultPath: string = this.browser.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].vault;
         vaults = vaults.length == 0 ? [origVaultPath] : vaults;
         const configDir = await this.getConfigDir();
 
@@ -173,7 +173,7 @@ class ObsidianPage {
 
         // calculate the changes needed to the current vault
         const newFolders = getFolders(newFiles.keys());
-        const currFiles = await readVaultFiles(obsidianPage.getVaultPath());
+        const currFiles = await readVaultFiles(this.getVaultPath());
         const currFolders = getFolders(currFiles.keys());
 
         type FileUpdateInstruction = {
@@ -216,7 +216,7 @@ class ObsidianPage {
             }
         }
 
-        await browser.executeObsidian(async ({app, require}, instructions) => {
+        await this.browser.executeObsidian(async ({app, require}, instructions) => {
             // the require is getting transpiled by tsup, so use it from args instead of globally
             const fs = require('fs');
     

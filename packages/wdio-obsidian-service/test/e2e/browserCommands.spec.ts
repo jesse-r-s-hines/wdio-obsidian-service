@@ -35,8 +35,8 @@ describe("Test custom browser commands", () => {
     })
 
     it("getObsidianPage", async () => {
-        const commandObsidianPage = await browser.getObsidianPage();
-        expect(commandObsidianPage).toBe(obsidianPage);
+        const commandObsidianPage = browser.getObsidianPage();
+        expect(commandObsidianPage).toBeInstanceOf(obsidianPage.constructor);
     })
 })
 
