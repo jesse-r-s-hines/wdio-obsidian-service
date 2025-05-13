@@ -116,4 +116,6 @@ export const config: WebdriverIO.Config = {
     },
 
     logLevel: "warn",
+
+    injectGlobals: false,
 }
