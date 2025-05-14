@@ -2,6 +2,7 @@ import { browser, expect } from '@wdio/globals'
 import fsAsync from "fs/promises";
 import path from "path";
 import { obsidianPage } from 'wdio-obsidian-service';
+import { OBSIDIAN_CAPABILITY_KEY } from '../../src/types.js';
 
 
 async function getOpenFiles() {
@@ -52,6 +53,13 @@ describe("Test page object", () => {
         const configDir = await obsidianPage.getConfigDir();
         const vaultPath = obsidianPage.getVaultPath();
         expect(configDir).toEqual(path.join(vaultPath, ".obsidian"));
+    })
+
+    it('getPlatform', async () => {
+        const platform = obsidianPage.getPlatform();
+        const emulateMobile = !!browser.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].emulateMobile;
+        expect(platform.isMobile).toEqual(emulateMobile);
+        expect(platform.isDesktop).toEqual(!emulateMobile);
     })
 
     it('enable/disable plugin', async () => {
