@@ -22,8 +22,10 @@
     "scripts": {
         "build": "tsup",
         "test": "run-s test:*",
-        "test:unit": "tsc --noEmit && mocha",
-        "test:e2e": "npx wdio run ./wdio.conf.ts"
+        "test:unit": "tsc --noEmit && mocha --config .mocharc.unit.json",
+        "test:e2e": "run-s test:e2e:*",
+        "test:e2e:wdio": "npx wdio run ./wdio.conf.ts",
+        "test:e2e:standalone": "mocha --config .mocharc.standalone.json"
     },
     "repository": {
         "type": "git",
