@@ -36,12 +36,16 @@ class ObsidianPage extends BasePage {
     }
 
     /**
-     * Return the path to the Obsidian config dir (".obsidian" unless you've changed it explicitly)
+     * Return the full path to the Obsidian config dir ("path/to/vault/.obsidian" unless you changed the config dir
+     * name).
      */
     async getConfigDir(): Promise<string> {
-        return await this.browser.executeObsidian(({app}) => {
+        // You can theoretically change the config dir name
+        const dirName = await this.browser.executeObsidian(({app}) => {
             return app.vault.configDir;
         })
+        const vaultPath = this.getVaultPath();
+        return path.join(vaultPath, dirName);
     }
 
     /**
@@ -97,7 +101,7 @@ class ObsidianPage extends BasePage {
         if (typeof layout == "string") {
             // read from .obsidian/workspaces.json like the built-in workspaces plugin does
             const configDir = await this.getConfigDir();
-            const workspacesPath = path.join(this.getVaultPath(), configDir, 'workspaces.json');
+            const workspacesPath = path.join(configDir, 'workspaces.json');
             const layoutName = layout;
             try {
                 const fileContent = await fsAsync.readFile(workspacesPath, 'utf-8');
@@ -140,7 +144,7 @@ class ObsidianPage extends BasePage {
     async resetVault(...vaults: (string|Record<string, string>)[]) {
         const origVaultPath: string = this.browser.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].vault;
         vaults = vaults.length == 0 ? [origVaultPath] : vaults;
-        const configDir = await this.getConfigDir();
+        const configDir = path.basename(await this.getConfigDir());
 
         async function readVaultFiles(vault: string): Promise<Map<string, fs.Stats>> {
             const files = await fsAsync.readdir(vault, { recursive: true, withFileTypes: true });

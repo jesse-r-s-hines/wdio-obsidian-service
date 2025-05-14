@@ -48,6 +48,12 @@ describe("Test page object", () => {
         expect(vaultPath3).toEqual(vaultPath3);
     })
 
+    it('getConfigDir', async () => {
+        const configDir = await obsidianPage.getConfigDir();
+        const vaultPath = obsidianPage.getVaultPath();
+        expect(configDir).toEqual(path.join(vaultPath, ".obsidian"));
+    })
+
     it('enable/disable plugin', async () => {
         let plugins: string[] = await browser.executeObsidian(({app}) =>
             [...(app as any).plugins.enabledPlugins].sort() 
