@@ -12,7 +12,7 @@ export const launcher = ObsidianLauncherService;
 export type { ObsidianCapabilityOptions, ObsidianServiceOptions } from "./types.js";
 export type { ObsidianBrowserCommands, ExecuteObsidianArg, InstalledPlugins } from "./browserCommands.js";
 export { default as obsidianPage } from "./pageobjects/obsidianPage.js";
-export type { ObsidianPage } from "./pageobjects/obsidianPage.js";
+export type { ObsidianPage, Platform } from "./pageobjects/obsidianPage.js";
 export type { PluginEntry, DownloadedPluginEntry, ThemeEntry, DownloadedThemeEntry } from "obsidian-launcher";
 
 export { minSupportedObsidianVersion } from "./service.js";
