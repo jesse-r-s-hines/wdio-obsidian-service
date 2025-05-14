@@ -16,6 +16,7 @@ export type { ObsidianPage } from "./pageobjects/obsidianPage.js";
 export type { PluginEntry, DownloadedPluginEntry, ThemeEntry, DownloadedThemeEntry } from "obsidian-launcher";
 
 export { minSupportedObsidianVersion } from "./service.js";
+export { startWdioSession } from "./standalone.js";
 
 // Some convenience helpers for use in wdio.conf.(m)ts
 
