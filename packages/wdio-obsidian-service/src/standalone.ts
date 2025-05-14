@@ -4,7 +4,8 @@ import { ObsidianLauncherService, ObsidianWorkerService } from "./service.js"
 import { ObsidianServiceOptions } from "./types.js"
 
 /**
- * Starts an Obsidian instance for WDIO standalone mode.
+ * Starts an Obsidian instance for WDIO standalone mode. This can be used for making scripts to interact with Obsidian.
+ * 
  * See also: https://webdriver.io/docs/setuptypes/#standalone-mode
  */
 export async function startWdioSession(
