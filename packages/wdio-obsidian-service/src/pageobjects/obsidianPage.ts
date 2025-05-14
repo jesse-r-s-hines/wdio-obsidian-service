@@ -49,6 +49,21 @@ class ObsidianPage extends BasePage {
     }
 
     /**
+     * Returns the Obsidian Platform object. Useful for skipping tests based on whether we running in desktop or
+     * (emulated) mobile, or based on OS.
+     */
+    getPlatform(): Platform {
+        const emulateMobile = !!this.browser.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].emulateMobile;
+        return {
+            isDesktop: !emulateMobile,
+            isMobile: emulateMobile,
+            isMacOS: process.platform == 'darwin',
+            isWin: process.platform == "win32",
+            isLinux: process.platform == "linux",
+        }
+    }
+
+    /**
      * Enables a plugin by ID
      */
     async enablePlugin(pluginId: string): Promise<void> {
@@ -221,8 +236,7 @@ class ObsidianPage extends BasePage {
         }
 
         await this.browser.executeObsidian(async ({app}, instructions) => {
-            // use window.require so it doesn't get transpiled by tsup, and so that we can access node modules even in
-            // emulateMobile mode (the plugin require blocks node imports when emulating mobile)
+            // The plugin require blocks node imports when emulating mobile, so use window.require to bypass that.
             const fs = window.require('fs');
     
             for (const {action, path, sourcePath, sourceContent} of instructions) {
@@ -279,6 +293,31 @@ class ObsidianPage extends BasePage {
         );
     }
 }
+
+/** Info on the platform we are running on or emulating, in the same format as obsidian.Platform */
+export type Platform = {
+    /**
+     * The UI is in desktop mode.
+     */
+    isDesktop: boolean;
+    /**
+     * The UI is in mobile mode.
+     */
+    isMobile: boolean;
+    /**
+     * We're on a macOS device, or a device that pretends to be one (like iPhones and iPads).
+     * Typically used to detect whether to use command-based hotkeys vs ctrl-based hotkeys.
+     */
+    isMacOS: boolean;
+    /**
+     * We're on a Windows device.
+     */
+    isWin: boolean;
+    /**
+     * We're on a Linux device.
+     */
+    isLinux: boolean;
+};
 
 /**
  * Instance of {@link ObsidianPage} with helper methods for writing Obsidian tests.

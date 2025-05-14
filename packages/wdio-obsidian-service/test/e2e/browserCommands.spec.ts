@@ -2,7 +2,6 @@ import { browser, expect } from '@wdio/globals'
 import { TFile } from 'obsidian';
 import semver from "semver";
 import { obsidianPage } from 'wdio-obsidian-service';
-import { OBSIDIAN_CAPABILITY_KEY } from '../../src/types.js';
 
 
 describe("Test custom browser commands", () => {
@@ -44,9 +43,8 @@ describe("Test custom browser commands", () => {
 describe("Test windows", () => {
     before(async function() {
         const installerVersion = browser.getObsidianInstallerVersion();
-        const isMobile = !!browser.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].emulateMobile;
-        if (semver.lt(installerVersion, "0.12.19") || isMobile) {
-            this.skip() // Windows don't work on older installer versions or mobile
+        if (semver.lt(installerVersion, "0.12.19") || obsidianPage.getPlatform().isMobile) {
+            this.skip(); // Windows don't work on older installer versions or mobile
         }
     })
 
