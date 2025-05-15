@@ -18,7 +18,10 @@ export default class ChromeLocalStorage {
     }
 
     private encodeKey = (domain: string, key: string) => `_${domain}\u0000\u0001${key}`;
-    private decodeKey = (key: string) => key.slice(1).split("\u0000\u0001") as [string, string];
+    private decodeKey = (key: string) => {
+        const parts = key.slice(1).split("\u0000\u0001");
+        return [parts[0], parts.slice(1).join("\u0000\u0001")] as [string, string]
+    };
     private encodeValue = (value: string) => `\u0001${value}`;
     private decodeValue = (value: string) => value.slice(1);
 
