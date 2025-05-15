@@ -113,6 +113,8 @@ export class ObsidianLauncherService implements Services.ServiceInstance {
                     ...(cap['goog:chromeOptions']?.args ?? [])
                 ];
 
+                const platform = obsidianOptions.platform ?? "desktop";
+
                 cap.browserName = "chrome";
                 cap.browserVersion = installerVersionInfo.chromeVersion;
                 cap[OBSIDIAN_CAPABILITY_KEY] = {
@@ -124,6 +126,7 @@ export class ObsidianLauncherService implements Services.ServiceInstance {
                     vault: vault,
                     appVersion: appVersion, // Resolve the versions
                     installerVersion: installerVersion,
+                    platform: platform,
                 };
                 cap['goog:chromeOptions'] = {
                     binary: installerPath,
@@ -200,7 +203,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
             vault: vault,
             // `app.emulateMobile` just sets this localStorage variable. Setting it ourselves here instead of calling
             // the function simplifies the boot/plugin load sequence and makes sure plugins load in mobile mode.
-            localStorage: obsidianOptions.emulateMobile ? {"EmulateMobile": "1"} : {},
+            localStorage: obsidianOptions.platform == "emulate-mobile" ? {"EmulateMobile": "1"} : {},
         });
         this.tmpDirs.push(configDir);
 
@@ -228,7 +231,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
             })
         }
 
-        if (obsidianOptions.emulateMobile && obsidianOptions.vault) {
+        if (obsidianOptions.platform == "emulate-mobile" && obsidianOptions.vault) {
             // change the screen size for mobile.
             await browser.getObsidianPage().setWindowSize({width: 412, height: 914});
         };
