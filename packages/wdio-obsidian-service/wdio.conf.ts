@@ -87,13 +87,13 @@ export const config: WebdriverIO.Config = {
     maxInstances: maxInstances,
 
     capabilities: versionsToTest
-        .flatMap(v => [[...v, true], [...v, false]] as const)
-        .map(([appVersion, installerVersion, emulateMobile]) => ({
+        .flatMap(v => [[...v, "desktop"], [...v, "emulate-mobile"]] as const)
+        .map(([appVersion, installerVersion, platform]) => ({
             browserName: "obsidian",
             browserVersion: appVersion,
             'wdio:obsidianOptions': {
                 installerVersion: installerVersion,
-                emulateMobile: emulateMobile,
+                platform: platform,
                 plugins: [
                     "./test/plugins/basic-plugin",
                 ],

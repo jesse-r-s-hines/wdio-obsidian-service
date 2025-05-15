@@ -53,10 +53,10 @@ class ObsidianPage extends BasePage {
      * (emulated) mobile, or based on OS.
      */
     getPlatform(): Platform {
-        const emulateMobile = !!this.browser.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].emulateMobile;
+        const platform = this.browser.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].platform;
         return {
-            isDesktop: !emulateMobile,
-            isMobile: emulateMobile,
+            isDesktop: platform == "desktop",
+            isMobile: platform == "emulate-mobile",
             isMacOS: process.platform == 'darwin',
             isWin: process.platform == "win32",
             isLinux: process.platform == "linux",
