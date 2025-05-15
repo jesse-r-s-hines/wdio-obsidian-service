@@ -57,9 +57,9 @@ describe("Test page object", () => {
 
     it('getPlatform', async () => {
         const platform = obsidianPage.getPlatform();
-        const emulateMobile = !!browser.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].emulateMobile;
-        expect(platform.isMobile).toEqual(emulateMobile);
-        expect(platform.isDesktop).toEqual(!emulateMobile);
+        const isMobile = browser.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].platform == "emulate-mobile";
+        expect(platform.isMobile).toEqual(isMobile);
+        expect(platform.isDesktop).toEqual(!isMobile);
     })
 
     it('enable/disable plugin', async () => {

@@ -83,15 +83,16 @@ export interface ObsidianCapabilityOptions {
     vault?: string,
 
     /**
-     * Emulate Obsidian mobile. This uses `app.emulateMobile()` to switch Obsidian to the mobile UI.
+     * Platform to run on. One of "desktop" or "emulate-mobile". Default "desktop".
      * 
-     * By default sets the window size to 412x914. You can use `obsidianPage.setWindowSize` to change the window size to
-     * something else.
+     * Set to "emulate-mobile" to simulate the mobile app. This uses `app.emulateMobile()` to switch Obsidian to the
+     * mobile UI, and sets the window size to 412x914. You can use `obsidianPage.setWindowSize` to change the window
+     * size to something else.
      * 
      * Note that Obsidian on a real mobile device runs using Capacitor instead of Electron so the emulation is not
      * perfect, but should be good enough for most use cases.
      */
-    emulateMobile?: boolean,
+    platform?: "desktop"|"emulate-mobile",
 
     /**
      * Path to the Obsidian binary to use. If omitted it will be downloaded automatically.
