@@ -5,7 +5,9 @@ import { SevereServiceError } from 'webdriverio'
 import type { Capabilities, Options, Services } from '@wdio/types'
 import logger from '@wdio/logger'
 import { fileURLToPath } from "url"
-import ObsidianLauncher, { DownloadedPluginEntry, DownloadedThemeEntry } from "obsidian-launcher"
+import ObsidianLauncher, {
+    PluginEntry, ThemeEntry, DownloadedPluginEntry, DownloadedThemeEntry,
+} from "obsidian-launcher"
 import { asyncBrowserCommands, syncBrowserCommands } from "./browserCommands.js"
 import { ObsidianCapabilityOptions, ObsidianServiceOptions, OBSIDIAN_CAPABILITY_KEY } from "./types.js"
 import { sleep } from "./utils.js"
@@ -15,8 +17,18 @@ import _ from "lodash"
 
 const log = logger("wdio-obsidian-service");
 
-function getDefaultCacheDir() {
-    return path.resolve(process.env.WEBDRIVER_CACHE_DIR ?? process.env.OBSIDIAN_CACHE ?? "./.obsidian-cache")
+function getDefaultCacheDir(rootDir: string) {
+    return path.resolve(rootDir, process.env.WEBDRIVER_CACHE_DIR ?? process.env.OBSIDIAN_CACHE ?? "./.obsidian-cache");
+}
+
+function resolveEntry(rootDir: string, entry: PluginEntry|ThemeEntry): PluginEntry|ThemeEntry {
+    if (typeof entry == "string") {
+        return path.resolve(rootDir, entry);
+    } else if ('path' in entry) {
+        return {...entry, path: path.resolve(rootDir, entry.path)};
+    } else {
+        return entry;
+    }
 }
 
 /**
@@ -36,18 +48,20 @@ export const minSupportedObsidianVersion: string = "1.0.3"
 export class ObsidianLauncherService implements Services.ServiceInstance {
     private obsidianLauncher: ObsidianLauncher
     private readonly helperPluginPath: string
+    private readonly rootDir: string
 
     constructor (
         public options: ObsidianServiceOptions,
         public capabilities: WebdriverIO.Capabilities,
         public config: Options.Testrunner
     ) {
+        this.rootDir = config.rootDir || process.cwd();
         this.obsidianLauncher = new ObsidianLauncher({
-            cacheDir: config.cacheDir ?? getDefaultCacheDir(),
+            cacheDir: config.cacheDir ?? getDefaultCacheDir(this.rootDir),
             versionsUrl: options.versionsUrl,
             communityPluginsUrl: options.communityPluginsUrl, communityThemesUrl: options.communityThemesUrl,
         });
-        this.helperPluginPath = path.resolve(path.join(fileURLToPath(import.meta.url), '../../helper-plugin'));
+        this.helperPluginPath = path.resolve(fileURLToPath(import.meta.url), '../../helper-plugin');
     }
 
     /**
@@ -72,7 +86,7 @@ export class ObsidianLauncherService implements Services.ServiceInstance {
             for (const cap of obsidianCapabilities) {
                 const obsidianOptions = cap[OBSIDIAN_CAPABILITY_KEY] ?? {};
     
-                const vault = obsidianOptions.vault != undefined ? path.resolve(obsidianOptions.vault) : undefined;
+                const vault = obsidianOptions.vault ? path.resolve(this.rootDir, obsidianOptions.vault) : undefined;
     
                 const [appVersion, installerVersion] = await this.obsidianLauncher.resolveVersions(
                     cap.browserVersion ?? cap[OBSIDIAN_CAPABILITY_KEY]?.appVersion ?? "latest",
@@ -83,28 +97,37 @@ export class ObsidianLauncherService implements Services.ServiceInstance {
                     throw Error(`Minimum supported Obsidian version is ${minSupportedObsidianVersion}`)
                 }
 
-                let installerPath = obsidianOptions.binaryPath;
-                if (!installerPath) {
+                let installerPath: string;
+                if (obsidianOptions.binaryPath) {
+                    installerPath = path.resolve(this.rootDir, obsidianOptions.binaryPath)
+                } else {
                     installerPath = await this.obsidianLauncher.downloadInstaller(installerVersion);
                 }
-                let appPath = obsidianOptions.appPath;
-                if (!appPath) {
+                let appPath: string;
+                if (obsidianOptions.appPath) {
+                    appPath = path.resolve(this.rootDir, obsidianOptions.appPath)
+                } else {
                     appPath = await this.obsidianLauncher.downloadApp(appVersion);
                 }
-                let chromedriverPath = cap['wdio:chromedriverOptions']?.binary
-                // wdio can download chromedriver for versions greater than 115 automatically
+                let chromedriverPath = cap['wdio:chromedriverOptions']?.binary;
+                // wdio can't download chromedriver for versions less than 115 automatically
                 if (!chromedriverPath && Number(installerVersionInfo.chromeVersion!.split(".")[0]) <= 115) {
                     chromedriverPath = await this.obsidianLauncher.downloadChromedriver(installerVersion);
                 }
 
-                let plugins = obsidianOptions.plugins ?? ["."];
-                plugins.push(this.helperPluginPath); // Always install the helper plugin
-                plugins = await this.obsidianLauncher.downloadPlugins(plugins);
+                const plugins = await this.obsidianLauncher.downloadPlugins(
+                    (obsidianOptions.plugins ?? [])
+                        .concat([this.helperPluginPath]) // Always install the helper plugin
+                        .map(p => resolveEntry(this.rootDir, p) as PluginEntry)
+                );
 
-                const themes = await this.obsidianLauncher.downloadThemes(obsidianOptions.themes ?? []);
+                const themes = await this.obsidianLauncher.downloadThemes(
+                    (obsidianOptions.themes ?? [])
+                        .map(t => resolveEntry(this.rootDir, t) as ThemeEntry),
+                );
 
-                if (obsidianOptions.vault != undefined && !fs.existsSync(obsidianOptions.vault)) {
-                    throw Error(`Vault "${obsidianOptions.vault}" doesn't exist`)
+                if (vault && !fs.existsSync(vault)) {
+                    throw Error(`Vault "${vault}" doesn't exist`)
                 }
 
                 const args = [
@@ -162,14 +185,16 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
     private obsidianLauncher: ObsidianLauncher
     /** Directories to clean up after the tests */
     private tmpDirs: string[]
+    private rootDir: string
 
     constructor (
         public options: ObsidianServiceOptions,
         public capabilities: WebdriverIO.Capabilities,
         public config: Options.Testrunner
     ) {
+        this.rootDir = config.rootDir || process.cwd();
         this.obsidianLauncher = new ObsidianLauncher({
-            cacheDir: config.cacheDir ?? getDefaultCacheDir(),
+            cacheDir: config.cacheDir ?? getDefaultCacheDir(this.rootDir),
             versionsUrl: options.versionsUrl,
             communityPluginsUrl: options.communityPluginsUrl, communityThemesUrl: options.communityThemesUrl,
         });
@@ -294,7 +319,8 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
             if (vault) {
                 const newObsidianOptions = {
                     ...oldObsidianOptions,
-                    vault: path.resolve(vault),
+                    // Resolve relative to PWD instead of root dir during tests
+                    vault: path.resolve(vault), 
                     plugins: service.selectPlugins(oldObsidianOptions.plugins, plugins),
                     themes: service.selectThemes(oldObsidianOptions.themes, theme),
                 }

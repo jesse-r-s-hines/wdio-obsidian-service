@@ -4,7 +4,7 @@ import { expect } from "chai";
 import { startWdioSession } from "wdio-obsidian-service"
 import { fileURLToPath } from "url"
 
-const workspacePath = path.resolve(path.join(fileURLToPath(import.meta.url), "../../../../.."))
+const workspacePath = path.resolve(fileURLToPath(import.meta.url), "../../../../..")
 const cacheDir = path.join(workspacePath, ".obsidian-cache");
 
 describe("standalone mode test", function() {
