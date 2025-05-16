@@ -56,12 +56,12 @@ const collectOpt = (curr: string, prev?: string[]) => [...(prev ?? []), curr];
 
 const versionOptionArgs = [
     '-v, --version <version>',
-    "Obsidian version to run",
+    "Obsidian app version",
     "latest",
 ] as const
 const installerOptionArgs = [
     '-i, --installer <version>',
-    "Obsidian installer version to run",
+    "Obsidian installer version",
     "latest",
 ] as const
 const cacheOptionArgs = [
