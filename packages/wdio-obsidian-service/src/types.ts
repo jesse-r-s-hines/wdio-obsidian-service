@@ -56,21 +56,22 @@ export interface ObsidianCapabilityOptions {
     /**
      * List of plugins to install.
      * 
-     * Each entry is a path to the local plugin to install, e.g. ["."] or ["dist"] depending on your build setup. You
-     * can also pass objects. If you pass an object it can contain one of either `path` (to install a local plugin),
-     * `repo` (to install a plugin from github), or `id` (to install a community plugin). You can set `enabled: false`
-     * to install the plugin but start it disabled. You can enable the plugin later using `reloadObsidian` or the
-     * `enablePlugin` command.
+     * Each entry is a path to the local plugin to install, e.g. ["."] or ["dist"] depending on your build setup. Paths
+     * are relative to your `wdio.conf.ts`.You can also pass objects. If you pass an object it should contain one of
+     * `path` (to install a local plugin), `repo` (to install a plugin from GitHub), or `id` (to install a community
+     * plugin). You can set `enabled: false` to install the plugin but start it disabled. You can enable the plugin
+     * later using `browser.reloadObsidian` or the `obsidianPage.enablePlugin`.
      */
     plugins?: PluginEntry[],
 
     /**
      * List of themes to install.
      * 
-     * Each entry is a path to the local theme to install. You can also pass an object. If you pass an object it can
-     * contain one of either `path` (to install a local theme), `repo` (to install a theme from github), or `name` (to
-     * install a community theme). You can set `enabled: false` to install the theme, but start it disabled. You can
-     * only have one enabled theme, so if you pass multiple you'll have to disable all but one.
+     * Each entry is a path to the local theme to install. Paths are relative to your `wdio.conf.ts`. You can also pass
+     * an object. If you pass an object it should contain one of `path` (to install a local theme), `repo` (to install a
+     * theme from GitHub), or `name` (to install a community theme). You can set `enabled: false` to install the theme,
+     * but start it disabled. You can only have one enabled theme, so if you pass multiple you'll have to disable all
+     * but one.
      */
     themes?: ThemeEntry[],
 
@@ -78,7 +79,8 @@ export interface ObsidianCapabilityOptions {
      * The path to the vault to open.
      * 
      * The vault will be copied, so any changes made in your tests won't affect the original. If omitted, no vault will
-     * be opened and you'll need to call `browser.reloadObsidian` to open a vault during your tests.
+     * be opened and you'll need to call `browser.reloadObsidian` to open a vault during your tests. Path is relative
+     * to your `wdio.conf.ts`.
      */
     vault?: string,
 
