@@ -36,9 +36,8 @@ export async function withTmpDir(dest: string, func: (tmpDir: string) => Promise
     const tmpDir = await fsAsync.mkdtemp(path.join(path.dirname(dest), `.${path.basename(dest)}.tmp.`));
     try {
         let result = await func(tmpDir) ?? tmpDir;
-        if (!path.isAbsolute(result)) {
-            result = path.join(tmpDir, result);
-        } else if (!path.resolve(result).startsWith(tmpDir)) {
+        result = path.resolve(tmpDir, result);
+        if (!result.startsWith(tmpDir)) {
             throw new Error(`Returned path ${result} not under tmpDir`)
         }
         // rename will overwrite files but not directories

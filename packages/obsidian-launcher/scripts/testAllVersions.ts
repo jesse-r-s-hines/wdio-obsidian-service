@@ -10,7 +10,7 @@ import { ObsidianLauncher } from "../src/launcher.js"
 import { ChildProcess } from "child_process"
 import { ObsidianVersionInfo } from "../src/types.js"
 
-const rootPath = path.resolve(path.join(fileURLToPath(import.meta.url), "../../../.."))
+const rootPath = path.resolve(fileURLToPath(import.meta.url), "../../../..")
 const obsidianVersionsJson = path.join(rootPath, "obsidian-versions.json");
 
 async function checkVaultPath(proc: ChildProcess): Promise<string> {

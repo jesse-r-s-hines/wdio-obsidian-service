@@ -12,7 +12,7 @@ import _ from "lodash"
 const testPreset = process.env['TEST_PRESET'] ?? 'first-and-last';
 
 const maxInstances = Number(process.env['WDIO_MAX_INSTANCES'] ?? 4);
-const workspacePath = path.resolve(path.join(fileURLToPath(import.meta.url), "../../.."))
+const workspacePath = path.resolve(fileURLToPath(import.meta.url), "../../..")
 const obsidianVersionsJson = path.join(workspacePath, "obsidian-versions.json");
 const allVersions: ObsidianVersionInfo[] = JSON.parse(await fsAsync.readFile(obsidianVersionsJson, 'utf-8')).versions;
 const minInstallerVersion = allVersions.find(v => v.version == minSupportedObsidianVersion)!.minInstallerVersion!;
