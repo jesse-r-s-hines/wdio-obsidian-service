@@ -207,7 +207,7 @@ class ObsidianPage extends BasePage {
             }
         }
         // create/modify files
-        for (let [newFile, newFileInfo] of newFiles.entries()) {
+        for (const [newFile, newFileInfo] of newFiles.entries()) {
             const {stat: newStat, sourcePath, sourceContent} = newFileInfo;
             const args = {path: newFile, sourcePath, sourceContent};
             const currStat = currFiles.get(newFile);

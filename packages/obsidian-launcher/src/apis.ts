@@ -61,7 +61,7 @@ export async function fetchGitHubAPI(url: string, params: Record<string, any> = 
     if (!response.ok) {
         throw new Error(`GitHub API error: ${await response.text()}`);
     }
-    return await response;
+    return response;
 }
 
 

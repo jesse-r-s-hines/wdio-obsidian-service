@@ -12,7 +12,7 @@ describe("ChromeLocalStorage", () => {
         localStorage = new ChromeLocalStorage(await createDirectory())
     })
     afterEach(async () => {
-        localStorage.close();
+        await localStorage.close();
     });
 
     it("empty folder", async () => {
@@ -24,7 +24,7 @@ describe("ChromeLocalStorage", () => {
         expect(await localStorage.getItem("https://www.example.com", "foo")).to.eql("bar");
         expect(await fileExists(`${localStorage.userDataDir}/Local Storage/leveldb`)).to.eql(true);
 
-        localStorage.close();
+        await localStorage.close();
         localStorage = new ChromeLocalStorage(localStorage.userDataDir);
         
         expect(await localStorage.getAllItems()).to.have.deep.members([
