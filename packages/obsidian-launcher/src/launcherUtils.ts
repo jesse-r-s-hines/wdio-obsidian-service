@@ -126,7 +126,7 @@ export async function getElectronVersionInfo(
     try {
         // Wait for the logs showing that Obsidian is ready, and pull the chosen DevTool Protocol port from it
         const portPromise = new Promise<number>((resolve, reject) => {
-            procExit.then(() => reject("Processed ended without opening a port"))
+            void procExit.then(() => reject(Error("Processed ended without opening a port")))
             proc.stderr.on('data', data => {
                 const port = data.toString().match(/ws:\/\/[\w.]+?:(\d+)/)?.[1];
                 if (port) {
@@ -216,7 +216,7 @@ export function normalizeObsidianVersionInfo(versionInfo: Partial<ObsidianVersio
         chromeVersion: versionInfo.chromeVersion,
         nodeVersion: versionInfo.nodeVersion,
     };
-    versionInfo.downloads = _.omitBy(versionInfo.downloads, _.isUndefined);
-    versionInfo = _.omitBy(versionInfo, _.isUndefined);
+    versionInfo.downloads = _.omitBy(versionInfo.downloads, v => v === undefined);
+    versionInfo = _.omitBy(versionInfo, v => v === undefined);
     return versionInfo as ObsidianVersionInfo;
 }
