@@ -20,6 +20,7 @@ import _ from "lodash";
  * ```
  * 
  * @hideconstructor
+ * @category Utilities
  */
 class ObsidianPage extends BasePage {
     /**
@@ -264,6 +265,7 @@ class ObsidianPage extends BasePage {
 
 /**
  * Instance of {@link ObsidianPage} with helper methods for writing Obsidian tests.
+ * @category Utilities
  */
 const obsidianPage = new ObsidianPage()
 export default obsidianPage;

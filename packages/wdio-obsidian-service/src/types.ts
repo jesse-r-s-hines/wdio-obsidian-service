@@ -16,6 +16,8 @@ export const OBSIDIAN_CAPABILITY_KEY = "wdio:obsidianOptions" as const;
  *     },
  * }],
  * ```
+ * 
+ * @category Options
  */
 export interface ObsidianCapabilityOptions {
     /**
@@ -104,6 +106,8 @@ export interface ObsidianCapabilityOptions {
  * ```
  * You'll usually want to leave these options as the default, they are mostly useful for wdio-obsidian-service's
  * internal tests.
+ * 
+ * @category Options
  */
 export interface ObsidianServiceOptions {
     /**
