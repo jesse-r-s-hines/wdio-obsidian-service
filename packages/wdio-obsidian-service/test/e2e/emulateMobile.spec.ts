@@ -5,7 +5,7 @@ import { obsidianPage } from 'wdio-obsidian-service';
 describe("Emulate Mobile", () => {
     before(async function() {
         // Obsidian should start with no vault open
-        if (!obsidianPage.getPlatform().isMobile) {
+        if (!(await obsidianPage.getPlatform()).isMobile) {
             this.skip();
         }
         await browser.reloadObsidian({vault: "./test/vaults/basic"});
