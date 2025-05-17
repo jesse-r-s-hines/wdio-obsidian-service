@@ -2,7 +2,7 @@
  * @module
  * @document ../README.md
  * @categoryDescription Options
- * Service and capability options.
+ * Capability and service options.
  * @categoryDescription WDIO Helpers
  * Helpers for use in wdio.conf, or for launching WDIO in standalone mode.
  * @categoryDescription Utilities

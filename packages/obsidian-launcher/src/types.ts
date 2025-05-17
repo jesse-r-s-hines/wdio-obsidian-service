@@ -60,24 +60,24 @@ export type ObsidianCommunityTheme = {
 }
 
 /** @inline */
-type BasePluginEntry = {
+interface BasePluginEntry {
     /** Set false to install the plugin but start it disabled. Default true. */
     enabled?: boolean,
 }
 /** @inline */
-type LocalPluginEntry = BasePluginEntry & {
+interface LocalPluginEntry extends BasePluginEntry {
     /** Path on disk to the plugin to install. */
     path: string,
 }
 /** @inline */
-type GitHubPluginEntry = BasePluginEntry & {
+interface GitHubPluginEntry extends BasePluginEntry {
     /** Github repo of the plugin to install, e.g. "some-user/some-plugin". */
     repo: string,
     /** Version of the plugin to install. Defaults to latest. */
     version?: string,
 }
 /** @inline */
-type CommunityPluginEntry = BasePluginEntry & {
+interface CommunityPluginEntry extends BasePluginEntry {
     /** Plugin ID to install from Obsidian community plugins. */
     id: string,
     /** Version of the plugin to install. Defaults to latest. */
@@ -112,7 +112,7 @@ export type DownloadedPluginEntry = {
 }
 
 /** @inline */
-type BaseThemeEntry = {
+interface BaseThemeEntry {
     /**
      * Set false to install the theme but not enable it. Defaults to true.
      * Only one theme can be enabled.
@@ -120,17 +120,17 @@ type BaseThemeEntry = {
     enabled?: boolean,
 }
 /** @inline */
-type LocalThemeEntry = BaseThemeEntry & {
+interface LocalThemeEntry extends BaseThemeEntry {
     /** Path on disk to the theme to install. */
     path: string,
 }
 /** @inline */
-type GitHubThemeEntry = BaseThemeEntry & {
+interface GitHubThemeEntry extends BaseThemeEntry {
     /** Github repo of the theme to install, e.g. "some-user/some-theme". */
     repo: string,
 }
 /** @inline */
-type CommunityThemeEntry = BaseThemeEntry & {
+interface CommunityThemeEntry extends BaseThemeEntry {
     /** Theme name to install from Obsidian community themes. */
     name: string,
 }
