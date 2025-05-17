@@ -37,6 +37,11 @@ function resolveEntry(rootDir: string, entry: PluginEntry|ThemeEntry): PluginEnt
  */
 export const minSupportedObsidianVersion: string = "1.0.3"
 
+const WINDOW_SIZE_PRESETS = {
+    "phone": {width: 390, height: 844}, // iPhone 12 Pro
+    "tablet": {width: 768, height: 1024}, // iPad Mini
+}
+
 
 /**
  * wdio launcher service.
@@ -257,10 +262,17 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
             })
         }
 
-        if (obsidianOptions.platform == "emulate-mobile" && obsidianOptions.vault) {
+        let windowSize = obsidianOptions.windowSize;
+        if (!windowSize && obsidianOptions.platform == "emulate-mobile") {
+            windowSize = "phone";
+        }
+        if (typeof windowSize == "string") {
+            windowSize = WINDOW_SIZE_PRESETS[windowSize];
+        }
+        if (windowSize && obsidianOptions.vault) {
             // change the screen size for mobile.
-            await browser.getObsidianPage().setWindowSize({width: 412, height: 914});
-        };
+            await browser.getObsidianPage().setWindowSize(windowSize);
+        }
     }
 
     /**
