@@ -117,24 +117,25 @@ class ObsidianPage extends BasePage {
     }
 
     /**
-     * Resets the vault files to the original state by deleting/creating/modifying vault files in place without
-     * reloading Obsidian.
+     * Updates the vault by modifying files in place without reloading Obsidian. Can be used to reset the vault back to
+     * its original state or to "switch" to an entirely different vault without rebooting Obsidian
      * 
-     * This will only reset regular vault files, it won't touch anything under `.obsidian`, and it won't reset any
+     * This will only update regular vault files, it won't touch anything under `.obsidian`, and it won't reset any
      * config and app state you've set in Obsidian. But if all you need is to reset the vault files, this can be used as
      * a faster alternative to reloadObsidian.
      * 
      * If no vault is passed, it resets the vault back to the oringal vault opened by the tests. You can also pass a
-     * path to a different vault, and it will sync the current vault to match that one (similar to "rsync"). Or,
-     * instead of passing a vault path you can pass an object mapping vault file paths to file content. E.g.
+     * path to a different vault, and it will replace the current files with the files of that vault (similar to an
+     * "rsync"). Or, instead of passing a vault path you can pass an object mapping vault file paths to file content.
+     * E.g.
      * ```ts
      * obsidianPage.resetVault({
      *     'path/in/vault.md': "Hello World",
      * })
      * ```
      * 
-     * You can also pass multiple vaults and the files will be merged. This can be useful if you want to add a few small
-     * modifications to the base vault. e.g:
+     * You can also pass multiple vaults and objects, and they will be merged. This can be useful if you want to add a
+     * few small modifications to the base vault. e.g:
      * ```ts
      * obsidianPage.resetVault('./path/to/vault', {
      *    "books/leviathan-wakes.md": "...",
