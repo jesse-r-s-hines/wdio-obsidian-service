@@ -56,7 +56,7 @@ describe("Test page object", () => {
     })
 
     it('getPlatform', async () => {
-        const platform = obsidianPage.getPlatform();
+        const platform = await obsidianPage.getPlatform();
         const isMobile = browser.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].platform == "emulate-mobile";
         expect(platform.isMobile).toEqual(isMobile);
         expect(platform.isDesktop).toEqual(!isMobile);
