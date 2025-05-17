@@ -114,18 +114,16 @@ type SyncObsidianBrowserCommands = typeof syncBrowserCommands;
  * @interface
  */
 export type ObsidianBrowserCommands = AsyncObsidianBrowserCommands & SyncObsidianBrowserCommands & {
-    // This command is implemented in the service hooks.
     /**
-     * Relaunch obsidian. Can be used to switch to a new vault, change the plugin list, or just to reboot
-     * Obsidian.
+     * Relaunch obsidian. Can be used to switch to a new vault, change the plugin list, or just to reboot Obsidian.
      * 
-     * As this does a full reboot of Obsidian, avoid calling this too often so you don't slow your tests down.
-     * You can also set the vault in the `wdio.conf.(m)ts` capabilities section which may be useful if all your
-     * tests use the same vault.
+     * As this does a full reboot of Obsidian, this is rather slow. In many cases you can use {@link ObsidianPage.resetVault}
+     * instead, which modifies vault files in place without rebooting Obsidian. If all your tests use the same vault,
+     * you can also just set the vault in the `wdio.conf.(m)ts` capabilities section.
      * 
      * @param params.vault Path to the vault to open. The vault will be copied, so any changes made in your tests won't
-     *     be persited to the original. If omitted, it will reboot Obsidian with the current vault, without
-     *     creating a new copy of the vault.
+     *     be persited to the original. If omitted, it will reboot Obsidian with the current vault without creating a
+     *     new copy of the vault.
      * @param params.plugins List of plugin ids to enable. If omitted it will keep current plugin list. Note, all the
      *     plugins must be defined in your wdio.conf.ts capabilities. You can also use the enablePlugin and 
      *     disablePlugin commands to change plugins without relaunching Obsidian.
@@ -137,10 +135,11 @@ export type ObsidianBrowserCommands = AsyncObsidianBrowserCommands & SyncObsidia
         vault?: string,
         plugins?: string[], theme?: string,
     }): Promise<string>;
+    // This command is implemented in the service hooks.
 };
 
 /**
- * Argument passed to the `executeObsidian` browser command.
+ * Argument passed to the {@link ObsidianBrowserCommands.executeObsidian | executeObsidian} browser command.
  */
 export interface ExecuteObsidianArg {
     /**
@@ -177,6 +176,8 @@ export interface ExecuteObsidianArg {
     require: NodeJS.Require,
 }
 
-/** Installed plugins, mapped by their id converted to camelCase */
+/**
+ * Installed plugins, mapped by their id converted to camelCase
+ */
 export interface InstalledPlugins extends Record<string, obsidian.Plugin> {
 }
