@@ -20,6 +20,7 @@ import _ from "lodash";
  * ```
  * 
  * @hideconstructor
+ * @category Utilities
  */
 class ObsidianPage extends BasePage {
     /**
@@ -298,6 +299,7 @@ class ObsidianPage extends BasePage {
 /**
  * Info on the platform we are running on or emulating, in similar format as
  * [obsidian.Platform](https://docs.obsidian.md/Reference/TypeScript+API/Platform)
+ * @category Types
  */
 export interface Platform {
     /**
@@ -325,6 +327,7 @@ export interface Platform {
 
 /**
  * Instance of {@link ObsidianPage} with helper methods for writing Obsidian tests.
+ * @category Utilities
  */
 const obsidianPage = new ObsidianPage()
 export default obsidianPage;
