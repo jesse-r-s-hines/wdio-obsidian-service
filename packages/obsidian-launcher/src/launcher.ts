@@ -770,7 +770,7 @@ export class ObsidianLauncher {
         let obsidianJson: any = {
             updateDisabled: true, // Prevents Obsidian trying to auto-update on boot.
         }
-        let localStorageData: Record<string, string> = {
+        const localStorageData: Record<string, string> = {
             "most-recently-installed-version": appVersion, // prevents the changelog page on boot
         }
 
