@@ -2,10 +2,14 @@ import path from "path";
 import { describe, it } from "mocha";
 import { expect } from "chai";
 import { startWdioSession } from "wdio-obsidian-service"
-import { fileURLToPath } from "url"
+import { fileURLToPath, pathToFileURL } from "url"
 
 const workspacePath = path.resolve(fileURLToPath(import.meta.url), "../../../../..")
 const cacheDir = path.join(workspacePath, ".obsidian-cache");
+const obsidianVersionsJson = path.join(workspacePath, "obsidian-versions.json");
+const obsidianServiceOptions = {
+    versionsUrl: pathToFileURL(obsidianVersionsJson).toString(),
+}
 
 describe("standalone mode test", function() {
     let browser: WebdriverIO.Browser|undefined;
@@ -25,7 +29,7 @@ describe("standalone mode test", function() {
             },
             cacheDir: cacheDir,
             logLevel: "warn",
-        })
+        }, obsidianServiceOptions)
     });
     after(async function() {
         await browser?.deleteSession();
