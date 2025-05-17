@@ -5,7 +5,7 @@ import fsAsync from "fs/promises"
 import path from "path"
 
 
-describe("resetVault", async () => {
+describe("resetVault", () => {
     async function getAllFiles() {
         return await browser.executeObsidian(async ({app}) => {
             const result: Record<string, string> = {};

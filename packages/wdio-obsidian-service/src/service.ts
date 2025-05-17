@@ -70,7 +70,7 @@ export class ObsidianLauncherService implements Services.ServiceInstance {
      */
     async onPrepare(config: Options.Testrunner, capabilities: Capabilities.TestrunnerCapabilities) {
         if (!Array.isArray(capabilities)) {
-            capabilities = Object.values(capabilities as Capabilities.RequestedMultiremoteCapabilities).map(
+            capabilities = Object.values(capabilities).map(
                 (multiremoteOption) => (multiremoteOption as Capabilities.WithRequestedCapabilities).capabilities,
             );
         }
@@ -385,10 +385,10 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
             return sessionId;
         }
 
-        await browser.addCommand("reloadObsidian", reloadObsidian);
+        browser.addCommand("reloadObsidian", reloadObsidian);
 
         for (const [name, cmd] of Object.entries(asyncBrowserCommands)) {
-            await browser.addCommand(name, cmd);
+            browser.addCommand(name, cmd);
         }
         // Hack to allow adding a few sync methods to browser
         for (const [name, cmd] of Object.entries(syncBrowserCommands)) {
