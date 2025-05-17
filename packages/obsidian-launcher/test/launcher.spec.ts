@@ -365,7 +365,7 @@ describe("ObsidianLauncher download, install and setup", () => {
 
         const localStorage = new ChromeLocalStorage(configDir);
         const value = await localStorage.getItem("app://obsidian.md", `${vaultId}-foo`);
-        localStorage.close();
+        await localStorage.close();
         expect(value).to.equal('bar');
     })
 

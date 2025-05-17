@@ -17,7 +17,7 @@ describe("Emulate Mobile", () => {
     })
 
     it('window size', async function() {
-        const [width, height] = await browser.executeObsidian(({}) => {
+        const [width, height] = await browser.executeObsidian(() => {
             return [window.innerWidth, window.innerHeight];
         })
         expect([width, height]).toEqual([390, 844]);

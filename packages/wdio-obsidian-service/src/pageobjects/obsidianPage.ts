@@ -55,7 +55,7 @@ class ObsidianPage extends BasePage {
      */
     async getPlatform(): Promise<Platform> {
         if (this.browser.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].vaultCopy !== undefined) {
-            return await this.browser.executeObsidian(({app, obsidian}) => {
+            return await this.browser.executeObsidian(({obsidian}) => {
                 const p = obsidian.Platform;
                 return {
                     isDesktop: p.isDesktop,
@@ -249,7 +249,7 @@ class ObsidianPage extends BasePage {
             }
         }
         // create/modify files
-        for (let [newFile, newFileInfo] of newFiles.entries()) {
+        for (const [newFile, newFileInfo] of newFiles.entries()) {
             const {stat: newStat, sourcePath, sourceContent} = newFileInfo;
             const args = {path: newFile, sourcePath, sourceContent};
             const currStat = currFiles.get(newFile);
