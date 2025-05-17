@@ -95,6 +95,11 @@ export class ObsidianLauncher {
                     if (request.success) {
                         await fsAsync.mkdir(path.dirname(dest), { recursive: true });
                         await withTmpDir(dest, async (tmpDir) => {
+                            try {
+                                JSON.parse(request.result);
+                            } catch (e) {
+                                throw Error(`Failed to parse response from ${url}: ${e}`)
+                            }
                             await fsAsync.writeFile(path.join(tmpDir, 'download.json'), request.result);
                             return path.join(tmpDir, 'download.json');
                         })
