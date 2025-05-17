@@ -4,7 +4,11 @@ import { ObsidianLauncherService, ObsidianWorkerService } from "./service.js"
 import { ObsidianServiceOptions } from "./types.js"
 
 /**
- * Starts an Obsidian instance for WDIO standalone mode. This can be used for making scripts to interact with Obsidian.
+ * Starts an Obsidian instance for WDIO standalone mode.
+ * 
+ * For testing, you'll usually want to use the WDIO testrunner with Mocha, wdio.conf.ts, etc. to launch WDIO. However if
+ * you want to use WDIO for some kind of scripting scenario, you can use this function to launch a WDIO standalone
+ * session connected to Obsidian.
  * 
  * See also: https://webdriver.io/docs/setuptypes/#standalone-mode
  */
