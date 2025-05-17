@@ -53,14 +53,41 @@ class ObsidianPage extends BasePage {
      * Returns the Obsidian Platform object. Useful for skipping tests based on whether we running in desktop or
      * (emulated) mobile, or based on OS.
      */
-    getPlatform(): Platform {
-        const platform = this.browser.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].platform;
-        return {
-            isDesktop: platform == "desktop",
-            isMobile: platform == "emulate-mobile",
-            isMacOS: process.platform == 'darwin',
-            isWin: process.platform == "win32",
-            isLinux: process.platform == "linux",
+    async getPlatform(): Promise<Platform> {
+        if (this.browser.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].vaultCopy !== undefined) {
+            return await this.browser.executeObsidian(({app, obsidian}) => {
+                const p = obsidian.Platform;
+                return {
+                    isDesktop: p.isDesktop,
+                    isMobile: p.isMobile,
+                    isPhone: p.isPhone,
+                    isTablet: p.isTablet,
+                    isMacOS: p.isMacOS,
+                    isWin: p.isWin,
+                    isLinux: p.isLinux,
+                };
+            });
+        } else {
+            // hack to allow calling getPlatform before opening a vault.
+            // we don't use this method normally, as you can set the size or switch emulation mode during tests
+            const platform = this.browser.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].platform;
+            const windowSize = this.browser.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].windowSize;
+            let isTablet = false;
+            let isPhone = false;
+            if (platform == "emulate-mobile") {
+                 // replicate Obsidian's tablet vs phone breakpoint
+                isTablet = (windowSize.width >= 600 && windowSize.height >= 600);
+                isPhone = !isTablet;
+            }
+            
+            return {
+                isDesktop: platform == "desktop",
+                isMobile: platform == "emulate-mobile",
+                isPhone: isPhone, isTablet: isTablet,
+                isMacOS: process.platform == 'darwin',
+                isWin: process.platform == "win32",
+                isLinux: process.platform == "linux",
+            };
         }
     }
 
@@ -310,6 +337,14 @@ export interface Platform {
      * The UI is in mobile mode.
      */
     isMobile: boolean;
+    /**
+     * We're in a mobile app that has very limited screen space.
+     */
+    isPhone: boolean;
+    /**
+     * We're in a mobile app that has sufficiently large screen space.
+     */
+    isTablet: boolean;
     /**
      * We're on a macOS device, or a device that pretends to be one (like iPhones and iPads).
      * Typically used to detect whether to use command-based hotkeys vs ctrl-based hotkeys.

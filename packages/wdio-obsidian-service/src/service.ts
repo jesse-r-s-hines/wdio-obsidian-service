@@ -144,6 +144,14 @@ export class ObsidianLauncherService implements Services.ServiceInstance {
 
                 const platform = obsidianOptions.platform ?? "desktop";
 
+                let windowSize = obsidianOptions.windowSize;
+                if (!windowSize && platform == "emulate-mobile") {
+                    windowSize = "phone";
+                }
+                if (typeof windowSize == "string") {
+                    windowSize = WINDOW_SIZE_PRESETS[windowSize];
+                }
+
                 cap.browserName = "chrome";
                 cap.browserVersion = installerVersionInfo.chromeVersion;
                 cap[OBSIDIAN_CAPABILITY_KEY] = {
@@ -156,6 +164,7 @@ export class ObsidianLauncherService implements Services.ServiceInstance {
                     appVersion: appVersion, // Resolve the versions
                     installerVersion: installerVersion,
                     platform: platform,
+                    windowSize: windowSize,
                 };
                 cap['goog:chromeOptions'] = {
                     binary: installerPath,
