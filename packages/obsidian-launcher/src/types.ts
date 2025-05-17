@@ -1,5 +1,6 @@
 /**
  * Type of the obsidian-versions.json file.
+ * @category Types
  */
 export type ObsidianVersionInfos = {
     metadata: {
@@ -13,6 +14,7 @@ export type ObsidianVersionInfos = {
 /**
  * Metadata about a specific Obsidian version, including the min/max compatible installer versions, download urls, and
  * the internal electron version.
+ * @category Types
  */
 export type ObsidianVersionInfo = {
     version: string,
@@ -35,6 +37,7 @@ export type ObsidianVersionInfo = {
 
 /**
  * Schema of entries in https://github.com/obsidianmd/obsidian-releases/blob/HEAD/community-plugins.json
+ * @category Types
  */
 export type ObsidianCommunityPlugin = {
     id: string,
@@ -46,6 +49,7 @@ export type ObsidianCommunityPlugin = {
 
 /**
  * Schema of entries in https://github.com/obsidianmd/obsidian-releases/blob/HEAD/community-css-themes.json
+ * @category Types
  */
 export type ObsidianCommunityTheme = {
     name: string,
@@ -87,11 +91,14 @@ type CommunityPluginEntry = BasePluginEntry & {
  * - `id` to install a community plugin
  * 
  * You can also pass `enabled: false` to install the plugin, but start it disabled by default.
+ * 
+ * @category Types
  */
 export type PluginEntry = string|LocalPluginEntry|GitHubPluginEntry|CommunityPluginEntry
 
 /**
  * PluginEntry plus downloaded path.
+ * @category Types
  */
 export type DownloadedPluginEntry = {
     /** If the plugin is enabled */
@@ -137,11 +144,14 @@ type CommunityThemeEntry = BaseThemeEntry & {
  * 
  * You can also pass `enabled: false` to install the theme, but start it disabled by default. You can only have one
  * enabled theme, so if you pass multiple you need to disable all but one.
+ * 
+ * @category Types
  */
 export type ThemeEntry = string|LocalThemeEntry|GitHubThemeEntry|CommunityThemeEntry
 
 /**
  * ThemeEntry plus downloaded path.
+ * @category Types
  */
 export type DownloadedThemeEntry = {
     /** If the theme is enabled */
