@@ -33,6 +33,7 @@ function resolveEntry(rootDir: string, entry: PluginEntry|ThemeEntry): PluginEnt
 
 /**
  * Minimum Obsidian version that wdio-obsidian-service supports.
+ * @category WDIO Helpers
  */
 export const minSupportedObsidianVersion: string = "1.0.3"
 

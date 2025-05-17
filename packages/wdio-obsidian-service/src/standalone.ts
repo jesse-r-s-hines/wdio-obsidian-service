@@ -11,6 +11,8 @@ import { ObsidianServiceOptions } from "./types.js"
  * session connected to Obsidian.
  * 
  * See also: https://webdriver.io/docs/setuptypes/#standalone-mode
+ * 
+ * @category WDIO Helpers
  */
 export async function startWdioSession(
     params: Capabilities.WebdriverIOConfig,
