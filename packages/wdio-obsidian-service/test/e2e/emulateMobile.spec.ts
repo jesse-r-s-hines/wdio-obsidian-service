@@ -20,6 +20,6 @@ describe("Emulate Mobile", () => {
         const [width, height] = await browser.executeObsidian(({}) => {
             return [window.innerWidth, window.innerHeight];
         })
-        expect([width, height]).toEqual([412, 914]);
+        expect([width, height]).toEqual([390, 844]);
     })
 })
