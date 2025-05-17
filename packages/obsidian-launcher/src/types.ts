@@ -90,6 +90,9 @@ type CommunityPluginEntry = BasePluginEntry & {
  */
 export type PluginEntry = string|LocalPluginEntry|GitHubPluginEntry|CommunityPluginEntry
 
+/**
+ * PluginEntry plus downloaded path.
+ */
 export type DownloadedPluginEntry = {
     /** If the plugin is enabled */
     enabled: boolean,
@@ -137,6 +140,9 @@ type CommunityThemeEntry = BaseThemeEntry & {
  */
 export type ThemeEntry = string|LocalThemeEntry|GitHubThemeEntry|CommunityThemeEntry
 
+/**
+ * ThemeEntry plus downloaded path.
+ */
 export type DownloadedThemeEntry = {
     /** If the theme is enabled */
     enabled: boolean,

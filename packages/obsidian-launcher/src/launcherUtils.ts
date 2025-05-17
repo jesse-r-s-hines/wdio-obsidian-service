@@ -34,8 +34,8 @@ export async function extractObsidianExe(exe: string, appArch: string, dest: str
     const path7z = await which("7z", { nothrow: true });
     if (!path7z) {
         throw new Error(
-            "Downloading Obsidian for Windows requires 7zip to be installed and available on the PATH. " +
-            "You install it from https://www.7-zip.org and then add the install location to the PATH."
+            "Downloading Obsidian for Windows requires 7zip. Install it from https://www.7-zip.org and then add the " +
+            "install location to the PATH."
         );
     }
     exe = path.resolve(exe);

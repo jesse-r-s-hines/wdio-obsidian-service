@@ -320,7 +320,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
                 const newObsidianOptions = {
                     ...oldObsidianOptions,
                     // Resolve relative to PWD instead of root dir during tests
-                    vault: path.resolve(vault), 
+                    vault: path.resolve(vault),
                     plugins: service.selectPlugins(oldObsidianOptions.plugins, plugins),
                     themes: service.selectThemes(oldObsidianOptions.themes, theme),
                 }

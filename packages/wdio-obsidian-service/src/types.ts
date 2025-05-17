@@ -4,7 +4,7 @@ import type { PluginEntry, ThemeEntry } from "obsidian-launcher";
 export const OBSIDIAN_CAPABILITY_KEY = "wdio:obsidianOptions" as const;
 
 /**
- * Options passed to an "obsidian" capability in wdio.conf.ts. E.g.
+ * Options passed to an "wdio:obsidianOptions" capability in wdio.conf.ts. E.g.
  * ```ts
  * // ...
  * capabilities: [{
