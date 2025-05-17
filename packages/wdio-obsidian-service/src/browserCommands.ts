@@ -112,6 +112,7 @@ type SyncObsidianBrowserCommands = typeof syncBrowserCommands;
  * 
  * See also: https://webdriver.io/docs/api/browser
  * @interface
+ * @category Utilities
  */
 export type ObsidianBrowserCommands = AsyncObsidianBrowserCommands & SyncObsidianBrowserCommands & {
     /**
@@ -140,6 +141,7 @@ export type ObsidianBrowserCommands = AsyncObsidianBrowserCommands & SyncObsidia
 
 /**
  * Argument passed to the {@link ObsidianBrowserCommands.executeObsidian | executeObsidian} browser command.
+ * @category Types
  */
 export interface ExecuteObsidianArg {
     /**
@@ -178,6 +180,7 @@ export interface ExecuteObsidianArg {
 
 /**
  * Installed plugins, mapped by their id converted to camelCase
+ * @category Types
  */
 export interface InstalledPlugins extends Record<string, obsidian.Plugin> {
 }
