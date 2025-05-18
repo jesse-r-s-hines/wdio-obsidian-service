@@ -271,13 +271,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
             })
         }
 
-        let windowSize = obsidianOptions.windowSize;
-        if (!windowSize && obsidianOptions.platform == "emulate-mobile") {
-            windowSize = "phone";
-        }
-        if (typeof windowSize == "string") {
-            windowSize = WINDOW_SIZE_PRESETS[windowSize];
-        }
+        let windowSize = obsidianOptions.windowSize as {width: number, height: number}|undefined;
         if (windowSize && obsidianOptions.vault) {
             // change the screen size for mobile.
             await browser.getObsidianPage().setWindowSize(windowSize);
