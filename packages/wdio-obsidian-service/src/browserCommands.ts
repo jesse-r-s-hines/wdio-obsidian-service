@@ -1,6 +1,6 @@
 import type * as obsidian from "obsidian"
 import { ObsidianPage } from "./pageobjects/obsidianPage.js"
-import { OBSIDIAN_CAPABILITY_KEY } from "./types.js";
+import { NormalizedObsidianCapabilityOptions, OBSIDIAN_CAPABILITY_KEY } from "./types.js";
 
 export const asyncBrowserCommands = {
     /**
@@ -49,7 +49,8 @@ export const asyncBrowserCommands = {
         func: (obs: ExecuteObsidianArg, ...params: Params) => Return,
         ...params: Params
     ): Promise<Return> {
-        if (this.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].vaultCopy === undefined) {
+        const obsidianOptions = this.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY] as NormalizedObsidianCapabilityOptions;
+        if (obsidianOptions.vault === undefined) {
             throw Error("No vault open, set vault in wdio.conf or use reloadObsidian to open a vault dynamically.")
         }
         return await this.execute<Return, Params>(`
@@ -82,14 +83,16 @@ export const syncBrowserCommands = {
      * Returns the Obsidian app version this test is running under.
      */
     getObsidianVersion(this: WebdriverIO.Browser): string {
-        return this.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].appVersion;
+        const obsidianOptions = this.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY] as NormalizedObsidianCapabilityOptions;
+        return obsidianOptions.appVersion;
     },
     
     /**
      * Returns the Obsidian installer version this test is running under.
      */
     getObsidianInstallerVersion(this: WebdriverIO.Browser): string {
-        return this.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].installerVersion;
+        const obsidianOptions = this.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY] as NormalizedObsidianCapabilityOptions;
+        return obsidianOptions.installerVersion;
     },
 
     /**

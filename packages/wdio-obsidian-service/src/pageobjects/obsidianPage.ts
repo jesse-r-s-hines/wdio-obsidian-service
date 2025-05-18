@@ -1,7 +1,7 @@
 import * as path from "path"
 import * as fs from "fs"
 import * as fsAsync from "fs/promises"
-import { OBSIDIAN_CAPABILITY_KEY } from "../types.js";
+import { OBSIDIAN_CAPABILITY_KEY, NormalizedObsidianCapabilityOptions } from "../types.js";
 import { BasePage } from "./basePage.js";
 import { TFile } from "obsidian";
 import _ from "lodash";
@@ -23,17 +23,21 @@ import _ from "lodash";
  * @category Utilities
  */
 class ObsidianPage extends BasePage {
+    private getObsidianCapabilities(): NormalizedObsidianCapabilityOptions {
+        return this.browser.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY];
+    }
+
     /**
      * Returns the path to the vault opened in Obsidian.
      * 
      * wdio-obsidian-service copies your vault before running tests, so this is the path to the temporary copy.
      */
     getVaultPath(): string {
-        const vault = this.browser.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].vaultCopy;
-        if (vault === undefined) {
+        const obsidianOptions = this.getObsidianCapabilities();
+        if (obsidianOptions.vaultCopy === undefined) {
             throw Error("No vault open, set vault in wdio.conf or use reloadObsidian to open a vault dynamically.")
         }
-        return vault;
+        return obsidianOptions.vaultCopy;
     }
 
     /**
@@ -144,7 +148,9 @@ class ObsidianPage extends BasePage {
      * ```
      */
     async resetVault(...vaults: (string|Record<string, string>)[]) {
-        const origVaultPath: string = this.browser.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].vault;
+        const obsidianOptions = this.getObsidianCapabilities();
+        const origVaultPath = obsidianOptions.vault!;
+
         vaults = vaults.length == 0 ? [origVaultPath] : vaults;
         const configDir = path.basename(await this.getConfigDir());
 

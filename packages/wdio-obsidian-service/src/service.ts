@@ -9,7 +9,9 @@ import ObsidianLauncher, {
     PluginEntry, ThemeEntry, DownloadedPluginEntry, DownloadedThemeEntry,
 } from "obsidian-launcher"
 import { asyncBrowserCommands, syncBrowserCommands } from "./browserCommands.js"
-import { ObsidianCapabilityOptions, ObsidianServiceOptions, OBSIDIAN_CAPABILITY_KEY } from "./types.js"
+import {
+    ObsidianServiceOptions, NormalizedObsidianCapabilityOptions, OBSIDIAN_CAPABILITY_KEY,
+} from "./types.js"
 import { sleep } from "./utils.js"
 import semver from "semver"
 import _ from "lodash"
@@ -137,18 +139,20 @@ export class ObsidianLauncherService implements Services.ServiceInstance {
                     ...(cap['goog:chromeOptions']?.args ?? [])
                 ];
 
-                cap.browserName = "chrome";
-                cap.browserVersion = installerVersionInfo.chromeVersion;
-                cap[OBSIDIAN_CAPABILITY_KEY] = {
+                const normalizedObsidianOptions: NormalizedObsidianCapabilityOptions = {
                     ...obsidianOptions,
                     plugins: plugins,
                     themes: themes,
                     binaryPath: installerPath,
                     appPath: appPath,
                     vault: vault,
-                    appVersion: appVersion, // Resolve the versions
+                    appVersion: appVersion,
                     installerVersion: installerVersion,
-                };
+                }
+
+                cap.browserName = "chrome";
+                cap.browserVersion = installerVersionInfo.chromeVersion;
+                cap[OBSIDIAN_CAPABILITY_KEY] = normalizedObsidianOptions;
                 cap['goog:chromeOptions'] = {
                     binary: installerPath,
                     windowTypes: ["app", "webview"],
@@ -205,7 +209,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
     /**
      * Setup vault and config dir for a sandboxed Obsidian instance.
      */
-    private async setupObsidian(obsidianOptions: ObsidianCapabilityOptions): Promise<[string, string|undefined]> {
+    private async setupObsidian(obsidianOptions: NormalizedObsidianCapabilityOptions): Promise<[string, string|undefined]> {
         let vault = obsidianOptions.vault;
         if (vault != undefined) {
             log.info(`Opening vault ${obsidianOptions.vault}`);
@@ -221,8 +225,8 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
         }
 
         const configDir = await this.obsidianLauncher.setupConfigDir({
-            appVersion: obsidianOptions.appVersion!, installerVersion: obsidianOptions.installerVersion!,
-            appPath: obsidianOptions.appPath!,
+            appVersion: obsidianOptions.appVersion, installerVersion: obsidianOptions.installerVersion,
+            appPath: obsidianOptions.appPath,
             vault: vault,
         });
         this.tmpDirs.push(configDir);
@@ -234,7 +238,8 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
      * Wait for Obsidian to fully boot.
      */
     private async waitForReady(browser: WebdriverIO.Browser) {
-        if (browser.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].vault != undefined) {
+        const obsidianOptions: NormalizedObsidianCapabilityOptions = browser.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY];
+        if (obsidianOptions.vault != undefined) {
             await browser.waitUntil( // wait until the helper plugin is loaded
                 () => browser.execute(() => !!(window as any).wdioObsidianService),
                 {timeout: 30 * 1000, interval: 100},
@@ -256,11 +261,12 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
      */
     async beforeSession(config: Options.Testrunner, capabilities: WebdriverIO.Capabilities) {
         if (!capabilities[OBSIDIAN_CAPABILITY_KEY]) return;
+        const obsidianOptions = capabilities[OBSIDIAN_CAPABILITY_KEY] as NormalizedObsidianCapabilityOptions;
 
-        const [configDir, vaultCopy] = await this.setupObsidian(capabilities[OBSIDIAN_CAPABILITY_KEY]);
+        const [configDir, vaultCopy] = await this.setupObsidian(obsidianOptions);
 
-        // Undocumented field so we can get the path to the vault copy in getVaultPath()
-        (capabilities[OBSIDIAN_CAPABILITY_KEY] as any)['vaultCopy'] = vaultCopy;
+        // for use in getVaultPath()
+        obsidianOptions.vaultCopy = vaultCopy;
         capabilities['goog:chromeOptions']!.args = [
             `--user-data-dir=${configDir}`,
             ...(capabilities['goog:chromeOptions']!.args ?? [])
@@ -314,11 +320,11 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
             this: WebdriverIO.Browser,
             {vault, plugins, theme} = {},
         ) {
-            const oldObsidianOptions = this.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY];
+            const oldObsidianOptions: NormalizedObsidianCapabilityOptions = this.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY];
             let newCapabilities: WebdriverIO.Capabilities
 
             if (vault) {
-                const newObsidianOptions = {
+                const newObsidianOptions: NormalizedObsidianCapabilityOptions = {
                     ...oldObsidianOptions,
                     // Resolve relative to PWD instead of root dir during tests
                     vault: path.resolve(vault),

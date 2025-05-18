@@ -1,5 +1,5 @@
 import type { ObsidianBrowserCommands } from "./browserCommands.js";
-import type { PluginEntry, ThemeEntry } from "obsidian-launcher";
+import type { PluginEntry, ThemeEntry, DownloadedPluginEntry, DownloadedThemeEntry } from "obsidian-launcher";
 
 export const OBSIDIAN_CAPABILITY_KEY = "wdio:obsidianOptions";
 
@@ -95,6 +95,19 @@ export interface ObsidianCapabilityOptions {
      * Path to the app asar to load into obsidian. If omitted it will be downloaded automatically.
      */
     appPath?: string,
+}
+
+
+/** Internal type, capability options after being normalized by onPrepare */
+export interface NormalizedObsidianCapabilityOptions {
+    appVersion: string
+    installerVersion: string,
+    plugins: DownloadedPluginEntry[],
+    themes: DownloadedThemeEntry[],
+    vault?: string,
+    vaultCopy?: string,
+    binaryPath: string,
+    appPath: string,
 }
 
 
