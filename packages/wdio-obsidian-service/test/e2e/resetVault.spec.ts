@@ -43,6 +43,11 @@ describe("resetVault", () => {
         return result;
     }
 
+    it("no vault open", async () => {
+        await obsidianPage.resetVault({"foo.md": "BAR"});
+        expect(await getAllFiles()).toEqual({"foo.md": "BAR"});
+    })
+
     it("no change", async () => {
         await browser.reloadObsidian({vault: "./test/vaults/basic"});
         const contentBefore = await getAllFiles();

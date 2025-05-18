@@ -17,7 +17,8 @@
     },
     "files": [
         "dist",
-        "helper-plugin"
+        "helper-plugin",
+        "default-vault"
     ],
     "scripts": {
         "build": "tsup",
