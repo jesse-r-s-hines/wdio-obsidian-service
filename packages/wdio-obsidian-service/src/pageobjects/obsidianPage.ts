@@ -1,6 +1,7 @@
 import * as path from "path"
 import * as fs from "fs"
 import * as fsAsync from "fs/promises"
+import { fileURLToPath } from "url";
 import { OBSIDIAN_CAPABILITY_KEY, NormalizedObsidianCapabilityOptions } from "../types.js";
 import { BasePage } from "./basePage.js";
 import { TFile } from "obsidian";
@@ -149,6 +150,12 @@ class ObsidianPage extends BasePage {
      */
     async resetVault(...vaults: (string|Record<string, string>)[]) {
         const obsidianOptions = this.getObsidianCapabilities();
+        if (!obsidianOptions.vault) {
+            // open an empty vault if there's no vault open
+            const defaultVaultPath = path.resolve(fileURLToPath(import.meta.url), '../../default-vault');
+            await this.browser.reloadObsidian({vault: defaultVaultPath});
+        }
+
         const origVaultPath = obsidianOptions.vault!;
 
         vaults = vaults.length == 0 ? [origVaultPath] : vaults;
