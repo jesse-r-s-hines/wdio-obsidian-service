@@ -60,6 +60,7 @@ describe("Test page object", () => {
         const isMobile = browser.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].platform == "emulate-mobile";
         expect(platform.isMobile).toEqual(isMobile);
         expect(platform.isDesktop).toEqual(!isMobile);
+        expect(platform.isPhone).toEqual(isMobile);
     })
 
     it('enable/disable plugin', async () => {
