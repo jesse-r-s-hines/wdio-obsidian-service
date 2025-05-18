@@ -113,8 +113,9 @@ export class ObsidianLauncherService implements Services.ServiceInstance {
                     appPath = await this.obsidianLauncher.downloadApp(appVersion);
                 }
                 let chromedriverPath = cap['wdio:chromedriverOptions']?.binary;
-                // wdio can't download chromedriver for versions less than 115 automatically
-                if (!chromedriverPath && Number(installerVersionInfo.chromeVersion!.split(".")[0]) <= 115) {
+                // wdio can't download chromedriver for versions less than 115 automatically. Fetching it ourselves is
+                // also a bit faster as it skips the chromedriver version detection step.
+                if (!chromedriverPath) {
                     chromedriverPath = await this.obsidianLauncher.downloadChromedriver(installerVersion);
                 }
 

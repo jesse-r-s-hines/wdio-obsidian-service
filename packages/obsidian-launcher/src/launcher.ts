@@ -371,28 +371,29 @@ export class ObsidianLauncher {
             throw Error(`${installerVersion} is not an Obsidian installer version.`)
         }
 
-        const chromedriverZipPath = await downloadArtifact({
-            version: electronVersion,
-            artifactName: 'chromedriver',
-            cacheRoot: path.join(this.cacheDir, "chromedriver-legacy"),
-            unsafelyDisableChecksums: true, // the checksums are slow and run even on cache hit.
-        });
-
-        let chromedriverPath: string
+        const {platform, arch} = process;
+        const cacheDir = path.join(this.cacheDir, `electron-chromedriver/${platform}-${arch}/${electronVersion}`);
+        let chromedriverPath: string;
         if (process.platform == "win32") {
-            chromedriverPath = path.join(path.dirname(chromedriverZipPath), "chromedriver.exe");
+            chromedriverPath = path.join(cacheDir, `chromedriver.exe`);
         } else {
-            chromedriverPath = path.join(path.dirname(chromedriverZipPath), "chromedriver");
+            chromedriverPath = path.join(cacheDir, `chromedriver`);
         }
 
         if (!(await fileExists(chromedriverPath))) {
-            console.log(`Downloading legacy chromedriver for electron ${electronVersion} ...`)
-            await withTmpDir(chromedriverPath, async (tmpDir) => {
-                await extractZip(chromedriverZipPath, { dir: tmpDir });
-                return path.join(tmpDir, path.basename(chromedriverPath));
+            console.log(`Downloading chromedriver for electron ${electronVersion} ...`);
+            await fsAsync.mkdir(path.dirname(cacheDir), { recursive: true });
+            await withTmpDir(cacheDir, async (tmpDir) => {
+                const chromedriverZipPath = await downloadArtifact({
+                    version: electronVersion,
+                    artifactName: 'chromedriver',
+                    cacheRoot: path.join(tmpDir, 'download'),
+                });
+                const extracted = path.join(tmpDir, "extracted");
+                await extractZip(chromedriverZipPath, { dir: extracted });
+                return extracted;
             })
         }
-
         return chromedriverPath;
     }
 
