@@ -331,8 +331,17 @@ class ObsidianPage extends BasePage {
         await this.browser.execute(async (width, height) => {
             await (window as any).electron.remote.getCurrentWindow().setSize(width, height);
         }, width, height);
-        await this.browser.waitUntil(async () =>
-            await this.browser.execute(() => `${window.innerWidth},${window.innerHeight}`) == `${width},${height}`
+        const platform = this.getObsidianCapabilities().platform;
+        const isTablet = (platform == "emulate-mobile" && width >= 600 && height >= 600);
+        const isPhone = (platform == "emulate-mobile" && !isTablet);
+        await this.browser.waitUntil(
+            () => this.browser.executeObsidian(({obsidian}, width, height, isTablet, isPhone) => (
+                obsidian.Platform.isTablet == isTablet &&
+                obsidian.Platform.isPhone == isPhone &&
+                window.innerWidth == width &&
+                window.innerHeight == height
+            ), width, height, isTablet, isPhone),
+            {timeout: 30 * 1000, interval: 100},
         );
     }
 }
