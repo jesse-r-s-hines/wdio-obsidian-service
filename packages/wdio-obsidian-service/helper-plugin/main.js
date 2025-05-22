@@ -7,9 +7,10 @@ function toCamelCase(s) {
 
 class WdioObsidianServicePlugin extends obsidian.Plugin {
     async onload() {
-        const globals = {
+        const getGlobals = () => ({
             app: this.app,
             obsidian: obsidian,
+            // need to rebuild plugins each time, as the plugins can change on disable/enable.
             plugins: Object.fromEntries(
                 Object.entries(this.app.plugins.plugins)
                     .filter(([id, plugin]) => id != "wdio-obsidian-service-plugin")
@@ -17,14 +18,14 @@ class WdioObsidianServicePlugin extends obsidian.Plugin {
             ),
             // Obsidian uses a magic wrapper for the require seen by plugins that can import Obsidian modules
             require: require,
-        }
+        });
 
-        window.wdioObsidianService = globals;
+        window.wdioObsidianService = getGlobals;
         // pop-out windows have separate window objects so the globals don't tranfer by default. webdriverio normally
         // executes in the main window but you can switch that with `switchWindow`. Here we add the global to all
         // windows so executeObsidian still works.
         this.registerEvent(this.app.workspace.on("window-open", (win) => {
-            win.win.wdioObsidianService = globals;
+            win.win.wdioObsidianService = getGlobals;
         }))
     };
 }

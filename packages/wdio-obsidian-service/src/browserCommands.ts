@@ -67,8 +67,8 @@ const browserCommands = {
             throw Error("No vault open")
         }
         return await this.execute<Return, Params>(`
-            const require = window.wdioObsidianService.require;
-            return (${func.toString()}).call(null, {...window.wdioObsidianService}, ...arguments)
+            const require = window.wdioObsidianService().require;
+            return (${func.toString()}).call(null, {...window.wdioObsidianService()}, ...arguments)
         `, ...params)
     },
 
