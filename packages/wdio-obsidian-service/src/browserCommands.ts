@@ -54,8 +54,8 @@ export const asyncBrowserCommands = {
             throw Error("No vault open, set vault in wdio.conf or use reloadObsidian to open a vault dynamically.")
         }
         return await this.execute<Return, Params>(`
-            const require = window.wdioObsidianService.require;
-            return (${func.toString()}).call(null, {...window.wdioObsidianService}, ...arguments)
+            const require = window.wdioObsidianService().require;
+            return (${func.toString()}).call(null, {...window.wdioObsidianService()}, ...arguments)
         `, ...params)
     },
 
