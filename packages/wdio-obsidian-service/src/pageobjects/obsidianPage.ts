@@ -135,7 +135,9 @@ class ObsidianPage extends BasePage {
         await this.browser.executeObsidian(async ({app, obsidian}, path) => {
             const file = app.vault.getAbstractFileByPath(path);
             if (file instanceof obsidian.TFile) {
-                await app.workspace.getLeaf('tab').openFile(file);
+                const leaf = await app.workspace.getLeaf('tab');
+                await leaf.openFile(file);
+                await app.workspace.setActiveLeaf(leaf, {focus: true});
             } else {
                 throw Error(`No file ${path} exists`);
             }
