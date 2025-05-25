@@ -158,6 +158,8 @@ class ObsidianPage extends BasePage {
                 const fileContent = await fsAsync.readFile(workspacesPath, 'utf-8');
                 layout = JSON.parse(fileContent)?.workspaces?.[layoutName];
             } catch {
+            }
+            if (!layout) {
                 throw new Error(`No workspace ${layoutName} found in ${configDir}/workspaces.json`);
             }
         }
