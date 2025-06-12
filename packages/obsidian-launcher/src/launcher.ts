@@ -876,6 +876,8 @@ export class ObsidianLauncher {
         // Spawn child.
         const proc = child_process.spawn(installerPath, [
             `--user-data-dir=${configDir}`,
+            // Workaround for SUID issue on AppImages. See https://github.com/electron/electron/issues/42510
+            ...(process.platform == 'linux' ? ["--no-sandbox"] : []),
             ...(params.args ?? []),
         ], {
             ...params.spawnOptions,

@@ -115,23 +115,30 @@ program
     .command("launch")
     .summary("Download and launch Obsidian")
     .description(
-        "Download and launch Obsidian, opening the specified vault. The Obsidian instance will have a sandboxed " +
-        "configuration directory. You can use this option to easily compare plugin behavior on different versions of " +
-        "Obsidian without messing with your system installation of Obsidian."
+        "Download and launch Obsidian, opening the specified vault.\n" +
+        "\n" +
+        "The Obsidian instance will have a sandboxed configuration directory. You can use this option to easily " +
+        "plugin behavior on different versions of Obsidian without messing with your system installation of " + 
+        "Obsidian.\n" +
+        "\n" +
+        "You can pass arguments through to the Obsidian executable using\n" +
+        "    npx obsidian-launcher ./vault -- --remote-debugging-port=9222"
     )
     .argument('[vault]', 'Vault to open')
+    .argument('[obsidian-args...]', 'Arguments to pass to Obsidian')
     .option(...cacheOptionArgs)
     .option(...versionOptionArgs)
     .option(...installerOptionArgs)
     .option(...pluginOptionArgs)
     .option(...themeOptionArgs)
     .option('--copy', "Copy the vault first")
-    .action(async (vault: string|undefined, opts) => {
+    .action(async (vault: string|undefined, obsidianArgs: string[], opts: any) => {
         const launcher = new ObsidianLauncher({cacheDir: opts.cache});
         const {proc} = await launcher.launch({
             appVersion: opts.version, installerVersion: opts.installerVersion,
             vault: vault,
             copy: opts.copy ?? false,
+            args: obsidianArgs,
             plugins: parsePlugins(opts.plugin),
             themes: parseThemes(opts.theme),
             spawnOptions: {
@@ -154,13 +161,14 @@ program
         'updated.'
     )
     .argument('[vault]', 'Vault to open')
+    .argument('[obsidian-args...]', 'Arguments to pass to Obsidian')
     .option(...cacheOptionArgs)
     .option(...versionOptionArgs)
     .option(...installerOptionArgs)
     .option(...pluginOptionArgs)
     .option(...themeOptionArgs)
     .option('--copy', "Copy the vault first")
-    .action(async (vault: string, opts) => {
+    .action(async (vault: string, obsidianArgs: string[], opts: any) => {
         const launcher = new ObsidianLauncher({cacheDir: opts.cache});
         // Normalize the plugins and themes
         const plugins = await launcher.downloadPlugins(parsePlugins(opts.plugin));
@@ -170,6 +178,7 @@ program
             appVersion: opts.version, installerVersion: opts.installerVersion,
             vault: vault,
             copy: copy,
+            args: obsidianArgs,
             plugins: plugins,
             themes: themes,
         } as const
