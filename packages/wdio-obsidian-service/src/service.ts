@@ -210,7 +210,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
     /**
      * Setup vault and config dir for a sandboxed Obsidian instance.
      */
-    private async setupObsidian(obsidianOptions: NormalizedObsidianCapabilityOptions): Promise<[string, string|undefined]> {
+    private async setupObsidianDirs(obsidianOptions: NormalizedObsidianCapabilityOptions): Promise<[string, string|undefined]> {
         let vault = obsidianOptions.vault;
         if (vault != undefined) {
             log.info(`Opening vault ${obsidianOptions.vault}`);
@@ -238,7 +238,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
     /**
      * Wait for Obsidian to fully boot.
      */
-    private async waitForReady(browser: WebdriverIO.Browser) {
+    private async setupObsidianApp(browser: WebdriverIO.Browser) {
         const obsidianOptions: NormalizedObsidianCapabilityOptions = browser.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY];
         if (obsidianOptions.vault != undefined) {
             await browser.waitUntil( // wait until the helper plugin is loaded
@@ -247,13 +247,13 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
             );
             await browser.executeObsidian(async ({app}) => {
                 await new Promise<void>((resolve) => app.workspace.onLayoutReady(resolve) );
-            })
+            });
         } else {
             await browser.execute(async () => {
                 if (document.readyState === "loading") {
                     return new Promise<void>(resolve => document.addEventListener("DOMContentLoaded", () => resolve()));
                 }
-            })
+            });
         }
     }
 
@@ -264,7 +264,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
         if (!capabilities[OBSIDIAN_CAPABILITY_KEY]) return;
         const obsidianOptions = capabilities[OBSIDIAN_CAPABILITY_KEY] as NormalizedObsidianCapabilityOptions;
 
-        const [configDir, vaultCopy] = await this.setupObsidian(obsidianOptions);
+        const [configDir, vaultCopy] = await this.setupObsidianDirs(obsidianOptions);
 
         // for use in getVaultPath()
         obsidianOptions.vaultCopy = vaultCopy;
@@ -333,7 +333,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
                     themes: service.selectThemes(oldObsidianOptions.themes, theme),
                 }
     
-                const [configDir, vaultCopy] = await service.setupObsidian(newObsidianOptions);
+                const [configDir, vaultCopy] = await service.setupObsidianDirs(newObsidianOptions);
                 // for use in getVaultPath()
                 newObsidianOptions.vaultCopy = vaultCopy;
                 
@@ -388,7 +388,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
                 ..._.omit(this.requestedCapabilities, ['browserName', 'browserVersion']),
                 ...newCapabilities,
             });
-            await service.waitForReady(this);
+            await service.setupObsidianApp(this);
             return sessionId;
         }
 
@@ -402,7 +402,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
             (browser as any)[name] = cmd;
         }
 
-        await service.waitForReady(browser);
+        await service.setupObsidianApp(browser);
     }
 
     /**
