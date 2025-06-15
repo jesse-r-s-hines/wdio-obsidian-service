@@ -152,6 +152,8 @@ You can see the [sample plugin](https://github.com/jesse-r-s-hines/wdio-obsidian
 
 Windows firewall will sometimes complain about NodeJS, you can just cancel the popup it makes.
 
+Currently, `wdio-obsidian-service` only works for Obsidian Desktop. However, it does support emulating Obsidian Mobile during testing. It uses Obsidian `app.emulateMobile()` to switch Obsidian to the mobile UI and sets the screen size to mobile, so you can test that your plugin works on both desktop and mobile Obsidian apps. 
+
 ### Test Frameworks
 
 WebdriverIO can run tests using [Mocha](https://mochajs.org), [Jasmine](https://jasmine.github.io), and [Cucumber](https://cucumber.io/). Mocha is the easiest to set up and is used in all the wdio-obsidian-service examples. Mocha can also run your unit tests, typically with the addition of an assertion library like [Chai](https://www.chaijs.com). You can't run WebdriverIO using [Jest](https://jestjs.io), but if you already have Jest unit tests (or just prefer Jest) you can easily continue using Jest for your unit tests and Mocha just for your e2e tests. The built-in WebdriverIO [expect](https://webdriver.io/docs/api/expect-webdriverio) is very similar to Jest matchers, so should be familiar to use.

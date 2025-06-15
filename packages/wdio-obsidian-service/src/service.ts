@@ -39,6 +39,11 @@ function resolveEntry(rootDir: string, entry: PluginEntry|ThemeEntry): PluginEnt
  */
 export const minSupportedObsidianVersion: string = "1.0.3"
 
+const WINDOW_SIZE_PRESETS = {
+    "phone": {width: 390, height: 844}, // iPhone 12 Pro
+    "tablet": {width: 768, height: 1024}, // iPad Mini
+}
+
 
 /**
  * wdio launcher service.
@@ -140,6 +145,16 @@ export class ObsidianLauncherService implements Services.ServiceInstance {
                     ...(cap['goog:chromeOptions']?.args ?? [])
                 ];
 
+                const platform = obsidianOptions.platform ?? "desktop";
+
+                let windowSize = obsidianOptions.windowSize;
+                if (!windowSize && platform == "emulate-mobile") {
+                    windowSize = "phone";
+                }
+                if (typeof windowSize == "string") {
+                    windowSize = WINDOW_SIZE_PRESETS[windowSize];
+                }
+
                 const normalizedObsidianOptions: NormalizedObsidianCapabilityOptions = {
                     ...obsidianOptions,
                     plugins: plugins,
@@ -149,6 +164,8 @@ export class ObsidianLauncherService implements Services.ServiceInstance {
                     vault: vault,
                     appVersion: appVersion,
                     installerVersion: installerVersion,
+                    platform: platform,
+                    windowSize: windowSize,
                 }
 
                 cap.browserName = "chrome";
@@ -229,6 +246,9 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
             appVersion: obsidianOptions.appVersion, installerVersion: obsidianOptions.installerVersion,
             appPath: obsidianOptions.appPath,
             vault: vault,
+            // `app.emulateMobile` just sets this localStorage variable. Setting it ourselves here instead of calling
+            // the function simplifies the boot/plugin load sequence and makes sure plugins load in mobile mode.
+            localStorage: obsidianOptions.platform == "emulate-mobile" ? {"EmulateMobile": "1"} : {},
         });
         this.tmpDirs.push(configDir);
 
@@ -236,7 +256,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
     }
 
     /**
-     * Wait for Obsidian to fully boot.
+     * Wait for Obsidian to fully boot and do some final set up steps before running the tests.
      */
     private async setupObsidianApp(browser: WebdriverIO.Browser) {
         const obsidianOptions: NormalizedObsidianCapabilityOptions = browser.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY];
@@ -253,7 +273,12 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
                 if (document.readyState === "loading") {
                     return new Promise<void>(resolve => document.addEventListener("DOMContentLoaded", () => resolve()));
                 }
-            });
+            })
+        }
+
+        if (obsidianOptions.windowSize && obsidianOptions.vault) {
+            // change the screen size for mobile.
+            await browser.getObsidianPage().setWindowSize(obsidianOptions.windowSize);
         }
     }
 

@@ -2,6 +2,7 @@ import { browser, expect } from '@wdio/globals'
 import fsAsync from "fs/promises";
 import path from "path";
 import { obsidianPage } from 'wdio-obsidian-service';
+import { OBSIDIAN_CAPABILITY_KEY } from '../../src/types.js';
 
 
 async function getOpenFiles() {
@@ -54,6 +55,14 @@ describe("Test page object", () => {
         expect(configDir).toEqual(path.join(vaultPath, ".obsidian"));
     })
 
+    it('getPlatform', async () => {
+        const platform = await obsidianPage.getPlatform();
+        const isMobile = browser.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].platform == "emulate-mobile";
+        expect(platform.isMobile).toEqual(isMobile);
+        expect(platform.isDesktop).toEqual(!isMobile);
+        expect(platform.isPhone).toEqual(isMobile);
+    })
+
     it('enable/disable plugin', async () => {
         let plugins: string[] = await browser.executeObsidian(({app}) =>
             [...(app as any).plugins.enabledPlugins].sort() 
@@ -103,5 +112,13 @@ describe("Test page object", () => {
         expect(await getOpenFiles()).toEqual([]);
         await obsidianPage.loadWorkspaceLayout(workspace);
         expect(await getOpenFiles()).toEqual(["Goodbye.md", "Welcome.md"]);
+    })
+
+    it("setWindowSize", async () => {
+        await obsidianPage.setWindowSize({width: 600, height: 700});
+        const [width, height] = await browser.executeObsidian(() => {
+            return [window.innerWidth, window.innerHeight];
+        })
+        expect([width, height]).toEqual([600, 700]);
     })
 })
