@@ -901,7 +901,7 @@ export class ObsidianLauncher {
     }
 
     /** 
-     * Updates the info obsidian-versions.json. The obsidian-versions.json file is used in other launcher commands
+     * Updates the info in obsidian-versions.json. The obsidian-versions.json file is used in other launcher commands
      * and in wdio-obsidian-service to get metadata about Obsidian versions in one place such as minInstallerVersion and
      * the internal electron version.
      */

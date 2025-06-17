@@ -117,7 +117,7 @@ program
     .description(
         "Download and launch Obsidian, opening the specified vault.\n" +
         "\n" +
-        "The Obsidian instance will have a sandboxed configuration directory. You can use this option to easily " +
+        "The Obsidian instance will have a sandboxed configuration directory. You can use this command to test " +
         "plugin behavior on different versions of Obsidian without messing with your system installation of " + 
         "Obsidian.\n" +
         "\n" +

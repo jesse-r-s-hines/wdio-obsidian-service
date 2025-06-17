@@ -28,8 +28,8 @@ export const asyncBrowserCommands = {
      * 
      * This *won't* work:
      * ```ts
-     * import { FileView } from Obsidian
-     * browser.executeObsidian(({app, obsidian}) => {
+     * import { FileView } from "obsidian"
+     * browser.executeObsidian(({app}) => {
      *     if (leaf.view instanceof FileView) {
      *         ...
      *     }
