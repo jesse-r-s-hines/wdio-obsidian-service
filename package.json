@@ -14,7 +14,7 @@
         "build": "npm run --workspaces build",
         "version": "node scripts/bumpVersions.mjs",
         "postversion": "git add package*.json **/package*.json && git commit -m \"Bump $npm_package_version\"",
-        "lint": "eslint packages/*/src packages/*/test",
+        "lint": "eslint packages/*/src packages/*/test/e2e packages/*/test/unit packages/*/test/standalone",
         "test": "run-s test:*",
         "test:unit": "npm run --workspaces --if-present test:unit",
         "test:e2e": "npm run --workspaces --if-present test:e2e",
@@ -26,7 +26,7 @@
         "eslint": "^9.22.0",
         "http-server": "^14.1.1",
         "npm-run-all": "^4.1.5",
-        "typedoc": "^0.28.0",
+        "typedoc": "^0.28.4",
         "typescript": "^5.8.2",
         "typescript-eslint": "^8.26.1"
     },

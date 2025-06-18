@@ -56,12 +56,12 @@ const collectOpt = (curr: string, prev?: string[]) => [...(prev ?? []), curr];
 
 const versionOptionArgs = [
     '-v, --version <version>',
-    "Obsidian version to run",
+    "Obsidian app version",
     "latest",
 ] as const
 const installerOptionArgs = [
     '-i, --installer <version>',
-    "Obsidian installer version to run",
+    "Obsidian installer version",
     "latest",
 ] as const
 const cacheOptionArgs = [
@@ -117,7 +117,7 @@ program
     .description(
         "Download and launch Obsidian, opening the specified vault.\n" +
         "\n" +
-        "The Obsidian instance will have a sandboxed configuration directory. You can use this option to easily " +
+        "The Obsidian instance will have a sandboxed configuration directory. You can use this command to test " +
         "plugin behavior on different versions of Obsidian without messing with your system installation of " + 
         "Obsidian.\n" +
         "\n" +
@@ -274,7 +274,7 @@ program
 
         const launcher = new ObsidianLauncher({cacheDir: opts.cache});
         versionInfos = await launcher.updateObsidianVersionInfos(versionInfos, { maxInstances });
-        fsAsync.writeFile(dest, JSON.stringify(versionInfos, undefined, 4));
+        await fsAsync.writeFile(dest, JSON.stringify(versionInfos, undefined, 4));
         console.log(`Wrote updated version information to ${dest}`)
     })
 

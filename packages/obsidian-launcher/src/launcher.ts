@@ -95,6 +95,11 @@ export class ObsidianLauncher {
                     if (request.success) {
                         await fsAsync.mkdir(path.dirname(dest), { recursive: true });
                         await withTmpDir(dest, async (tmpDir) => {
+                            try {
+                                JSON.parse(request.result);
+                            } catch (e) {
+                                throw Error(`Failed to parse response from ${url}: ${e}`)
+                            }
                             await fsAsync.writeFile(path.join(tmpDir, 'download.json'), request.result);
                             return path.join(tmpDir, 'download.json');
                         })
@@ -366,28 +371,29 @@ export class ObsidianLauncher {
             throw Error(`${installerVersion} is not an Obsidian installer version.`)
         }
 
-        const chromedriverZipPath = await downloadArtifact({
-            version: electronVersion,
-            artifactName: 'chromedriver',
-            cacheRoot: path.join(this.cacheDir, "chromedriver-legacy"),
-            unsafelyDisableChecksums: true, // the checksums are slow and run even on cache hit.
-        });
-
-        let chromedriverPath: string
+        const {platform, arch} = process;
+        const cacheDir = path.join(this.cacheDir, `electron-chromedriver/${platform}-${arch}/${electronVersion}`);
+        let chromedriverPath: string;
         if (process.platform == "win32") {
-            chromedriverPath = path.join(path.dirname(chromedriverZipPath), "chromedriver.exe");
+            chromedriverPath = path.join(cacheDir, `chromedriver.exe`);
         } else {
-            chromedriverPath = path.join(path.dirname(chromedriverZipPath), "chromedriver");
+            chromedriverPath = path.join(cacheDir, `chromedriver`);
         }
 
         if (!(await fileExists(chromedriverPath))) {
-            console.log(`Downloading legacy chromedriver for electron ${electronVersion} ...`)
-            await withTmpDir(chromedriverPath, async (tmpDir) => {
-                await extractZip(chromedriverZipPath, { dir: tmpDir });
-                return path.join(tmpDir, path.basename(chromedriverPath));
+            console.log(`Downloading chromedriver for electron ${electronVersion} ...`);
+            await fsAsync.mkdir(path.dirname(cacheDir), { recursive: true });
+            await withTmpDir(cacheDir, async (tmpDir) => {
+                const chromedriverZipPath = await downloadArtifact({
+                    version: electronVersion,
+                    artifactName: 'chromedriver',
+                    cacheRoot: path.join(tmpDir, 'download'),
+                });
+                const extracted = path.join(tmpDir, "extracted");
+                await extractZip(chromedriverZipPath, { dir: extracted });
+                return extracted;
             })
         }
-
         return chromedriverPath;
     }
 
@@ -749,31 +755,32 @@ export class ObsidianLauncher {
      * @param params.installerVersion Obsidian version string.
      * @param params.appPath Path to the asar file to install. Will download if omitted.
      * @param params.vault Path to the vault to open in Obsidian.
-     * @param params.dest Destination path for the config dir. If omitted it will create a temporary directory.
+     * @param params.localStorage items to add to localStorage. `$vaultId` in the keys will be replaced with the vaultId
      */
     async setupConfigDir(params: {
         appVersion: string, installerVersion: string,
         appPath?: string,
         vault?: string,
-        dest?: string,
+        localStorage?: Record<string, string>,
     }): Promise<string> {
         const [appVersion, installerVersion] = await this.resolveVersions(params.appVersion, params.installerVersion);
         // configDir will be passed to --user-data-dir, so Obsidian is somewhat sandboxed. We set up "obsidian.json" so
         // that Obsidian opens the vault by default and doesn't check for updates.
-        const configDir = params.dest ?? await makeTmpDir('obs-launcher-config-');
+        const configDir = await makeTmpDir('obs-launcher-config-');
     
         let obsidianJson: any = {
             updateDisabled: true, // Prevents Obsidian trying to auto-update on boot.
         }
-        let localStorageData: Record<string, string> = {
+        const localStorageData: Record<string, string> = {
             "most-recently-installed-version": appVersion, // prevents the changelog page on boot
         }
 
+        let vaultId: string|undefined = undefined;
         if (params.vault !== undefined) {
             if (!await fileExists(params.vault)) {
                 throw Error(`Vault path ${params.vault} doesn't exist.`)
             }
-            const vaultId = crypto.randomBytes(8).toString("hex");
+            vaultId = crypto.randomBytes(8).toString("hex");
             obsidianJson = {
                 ...obsidianJson,
                 vaults: {
@@ -784,11 +791,13 @@ export class ObsidianLauncher {
                     },
                 },
             };
-            localStorageData = {
-                ...localStorageData,
+            Object.assign(localStorageData, {
                 [`enable-plugin-${vaultId}`]: "true", // Disable "safe mode" and enable plugins
-            }
+            })
         }
+        Object.assign(localStorageData, _.mapKeys(params.localStorage ?? {},
+            (v, k) => k.replace('$vaultId', vaultId ?? ''),
+        ));
 
         await fsAsync.writeFile(path.join(configDir, 'obsidian.json'), JSON.stringify(obsidianJson));
 
@@ -844,6 +853,7 @@ export class ObsidianLauncher {
      * @param params.plugins List of plugins to install in the vault
      * @param params.themes List of themes to install in the vault
      * @param params.args CLI args to pass to Obsidian
+     * @param params.localStorage items to add to localStorage. `$vaultId` in the keys will be replaced with the vaultId
      * @param params.spawnOptions Options to pass to `spawn`
      * @returns The launched child process and the created tmpdirs
      */
@@ -853,6 +863,7 @@ export class ObsidianLauncher {
         vault?: string,
         plugins?: PluginEntry[], themes?: ThemeEntry[],
         args?: string[],
+        localStorage?: Record<string, string>,
         spawnOptions?: child_process.SpawnOptions,
     }): Promise<{proc: child_process.ChildProcess, configDir: string, vault?: string}> {
         const [appVersion, installerVersion] = await this.resolveVersions(
@@ -871,7 +882,10 @@ export class ObsidianLauncher {
             })
         }
 
-        const configDir = await this.setupConfigDir({ appVersion, installerVersion, appPath, vault });
+        const configDir = await this.setupConfigDir({
+            appVersion, installerVersion, appPath, vault,
+            localStorage: params.localStorage,
+        });
 
         // Spawn child.
         const proc = child_process.spawn(installerPath, [
@@ -887,7 +901,7 @@ export class ObsidianLauncher {
     }
 
     /** 
-     * Updates the info obsidian-versions.json. The obsidian-versions.json file is used in other launcher commands
+     * Updates the info in obsidian-versions.json. The obsidian-versions.json file is used in other launcher commands
      * and in wdio-obsidian-service to get metadata about Obsidian versions in one place such as minInstallerVersion and
      * the internal electron version.
      */

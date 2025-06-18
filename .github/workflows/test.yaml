@@ -14,13 +14,13 @@ jobs:
         include:
           - os: ubuntu-latest
             node-version: "18.x"
-            test-preset: "sample"
+            test-preset: "samplex"
           - os: windows-latest
             node-version: "18.x"
-            test-preset: "first-and-last"
+            test-preset: "first-and-lastx"
           - os: macos-latest
             node-version: "18.x"
-            test-preset: "first-and-last"
+            test-preset: "first-and-lastx"
             max-instances: 1
           # Also test other node versions
           - os: ubuntu-latest
@@ -28,7 +28,7 @@ jobs:
             test-preset: "last"
           - os: ubuntu-latest
             node-version: "22.x"
-            test-preset: "last"
+            test-preset: "lastx"
     runs-on: ${{ matrix.os }}
     name: e2e-test-${{ matrix.os }}-node-${{ matrix.node-version }}
     steps:
@@ -65,3 +65,13 @@ jobs:
           # Secrets won't be available when run as on a PR
           OBSIDIAN_USERNAME: ${{ secrets.OBSIDIAN_USERNAME }}
           OBSIDIAN_PASSWORD: ${{ secrets.OBSIDIAN_PASSWORD }}
+
+  check:
+    if: always()
+    needs: [test]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check all tests passed
+        uses: re-actors/alls-green@release/v1
+        with:
+          jobs: ${{ toJSON(needs) }}
