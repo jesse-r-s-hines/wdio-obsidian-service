@@ -14,13 +14,13 @@ jobs:
         include:
           - os: ubuntu-latest
             node-version: "18.x"
-            test-preset: "sample"
+            test-preset: "samplex"
           - os: windows-latest
             node-version: "18.x"
-            test-preset: "first-and-last"
+            test-preset: "first-and-lastx"
           - os: macos-latest
             node-version: "18.x"
-            test-preset: "first-and-last"
+            test-preset: "first-and-lastx"
             max-instances: 1
           # Also test other node versions
           - os: ubuntu-latest
@@ -28,7 +28,7 @@ jobs:
             test-preset: "last"
           - os: ubuntu-latest
             node-version: "22.x"
-            test-preset: "last"
+            test-preset: "lastx"
     runs-on: ${{ matrix.os }}
     name: e2e-test-${{ matrix.os }}-node-${{ matrix.node-version }}
     steps:
