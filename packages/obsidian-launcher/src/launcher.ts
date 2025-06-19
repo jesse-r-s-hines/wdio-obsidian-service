@@ -239,14 +239,20 @@ export class ObsidianLauncher {
      */
     async downloadInstaller(installerVersion: string): Promise<string> {
         const installerVersionInfo = await this.getVersionInfo(installerVersion);
-        return await this.downloadInstallerFromVersionInfo(installerVersionInfo);
+        const downloader = this.getInstallerDownloader(installerVersionInfo);
+        if (!downloader) {
+            throw Error(`No Obsidian installer found for v${installerVersion} ${process.platform} ${process.arch}`);
+        }
+        return await downloader();
     }
 
+
     /**
-     * Helper for downloadInstaller that doesn't require the obsidian-versions.json file so it can be used in
-     * updateObsidianVersionInfos
+     * Helper for downloadInstaller that returns the path under cache, and a function that downloads and extracts the
+     * installer for the current platform and architecture. Takes a ObsidianVersionInfo so it doesn't use
+     * obsidian-versions.json and can be used in updateObsidianVersionInfos.
      */
-    private async downloadInstallerFromVersionInfo(versionInfo: ObsidianVersionInfo): Promise<string> {
+    private getInstallerDownloader(versionInfo: ObsidianVersionInfo): (() => Promise<string>)|undefined {
         const installerVersion = versionInfo.version;
         const {platform, arch} = process;
         const cacheDir = path.join(this.cacheDir, `obsidian-installer/${platform}-${arch}/Obsidian-${installerVersion}`);
@@ -306,17 +312,17 @@ export class ObsidianLauncher {
         } else {
             throw Error(`Unsupported platform ${platform}`);
         }
-        if (!downloader) {
-            throw Error(`No Obsidian installer download available for v${installerVersion} ${platform} ${arch}`);
-        }
 
-        if (!(await fileExists(installerPath))) {
-            console.log(`Downloading Obsidian installer v${installerVersion}...`)
-            await fsAsync.mkdir(path.dirname(cacheDir), { recursive: true });
-            await withTmpDir(cacheDir, downloader);
+        if (downloader) {
+            return async () => {
+                if (!(await fileExists(installerPath))) {
+                    console.log(`Downloading Obsidian installer v${installerVersion}...`)
+                    await fsAsync.mkdir(path.dirname(cacheDir), { recursive: true });
+                    await withTmpDir(cacheDir, downloader);
+                }
+                return installerPath;
+            }
         }
-
-        return installerPath;
     }
 
     /**
@@ -950,7 +956,8 @@ export class ObsidianLauncher {
         const dependencyVersions = await pool(maxInstances,
             Object.values(versionMap).filter(v => v.downloads?.appImage && !v.chromeVersion),
             async (v) => {
-                const binaryPath = await this.downloadInstallerFromVersionInfo(v as ObsidianVersionInfo);
+                const downloader = this.getInstallerDownloader(v as ObsidianVersionInfo)!
+                const binaryPath = await downloader();
                 const electronVersionInfo = await getElectronVersionInfo(v.version!, binaryPath);
                 return {...v, ...electronVersionInfo};
             },
