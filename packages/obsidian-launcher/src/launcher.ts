@@ -176,21 +176,32 @@ export class ObsidianLauncher {
     async resolveVersions(appVersion: string, installerVersion = "latest"): Promise<[string, string]> {
         const versions = await this.getVersions();
         const appVersionInfo = await this.getVersionInfo(appVersion);
+        appVersion = appVersionInfo.version;
+        let installerVersionInfo: ObsidianVersionInfo|undefined;
 
         if (!appVersionInfo.minInstallerVersion || !appVersionInfo.maxInstallerVersion) {
-            throw Error(`No compatible installers available for app version ${appVersion}`);
+            throw Error(`No installers available for Obsidian ${appVersion}`);
         }
         if (installerVersion == "latest") {
-            installerVersion = appVersionInfo.maxInstallerVersion;
+            installerVersionInfo = _.findLast(versions, v =>
+                semver.lte(v.version, appVersionInfo.version) && !!this.getInstallerUrl(v)
+            );
         } else if (installerVersion == "earliest") {
-            installerVersion = appVersionInfo.minInstallerVersion;
+            installerVersionInfo = versions.find(v =>
+                semver.gte(v.version, appVersionInfo.minInstallerVersion!) && !!this.getInstallerUrl(v)
+            );
         } else {
-            installerVersion = semver.valid(installerVersion) ?? installerVersion;
+            installerVersion = semver.valid(installerVersion) ?? installerVersion; // normalize
+            installerVersionInfo = versions.find(v => v.version == installerVersion);
         }
-        const installerVersionInfo = versions.find(v => v.version == installerVersion);
-        if (!installerVersionInfo || !installerVersionInfo.chromeVersion) {
-            throw Error(`No Obsidian installer for version ${installerVersion} found`);
+        if (!installerVersionInfo) {
+            if (["earliest", "latest"].includes(installerVersion)) {
+                throw Error(`No compatible installers available for Obsidian ${appVersion}`);
+            } else {
+                throw Error(`No Obsidian installer ${installerVersion} found`);
+            }
         }
+
         if (
             semver.lt(installerVersionInfo.version, appVersionInfo.minInstallerVersion) ||
             semver.gt(installerVersionInfo.version, appVersionInfo.maxInstallerVersion)
@@ -226,7 +237,7 @@ export class ObsidianLauncher {
         }
         const versionInfo = versions.find(v => v.version == appVersion);
         if (!versionInfo) {
-            throw Error(`No Obsidian app version ${appVersion} found`);
+            throw Error(`No Obsidian app version "${appVersion}" found`);
         }
 
         return versionInfo;
@@ -322,20 +333,19 @@ export class ObsidianLauncher {
      * @param installerVersion 
      * @returns 
      */
-    private async getInstallerUrl(installerVersion: string): Promise<string|undefined> {
-        const versionInfo = await this.getVersionInfo(installerVersion);
+    private getInstallerUrl(installerVersionInfo: ObsidianVersionInfo): string|undefined {
         const {platform, arch} = process;
         
         if (platform == "linux") {
             if (arch.startsWith("arm")) {
-                return versionInfo.downloads.appImageArm;
+                return installerVersionInfo.downloads.appImageArm;
             } else {
-                return versionInfo.downloads.appImage;
+                return installerVersionInfo.downloads.appImage;
             }
         } else if (platform == "win32") {
-            return versionInfo.downloads.exe;
+            return installerVersionInfo.downloads.exe;
         } else if (platform == "darwin") {
-            return versionInfo.downloads.dmg;
+            return installerVersionInfo.downloads.dmg;
         }
 
         return undefined;
