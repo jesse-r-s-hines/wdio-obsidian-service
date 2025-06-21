@@ -9,7 +9,7 @@ import { downloadArtifact } from '@electron/get';
 import child_process from "child_process"
 import semver from "semver"
 import { fileURLToPath } from "url";
-import { fileExists, makeTmpDir, withTmpDir, linkOrCp, maybe, pool, mergeKeepUndefined } from "./utils.js";
+import { fileExists, makeTmpDir, atomicCreate, linkOrCp, maybe, pool, mergeKeepUndefined } from "./utils.js";
 import {
     ObsidianVersionInfo, ObsidianCommunityPlugin, ObsidianCommunityTheme,
     PluginEntry, DownloadedPluginEntry, ThemeEntry, DownloadedThemeEntry,
@@ -93,8 +93,7 @@ export class ObsidianLauncher {
                 } else { // otherwise try to fetch the url
                     const request = await maybe(fetch(url).then(r => r.text()));
                     if (request.success) {
-                        await fsAsync.mkdir(path.dirname(dest), { recursive: true });
-                        await withTmpDir(dest, async (tmpDir) => {
+                        await atomicCreate(dest, async (tmpDir) => {
                             try {
                                 JSON.parse(request.result);
                             } catch (e) {
@@ -317,8 +316,7 @@ export class ObsidianLauncher {
             return async () => {
                 if (!(await fileExists(installerPath))) {
                     console.log(`Downloading Obsidian installer v${installerVersion}...`)
-                    await fsAsync.mkdir(path.dirname(cacheDir), { recursive: true });
-                    await withTmpDir(cacheDir, downloader);
+                    await atomicCreate(cacheDir, downloader);
                 }
                 return installerPath;
             }
@@ -343,9 +341,7 @@ export class ObsidianLauncher {
 
         if (!(await fileExists(appPath))) {
             console.log(`Downloading Obsidian app v${appVersion} ...`)
-            await fsAsync.mkdir(path.dirname(appPath), { recursive: true });
-
-            await withTmpDir(appPath, async (tmpDir) => {
+            await atomicCreate(appPath, async (tmpDir) => {
                 const isInsidersBuild = new URL(appUrl).hostname.endsWith('.obsidian.md');
                 const response = isInsidersBuild ? await fetchObsidianAPI(appUrl) : await fetch(appUrl);
                 const archive = path.join(tmpDir, 'app.asar.gz');
@@ -388,8 +384,7 @@ export class ObsidianLauncher {
 
         if (!(await fileExists(chromedriverPath))) {
             console.log(`Downloading chromedriver for electron ${electronVersion} ...`);
-            await fsAsync.mkdir(path.dirname(cacheDir), { recursive: true });
-            await withTmpDir(cacheDir, async (tmpDir) => {
+            await atomicCreate(cacheDir, async (tmpDir) => {
                 const chromedriverZipPath = await downloadArtifact({
                     version: electronVersion,
                     artifactName: 'chromedriver',
@@ -430,8 +425,7 @@ export class ObsidianLauncher {
 
         const pluginDir = path.join(this.cacheDir, "obsidian-plugins", repo, version);
         if (!(await fileExists(pluginDir))) {
-            await fsAsync.mkdir(path.dirname(pluginDir), { recursive: true });
-            await withTmpDir(pluginDir, async (tmpDir) => {
+            await atomicCreate(pluginDir, async (tmpDir) => {
                 const assetsToDownload = {'manifest.json': true, 'main.js': true, 'styles.css': false};
                 await Promise.all(
                     Object.entries(assetsToDownload).map(async ([file, required]) => {
@@ -548,8 +542,7 @@ export class ObsidianLauncher {
         const themeDir = path.join(this.cacheDir, "obsidian-themes", repo, version);
 
         if (!(await fileExists(themeDir))) {
-            await fsAsync.mkdir(path.dirname(themeDir), { recursive: true });
-            await withTmpDir(themeDir, async (tmpDir) => {
+            await atomicCreate(themeDir, async (tmpDir) => {
                 const assetsToDownload = ['manifest.json', 'theme.css'];
                 await Promise.all(
                     assetsToDownload.map(async (file) => {

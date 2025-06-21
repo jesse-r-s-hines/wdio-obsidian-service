@@ -6,7 +6,7 @@ import which from "which"
 import semver from "semver"
 import _ from "lodash"
 import CDP from 'chrome-remote-interface'
-import { makeTmpDir, withTmpDir, maybe, withTimeout, sleep } from "./utils.js";
+import { makeTmpDir, atomicCreate, maybe, withTimeout, sleep } from "./utils.js";
 import { ObsidianVersionInfo } from "./types.js";
 const execFile = promisify(child_process.execFile);
 
@@ -19,7 +19,7 @@ export function normalizeGitHubRepo(repo: string) {
  * Running AppImage requires libfuse2, extracting the AppImage first avoids that.
  */
 export async function extractObsidianAppImage(appImage: string, dest: string) {
-    await withTmpDir(dest, async (tmpDir) => {
+    await atomicCreate(dest, async (tmpDir) => {
         await fsAsync.chmod(appImage, 0o755);
         await execFile(appImage, ["--appimage-extract"], {cwd: tmpDir});
         return path.join(tmpDir, 'squashfs-root');
@@ -43,7 +43,7 @@ export async function extractObsidianExe(exe: string, appArch: string, dest: str
     const subArchive = path.join('$PLUGINSDIR', appArch + ".7z");
     dest = path.resolve(dest);
 
-    await withTmpDir(dest, async (tmpDir) => {
+    await atomicCreate(dest, async (tmpDir) => {
         const extractedInstaller = path.join(tmpDir, "installer");
         await execFile(path7z, ["x", "-o" + extractedInstaller, exe, subArchive]);
         const extractedObsidian = path.join(tmpDir, "obsidian");
@@ -58,7 +58,7 @@ export async function extractObsidianExe(exe: string, appArch: string, dest: str
 export async function extractObsidianDmg(dmg: string, dest: string) {
     dest = path.resolve(dest);
 
-    await withTmpDir(dest, async (tmpDir) => {
+    await atomicCreate(dest, async (tmpDir) => {
         const proc = await execFile('hdiutil', ['attach', '-nobrowse', '-readonly', dmg]);
         const volume = proc.stdout.match(/\/Volumes\/.*$/m)![0];
         const obsidianApp = path.join(volume, "Obsidian.app");

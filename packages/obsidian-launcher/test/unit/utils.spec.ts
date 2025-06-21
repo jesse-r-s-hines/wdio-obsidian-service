@@ -4,7 +4,7 @@ import fsAsync from "fs/promises";
 import path from "path"
 import { createDirectory } from "../helpers.js";
 import {
-    fileExists, withTmpDir, linkOrCp, sleep, withTimeout, pool, maybe, mergeKeepUndefined,
+    fileExists, atomicCreate, linkOrCp, sleep, withTimeout, pool, maybe, mergeKeepUndefined,
 } from "../../src/utils.js";
 
 
@@ -16,11 +16,11 @@ describe("fileExists", () => {
     })
 })
 
-describe("withTmpDir", () => {
+describe("atomicCreate", () => {
     it("basic", async () => {
         const tmpDir = await createDirectory();
         const dest = path.join(tmpDir, "out");
-        await withTmpDir(dest, async (scratch) => {
+        await atomicCreate(dest, async (scratch) => {
             await fsAsync.writeFile(path.join(scratch, 'a'), "a");
             await fsAsync.writeFile(path.join(scratch, 'b'), "b");
             return path.join(scratch, 'b');
@@ -32,7 +32,7 @@ describe("withTmpDir", () => {
     it("relative path", async () => {
         const tmpDir = await createDirectory();
         const dest = path.join(tmpDir, "out");
-        await withTmpDir(dest, async (scratch) => {
+        await atomicCreate(dest, async (scratch) => {
             await fsAsync.writeFile(path.join(scratch, 'a'), "a");
             return 'a';
         })
@@ -42,7 +42,7 @@ describe("withTmpDir", () => {
     it("with directory", async () => {
         const tmpDir = await createDirectory();
         const dest = path.join(tmpDir, "out");
-        await withTmpDir(dest, async (scratch) => {
+        await atomicCreate(dest, async (scratch) => {
             await fsAsync.mkdir(path.join(scratch, 'a'));
             await fsAsync.writeFile(path.join(scratch, 'a', 'b'), "b");
             return path.join(scratch, 'a');
@@ -54,7 +54,7 @@ describe("withTmpDir", () => {
     it("return tmpDir", async () => {
         const tmpDir = await createDirectory();
         const dest = path.join(tmpDir, "out");
-        await withTmpDir(dest, async (scratch) => {
+        await atomicCreate(dest, async (scratch) => {
             await fsAsync.writeFile(path.join(scratch, 'a'), "b");
             return scratch;
         })
@@ -65,7 +65,7 @@ describe("withTmpDir", () => {
     it("return undefined", async () => {
         const tmpDir = await createDirectory();
         const dest = path.join(tmpDir, "out");
-        await withTmpDir(dest, async (scratch) => {
+        await atomicCreate(dest, async (scratch) => {
             await fsAsync.writeFile(path.join(scratch, 'a'), "b");
         })
         expect(await fsAsync.readFile(path.join(dest, 'a'), 'utf-8')).to.equal("b");
@@ -76,7 +76,7 @@ describe("withTmpDir", () => {
         const tmpDir = await createDirectory({"foo.txt": "bar"})
         const dest = path.join(tmpDir, "foo.txt");
 
-        await withTmpDir(dest, async (scratch) => {
+        await atomicCreate(dest, async (scratch) => {
             await fsAsync.writeFile(path.join(scratch, 'foo.txt'), "baz");
             return path.join(scratch, 'foo.txt');
         })
@@ -88,7 +88,7 @@ describe("withTmpDir", () => {
         const tmpDir = await createDirectory({"out/foo.txt": "bar"});
         const dest = path.join(tmpDir, "out");
 
-        await withTmpDir(dest, async (scratch) => {
+        await atomicCreate(dest, async (scratch) => {
             await fsAsync.writeFile(path.join(scratch, 'a'), "b");
             return scratch;
         })
@@ -96,10 +96,20 @@ describe("withTmpDir", () => {
         expect(await fsAsync.readdir(tmpDir)).to.eql(["out"]);
     })
 
+    it("creates parent directory", async () => {
+        const tmpDir = await createDirectory();
+        const dest = path.join(tmpDir, "a/b/c.txt");
+        await atomicCreate(dest, async (scratch) => {
+            await fsAsync.writeFile(path.join(scratch, 'c.txt'), "C");
+            return path.join(scratch, 'c.txt');
+        })
+        expect(await fsAsync.readFile(dest, 'utf-8')).to.equal("C");
+    })
+
     it("errors", async () => {
         const tmpDir = await createDirectory();
         const dest = path.join(tmpDir, "out");
-        const result = await withTmpDir(dest, async (scratch) => {
+        const result = await atomicCreate(dest, async (scratch) => {
             await fsAsync.writeFile(path.join(scratch, 'a'), "a");
             throw Error("FOO")
         }).catch(err => err)

@@ -26,14 +26,16 @@ export async function makeTmpDir(prefix?: string) {
 }
 
 /**
- * Handles creating a file "atomically" by creating a tmpDir, then downloading or otherwise creating the file under it,
+ * Handles creating a file or folder "atomically" by creating a tmpDir, then downloading or otherwise creating the file
+ * under it,
  * then renaming it to the final location when done.
  * @param dest Path the file should end up at.
  * @param func Function takes path to a temporary directory it can use as scratch space. The path it returns will be
  *     moved to `dest`. If no path is returned, it will move the whole tmpDir to dest.
  */
-export async function withTmpDir(dest: string, func: (tmpDir: string) => Promise<string|void>): Promise<void> {
+export async function atomicCreate(dest: string, func: (tmpDir: string) => Promise<string|void>): Promise<void> {
     dest = path.resolve(dest);
+    await fsAsync.mkdir(path.dirname(dest), { recursive: true });
     const tmpDir = await fsAsync.mkdtemp(path.join(path.dirname(dest), `.${path.basename(dest)}.tmp.`));
     try {
         let result = await func(tmpDir) ?? tmpDir;
