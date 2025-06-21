@@ -4,11 +4,11 @@ import path from "path"
 import fsAsync from "fs/promises"
 import { pathToFileURL } from "url";
 import semver from "semver";
-import { createDirectory } from "./helpers.js"
-import { ObsidianLauncher } from "../src/launcher.js";
-import { fileExists } from "../src/utils.js";
-import { ObsidianVersionInfo } from "../src/types.js";
-import ChromeLocalStorage from "../src/chromeLocalStorage.js";
+import { createDirectory } from "../helpers.js"
+import { ObsidianLauncher } from "../../src/launcher.js";
+import { fileExists } from "../../src/utils.js";
+import { ObsidianVersionInfo } from "../../src/types.js";
+import ChromeLocalStorage from "../../src/chromeLocalStorage.js";
 
 
 const obsidianLauncherOpts = {

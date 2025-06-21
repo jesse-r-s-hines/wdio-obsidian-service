@@ -2,8 +2,10 @@ import { describe, it } from "mocha";
 import { expect } from "chai";
 import fsAsync from "fs/promises";
 import path from "path"
-import { createDirectory } from "./helpers.js";
-import { fileExists, withTmpDir, linkOrCp, sleep, withTimeout, pool, maybe, mergeKeepUndefined } from "../src/utils.js";
+import { createDirectory } from "../helpers.js";
+import {
+    fileExists, withTmpDir, linkOrCp, sleep, withTimeout, pool, maybe, mergeKeepUndefined,
+} from "../../src/utils.js";
 
 
 describe("fileExists", () => {

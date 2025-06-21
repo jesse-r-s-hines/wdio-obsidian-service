@@ -27,7 +27,8 @@
     "scripts": {
         "build": "tsup",
         "test": "run-s test:*",
-        "test:unit": "tsc --noEmit && mocha"
+        "test:unit": "tsc --noEmit && mocha --config .mocharc.unit.json",
+        "test:e2e": "tsc --noEmit && mocha --config .mocharc.e2e.json"
     },
     "repository": {
         "type": "git",
