@@ -238,20 +238,14 @@ export class ObsidianLauncher {
      */
     async downloadInstaller(installerVersion: string): Promise<string> {
         const installerVersionInfo = await this.getVersionInfo(installerVersion);
-        const downloader = this.getInstallerDownloader(installerVersionInfo);
-        if (!downloader) {
-            throw Error(`No Obsidian installer found for v${installerVersion} ${process.platform} ${process.arch}`);
-        }
-        return await downloader();
+        return await this.downloadInstallerFromVersionInfo(installerVersionInfo);
     }
 
-
     /**
-     * Helper for downloadInstaller that returns the path under cache, and a function that downloads and extracts the
-     * installer for the current platform and architecture. Takes a ObsidianVersionInfo so it doesn't use
-     * obsidian-versions.json and can be used in updateObsidianVersionInfos.
+     * Helper for downloadInstaller, takes a ObsidianVersionInfo so it doesn't use obsidian-versions.json and can be
+     * used in updateObsidianVersionInfos.
      */
-    private getInstallerDownloader(versionInfo: ObsidianVersionInfo): (() => Promise<string>)|undefined {
+    private async downloadInstallerFromVersionInfo(versionInfo: ObsidianVersionInfo): Promise<string> {
         const installerVersion = versionInfo.version;
         const {platform, arch} = process;
         const cacheDir = path.join(this.cacheDir, `obsidian-installer/${platform}-${arch}/Obsidian-${installerVersion}`);
@@ -312,15 +306,39 @@ export class ObsidianLauncher {
             throw Error(`Unsupported platform ${platform}`);
         }
 
-        if (downloader) {
-            return async () => {
-                if (!(await fileExists(installerPath))) {
-                    console.log(`Downloading Obsidian installer v${installerVersion}...`)
-                    await atomicCreate(cacheDir, downloader);
-                }
-                return installerPath;
-            }
+        if (!downloader) {
+            throw Error(`No Obsidian installer found for v${installerVersion} ${process.platform} ${process.arch}`);
         }
+
+        if (!(await fileExists(installerPath))) {
+            console.log(`Downloading Obsidian installer v${installerVersion}...`)
+            await atomicCreate(cacheDir, downloader);
+        }
+        return installerPath;
+    }
+
+    /**
+     * Gets the installer download url for the current platform, if one exists.
+     * @param installerVersion 
+     * @returns 
+     */
+    private async getInstallerUrl(installerVersion: string): Promise<string|undefined> {
+        const versionInfo = await this.getVersionInfo(installerVersion);
+        const {platform, arch} = process;
+        
+        if (platform == "linux") {
+            if (arch.startsWith("arm")) {
+                return versionInfo.downloads.appImageArm;
+            } else {
+                return versionInfo.downloads.appImage;
+            }
+        } else if (platform == "win32") {
+            return versionInfo.downloads.exe;
+        } else if (platform == "darwin") {
+            return versionInfo.downloads.dmg;
+        }
+
+        return undefined;
     }
 
     /**
@@ -949,8 +967,7 @@ export class ObsidianLauncher {
         const dependencyVersions = await pool(maxInstances,
             Object.values(versionMap).filter(v => v.downloads?.appImage && !v.chromeVersion),
             async (v) => {
-                const downloader = this.getInstallerDownloader(v as ObsidianVersionInfo)!
-                const binaryPath = await downloader();
+                const binaryPath = await this.downloadInstallerFromVersionInfo(v as ObsidianVersionInfo)!
                 const electronVersionInfo = await getElectronVersionInfo(v.version!, binaryPath);
                 return {...v, ...electronVersionInfo};
             },
