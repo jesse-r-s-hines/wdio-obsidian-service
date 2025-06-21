@@ -1,4 +1,5 @@
 import fsAsync from "fs/promises"
+import fs from "fs";
 import path from "path"
 import os from "os"
 import { PromisePool } from '@supercharge/promise-pool'
@@ -120,4 +121,23 @@ export function mergeKeepUndefined(object: any, ...sources: any[]) {
             }
         }
     );
+}
+
+
+/**
+ * Watch a list of files and call func whenever they change.
+ */
+export function watchFiles(
+    files: string[],
+    func: (curr: fs.Stats, prev: fs.Stats) => void,
+    options: { interval: number, persistent: boolean, debounce: number },
+) {
+    const debouncedFunc = _.debounce((curr: fs.Stats, prev: fs.Stats) => {
+        if (curr.mtimeMs > prev.mtimeMs || (curr.mtimeMs == 0 && prev.mtimeMs != 0)) {
+            func(curr, prev)
+        }
+    }, options.debounce);
+    for (const file of files) {
+        fs.watchFile(file, {interval: options.interval, persistent: options.persistent}, debouncedFunc);
+    }
 }

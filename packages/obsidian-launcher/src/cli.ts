@@ -2,8 +2,8 @@
 import { Command } from 'commander';
 import _ from "lodash";
 import { ObsidianLauncher } from "./launcher.js"
+import { watchFiles } from './utils.js';
 import { PluginEntry, ThemeEntry } from "./types.js";
-import fs from "fs";
 import path from "path"
 import fsAsync from "fs/promises";
 
@@ -32,24 +32,6 @@ function parseThemes(themes: string[] = []): ThemeEntry[] {
         }
         return {...result, enabled: i == themes.length - 1}
     })
-}
-
-/**
- * Watch a list of files, calls func whenever there's an update. Debounced files changes.
- */
-function watchFiles(
-    files: string[],
-    func: (curr: fs.Stats, prev: fs.Stats) => void,
-    options: { interval: number, persistent: boolean, debounce: number },
-) {
-    const debouncedFunc = _.debounce((curr: fs.Stats, prev: fs.Stats) => {
-        if (curr.mtimeMs > prev.mtimeMs || (curr.mtimeMs == 0 && prev.mtimeMs != 0)) {
-            func(curr, prev)
-        }
-    }, options.debounce);
-    for (const file of files) {
-        fs.watchFile(file, {interval: options.interval, persistent: options.persistent}, debouncedFunc);
-    }
 }
 
 const collectOpt = (curr: string, prev?: string[]) => [...(prev ?? []), curr];
