@@ -30,7 +30,7 @@ describe('ObsdianLauncher resolve versions', () => {
         // Create constant version of obsidian-versions.json
         const tmpDir = await createDirectory({
             "obsidian-versions.json": JSON.stringify({
-                latest: {
+                metadata: {
                     "date": "2025-01-07T00:00:00Z",
                     "sha": "0000000"
                 },
