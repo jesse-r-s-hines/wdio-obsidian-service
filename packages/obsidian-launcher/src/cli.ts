@@ -169,7 +169,6 @@ program
     .option(...themeOptionArgs)
     .option('--copy', "Copy the vault first")
     .action(async (vault: string, obsidianArgs: string[], opts: any) => {
-        console.log({vault, obsidianArgs, opts})
         const launcher = new ObsidianLauncher({cacheDir: opts.cache});
         // Normalize the plugins and themes
         const plugins = await launcher.downloadPlugins(parsePlugins(opts.plugin));
