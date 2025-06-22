@@ -125,7 +125,7 @@ export function parseObsidianGithubRelease(gitHubRelease: any): Partial<Obsidian
  * Extract electron and chrome versions for an Obsidian version.
  */
 export async function getElectronVersionInfo(
-    version:string, binaryPath: string,
+    version: string, binaryPath: string,
 ):  Promise<Partial<ObsidianVersionInfo>> {
     console.log(`${version}: Retrieving electron & chrome versions...`);
 
@@ -137,7 +137,7 @@ export async function getElectronVersionInfo(
         `--user-data-dir=${configDir}`,
         '--no-sandbox', // Workaround for SUID issue, see https://github.com/electron/electron/issues/42510
     ]);
-    const procExit = new Promise<number>((resolve) => proc.on('exit', (code) => resolve(code ?? -1)));
+    const procExit = new Promise<number>((resolve) => proc.on('close', (code) => resolve(code ?? -1)));
     // proc.stdout.on('data', data => console.log(`stdout: ${data}`));
     // proc.stderr.on('data', data => console.log(`stderr: ${data}`));
 

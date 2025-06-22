@@ -7,10 +7,11 @@ import { pathToFileURL } from "url";
 import serverHandler from "serve-handler";
 import http from "http";
 import CDP from 'chrome-remote-interface'
+import child_process from "child_process";
 import { createDirectory } from "../helpers.js";
 import { ObsidianLauncher } from "../../src/launcher.js";
 import { downloadResponse } from "../../src/apis.js";
-import { fileExists, atomicCreate } from "../../src/utils.js";
+import { fileExists, atomicCreate, sleep } from "../../src/utils.js";
 import { AddressInfo } from "net";
 
 const obsidianLauncherOpts = {
@@ -30,6 +31,27 @@ async function downloadIfNotExists(url: string, dest: string) {
     }
 }
 
+async function testLaunch(proc: child_process.ChildProcess) {
+    const procExit = new Promise<number>((resolve) => proc.on('close', (code) => resolve(code ?? -1)));
+    const port = await new Promise<number>((resolve, reject) => {
+        void procExit.then(() => reject(Error("Processed ended without opening a port")))
+        proc.stderr!.on('data', data => {
+            const port = data.toString().match(/ws:\/\/[\w.]+?:(\d+)/)?.[1];
+            if (port) {
+                resolve(Number(port));
+            }
+        });
+    })
+    const client = await CDP({port: port});
+    const response = await client.Runtime.evaluate({ expression: "process.versions.electron" });
+    expect(response.result.value).to.match(/\d\.\d.\d/);
+    await client.close();
+    proc.kill("SIGTERM");
+    await procExit;
+     // Need to wait a bit or sometimes the rm fails because something else is writing to it
+    await sleep(1000);
+}
+
 describe("ObsidianLauncher", function() {
     this.timeout(60 * 1000);
     const { platform, arch } = process;
@@ -37,17 +59,25 @@ describe("ObsidianLauncher", function() {
     const testData = path.resolve("../../.obsidian-cache/test-data");
     let server: http.Server|undefined;
     let latest = "";
+    const earliestApp = "1.0.3";
+    let earliestInstaller = "";
 
     before(async function() {
         this.timeout(10 * 60 * 1000);
         launcher = new ObsidianLauncher(obsidianLauncherOpts);
         await fsAsync.mkdir(testData, {recursive: true});
 
-        const versionInfo = await launcher.getVersionInfo("latest");
-        latest = versionInfo.version;
+        const earliestAppVersionInfo = await launcher.getVersionInfo(earliestApp);
+        earliestInstaller = (await launcher.resolveVersions(earliestApp, "earliest"))[1];
+        const earliestInstallerVersionInfo = await launcher.getVersionInfo(earliestInstaller);
+        const latestVersionInfo = await launcher.getVersionInfo("latest");
+        latest = latestVersionInfo.version;
 
-        await downloadIfNotExists(versionInfo.downloads.asar!, testData);
-        await downloadIfNotExists(launcher['getInstallerUrl'](versionInfo)!, testData);
+        await downloadIfNotExists(earliestAppVersionInfo.downloads.asar!, testData);
+        await downloadIfNotExists(launcher['getInstallerUrl'](earliestInstallerVersionInfo)!, testData);
+
+        await downloadIfNotExists(latestVersionInfo.downloads.asar!, testData);
+        await downloadIfNotExists(launcher['getInstallerUrl'](latestVersionInfo)!, testData);
 
         server = http.createServer((request, response) => {
             return serverHandler(request, response, {public: testData});
@@ -62,12 +92,12 @@ describe("ObsidianLauncher", function() {
                     "date": "2025-01-07T00:00:00Z",
                     "sha": "0000000",
                 },
-                versions: [{
-                    ...versionInfo,
-                    downloads: _.mapValues(versionInfo.downloads,
+                versions: [earliestInstallerVersionInfo, earliestAppVersionInfo, latestVersionInfo].map(v => ({
+                    ...v,
+                    downloads: _.mapValues(v.downloads,
                         v => `http://localhost:${port}/${v!.split("/").at(-1)!}`
                     ),
-                }],
+                })),
             }),
         });
         const cacheDir = await createDirectory();
@@ -84,39 +114,39 @@ describe("ObsidianLauncher", function() {
         server?.close();
     })
 
-    it("test downloadInstaller", async function() {
-        // test that it downloads and extracts properly
-        const path = await launcher.downloadInstaller(latest);
-        expect(await fileExists(path)).to.eql(true);
-    })
-
     it("test downloadApp", async function() {
         // test that it downloads and extracts properly
         const path = await launcher.downloadApp(latest);
         expect(await fileExists(path)).to.eql(true);
     })
 
-    it("test launch", async function() {
+    it("test downloadInstaller earliest", async function() {
+        // test that it downloads and extracts properly
+        const path = await launcher.downloadInstaller(earliestInstaller);
+        expect(await fileExists(path)).to.eql(true);
+    })
+
+    it("test downloadInstaller latest", async function() {
+        // test that it downloads and extracts properly
+        const path = await launcher.downloadInstaller(latest);
+        expect(await fileExists(path)).to.eql(true);
+    })
+
+    it("test launch earliest", async function() {
+        const {proc, configDir} = await launcher.launch({
+            appVersion: earliestApp, installerVersion: earliestInstaller,
+            args: ["--remote-debugging-port=0"],
+        });
+        await testLaunch(proc);
+        await fsAsync.rm(configDir, { recursive: true, force: true });
+    })
+
+    it("test launch latest", async function() {
         const {proc, configDir} = await launcher.launch({
             appVersion: latest, installerVersion: latest,
             args: ["--remote-debugging-port=0"],
         });
-        const procExit = new Promise<number>((resolve) => proc.on('exit', (code) => resolve(code ?? -1)));
-        const port = await new Promise<number>((resolve, reject) => {
-            void procExit.then(() => reject(Error("Processed ended without opening a port")))
-            proc.stderr!.on('data', data => {
-                const port = data.toString().match(/ws:\/\/[\w.]+?:(\d+)/)?.[1];
-                if (port) {
-                    resolve(Number(port));
-                }
-            });
-        })
-        const client = await CDP({port: port});
-        const response = await client.Runtime.evaluate({ expression: "process.versions.electron" });
-        expect(response.result.value).to.eql("34.2.0");
-        await client.close();
-        proc.kill("SIGTERM");
-        await procExit;
+        await testLaunch(proc);
         await fsAsync.rm(configDir, { recursive: true, force: true });
     })
 })
