@@ -1,10 +1,7 @@
 import fsAsync from "fs/promises"
-import fs from "fs"
-import zlib from "zlib"
 import path from "path"
 import crypto from "crypto";
 import extractZip from "extract-zip"
-import { pipeline } from "stream/promises";
 import { downloadArtifact } from '@electron/get';
 import child_process from "child_process"
 import semver from "semver"
@@ -18,7 +15,7 @@ import {
 import { fetchObsidianAPI, fetchGitHubAPIPaginated, downloadResponse } from "./apis.js";
 import ChromeLocalStorage from "./chromeLocalStorage.js";
 import {
-    normalizeGitHubRepo, extractObsidianAppImage, extractObsidianExe, extractObsidianDmg,
+    normalizeGitHubRepo, extractGz, extractObsidianAppImage, extractObsidianExe, extractObsidianDmg,
     parseObsidianDesktopRelease, parseObsidianGithubRelease, correctObsidianVersionInfo,
     getElectronVersionInfo, normalizeObsidianVersionInfo,
 } from "./launcherUtils.js";
@@ -375,7 +372,7 @@ export class ObsidianLauncher {
                 const archive = path.join(tmpDir, 'app.asar.gz');
                 const asar = path.join(tmpDir, 'app.asar')
                 await downloadResponse(response, archive);
-                await pipeline(fs.createReadStream(archive), zlib.createGunzip(), fs.createWriteStream(asar));
+                await extractGz(archive, asar);
                 return asar;
             })
         }

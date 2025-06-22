@@ -1,4 +1,5 @@
 import fsAsync from "fs/promises"
+import fs from "fs"
 import path from "path"
 import { promisify } from "util";
 import child_process from "child_process"
@@ -6,6 +7,8 @@ import which from "which"
 import semver from "semver"
 import _ from "lodash"
 import CDP from 'chrome-remote-interface'
+import { pipeline } from "stream/promises";
+import zlib from "zlib"
 import { makeTmpDir, atomicCreate, maybe, withTimeout, sleep } from "./utils.js";
 import { ObsidianVersionInfo } from "./types.js";
 const execFile = promisify(child_process.execFile);
@@ -13,6 +16,10 @@ const execFile = promisify(child_process.execFile);
 
 export function normalizeGitHubRepo(repo: string) {
     return repo.replace(/^(https?:\/\/)?(github.com\/)/, '')
+}
+
+export async function extractGz(archive: string, dest: string) {
+    await pipeline(fs.createReadStream(archive), zlib.createGunzip(), fs.createWriteStream(dest));
 }
 
 /**
