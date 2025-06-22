@@ -54,7 +54,6 @@ async function testLaunch(proc: child_process.ChildProcess) {
 
 describe("ObsidianLauncher", function() {
     this.timeout(60 * 1000);
-    const { platform, arch } = process;
     let launcher: ObsidianLauncher;
     const testData = path.resolve("../../.obsidian-cache/test-data");
     let server: http.Server|undefined;
@@ -72,12 +71,13 @@ describe("ObsidianLauncher", function() {
         const earliestInstallerVersionInfo = await launcher.getVersionInfo(earliestInstaller);
         const latestVersionInfo = await launcher.getVersionInfo("latest");
         latest = latestVersionInfo.version;
+        const {platform, arch} = process;
 
         await downloadIfNotExists(earliestAppVersionInfo.downloads.asar!, testData);
-        await downloadIfNotExists(launcher['getInstallerUrl'](earliestInstallerVersionInfo)!, testData);
+        await downloadIfNotExists(launcher['getInstallerUrl'](earliestInstallerVersionInfo, platform, arch)!, testData);
 
         await downloadIfNotExists(latestVersionInfo.downloads.asar!, testData);
-        await downloadIfNotExists(launcher['getInstallerUrl'](latestVersionInfo)!, testData);
+        await downloadIfNotExists(launcher['getInstallerUrl'](latestVersionInfo, platform, arch)!, testData);
 
         server = http.createServer((request, response) => {
             return serverHandler(request, response, {public: testData});

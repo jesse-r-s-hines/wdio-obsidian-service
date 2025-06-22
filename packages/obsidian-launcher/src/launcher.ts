@@ -180,17 +180,18 @@ export class ObsidianLauncher {
         const appVersionInfo = await this.getVersionInfo(appVersion);
         appVersion = appVersionInfo.version;
         let installerVersionInfo: ObsidianVersionInfo|undefined;
+        const { platform, arch } = process;
 
         if (!appVersionInfo.minInstallerVersion || !appVersionInfo.maxInstallerVersion) {
             throw Error(`No installers available for Obsidian ${appVersion}`);
         }
         if (installerVersion == "latest") {
             installerVersionInfo = _.findLast(versions, v =>
-                semver.lte(v.version, appVersionInfo.version) && !!this.getInstallerUrl(v)
+                semver.lte(v.version, appVersionInfo.version) && !!this.getInstallerUrl(v, platform, arch)
             );
         } else if (installerVersion == "earliest") {
             installerVersionInfo = versions.find(v =>
-                semver.gte(v.version, appVersionInfo.minInstallerVersion!) && !!this.getInstallerUrl(v)
+                semver.gte(v.version, appVersionInfo.minInstallerVersion!) && !!this.getInstallerUrl(v, platform, arch)
             );
         } else {
             installerVersion = semver.valid(installerVersion) ?? installerVersion; // normalize
@@ -246,21 +247,29 @@ export class ObsidianLauncher {
     }
 
     /**
-     * Downloads the Obsidian installer for the given version and current platform. Returns the file path.
+     * Downloads the Obsidian installer for the given version and platform/arch (defaults to host platform/arch).
+     * Returns the file path.
      * @param installerVersion Obsidian installer version to download
+     * @param platform Platform/os of the installer to download (defaults to host platform)
+     * @param arch Architecture of the installer to download (defaults to host architecture)
      */
-    async downloadInstaller(installerVersion: string): Promise<string> {
+    async downloadInstaller(
+        installerVersion: string, platform?: NodeJS.Platform, arch?: NodeJS.Architecture,
+    ): Promise<string> {
+        platform = platform ?? process.platform;
+        arch = arch ?? process.arch;
         const installerVersionInfo = await this.getVersionInfo(installerVersion);
-        return await this.downloadInstallerFromVersionInfo(installerVersionInfo);
+        return await this.downloadInstallerFromVersionInfo(installerVersionInfo, platform, arch);
     }
 
     /**
      * Helper for downloadInstaller, takes a ObsidianVersionInfo so it doesn't use obsidian-versions.json and can be
      * used in updateObsidianVersionInfos.
      */
-    private async downloadInstallerFromVersionInfo(versionInfo: ObsidianVersionInfo): Promise<string> {
+    private async downloadInstallerFromVersionInfo(
+        versionInfo: ObsidianVersionInfo, platform: NodeJS.Platform, arch: NodeJS.Architecture,
+    ): Promise<string> {
         const installerVersion = versionInfo.version;
-        const {platform, arch} = process;
         const cacheDir = path.join(this.cacheDir, `obsidian-installer/${platform}-${arch}/Obsidian-${installerVersion}`);
         
         let installerPath: string
@@ -335,9 +344,9 @@ export class ObsidianLauncher {
      * @param installerVersion 
      * @returns 
      */
-    private getInstallerUrl(installerVersionInfo: ObsidianVersionInfo): string|undefined {
-        const {platform, arch} = process;
-        
+    private getInstallerUrl(
+        installerVersionInfo: ObsidianVersionInfo, platform: NodeJS.Platform, arch: NodeJS.Architecture,
+    ): string|undefined {
         if (platform == "linux") {
             if (arch.startsWith("arm")) {
                 return installerVersionInfo.downloads.appImageArm;
@@ -979,7 +988,9 @@ export class ObsidianLauncher {
         const dependencyVersions = await pool(maxInstances,
             Object.values(versionMap).filter(v => v.downloads?.appImage && !v.chromeVersion),
             async (v) => {
-                const binaryPath = await this.downloadInstallerFromVersionInfo(v as ObsidianVersionInfo)!
+                const binaryPath = await this.downloadInstallerFromVersionInfo(
+                    v as ObsidianVersionInfo, process.platform, process.arch,
+                );
                 const electronVersionInfo = await getElectronVersionInfo(v.version!, binaryPath);
                 return {...v, ...electronVersionInfo};
             },
