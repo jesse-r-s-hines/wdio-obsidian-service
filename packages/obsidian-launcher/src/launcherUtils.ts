@@ -45,14 +45,13 @@ export async function sevenZ(args: string[], options?: child_process.SpawnOption
 }
 
 /**
- * Extract the .tar.gz
+ * Running AppImage requires libfuse2, extracting the AppImage first avoids that.
  */
-export async function extractObsidianTar(tar: string, dest: string) {
+export async function extractObsidianAppImage(appImage: string, dest: string) {
+    // Could also use `--appimage-extract` instead.
     await atomicCreate(dest, async (tmpDir) => {
-        await extractGz(tar, path.join(tmpDir, "inflated.tar"));
-        // We already have 7z, so might as well use it to extract the tar
-        await sevenZ(["x", "-o.", "inflated.tar"], {cwd: tmpDir});
-        return (await fsAsync.readdir(tmpDir)).find(p => p.match("obsidian-"))!;
+        await sevenZ(["x", "-o.", path.relative(tmpDir, appImage)], {cwd: tmpDir});
+        return tmpDir;
     })
 }
 

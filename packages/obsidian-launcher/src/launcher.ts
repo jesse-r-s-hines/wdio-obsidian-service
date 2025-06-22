@@ -15,7 +15,7 @@ import {
 import { fetchObsidianAPI, fetchGitHubAPIPaginated, downloadResponse } from "./apis.js";
 import ChromeLocalStorage from "./chromeLocalStorage.js";
 import {
-    normalizeGitHubRepo, extractGz, extractObsidianTar, extractObsidianExe, extractObsidianDmg,
+    normalizeGitHubRepo, extractGz, extractObsidianAppImage, extractObsidianExe, extractObsidianDmg,
     parseObsidianDesktopRelease, parseObsidianGithubRelease, correctObsidianVersionInfo,
     getElectronVersionInfo, normalizeObsidianVersionInfo,
 } from "./launcherUtils.js";
@@ -265,16 +265,16 @@ export class ObsidianLauncher {
             installerPath = path.join(cacheDir, "obsidian");
             let installerUrl: string|undefined
             if (arch.startsWith("arm")) {
-                installerUrl = versionInfo.downloads.tarArm;
+                installerUrl = versionInfo.downloads.appImageArm;
             } else {
-                installerUrl = versionInfo.downloads.tar;
+                installerUrl = versionInfo.downloads.appImage;
             }
             if (installerUrl) {
                 downloader = async (tmpDir) => {
-                    const tar = path.join(tmpDir, "obsidian.tar");
-                    await downloadResponse(await fetch(installerUrl), tar);
+                    const appImage = path.join(tmpDir, "Obsidian.AppImage");
+                    await downloadResponse(await fetch(installerUrl), appImage);
                     const obsidianFolder = path.join(tmpDir, "Obsidian");
-                    await extractObsidianTar(tar, obsidianFolder);
+                    await extractObsidianAppImage(appImage, obsidianFolder);
                     return obsidianFolder;
                 };
             }
@@ -335,9 +335,9 @@ export class ObsidianLauncher {
         
         if (platform == "linux") {
             if (arch.startsWith("arm")) {
-                return installerVersionInfo.downloads.tarArm;
+                return installerVersionInfo.downloads.appImageArm;
             } else {
-                return installerVersionInfo.downloads.tar;
+                return installerVersionInfo.downloads.appImage;
             }
         } else if (platform == "win32") {
             return installerVersionInfo.downloads.exe;
