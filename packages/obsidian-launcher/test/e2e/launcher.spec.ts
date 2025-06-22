@@ -10,7 +10,8 @@ import CDP from 'chrome-remote-interface'
 import { createDirectory } from "../helpers.js";
 import { ObsidianLauncher } from "../../src/launcher.js";
 import { downloadResponse } from "../../src/apis.js";
-import { fileExists, atomicCreate, sleep, withTimeout } from "../../src/utils.js";
+import { fileExists, atomicCreate } from "../../src/utils.js";
+import { AddressInfo } from "net";
 
 const obsidianLauncherOpts = {
     versionsUrl: pathToFileURL("../../obsidian-versions.json").toString(),
@@ -19,6 +20,8 @@ const obsidianLauncherOpts = {
 }
 
 async function downloadIfNotExists(url: string, dest: string) {
+    const name = url.split("/").at(-1)!;
+    dest = path.join(dest, name);
     if (!(await fileExists(dest))) {
         await atomicCreate(dest, async (tmpDir) => {
             await downloadResponse(await fetch(url), path.join(tmpDir, "out"));
@@ -33,6 +36,7 @@ describe("ObsidianLauncher", function() {
     let launcher: ObsidianLauncher;
     const testData = path.resolve("../../.obsidian-cache/test-data");
     let server: http.Server|undefined;
+    let latest = "";
 
     before(async function() {
         this.timeout(10 * 60 * 1000);
@@ -40,13 +44,16 @@ describe("ObsidianLauncher", function() {
         await fsAsync.mkdir(testData, {recursive: true});
 
         const versionInfo = await launcher.getVersionInfo("latest");
-        await downloadIfNotExists(versionInfo.downloads.asar!, path.join(testData, `obsidian.asar.gz`));
-        const installerUrl = launcher['getInstallerUrl'](versionInfo)!;
-        await downloadIfNotExists(installerUrl, path.join(testData, `obsidian-${platform}-${arch}`));
+        latest = versionInfo.version;
+
+        await downloadIfNotExists(versionInfo.downloads.asar!, testData);
+        await downloadIfNotExists(launcher['getInstallerUrl'](versionInfo)!, testData);
+
         server = http.createServer((request, response) => {
             return serverHandler(request, response, {public: testData});
         });
-        server.listen(8080);
+        await new Promise<void>(resolve => server!.listen({port: 0}, resolve));
+        const port = (server!.address() as AddressInfo).port;
 
         // Create constant version of obsidian-versions.json
         const tmpDir = await createDirectory({
@@ -56,22 +63,10 @@ describe("ObsidianLauncher", function() {
                     "sha": "0000000",
                 },
                 versions: [{
-                    version: "1.8.10",
-                    minInstallerVersion: "1.8.10",
-                    maxInstallerVersion: "1.8.10",
-                    isBeta: false,
-                    gitHubRelease: "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.8.10",
-                    downloads: {
-                        asar: `http://localhost:8080/obsidian.asar.gz`,
-                        appImage: `http://localhost:8080/obsidian-${platform}-${arch}`,
-                        appImageArm: `http://localhost:8080/obsidian-${platform}-${arch}`,
-                        apk: `http://localhost:8080/obsidian-${platform}-${arch}`,
-                        dmg: `http://localhost:8080/obsidian-${platform}-${arch}`,
-                        exe: `http://localhost:8080/obsidian-${platform}-${arch}`,
-                    },
-                    electronVersion: "34.2.0",
-                    chromeVersion: "132.0.6834.196",
-                    nodeVersion: "20.18.2",
+                    ...versionInfo,
+                    downloads: _.mapValues(versionInfo.downloads,
+                        v => `http://localhost:${port}/${v!.split("/").at(-1)!}`
+                    ),
                 }],
             }),
         });
@@ -91,20 +86,19 @@ describe("ObsidianLauncher", function() {
 
     it("test downloadInstaller", async function() {
         // test that it downloads and extracts properly
-        const path = await launcher.downloadInstaller("1.8.10");
+        const path = await launcher.downloadInstaller(latest);
         expect(await fileExists(path)).to.eql(true);
     })
 
     it("test downloadApp", async function() {
         // test that it downloads and extracts properly
-        const path = await launcher.downloadApp("1.8.10");
+        const path = await launcher.downloadApp(latest);
         expect(await fileExists(path)).to.eql(true);
     })
 
     it("test launch", async function() {
         const {proc, configDir} = await launcher.launch({
-            appVersion: "1.8.10",
-            installerVersion: "1.8.10",
+            appVersion: latest, installerVersion: latest,
             args: ["--remote-debugging-port=0"],
         });
         const procExit = new Promise<number>((resolve) => proc.on('exit', (code) => resolve(code ?? -1)));

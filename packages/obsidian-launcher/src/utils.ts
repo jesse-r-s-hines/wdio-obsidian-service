@@ -27,8 +27,7 @@ export async function makeTmpDir(prefix?: string) {
 
 /**
  * Handles creating a file or folder "atomically" by creating a tmpDir, then downloading or otherwise creating the file
- * under it,
- * then renaming it to the final location when done.
+ * under it, then renaming it to the final location when done.
  * @param dest Path the file should end up at.
  * @param func Function takes path to a temporary directory it can use as scratch space. The path it returns will be
  *     moved to `dest`. If no path is returned, it will move the whole tmpDir to dest.

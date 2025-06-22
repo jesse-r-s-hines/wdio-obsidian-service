@@ -15,7 +15,7 @@ import {
 import { fetchObsidianAPI, fetchGitHubAPIPaginated, downloadResponse } from "./apis.js";
 import ChromeLocalStorage from "./chromeLocalStorage.js";
 import {
-    normalizeGitHubRepo, extractGz, extractObsidianAppImage, extractObsidianExe, extractObsidianDmg,
+    normalizeGitHubRepo, extractGz, extractObsidianTar, extractObsidianExe, extractObsidianDmg,
     parseObsidianDesktopRelease, parseObsidianGithubRelease, correctObsidianVersionInfo,
     getElectronVersionInfo, normalizeObsidianVersionInfo,
 } from "./launcherUtils.js";
@@ -265,16 +265,16 @@ export class ObsidianLauncher {
             installerPath = path.join(cacheDir, "obsidian");
             let installerUrl: string|undefined
             if (arch.startsWith("arm")) {
-                installerUrl = versionInfo.downloads.appImageArm;
+                installerUrl = versionInfo.downloads.tarArm;
             } else {
-                installerUrl = versionInfo.downloads.appImage;
+                installerUrl = versionInfo.downloads.tar;
             }
             if (installerUrl) {
                 downloader = async (tmpDir) => {
-                    const appImage = path.join(tmpDir, "Obsidian.AppImage");
-                    await downloadResponse(await fetch(installerUrl), appImage);
+                    const tar = path.join(tmpDir, "obsidian.tar");
+                    await downloadResponse(await fetch(installerUrl), tar);
                     const obsidianFolder = path.join(tmpDir, "Obsidian");
-                    await extractObsidianAppImage(appImage, obsidianFolder);
+                    await extractObsidianTar(tar, obsidianFolder);
                     return obsidianFolder;
                 };
             }
@@ -335,9 +335,9 @@ export class ObsidianLauncher {
         
         if (platform == "linux") {
             if (arch.startsWith("arm")) {
-                return installerVersionInfo.downloads.appImageArm;
+                return installerVersionInfo.downloads.tarArm;
             } else {
-                return installerVersionInfo.downloads.appImage;
+                return installerVersionInfo.downloads.tar;
             }
         } else if (platform == "win32") {
             return installerVersionInfo.downloads.exe;
@@ -914,7 +914,7 @@ export class ObsidianLauncher {
         // Spawn child.
         const proc = child_process.spawn(installerPath, [
             `--user-data-dir=${configDir}`,
-            // Workaround for SUID issue on AppImages. See https://github.com/electron/electron/issues/42510
+            // Workaround for SUID issue on linux. See https://github.com/electron/electron/issues/42510
             ...(process.platform == 'linux' ? ["--no-sandbox"] : []),
             ...(params.args ?? []),
         ], {

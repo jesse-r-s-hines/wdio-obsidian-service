@@ -26,6 +26,8 @@ export type ObsidianVersionInfo = {
         asar?: string,
         appImage?: string,
         appImageArm?: string,
+        tar?: string,
+        tarArm?: string,
         apk?: string,
         dmg?: string,
         exe?: string,

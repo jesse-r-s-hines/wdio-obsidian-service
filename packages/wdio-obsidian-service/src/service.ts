@@ -135,7 +135,7 @@ export class ObsidianLauncherService implements Services.ServiceInstance {
                 }
 
                 const args = [
-                    // Workaround for SUID issue on AppImages. See https://github.com/electron/electron/issues/42510
+                    // Workaround for SUID issue on linux. See https://github.com/electron/electron/issues/42510
                     ...(process.platform == 'linux' ? ["--no-sandbox"] : []),
                     ...(cap['goog:chromeOptions']?.args ?? [])
                 ];

@@ -23,13 +23,12 @@ export async function extractGz(archive: string, dest: string) {
 }
 
 /**
- * Running AppImage requires libfuse2, extracting the AppImage first avoids that.
+ * Extract the .tar.gz
  */
-export async function extractObsidianAppImage(appImage: string, dest: string) {
+export async function extractObsidianTar(tar: string, dest: string) {
     await atomicCreate(dest, async (tmpDir) => {
-        await fsAsync.chmod(appImage, 0o755);
-        await execFile(appImage, ["--appimage-extract"], {cwd: tmpDir});
-        return path.join(tmpDir, 'squashfs-root');
+        await execFile("tar", ["-xf", tar, "-C", tmpDir])
+        return (await fsAsync.readdir(tmpDir))[0];
     })
 }
 
@@ -96,6 +95,8 @@ export function parseObsidianGithubRelease(gitHubRelease: any): Partial<Obsidian
     const downloads = {
         appImage: assets.find(u => u.match(`${version}.AppImage$`)),
         appImageArm: assets.find(u => u.match(`${version}-arm64.AppImage$`)),
+        tar: assets.find(u => u.match(`${version}.tar.gz$`)),
+        tarArm: assets.find(u => u.match(`${version}-arm64.tar.gz$`)),
         apk: assets.find(u => u.match(`${version}.apk$`)),
         asar: assets.find(u => u.match(`${version}.asar.gz$`)),
         dmg: assets.find(u => u.match(`${version}(-universal)?.dmg$`)),
@@ -215,6 +216,8 @@ export function normalizeObsidianVersionInfo(versionInfo: Partial<ObsidianVersio
             asar: versionInfo.downloads?.asar,
             appImage: versionInfo.downloads?.appImage,
             appImageArm: versionInfo.downloads?.appImageArm,
+            tar: versionInfo.downloads?.tar,
+            tarArm: versionInfo.downloads?.tarArm,
             apk: versionInfo.downloads?.apk,
             dmg: versionInfo.downloads?.dmg,
             exe: versionInfo.downloads?.exe,
