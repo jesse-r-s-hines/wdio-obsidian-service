@@ -39,7 +39,7 @@ Obsidian is distributed in two parts, the "installer" which is the executable co
 ### Platform Support
 `obsidian-launcher` works for Obsidian desktop on Windows, Linux, and MacOS.
 
-On Windows, you'll need to install [7zip](https://www.7-zip.org) and add it to the PATH so `obsidian-launcher` can extract the Obsidian installer. Windows firewall will sometimes complain about NodeJS on launch, you can just cancel the popup it makes.
+Windows firewall will sometimes complain about NodeJS on launch, you can just cancel the popup it makes.
 
 ## API Docs
 API docs for the package are available [here](https://jesse-r-s-hines.github.io/wdio-obsidian-service/obsidian-launcher/README.html).

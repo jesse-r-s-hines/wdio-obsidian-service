@@ -148,9 +148,9 @@ You can see the [sample plugin](https://github.com/jesse-r-s-hines/wdio-obsidian
 
 ### Platform Support
 
-`wdio-obsidian-service` works on Windows, Linux, and MacOS.
+`wdio-obsidian-service` works for Obsidian desktop on Windows, Linux, and MacOS.
 
-On Windows, you'll need to install [7zip](https://www.7-zip.org) and add it to the PATH so the service can extract the Obsidian installer. Windows firewall will sometimes complain about NodeJS, you can just cancel the popup it makes.
+Windows firewall will sometimes complain about NodeJS, you can just cancel the popup it makes.
 
 ### Test Frameworks
 

@@ -1,9 +1,8 @@
 import fsAsync from "fs/promises"
 import fs from "fs"
 import path from "path"
-import { promisify } from "util";
 import child_process from "child_process"
-import which from "which"
+import spawn from "cross-spawn"
 import semver from "semver"
 import _ from "lodash"
 import CDP from 'chrome-remote-interface'
@@ -11,7 +10,6 @@ import { pipeline } from "stream/promises";
 import zlib from "zlib"
 import { makeTmpDir, atomicCreate, maybe, withTimeout, sleep } from "./utils.js";
 import { ObsidianVersionInfo } from "./types.js";
-const execFile = promisify(child_process.execFile);
 
 
 export function normalizeGitHubRepo(repo: string) {
@@ -22,13 +20,39 @@ export async function extractGz(archive: string, dest: string) {
     await pipeline(fs.createReadStream(archive), zlib.createGunzip(), fs.createWriteStream(dest));
 }
 
+export async function crossExecFile(command: string, args: string[] = [], options?: child_process.SpawnOptions) {
+    const proc = spawn(command, args, {stdio: "pipe", ...options});
+    let stdout = "", stderr = "";
+    proc.stdout!.on('data', data => stdout += data);
+    proc.stderr!.on('data', data => stderr += data);
+    const procExit = new Promise<number>((resolve) => proc.on('close', (code) => resolve(code ?? -1)));
+    const exitCode = await procExit;
+    const result = {stdout, stderr}
+    if (exitCode != 0) {
+        throw Error(`"${command} ${args.join(' ')}" failed with ${exitCode}: ${JSON.stringify(result, undefined, 4)}`)
+    }
+    return result;
+}
+
+/**
+ * Run 7zip.
+ * Note there's some weirdness around absolute paths because of the way wasm's filesystem works. The root is mounted
+ * under /nodefs, so either use relative paths or prefix paths with /nodefs.
+ */
+export async function sevenZ(args: string[], options?: child_process.SpawnOptions) {
+    // package binaries are added to the path automatically
+    await crossExecFile("7z-wasm", args, options);
+}
+
 /**
  * Extract the .tar.gz
  */
 export async function extractObsidianTar(tar: string, dest: string) {
     await atomicCreate(dest, async (tmpDir) => {
-        await execFile("tar", ["-xf", tar, "-C", tmpDir])
-        return (await fsAsync.readdir(tmpDir))[0];
+        await extractGz(tar, path.join(tmpDir, "inflated.tar"));
+        // We already have 7z, so might as well use it to extract the tar
+        await sevenZ(["x", "-o.", "inflated.tar"], {cwd: tmpDir});
+        return (await fsAsync.readdir(tmpDir)).find(p => p.match("obsidian-"))!;
     })
 }
 
@@ -37,24 +61,12 @@ export async function extractObsidianTar(tar: string, dest: string) {
  * files directly without running the installer. 7zip can extract the raw files from the exe.
  */
 export async function extractObsidianExe(exe: string, appArch: string, dest: string) {
-    const path7z = await which("7z", { nothrow: true });
-    if (!path7z) {
-        throw new Error(
-            "Downloading Obsidian for Windows requires 7zip. Install it from https://www.7-zip.org and then add the " +
-            "install location to the PATH."
-        );
-    }
-    exe = path.resolve(exe);
     // The installer contains several `.7z` files with files for different architectures 
-    const subArchive = path.join('$PLUGINSDIR', appArch + ".7z");
-    dest = path.resolve(dest);
-
+    const subArchive = `$PLUGINSDIR/${appArch}.7z`;
     await atomicCreate(dest, async (tmpDir) => {
-        const extractedInstaller = path.join(tmpDir, "installer");
-        await execFile(path7z, ["x", "-o" + extractedInstaller, exe, subArchive]);
-        const extractedObsidian = path.join(tmpDir, "obsidian");
-        await execFile(path7z, ["x", "-o" + extractedObsidian, path.join(extractedInstaller, subArchive)]);
-        return extractedObsidian;
+        await sevenZ(["x", "-oinstaller", path.relative(tmpDir, exe), subArchive], {cwd: tmpDir});
+        await sevenZ(["x", "-oobsidian", path.join("installer", subArchive)], {cwd: tmpDir});
+        return "obsidian";
     })
 }
 
@@ -65,15 +77,14 @@ export async function extractObsidianDmg(dmg: string, dest: string) {
     dest = path.resolve(dest);
 
     await atomicCreate(dest, async (tmpDir) => {
-        const proc = await execFile('hdiutil', ['attach', '-nobrowse', '-readonly', dmg]);
-        const volume = proc.stdout.match(/\/Volumes\/.*$/m)![0];
-        const obsidianApp = path.join(volume, "Obsidian.app");
-        try {
-            await fsAsync.cp(obsidianApp, tmpDir, {recursive: true, verbatimSymlinks: true});
-        } finally {
-            await execFile('hdiutil', ['detach', volume]);
+        // Current mac dmg files just have `Obsidian.app`, but on older '-universal' ones it's nested another level.
+        await sevenZ(["x", "-o.", path.relative(tmpDir, dmg), "*/Obsidian.app", "Obsidian.app"], {cwd: tmpDir});
+        const files = await fsAsync.readdir(tmpDir);
+        if (files.includes("Obsidian.app")) {
+            return "Obsidian.app"
+        } else {
+            return path.join(files[0], "Obsidian.app")
         }
-        return tmpDir;
     })
 }
 
