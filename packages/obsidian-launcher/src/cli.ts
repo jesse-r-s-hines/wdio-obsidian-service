@@ -227,7 +227,7 @@ program
     })
 
 program
-    .command("create-versions-list")
+    .command("update-versions-list")
     .summary("Collect Obsidian version information into a single file")
     .description(
         "Collect Obsidian version information into a single file.\n" +
@@ -254,7 +254,7 @@ program
         }
 
         const launcher = new ObsidianLauncher({cacheDir: opts.cache});
-        versionInfos = await launcher.updateObsidianVersionInfos(versionInfos, { maxInstances });
+        versionInfos = await launcher.updateObsidianVersionList(versionInfos, { maxInstances });
         await fsAsync.writeFile(dest, JSON.stringify(versionInfos, undefined, 4));
         console.log(`Wrote updated version information to ${dest}`)
     })

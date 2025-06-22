@@ -264,7 +264,7 @@ export class ObsidianLauncher {
 
     /**
      * Helper for downloadInstaller, takes a ObsidianVersionInfo so it doesn't use obsidian-versions.json and can be
-     * used in updateObsidianVersionInfos.
+     * used in updateObsidianVersionList.
      */
     private async downloadInstallerFromVersionInfo(
         versionInfo: ObsidianVersionInfo, platform: NodeJS.Platform, arch: NodeJS.Architecture,
@@ -943,7 +943,7 @@ export class ObsidianLauncher {
      * and in wdio-obsidian-service to get metadata about Obsidian versions in one place such as minInstallerVersion and
      * the internal electron version.
      */
-    async updateObsidianVersionInfos(
+    async updateObsidianVersionList(
         original?: ObsidianVersionInfos, { maxInstances = 1 } = {},
     ): Promise<ObsidianVersionInfos> {
         const repo = 'obsidianmd/obsidian-releases';
