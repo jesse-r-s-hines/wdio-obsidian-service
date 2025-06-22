@@ -4,6 +4,7 @@
  */
 export type ObsidianVersionInfos = {
     metadata: {
+        schemaVersion: "v1",
         commitDate: string,
         commitSha: string,
         timestamp: string,

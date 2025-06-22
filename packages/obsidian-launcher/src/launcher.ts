@@ -139,7 +139,12 @@ export class ObsidianLauncher {
      * Get information about all available Obsidian versions.
      */
     async getVersions(): Promise<ObsidianVersionInfo[]> {
-        return (await this.cachedFetch(this.versionsUrl, "obsidian-versions.json")).versions;
+        const versionsFile: ObsidianVersionInfos = await this.cachedFetch(this.versionsUrl, "obsidian-versions.json");
+        const schemaVersion = versionsFile.metadata.schemaVersion ?? "v1";
+        if (schemaVersion != "v1") {
+            throw new Error(`${this.versionsUrl} format has changed, please update obsidian-launcher and wdio-obsidian-service`)
+        }
+        return versionsFile.versions;
     }
 
     /**
@@ -1006,6 +1011,7 @@ export class ObsidianLauncher {
     
         const result: ObsidianVersionInfos = {
             metadata: {
+                schemaVersion: "v1",
                 commitDate: commitHistory.at(-1)?.commit.committer.date ?? original?.metadata.commitDate,
                 commitSha: commitHistory.at(-1)?.sha ?? original?.metadata.commitSha,
                 timestamp: original?.metadata.timestamp ?? "", // set down below

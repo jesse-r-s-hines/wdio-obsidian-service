@@ -89,8 +89,9 @@ describe("ObsidianLauncher", function() {
         const tmpDir = await createDirectory({
             "obsidian-versions.json": JSON.stringify({
                 metadata: {
-                    "date": "2025-01-07T00:00:00Z",
-                    "sha": "0000000",
+                    schemaVersion: "v1",
+                    commitDate: "2025-01-07T00:00:00Z",
+                    commitSha: "0000000",
                 },
                 versions: [earliestInstallerVersionInfo, earliestAppVersionInfo, latestVersionInfo].map(v => ({
                     ...v,
