@@ -3,7 +3,7 @@
         "schemaVersion": "v1",
         "commitDate": "2025-06-05T16:47:21Z",
         "commitSha": "1d4401e3a1671936affe9017c3bffe7622183f2a",
-        "timestamp": "2025-06-22T19:18:02.414Z"
+        "timestamp": "2025-06-23T00:47:16.226Z"
     },
     "versions": [
         {
@@ -12,7 +12,8 @@
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.5.0",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.5.0/obsidian-0.5.0.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.5.1",
@@ -20,7 +21,8 @@
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.5.1",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.5.1/obsidian-0.5.1.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.5.2",
@@ -28,7 +30,8 @@
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.5.2",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.5.2/obsidian-0.5.2.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.5.3",
@@ -36,7 +39,8 @@
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.5.3",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.5.3/obsidian-0.5.3.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.6.0",
@@ -44,7 +48,8 @@
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.6.0",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.6.0/obsidian-0.6.0.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.6.1",
@@ -52,7 +57,8 @@
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.6.1",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.6.1/obsidian-0.6.1.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.6.2",
@@ -60,7 +66,8 @@
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.6.2",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.6.2/obsidian-0.6.2.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.6.3",
@@ -68,11 +75,11 @@
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.6.3",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.6.3/obsidian-0.6.3.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.6.4",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.6.4",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.6.4",
@@ -82,13 +89,25 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.6.4/Obsidian-0.6.4.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.6.4/Obsidian.0.6.4.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "8.2.5",
+                    "chrome": "80.0.3987.165"
+                },
+                "dmg": {
+                    "electron": "8.2.5",
+                    "chrome": "80.0.3987.165"
+                },
+                "exe": {
+                    "electron": "8.2.5",
+                    "chrome": "80.0.3987.165"
+                }
+            },
             "electronVersion": "8.2.5",
-            "chromeVersion": "80.0.3987.165",
-            "nodeVersion": "12.13.0"
+            "chromeVersion": "80.0.3987.165"
         },
         {
             "version": "0.6.5",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.6.5",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.6.5",
@@ -98,23 +117,35 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.6.5/Obsidian-0.6.5.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.6.5/Obsidian.0.6.5.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "8.2.5",
+                    "chrome": "80.0.3987.165"
+                },
+                "dmg": {
+                    "electron": "8.2.5",
+                    "chrome": "80.0.3987.165"
+                },
+                "exe": {
+                    "electron": "8.2.5",
+                    "chrome": "80.0.3987.165"
+                }
+            },
             "electronVersion": "8.2.5",
-            "chromeVersion": "80.0.3987.165",
-            "nodeVersion": "12.13.0"
+            "chromeVersion": "80.0.3987.165"
         },
         {
             "version": "0.6.6",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.6.5",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.6.6",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.6.6/obsidian-0.6.6.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.6.7",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.6.7",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.6.7",
@@ -124,43 +155,55 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.6.7/Obsidian-0.6.7.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.6.7/Obsidian.0.6.7.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "8.2.5",
+                    "chrome": "80.0.3987.165"
+                },
+                "dmg": {
+                    "electron": "8.2.5",
+                    "chrome": "80.0.3987.165"
+                },
+                "exe": {
+                    "electron": "8.2.5",
+                    "chrome": "80.0.3987.165"
+                }
+            },
             "electronVersion": "8.2.5",
-            "chromeVersion": "80.0.3987.165",
-            "nodeVersion": "12.13.0"
+            "chromeVersion": "80.0.3987.165"
         },
         {
             "version": "0.7.0",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.6.7",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.7.0",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.7.0/obsidian-0.7.0.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.7.1",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.6.7",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.7.1",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.7.1/obsidian-0.7.1.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.7.2",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.6.7",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.7.2",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.7.2/obsidian-0.7.2.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.7.3",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.7.3",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.7.3",
@@ -170,13 +213,25 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.7.3/Obsidian-0.7.3.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.7.3/Obsidian.0.7.3.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "8.2.5",
+                    "chrome": "80.0.3987.165"
+                },
+                "dmg": {
+                    "electron": "8.2.5",
+                    "chrome": "80.0.3987.165"
+                },
+                "exe": {
+                    "electron": "8.2.5",
+                    "chrome": "80.0.3987.165"
+                }
+            },
             "electronVersion": "8.2.5",
-            "chromeVersion": "80.0.3987.165",
-            "nodeVersion": "12.13.0"
+            "chromeVersion": "80.0.3987.165"
         },
         {
             "version": "0.7.4",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.7.4",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.7.4",
@@ -186,23 +241,35 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.7.4/Obsidian-0.7.4.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.7.4/Obsidian.0.7.4.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "8.2.5",
+                    "chrome": "80.0.3987.165"
+                },
+                "dmg": {
+                    "electron": "8.2.5",
+                    "chrome": "80.0.3987.165"
+                },
+                "exe": {
+                    "electron": "8.2.5",
+                    "chrome": "80.0.3987.165"
+                }
+            },
             "electronVersion": "8.2.5",
-            "chromeVersion": "80.0.3987.165",
-            "nodeVersion": "12.13.0"
+            "chromeVersion": "80.0.3987.165"
         },
         {
             "version": "0.7.5",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.7.4",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.7.5",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.7.5/obsidian-0.7.5.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.7.6",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.7.6",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.7.6",
@@ -212,13 +279,25 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.7.6/Obsidian-0.7.6.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.7.6/Obsidian.0.7.6.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "8.2.5",
+                    "chrome": "80.0.3987.165"
+                },
+                "dmg": {
+                    "electron": "8.2.5",
+                    "chrome": "80.0.3987.165"
+                },
+                "exe": {
+                    "electron": "8.2.5",
+                    "chrome": "80.0.3987.165"
+                }
+            },
             "electronVersion": "8.2.5",
-            "chromeVersion": "80.0.3987.165",
-            "nodeVersion": "12.13.0"
+            "chromeVersion": "80.0.3987.165"
         },
         {
             "version": "0.8.0",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.8.0",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.8.0",
@@ -228,13 +307,25 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.0/Obsidian-0.8.0.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.0/Obsidian.0.8.0.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "8.2.5",
+                    "chrome": "80.0.3987.165"
+                },
+                "dmg": {
+                    "electron": "8.2.5",
+                    "chrome": "80.0.3987.165"
+                },
+                "exe": {
+                    "electron": "8.2.5",
+                    "chrome": "80.0.3987.165"
+                }
+            },
             "electronVersion": "8.2.5",
-            "chromeVersion": "80.0.3987.165",
-            "nodeVersion": "12.13.0"
+            "chromeVersion": "80.0.3987.165"
         },
         {
             "version": "0.8.1",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.8.1",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.8.1",
@@ -244,13 +335,25 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.1/Obsidian-0.8.1.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.1/Obsidian.0.8.1.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "8.2.5",
+                    "chrome": "80.0.3987.165"
+                },
+                "dmg": {
+                    "electron": "8.2.5",
+                    "chrome": "80.0.3987.165"
+                },
+                "exe": {
+                    "electron": "8.2.5",
+                    "chrome": "80.0.3987.165"
+                }
+            },
             "electronVersion": "8.2.5",
-            "chromeVersion": "80.0.3987.165",
-            "nodeVersion": "12.13.0"
+            "chromeVersion": "80.0.3987.165"
         },
         {
             "version": "0.8.2",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.8.2",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.8.2",
@@ -260,23 +363,35 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.2/Obsidian-0.8.2.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.2/Obsidian.0.8.2.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "8.2.5",
+                    "chrome": "80.0.3987.165"
+                },
+                "dmg": {
+                    "electron": "8.2.5",
+                    "chrome": "80.0.3987.165"
+                },
+                "exe": {
+                    "electron": "8.2.5",
+                    "chrome": "80.0.3987.165"
+                }
+            },
             "electronVersion": "8.2.5",
-            "chromeVersion": "80.0.3987.165",
-            "nodeVersion": "12.13.0"
+            "chromeVersion": "80.0.3987.165"
         },
         {
             "version": "0.8.3",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.8.2",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.8.3",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.3/obsidian-0.8.3.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.8.4",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.8.4",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.8.4",
@@ -286,53 +401,65 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.4/Obsidian-0.8.4.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.4/Obsidian.0.8.4.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "8.2.5",
+                    "chrome": "80.0.3987.165"
+                },
+                "dmg": {
+                    "electron": "8.2.5",
+                    "chrome": "80.0.3987.165"
+                },
+                "exe": {
+                    "electron": "8.2.5",
+                    "chrome": "80.0.3987.165"
+                }
+            },
             "electronVersion": "8.2.5",
-            "chromeVersion": "80.0.3987.165",
-            "nodeVersion": "12.13.0"
+            "chromeVersion": "80.0.3987.165"
         },
         {
             "version": "0.8.5",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.8.4",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.8.5",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.5/obsidian-0.8.5.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.8.6",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.8.4",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.8.6",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.6/obsidian-0.8.6.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.8.7",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.8.4",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.8.7",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.7/obsidian-0.8.7.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.8.8",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.8.4",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.8.8",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.8/obsidian-0.8.8.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.8.9",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.8.9",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.8.9",
@@ -342,33 +469,45 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.9/Obsidian-0.8.9.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.9/Obsidian.0.8.9.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "8.2.5",
+                    "chrome": "80.0.3987.165"
+                },
+                "dmg": {
+                    "electron": "8.2.5",
+                    "chrome": "80.0.3987.165"
+                },
+                "exe": {
+                    "electron": "8.2.5",
+                    "chrome": "80.0.3987.165"
+                }
+            },
             "electronVersion": "8.2.5",
-            "chromeVersion": "80.0.3987.165",
-            "nodeVersion": "12.13.0"
+            "chromeVersion": "80.0.3987.165"
         },
         {
             "version": "0.8.10",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.8.9",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.8.10",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.10/obsidian-0.8.10.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.8.11",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.8.9",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.8.11",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.11/obsidian-0.8.11.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.8.12",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.8.12",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.8.12",
@@ -378,23 +517,35 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.12/Obsidian-0.8.12.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.12/Obsidian.0.8.12.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "10.1.1",
+                    "chrome": "85.0.4183.93"
+                },
+                "dmg": {
+                    "electron": "10.1.1",
+                    "chrome": "85.0.4183.93"
+                },
+                "exe": {
+                    "electron": "10.1.1",
+                    "chrome": "85.0.4183.93"
+                }
+            },
             "electronVersion": "10.1.1",
-            "chromeVersion": "85.0.4183.93",
-            "nodeVersion": "12.16.3"
+            "chromeVersion": "85.0.4183.93"
         },
         {
             "version": "0.8.13",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.8.12",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.8.13",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.13/obsidian-0.8.13.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.8.14",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.8.14",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.8.14",
@@ -404,13 +555,25 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.14/Obsidian-0.8.14.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.14/Obsidian.0.8.14.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "10.1.1",
+                    "chrome": "85.0.4183.93"
+                },
+                "dmg": {
+                    "electron": "10.1.1",
+                    "chrome": "85.0.4183.93"
+                },
+                "exe": {
+                    "electron": "10.1.1",
+                    "chrome": "85.0.4183.93"
+                }
+            },
             "electronVersion": "10.1.1",
-            "chromeVersion": "85.0.4183.93",
-            "nodeVersion": "12.16.3"
+            "chromeVersion": "85.0.4183.93"
         },
         {
             "version": "0.8.15",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.8.15",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.8.15",
@@ -420,23 +583,35 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.15/Obsidian-0.8.15.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.15/Obsidian.0.8.15.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "10.1.1",
+                    "chrome": "85.0.4183.93"
+                },
+                "dmg": {
+                    "electron": "10.1.1",
+                    "chrome": "85.0.4183.93"
+                },
+                "exe": {
+                    "electron": "10.1.1",
+                    "chrome": "85.0.4183.93"
+                }
+            },
             "electronVersion": "10.1.1",
-            "chromeVersion": "85.0.4183.93",
-            "nodeVersion": "12.16.3"
+            "chromeVersion": "85.0.4183.93"
         },
         {
             "version": "0.9.0",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.8.15",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.9.0",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.0/obsidian-0.9.0.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.9.1",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.9.1",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.9.1",
@@ -447,13 +622,25 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.1/Obsidian-0.9.1.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.1/Obsidian.0.9.1.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "10.1.1",
+                    "chrome": "85.0.4183.93"
+                },
+                "dmg": {
+                    "electron": "10.1.1",
+                    "chrome": "85.0.4183.93"
+                },
+                "exe": {
+                    "electron": "10.1.1",
+                    "chrome": "85.0.4183.93"
+                }
+            },
             "electronVersion": "10.1.1",
-            "chromeVersion": "85.0.4183.93",
-            "nodeVersion": "12.16.3"
+            "chromeVersion": "85.0.4183.93"
         },
         {
             "version": "0.9.2",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.9.2",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.9.2",
@@ -464,13 +651,25 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.2/Obsidian-0.9.2.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.2/Obsidian.0.9.2.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "10.1.1",
+                    "chrome": "85.0.4183.93"
+                },
+                "dmg": {
+                    "electron": "10.1.1",
+                    "chrome": "85.0.4183.93"
+                },
+                "exe": {
+                    "electron": "10.1.1",
+                    "chrome": "85.0.4183.93"
+                }
+            },
             "electronVersion": "10.1.1",
-            "chromeVersion": "85.0.4183.93",
-            "nodeVersion": "12.16.3"
+            "chromeVersion": "85.0.4183.93"
         },
         {
             "version": "0.9.3",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.9.3",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.9.3",
@@ -481,13 +680,25 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.3/Obsidian-0.9.3.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.3/Obsidian.0.9.3.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "10.1.1",
+                    "chrome": "85.0.4183.93"
+                },
+                "dmg": {
+                    "electron": "10.1.1",
+                    "chrome": "85.0.4183.93"
+                },
+                "exe": {
+                    "electron": "10.1.1",
+                    "chrome": "85.0.4183.93"
+                }
+            },
             "electronVersion": "10.1.1",
-            "chromeVersion": "85.0.4183.93",
-            "nodeVersion": "12.16.3"
+            "chromeVersion": "85.0.4183.93"
         },
         {
             "version": "0.9.4",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.9.4",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.9.4",
@@ -498,23 +709,35 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.4/Obsidian-0.9.4.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.4/Obsidian.0.9.4.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "10.1.1",
+                    "chrome": "85.0.4183.93"
+                },
+                "dmg": {
+                    "electron": "10.1.1",
+                    "chrome": "85.0.4183.93"
+                },
+                "exe": {
+                    "electron": "10.1.1",
+                    "chrome": "85.0.4183.93"
+                }
+            },
             "electronVersion": "10.1.1",
-            "chromeVersion": "85.0.4183.93",
-            "nodeVersion": "12.16.3"
+            "chromeVersion": "85.0.4183.93"
         },
         {
             "version": "0.9.5",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.9.4",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.9.5",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.5/obsidian-0.9.5.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.9.6",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.9.6",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.9.6",
@@ -525,43 +748,55 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.6/Obsidian-0.9.6.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.6/Obsidian.0.9.6.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "10.1.1",
+                    "chrome": "85.0.4183.93"
+                },
+                "dmg": {
+                    "electron": "10.1.1",
+                    "chrome": "85.0.4183.93"
+                },
+                "exe": {
+                    "electron": "10.1.1",
+                    "chrome": "85.0.4183.93"
+                }
+            },
             "electronVersion": "10.1.1",
-            "chromeVersion": "85.0.4183.93",
-            "nodeVersion": "12.16.3"
+            "chromeVersion": "85.0.4183.93"
         },
         {
             "version": "0.9.7",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.9.6",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.9.7",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.7/obsidian-0.9.7.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.9.8",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.9.6",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.9.8",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.8/obsidian-0.9.8.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.9.9",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.9.6",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.9.9",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.9/obsidian-0.9.9.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.9.10",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.9.10",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.9.10",
@@ -572,13 +807,25 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.10/Obsidian-0.9.10.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.10/Obsidian.0.9.10.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "10.1.5",
+                    "chrome": "85.0.4183.121"
+                },
+                "dmg": {
+                    "electron": "10.1.5",
+                    "chrome": "85.0.4183.121"
+                },
+                "exe": {
+                    "electron": "10.1.5",
+                    "chrome": "85.0.4183.121"
+                }
+            },
             "electronVersion": "10.1.5",
-            "chromeVersion": "85.0.4183.121",
-            "nodeVersion": "12.16.3"
+            "chromeVersion": "85.0.4183.121"
         },
         {
             "version": "0.9.11",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.9.11",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.9.11",
@@ -589,43 +836,55 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.11/Obsidian-0.9.11.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.11/Obsidian.0.9.11.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "10.1.5",
+                    "chrome": "85.0.4183.121"
+                },
+                "dmg": {
+                    "electron": "10.1.5",
+                    "chrome": "85.0.4183.121"
+                },
+                "exe": {
+                    "electron": "10.1.5",
+                    "chrome": "85.0.4183.121"
+                }
+            },
             "electronVersion": "10.1.5",
-            "chromeVersion": "85.0.4183.121",
-            "nodeVersion": "12.16.3"
+            "chromeVersion": "85.0.4183.121"
         },
         {
             "version": "0.9.12",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.9.11",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.9.12",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.12/obsidian-0.9.12.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.9.13",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.9.11",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.9.13",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.13/obsidian-0.9.13.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.9.14",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.9.11",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.9.14",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.14/obsidian-0.9.14.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.9.15",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.9.15",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.9.15",
@@ -636,23 +895,35 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.15/Obsidian-0.9.15.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.15/Obsidian.0.9.15.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "10.1.5",
+                    "chrome": "85.0.4183.121"
+                },
+                "dmg": {
+                    "electron": "10.1.5",
+                    "chrome": "85.0.4183.121"
+                },
+                "exe": {
+                    "electron": "10.1.5",
+                    "chrome": "85.0.4183.121"
+                }
+            },
             "electronVersion": "10.1.5",
-            "chromeVersion": "85.0.4183.121",
-            "nodeVersion": "12.16.3"
+            "chromeVersion": "85.0.4183.121"
         },
         {
             "version": "0.9.16",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.9.15",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.9.16",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.16/obsidian-0.9.16.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.9.17",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.9.17",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.9.17",
@@ -665,33 +936,49 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.17/Obsidian-0.9.17.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.17/Obsidian.0.9.17.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "11.0.3",
+                    "chrome": "87.0.4280.67"
+                },
+                "appImageArm": {
+                    "electron": "11.0.3",
+                    "chrome": "87.0.4280.67"
+                },
+                "dmg": {
+                    "electron": "11.0.3",
+                    "chrome": "87.0.4280.67"
+                },
+                "exe": {
+                    "electron": "11.0.3",
+                    "chrome": "87.0.4280.67"
+                }
+            },
             "electronVersion": "11.0.3",
-            "chromeVersion": "87.0.4280.67",
-            "nodeVersion": "12.18.3"
+            "chromeVersion": "87.0.4280.67"
         },
         {
             "version": "0.9.18",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.9.17",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.9.18",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.18/obsidian-0.9.18.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.9.19",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.9.17",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.9.19",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.19/obsidian-0.9.19.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.9.20",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.9.20",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.9.20",
@@ -702,23 +989,35 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.20/Obsidian-0.9.20.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.20/Obsidian.0.9.20.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "11.0.3",
+                    "chrome": "87.0.4280.67"
+                },
+                "dmg": {
+                    "electron": "11.0.3",
+                    "chrome": "87.0.4280.67"
+                },
+                "exe": {
+                    "electron": "11.0.3",
+                    "chrome": "87.0.4280.67"
+                }
+            },
             "electronVersion": "11.0.3",
-            "chromeVersion": "87.0.4280.67",
-            "nodeVersion": "12.18.3"
+            "chromeVersion": "87.0.4280.67"
         },
         {
             "version": "0.9.21",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.9.20",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.9.21",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.21/obsidian-0.9.21.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.9.22",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.9.22",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.9.22",
@@ -729,23 +1028,35 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.22/Obsidian-0.9.22.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.22/Obsidian.0.9.22.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "11.1.0",
+                    "chrome": "87.0.4280.88"
+                },
+                "dmg": {
+                    "electron": "11.1.0",
+                    "chrome": "87.0.4280.88"
+                },
+                "exe": {
+                    "electron": "11.1.0",
+                    "chrome": "87.0.4280.88"
+                }
+            },
             "electronVersion": "11.1.0",
-            "chromeVersion": "87.0.4280.88",
-            "nodeVersion": "12.18.3"
+            "chromeVersion": "87.0.4280.88"
         },
         {
             "version": "0.10.0",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.9.22",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.10.0",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.0/obsidian-0.10.0.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.10.1",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.10.1",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.10.1",
@@ -756,53 +1067,65 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.1/Obsidian-0.10.1.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.1/Obsidian.0.10.1.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "11.1.0",
+                    "chrome": "87.0.4280.88"
+                },
+                "dmg": {
+                    "electron": "11.1.0",
+                    "chrome": "87.0.4280.88"
+                },
+                "exe": {
+                    "electron": "11.1.0",
+                    "chrome": "87.0.4280.88"
+                }
+            },
             "electronVersion": "11.1.0",
-            "chromeVersion": "87.0.4280.88",
-            "nodeVersion": "12.18.3"
+            "chromeVersion": "87.0.4280.88"
         },
         {
             "version": "0.10.2",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.10.1",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.10.2",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.2/obsidian-0.10.2.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.10.3",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.10.1",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.10.3",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.3/obsidian-0.10.3.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.10.4",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.10.1",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.10.4",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.4/obsidian-0.10.4.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.10.5",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.10.1",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.10.5",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.5/obsidian-0.10.5.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.10.6",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.10.6",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.10.6",
@@ -813,13 +1136,25 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.6/Obsidian-0.10.6.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.6/Obsidian.0.10.6.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "11.1.0",
+                    "chrome": "87.0.4280.88"
+                },
+                "dmg": {
+                    "electron": "11.1.0",
+                    "chrome": "87.0.4280.88"
+                },
+                "exe": {
+                    "electron": "11.1.0",
+                    "chrome": "87.0.4280.88"
+                }
+            },
             "electronVersion": "11.1.0",
-            "chromeVersion": "87.0.4280.88",
-            "nodeVersion": "12.18.3"
+            "chromeVersion": "87.0.4280.88"
         },
         {
             "version": "0.10.7",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.10.7",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.10.7",
@@ -830,13 +1165,25 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.7/Obsidian-0.10.7.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.7/Obsidian.0.10.7.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "11.1.0",
+                    "chrome": "87.0.4280.88"
+                },
+                "dmg": {
+                    "electron": "11.1.0",
+                    "chrome": "87.0.4280.88"
+                },
+                "exe": {
+                    "electron": "11.1.0",
+                    "chrome": "87.0.4280.88"
+                }
+            },
             "electronVersion": "11.1.0",
-            "chromeVersion": "87.0.4280.88",
-            "nodeVersion": "12.18.3"
+            "chromeVersion": "87.0.4280.88"
         },
         {
             "version": "0.10.8",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.10.8",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.10.8",
@@ -847,13 +1194,25 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.8/Obsidian-0.10.8.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.8/Obsidian.0.10.8.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "11.1.0",
+                    "chrome": "87.0.4280.88"
+                },
+                "dmg": {
+                    "electron": "11.1.0",
+                    "chrome": "87.0.4280.88"
+                },
+                "exe": {
+                    "electron": "11.1.0",
+                    "chrome": "87.0.4280.88"
+                }
+            },
             "electronVersion": "11.1.0",
-            "chromeVersion": "87.0.4280.88",
-            "nodeVersion": "12.18.3"
+            "chromeVersion": "87.0.4280.88"
         },
         {
             "version": "0.10.9",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.10.9",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.10.9",
@@ -864,23 +1223,35 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.9/Obsidian-0.10.9-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.9/Obsidian.0.10.9.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "11.1.0",
+                    "chrome": "87.0.4280.88"
+                },
+                "dmg": {
+                    "electron": "11.1.0",
+                    "chrome": "87.0.4280.88"
+                },
+                "exe": {
+                    "electron": "11.1.0",
+                    "chrome": "87.0.4280.88"
+                }
+            },
             "electronVersion": "11.1.0",
-            "chromeVersion": "87.0.4280.88",
-            "nodeVersion": "12.18.3"
+            "chromeVersion": "87.0.4280.88"
         },
         {
             "version": "0.10.10",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.10.9",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.10.10",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.10/obsidian-0.10.10.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.10.11",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.10.11",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.10.11",
@@ -891,23 +1262,35 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.11/Obsidian-0.10.11-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.11/Obsidian.0.10.11.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "11.2.1",
+                    "chrome": "87.0.4280.141"
+                },
+                "dmg": {
+                    "electron": "11.2.1",
+                    "chrome": "87.0.4280.141"
+                },
+                "exe": {
+                    "electron": "11.2.1",
+                    "chrome": "87.0.4280.141"
+                }
+            },
             "electronVersion": "11.2.1",
-            "chromeVersion": "87.0.4280.141",
-            "nodeVersion": "12.18.3"
+            "chromeVersion": "87.0.4280.141"
         },
         {
             "version": "0.10.12",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.10.11",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.10.12",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.12/obsidian-0.10.12.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.10.13",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.10.13",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.10.13",
@@ -918,13 +1301,25 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.13/Obsidian-0.10.13-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.13/Obsidian.0.10.13.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "11.2.1",
+                    "chrome": "87.0.4280.141"
+                },
+                "dmg": {
+                    "electron": "11.2.1",
+                    "chrome": "87.0.4280.141"
+                },
+                "exe": {
+                    "electron": "11.2.1",
+                    "chrome": "87.0.4280.141"
+                }
+            },
             "electronVersion": "11.2.1",
-            "chromeVersion": "87.0.4280.141",
-            "nodeVersion": "12.18.3"
+            "chromeVersion": "87.0.4280.141"
         },
         {
             "version": "0.11.0",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.11.0",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.11.0",
@@ -935,33 +1330,45 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.0/Obsidian-0.11.0-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.0/Obsidian.0.11.0.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "11.2.3",
+                    "chrome": "87.0.4280.141"
+                },
+                "dmg": {
+                    "electron": "11.2.3",
+                    "chrome": "87.0.4280.141"
+                },
+                "exe": {
+                    "electron": "11.2.3",
+                    "chrome": "87.0.4280.141"
+                }
+            },
             "electronVersion": "11.2.3",
-            "chromeVersion": "87.0.4280.141",
-            "nodeVersion": "12.18.3"
+            "chromeVersion": "87.0.4280.141"
         },
         {
             "version": "0.11.1",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.11.0",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.11.1",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.1/obsidian-0.11.1.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.11.2",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.11.0",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.11.2",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.2/obsidian-0.11.2.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.11.3",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.11.3",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.11.3",
@@ -972,23 +1379,35 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.3/Obsidian-0.11.3-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.3/Obsidian.0.11.3.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "11.3.0",
+                    "chrome": "87.0.4280.141"
+                },
+                "dmg": {
+                    "electron": "11.3.0",
+                    "chrome": "87.0.4280.141"
+                },
+                "exe": {
+                    "electron": "11.3.0",
+                    "chrome": "87.0.4280.141"
+                }
+            },
             "electronVersion": "11.3.0",
-            "chromeVersion": "87.0.4280.141",
-            "nodeVersion": "12.18.3"
+            "chromeVersion": "87.0.4280.141"
         },
         {
             "version": "0.11.4",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.11.3",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.11.4",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.4/obsidian-0.11.4.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.11.5",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.11.5",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.11.5",
@@ -999,43 +1418,55 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.5/Obsidian-0.11.5-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.5/Obsidian.0.11.5.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "11.3.0",
+                    "chrome": "87.0.4280.141"
+                },
+                "dmg": {
+                    "electron": "11.3.0",
+                    "chrome": "87.0.4280.141"
+                },
+                "exe": {
+                    "electron": "11.3.0",
+                    "chrome": "87.0.4280.141"
+                }
+            },
             "electronVersion": "11.3.0",
-            "chromeVersion": "87.0.4280.141",
-            "nodeVersion": "12.18.3"
+            "chromeVersion": "87.0.4280.141"
         },
         {
             "version": "0.11.6",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.11.5",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.11.6",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.6/obsidian-0.11.6.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.11.7",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.11.5",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.11.7",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.7/obsidian-0.11.7.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.11.8",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.11.5",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.11.8",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.8/obsidian-0.11.8.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.11.9",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.11.9",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.11.9",
@@ -1046,43 +1477,55 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.9/Obsidian-0.11.9-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.9/Obsidian.0.11.9.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "11.3.0",
+                    "chrome": "87.0.4280.141"
+                },
+                "dmg": {
+                    "electron": "11.3.0",
+                    "chrome": "87.0.4280.141"
+                },
+                "exe": {
+                    "electron": "11.3.0",
+                    "chrome": "87.0.4280.141"
+                }
+            },
             "electronVersion": "11.3.0",
-            "chromeVersion": "87.0.4280.141",
-            "nodeVersion": "12.18.3"
+            "chromeVersion": "87.0.4280.141"
         },
         {
             "version": "0.11.10",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.11.9",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.11.10",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.10/obsidian-0.11.10.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.11.11",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.11.9",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.11.11",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.11/obsidian-0.11.11.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.11.12",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.11.9",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.11.12",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.12/obsidian-0.11.12.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.11.13",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.11.13",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.11.13",
@@ -1093,43 +1536,55 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.13/Obsidian-0.11.13-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.13/Obsidian.0.11.13.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "11.3.0",
+                    "chrome": "87.0.4280.141"
+                },
+                "dmg": {
+                    "electron": "11.3.0",
+                    "chrome": "87.0.4280.141"
+                },
+                "exe": {
+                    "electron": "11.3.0",
+                    "chrome": "87.0.4280.141"
+                }
+            },
             "electronVersion": "11.3.0",
-            "chromeVersion": "87.0.4280.141",
-            "nodeVersion": "12.18.3"
+            "chromeVersion": "87.0.4280.141"
         },
         {
             "version": "0.12.0",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.11.13",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.12.0",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.0/obsidian-0.12.0.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.12.1",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.11.13",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.12.1",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.1/obsidian-0.12.1.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.12.2",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.11.13",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.12.2",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.2/obsidian-0.12.2.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.12.3",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.12.3",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.12.3",
@@ -1140,13 +1595,25 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.3/Obsidian-0.12.3-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.3/Obsidian.0.12.3.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "12.0.6",
+                    "chrome": "89.0.4389.128"
+                },
+                "dmg": {
+                    "electron": "12.0.6",
+                    "chrome": "89.0.4389.128"
+                },
+                "exe": {
+                    "electron": "12.0.6",
+                    "chrome": "89.0.4389.128"
+                }
+            },
             "electronVersion": "12.0.6",
-            "chromeVersion": "89.0.4389.128",
-            "nodeVersion": "14.16.0"
+            "chromeVersion": "89.0.4389.128"
         },
         {
             "version": "0.12.4",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.12.4",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.12.4",
@@ -1157,13 +1624,25 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.4/Obsidian-0.12.4-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.4/Obsidian.0.12.4.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "12.0.6",
+                    "chrome": "89.0.4389.128"
+                },
+                "dmg": {
+                    "electron": "12.0.6",
+                    "chrome": "89.0.4389.128"
+                },
+                "exe": {
+                    "electron": "12.0.6",
+                    "chrome": "89.0.4389.128"
+                }
+            },
             "electronVersion": "12.0.6",
-            "chromeVersion": "89.0.4389.128",
-            "nodeVersion": "14.16.0"
+            "chromeVersion": "89.0.4389.128"
         },
         {
             "version": "0.12.5",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.12.5",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.12.5",
@@ -1174,53 +1653,65 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.5/Obsidian-0.12.5-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.5/Obsidian.0.12.5.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "12.0.11",
+                    "chrome": "89.0.4389.128"
+                },
+                "dmg": {
+                    "electron": "12.0.11",
+                    "chrome": "89.0.4389.128"
+                },
+                "exe": {
+                    "electron": "12.0.11",
+                    "chrome": "89.0.4389.128"
+                }
+            },
             "electronVersion": "12.0.11",
-            "chromeVersion": "89.0.4389.128",
-            "nodeVersion": "14.16.0"
+            "chromeVersion": "89.0.4389.128"
         },
         {
             "version": "0.12.6",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.12.5",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.12.6",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.6/obsidian-0.12.6.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.12.7",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.12.5",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.12.7",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.7/obsidian-0.12.7.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.12.8",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.12.5",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.12.8",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.8/obsidian-0.12.8.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.12.9",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.12.5",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.12.9",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.9/obsidian-0.12.9.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.12.10",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.12.10",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.12.10",
@@ -1231,23 +1722,35 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.10/Obsidian-0.12.10-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.10/Obsidian.0.12.10.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "12.0.14",
+                    "chrome": "89.0.4389.128"
+                },
+                "dmg": {
+                    "electron": "12.0.14",
+                    "chrome": "89.0.4389.128"
+                },
+                "exe": {
+                    "electron": "12.0.14",
+                    "chrome": "89.0.4389.128"
+                }
+            },
             "electronVersion": "12.0.14",
-            "chromeVersion": "89.0.4389.128",
-            "nodeVersion": "14.16.0"
+            "chromeVersion": "89.0.4389.128"
         },
         {
             "version": "0.12.11",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.12.10",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.12.11",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.11/obsidian-0.12.11.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.12.12",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.12.12",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.12.12",
@@ -1258,33 +1761,45 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.12/Obsidian-0.12.12-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.12/Obsidian.0.12.12.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "12.0.14",
+                    "chrome": "89.0.4389.128"
+                },
+                "dmg": {
+                    "electron": "12.0.14",
+                    "chrome": "89.0.4389.128"
+                },
+                "exe": {
+                    "electron": "12.0.14",
+                    "chrome": "89.0.4389.128"
+                }
+            },
             "electronVersion": "12.0.14",
-            "chromeVersion": "89.0.4389.128",
-            "nodeVersion": "14.16.0"
+            "chromeVersion": "89.0.4389.128"
         },
         {
             "version": "0.12.13",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.12.12",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.12.13",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.13/obsidian-0.12.13.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.12.14",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.12.12",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.12.14",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.14/obsidian-0.12.14.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.12.15",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.12.15",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.12.15",
@@ -1297,41 +1812,57 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.15/Obsidian-0.12.15-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.15/Obsidian.0.12.15.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "12.0.18",
+                    "chrome": "89.0.4389.128"
+                },
+                "appImageArm": {
+                    "electron": "12.0.18",
+                    "chrome": "89.0.4389.128"
+                },
+                "dmg": {
+                    "electron": "12.0.18",
+                    "chrome": "89.0.4389.128"
+                },
+                "exe": {
+                    "electron": "12.0.18",
+                    "chrome": "89.0.4389.128"
+                }
+            },
             "electronVersion": "12.0.18",
-            "chromeVersion": "89.0.4389.128",
-            "nodeVersion": "14.16.0"
+            "chromeVersion": "89.0.4389.128"
         },
         {
             "version": "0.12.16",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.12.15",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.12.16",
-            "downloads": {}
+            "downloads": {},
+            "installerInfo": {}
         },
         {
             "version": "0.12.17",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.12.15",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.12.17",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.17/obsidian-0.12.17.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.12.18",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.12.15",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.12.18",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.18/obsidian-0.12.18.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.12.19",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.12.19",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.12.19",
@@ -1342,139 +1873,151 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.19/Obsidian-0.12.19-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.19/Obsidian.0.12.19.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "13.5.2",
+                    "chrome": "91.0.4472.164"
+                },
+                "dmg": {
+                    "electron": "13.5.2",
+                    "chrome": "91.0.4472.164"
+                },
+                "exe": {
+                    "electron": "13.5.2",
+                    "chrome": "91.0.4472.164"
+                }
+            },
             "electronVersion": "13.5.2",
-            "chromeVersion": "91.0.4472.164",
-            "nodeVersion": "14.16.0"
+            "chromeVersion": "91.0.4472.164"
         },
         {
             "version": "0.13.0",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.12.19",
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.13.0.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.13.1",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.12.19",
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.13.1.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.13.2",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.12.19",
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.13.2.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.13.3",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.12.19",
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.13.3.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.13.4",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.12.19",
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.13.4.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.13.5",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.12.19",
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.13.5.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.13.6",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.12.19",
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.13.6.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.13.7",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.12.19",
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.13.7.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.13.8",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.12.19",
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.13.8.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.13.9",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.12.19",
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.13.9.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.13.10",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.12.19",
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.13.10.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.13.11",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.12.19",
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.13.11.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.13.12",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.12.19",
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.13.12.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.13.13",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.12.19",
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.13.13.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.13.14",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.13.14",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.13.14",
@@ -1485,49 +2028,61 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.13.14/Obsidian-0.13.14-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.13.14/Obsidian.0.13.14.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "13.6.2",
+                    "chrome": "91.0.4472.164"
+                },
+                "dmg": {
+                    "electron": "13.6.2",
+                    "chrome": "91.0.4472.164"
+                },
+                "exe": {
+                    "electron": "13.6.2",
+                    "chrome": "91.0.4472.164"
+                }
+            },
             "electronVersion": "13.6.2",
-            "chromeVersion": "91.0.4472.164",
-            "nodeVersion": "14.16.0"
+            "chromeVersion": "91.0.4472.164"
         },
         {
             "version": "0.13.15",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.13.14",
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.13.15.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.13.16",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.13.14",
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.13.16.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.13.17",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.13.14",
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.13.17.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.13.18",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.13.14",
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.13.18.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.13.19",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.13.19",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.13.19",
@@ -1538,40 +2093,52 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.13.19/Obsidian-0.13.19-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.13.19/Obsidian.0.13.19.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "13.6.2",
+                    "chrome": "91.0.4472.164"
+                },
+                "dmg": {
+                    "electron": "13.6.2",
+                    "chrome": "91.0.4472.164"
+                },
+                "exe": {
+                    "electron": "13.6.2",
+                    "chrome": "91.0.4472.164"
+                }
+            },
             "electronVersion": "13.6.2",
-            "chromeVersion": "91.0.4472.164",
-            "nodeVersion": "14.16.0"
+            "chromeVersion": "91.0.4472.164"
         },
         {
             "version": "0.13.20",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.13.19",
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.13.20.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.13.21",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.13.19",
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.13.21.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.13.22",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.13.19",
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.13.22.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.13.23",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.13.23",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.13.23",
@@ -1582,13 +2149,25 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.13.23/Obsidian-0.13.23-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.13.23/Obsidian.0.13.23.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "13.6.2",
+                    "chrome": "91.0.4472.164"
+                },
+                "dmg": {
+                    "electron": "13.6.2",
+                    "chrome": "91.0.4472.164"
+                },
+                "exe": {
+                    "electron": "13.6.2",
+                    "chrome": "91.0.4472.164"
+                }
+            },
             "electronVersion": "13.6.2",
-            "chromeVersion": "91.0.4472.164",
-            "nodeVersion": "14.16.0"
+            "chromeVersion": "91.0.4472.164"
         },
         {
             "version": "0.13.24",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.13.24",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.13.24",
@@ -1599,58 +2178,70 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.13.24/Obsidian-0.13.24-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.13.24/Obsidian.0.13.24.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "16.0.8",
+                    "chrome": "96.0.4664.110"
+                },
+                "dmg": {
+                    "electron": "16.0.8",
+                    "chrome": "96.0.4664.110"
+                },
+                "exe": {
+                    "electron": "16.0.8",
+                    "chrome": "96.0.4664.110"
+                }
+            },
             "electronVersion": "16.0.8",
-            "chromeVersion": "96.0.4664.110",
-            "nodeVersion": "16.9.1"
+            "chromeVersion": "96.0.4664.110"
         },
         {
             "version": "0.13.25",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.13.24",
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.13.25.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.13.26",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.13.24",
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.13.26.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.13.27",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.13.24",
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.13.27.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.13.28",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.13.24",
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.13.28.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.13.29",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.13.24",
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.13.29.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.13.30",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.13.30",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.13.30",
@@ -1663,13 +2254,29 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.13.30/Obsidian-0.13.30-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.13.30/Obsidian.0.13.30.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "16.0.10",
+                    "chrome": "96.0.4664.174"
+                },
+                "appImageArm": {
+                    "electron": "16.0.10",
+                    "chrome": "96.0.4664.174"
+                },
+                "dmg": {
+                    "electron": "16.0.10",
+                    "chrome": "96.0.4664.174"
+                },
+                "exe": {
+                    "electron": "16.0.10",
+                    "chrome": "96.0.4664.174"
+                }
+            },
             "electronVersion": "16.0.10",
-            "chromeVersion": "96.0.4664.174",
-            "nodeVersion": "16.9.1"
+            "chromeVersion": "96.0.4664.174"
         },
         {
             "version": "0.13.31",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.13.31",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.13.31",
@@ -1682,46 +2289,63 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.13.31/Obsidian-0.13.31-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.13.31/Obsidian.0.13.31.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "17.1.1",
+                    "chrome": "98.0.4758.109"
+                },
+                "appImageArm": {
+                    "electron": "17.1.1",
+                    "chrome": "98.0.4758.109"
+                },
+                "dmg": {
+                    "electron": "17.1.1",
+                    "chrome": "98.0.4758.109"
+                },
+                "exe": {
+                    "electron": "17.1.1",
+                    "chrome": "98.0.4758.109"
+                }
+            },
             "electronVersion": "17.1.1",
-            "chromeVersion": "98.0.4758.109",
-            "nodeVersion": "16.13.0"
+            "chromeVersion": "98.0.4758.109"
         },
         {
             "version": "0.13.32",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.13.31",
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.13.32.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.13.33",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.13.31",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.13.33",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.13.33/obsidian-0.13.33.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.14.0",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.13.31",
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.14.0.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.14.1",
-            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.13.31",
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.14.1.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.14.2",
@@ -1736,9 +2360,22 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.14.2/Obsidian-0.14.2-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.14.2/Obsidian.0.14.2.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "17.1.1",
+                    "chrome": "98.0.4758.109"
+                },
+                "dmg": {
+                    "electron": "17.1.1",
+                    "chrome": "98.0.4758.109"
+                },
+                "exe": {
+                    "electron": "17.1.1",
+                    "chrome": "98.0.4758.109"
+                }
+            },
             "electronVersion": "17.1.1",
-            "chromeVersion": "98.0.4758.109",
-            "nodeVersion": "16.13.0"
+            "chromeVersion": "98.0.4758.109"
         },
         {
             "version": "0.14.3",
@@ -1747,7 +2384,8 @@
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.14.3.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.14.4",
@@ -1756,7 +2394,8 @@
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.14.4.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.14.5",
@@ -1772,9 +2411,26 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.14.5/Obsidian-0.14.5-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.14.5/Obsidian.0.14.5.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "18.0.3",
+                    "chrome": "100.0.4896.75"
+                },
+                "appImageArm": {
+                    "electron": "18.0.3",
+                    "chrome": "100.0.4896.75"
+                },
+                "dmg": {
+                    "electron": "18.0.3",
+                    "chrome": "100.0.4896.75"
+                },
+                "exe": {
+                    "electron": "18.0.3",
+                    "chrome": "100.0.4896.75"
+                }
+            },
             "electronVersion": "18.0.3",
-            "chromeVersion": "100.0.4896.75",
-            "nodeVersion": "16.13.2"
+            "chromeVersion": "100.0.4896.75"
         },
         {
             "version": "0.14.6",
@@ -1790,9 +2446,26 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.14.6/Obsidian-0.14.6-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.14.6/Obsidian.0.14.6.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "18.0.4",
+                    "chrome": "100.0.4896.75"
+                },
+                "appImageArm": {
+                    "electron": "18.0.4",
+                    "chrome": "100.0.4896.75"
+                },
+                "dmg": {
+                    "electron": "18.0.4",
+                    "chrome": "100.0.4896.75"
+                },
+                "exe": {
+                    "electron": "18.0.4",
+                    "chrome": "100.0.4896.75"
+                }
+            },
             "electronVersion": "18.0.4",
-            "chromeVersion": "100.0.4896.75",
-            "nodeVersion": "16.13.2"
+            "chromeVersion": "100.0.4896.75"
         },
         {
             "version": "0.14.7",
@@ -1801,7 +2474,8 @@
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.14.7.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.14.8",
@@ -1810,7 +2484,8 @@
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.14.8.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.14.9",
@@ -1819,7 +2494,8 @@
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.14.9.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.14.10",
@@ -1828,7 +2504,8 @@
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.14.10.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.14.11",
@@ -1837,7 +2514,8 @@
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.14.11.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.14.12",
@@ -1846,7 +2524,8 @@
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.14.12.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.14.13",
@@ -1855,7 +2534,8 @@
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.14.13.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.14.14",
@@ -1864,7 +2544,8 @@
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.14.14.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.14.15",
@@ -1880,9 +2561,26 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.14.15/Obsidian-0.14.15-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.14.15/Obsidian.0.14.15.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "18.3.0",
+                    "chrome": "100.0.4896.160"
+                },
+                "appImageArm": {
+                    "electron": "18.3.0",
+                    "chrome": "100.0.4896.160"
+                },
+                "dmg": {
+                    "electron": "18.3.0",
+                    "chrome": "100.0.4896.160"
+                },
+                "exe": {
+                    "electron": "18.3.0",
+                    "chrome": "100.0.4896.160"
+                }
+            },
             "electronVersion": "18.3.0",
-            "chromeVersion": "100.0.4896.160",
-            "nodeVersion": "16.13.2"
+            "chromeVersion": "100.0.4896.160"
         },
         {
             "version": "0.15.0",
@@ -1891,7 +2589,8 @@
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.15.0.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.15.1",
@@ -1900,7 +2599,8 @@
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.15.1.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.15.2",
@@ -1909,7 +2609,8 @@
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.15.2.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.15.3",
@@ -1918,7 +2619,8 @@
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.15.3.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.15.4",
@@ -1927,7 +2629,8 @@
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.15.4.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.15.5",
@@ -1936,7 +2639,8 @@
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.15.5.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.15.6",
@@ -1952,9 +2656,26 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.15.6/Obsidian-0.15.6-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.15.6/Obsidian.0.15.6.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "18.3.5",
+                    "chrome": "100.0.4896.160"
+                },
+                "appImageArm": {
+                    "electron": "18.3.5",
+                    "chrome": "100.0.4896.160"
+                },
+                "dmg": {
+                    "electron": "18.3.5",
+                    "chrome": "100.0.4896.160"
+                },
+                "exe": {
+                    "electron": "18.3.5",
+                    "chrome": "100.0.4896.160"
+                }
+            },
             "electronVersion": "18.3.5",
-            "chromeVersion": "100.0.4896.160",
-            "nodeVersion": "16.13.2"
+            "chromeVersion": "100.0.4896.160"
         },
         {
             "version": "0.15.7",
@@ -1963,7 +2684,8 @@
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.15.7.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.15.8",
@@ -1979,9 +2701,26 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.15.8/Obsidian-0.15.8-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.15.8/Obsidian.0.15.8.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "18.3.5",
+                    "chrome": "100.0.4896.160"
+                },
+                "appImageArm": {
+                    "electron": "18.3.5",
+                    "chrome": "100.0.4896.160"
+                },
+                "dmg": {
+                    "electron": "18.3.5",
+                    "chrome": "100.0.4896.160"
+                },
+                "exe": {
+                    "electron": "18.3.5",
+                    "chrome": "100.0.4896.160"
+                }
+            },
             "electronVersion": "18.3.5",
-            "chromeVersion": "100.0.4896.160",
-            "nodeVersion": "16.13.2"
+            "chromeVersion": "100.0.4896.160"
         },
         {
             "version": "0.15.9",
@@ -1998,9 +2737,26 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.15.9/Obsidian-0.15.9-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.15.9/Obsidian.0.15.9.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "18.3.5",
+                    "chrome": "100.0.4896.160"
+                },
+                "appImageArm": {
+                    "electron": "18.3.5",
+                    "chrome": "100.0.4896.160"
+                },
+                "dmg": {
+                    "electron": "18.3.5",
+                    "chrome": "100.0.4896.160"
+                },
+                "exe": {
+                    "electron": "18.3.5",
+                    "chrome": "100.0.4896.160"
+                }
+            },
             "electronVersion": "18.3.5",
-            "chromeVersion": "100.0.4896.160",
-            "nodeVersion": "16.13.2"
+            "chromeVersion": "100.0.4896.160"
         },
         {
             "version": "0.16.0",
@@ -2009,7 +2765,8 @@
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.16.0.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.16.1",
@@ -2018,7 +2775,8 @@
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.16.1.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.16.2",
@@ -2027,7 +2785,8 @@
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.16.2.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.16.3",
@@ -2036,7 +2795,8 @@
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.16.3.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.16.4",
@@ -2045,7 +2805,8 @@
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.16.4.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "0.16.5",
@@ -2054,7 +2815,8 @@
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.16.5.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "1.0.0",
@@ -2071,9 +2833,26 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.0.0/Obsidian-1.0.0-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.0.0/Obsidian.1.0.0.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "18.3.5",
+                    "chrome": "100.0.4896.160"
+                },
+                "appImageArm": {
+                    "electron": "18.3.5",
+                    "chrome": "100.0.4896.160"
+                },
+                "dmg": {
+                    "electron": "18.3.5",
+                    "chrome": "100.0.4896.160"
+                },
+                "exe": {
+                    "electron": "18.3.5",
+                    "chrome": "100.0.4896.160"
+                }
+            },
             "electronVersion": "18.3.5",
-            "chromeVersion": "100.0.4896.160",
-            "nodeVersion": "16.13.2"
+            "chromeVersion": "100.0.4896.160"
         },
         {
             "version": "1.0.1",
@@ -2082,7 +2861,8 @@
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.0.1.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "1.0.2",
@@ -2091,7 +2871,8 @@
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.0.2.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "1.0.3",
@@ -2108,9 +2889,26 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.0.3/Obsidian-1.0.3-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.0.3/Obsidian.1.0.3.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "18.3.5",
+                    "chrome": "100.0.4896.160"
+                },
+                "appImageArm": {
+                    "electron": "18.3.5",
+                    "chrome": "100.0.4896.160"
+                },
+                "dmg": {
+                    "electron": "18.3.5",
+                    "chrome": "100.0.4896.160"
+                },
+                "exe": {
+                    "electron": "18.3.5",
+                    "chrome": "100.0.4896.160"
+                }
+            },
             "electronVersion": "18.3.5",
-            "chromeVersion": "100.0.4896.160",
-            "nodeVersion": "16.13.2"
+            "chromeVersion": "100.0.4896.160"
         },
         {
             "version": "1.1.0",
@@ -2119,7 +2917,8 @@
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.1.0.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "1.1.1",
@@ -2128,7 +2927,8 @@
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.1.1.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "1.1.2",
@@ -2137,7 +2937,8 @@
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.1.2.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "1.1.3",
@@ -2146,7 +2947,8 @@
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.1.3.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "1.1.4",
@@ -2155,7 +2957,8 @@
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.1.4.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "1.1.5",
@@ -2164,7 +2967,8 @@
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.1.5.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "1.1.6",
@@ -2173,7 +2977,8 @@
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.1.6.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "1.1.7",
@@ -2182,7 +2987,8 @@
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.1.7.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "1.1.8",
@@ -2199,9 +3005,26 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.1.8/Obsidian-1.1.8-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.1.8/Obsidian.1.1.8.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "18.3.15",
+                    "chrome": "100.0.4896.160"
+                },
+                "appImageArm": {
+                    "electron": "18.3.15",
+                    "chrome": "100.0.4896.160"
+                },
+                "dmg": {
+                    "electron": "18.3.15",
+                    "chrome": "100.0.4896.160"
+                },
+                "exe": {
+                    "electron": "18.3.15",
+                    "chrome": "100.0.4896.160"
+                }
+            },
             "electronVersion": "18.3.15",
-            "chromeVersion": "100.0.4896.160",
-            "nodeVersion": "16.13.2"
+            "chromeVersion": "100.0.4896.160"
         },
         {
             "version": "1.1.9",
@@ -2218,9 +3041,26 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.1.9/Obsidian-1.1.9-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.1.9/Obsidian.1.1.9.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "21.3.3",
+                    "chrome": "106.0.5249.199"
+                },
+                "appImageArm": {
+                    "electron": "21.3.3",
+                    "chrome": "106.0.5249.199"
+                },
+                "dmg": {
+                    "electron": "21.3.3",
+                    "chrome": "106.0.5249.199"
+                },
+                "exe": {
+                    "electron": "21.3.3",
+                    "chrome": "106.0.5249.199"
+                }
+            },
             "electronVersion": "21.3.3",
-            "chromeVersion": "106.0.5249.199",
-            "nodeVersion": "16.16.0"
+            "chromeVersion": "106.0.5249.199"
         },
         {
             "version": "1.1.10",
@@ -2229,7 +3069,8 @@
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.1.10.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "1.1.11",
@@ -2238,7 +3079,8 @@
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.1.11.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "1.1.12",
@@ -2247,7 +3089,8 @@
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.1.12.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "1.1.13",
@@ -2256,7 +3099,8 @@
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.1.13.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "1.1.14",
@@ -2265,7 +3109,8 @@
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.1.14.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "1.1.15",
@@ -2282,9 +3127,26 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.1.15/Obsidian-1.1.15-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.1.15/Obsidian.1.1.15.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "21.4.1",
+                    "chrome": "106.0.5249.199"
+                },
+                "appImageArm": {
+                    "electron": "21.4.1",
+                    "chrome": "106.0.5249.199"
+                },
+                "dmg": {
+                    "electron": "21.4.1",
+                    "chrome": "106.0.5249.199"
+                },
+                "exe": {
+                    "electron": "21.4.1",
+                    "chrome": "106.0.5249.199"
+                }
+            },
             "electronVersion": "21.4.1",
-            "chromeVersion": "106.0.5249.199",
-            "nodeVersion": "16.16.0"
+            "chromeVersion": "106.0.5249.199"
         },
         {
             "version": "1.1.16",
@@ -2301,9 +3163,26 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.1.16/Obsidian-1.1.16-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.1.16/Obsidian.1.1.16.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "21.4.1",
+                    "chrome": "106.0.5249.199"
+                },
+                "appImageArm": {
+                    "electron": "21.4.1",
+                    "chrome": "106.0.5249.199"
+                },
+                "dmg": {
+                    "electron": "21.4.1",
+                    "chrome": "106.0.5249.199"
+                },
+                "exe": {
+                    "electron": "21.4.1",
+                    "chrome": "106.0.5249.199"
+                }
+            },
             "electronVersion": "21.4.1",
-            "chromeVersion": "106.0.5249.199",
-            "nodeVersion": "16.16.0"
+            "chromeVersion": "106.0.5249.199"
         },
         {
             "version": "1.2.0",
@@ -2312,7 +3191,8 @@
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.2.0.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "1.2.1",
@@ -2321,7 +3201,8 @@
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.2.1.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "1.2.2",
@@ -2330,7 +3211,8 @@
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.2.2.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "1.2.3",
@@ -2339,7 +3221,8 @@
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.2.3.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "1.2.4",
@@ -2348,7 +3231,8 @@
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.2.4.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "1.2.5",
@@ -2357,7 +3241,8 @@
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.2.5.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "1.2.6",
@@ -2366,7 +3251,8 @@
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.2.6.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "1.2.7",
@@ -2383,9 +3269,26 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.2.7/Obsidian-1.2.7-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.2.7/Obsidian.1.2.7.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "24.1.2",
+                    "chrome": "112.0.5615.87"
+                },
+                "appImageArm": {
+                    "electron": "24.1.2",
+                    "chrome": "112.0.5615.87"
+                },
+                "dmg": {
+                    "electron": "24.1.2",
+                    "chrome": "112.0.5615.87"
+                },
+                "exe": {
+                    "electron": "24.1.2",
+                    "chrome": "112.0.5615.87"
+                }
+            },
             "electronVersion": "24.1.2",
-            "chromeVersion": "112.0.5615.87",
-            "nodeVersion": "18.14.0"
+            "chromeVersion": "112.0.5615.87"
         },
         {
             "version": "1.2.8",
@@ -2402,9 +3305,26 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.2.8/Obsidian-1.2.8-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.2.8/Obsidian.1.2.8.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "24.1.2",
+                    "chrome": "112.0.5615.87"
+                },
+                "appImageArm": {
+                    "electron": "24.1.2",
+                    "chrome": "112.0.5615.87"
+                },
+                "dmg": {
+                    "electron": "24.1.2",
+                    "chrome": "112.0.5615.87"
+                },
+                "exe": {
+                    "electron": "24.1.2",
+                    "chrome": "112.0.5615.87"
+                }
+            },
             "electronVersion": "24.1.2",
-            "chromeVersion": "112.0.5615.87",
-            "nodeVersion": "18.14.0"
+            "chromeVersion": "112.0.5615.87"
         },
         {
             "version": "1.3.0",
@@ -2413,7 +3333,8 @@
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.3.0.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "1.3.1",
@@ -2422,7 +3343,8 @@
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.3.1.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "1.3.2",
@@ -2431,7 +3353,8 @@
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.3.2.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "1.3.3",
@@ -2448,9 +3371,26 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.3.3/Obsidian-1.3.3-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.3.3/Obsidian.1.3.3.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "24.3.1",
+                    "chrome": "112.0.5615.183"
+                },
+                "appImageArm": {
+                    "electron": "24.3.1",
+                    "chrome": "112.0.5615.183"
+                },
+                "dmg": {
+                    "electron": "24.3.1",
+                    "chrome": "112.0.5615.183"
+                },
+                "exe": {
+                    "electron": "24.3.1",
+                    "chrome": "112.0.5615.183"
+                }
+            },
             "electronVersion": "24.3.1",
-            "chromeVersion": "112.0.5615.183",
-            "nodeVersion": "18.14.0"
+            "chromeVersion": "112.0.5615.183"
         },
         {
             "version": "1.3.4",
@@ -2467,9 +3407,26 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.3.4/Obsidian-1.3.4-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.3.4/Obsidian.1.3.4.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "24.3.1",
+                    "chrome": "112.0.5615.183"
+                },
+                "appImageArm": {
+                    "electron": "24.3.1",
+                    "chrome": "112.0.5615.183"
+                },
+                "dmg": {
+                    "electron": "24.3.1",
+                    "chrome": "112.0.5615.183"
+                },
+                "exe": {
+                    "electron": "24.3.1",
+                    "chrome": "112.0.5615.183"
+                }
+            },
             "electronVersion": "24.3.1",
-            "chromeVersion": "112.0.5615.183",
-            "nodeVersion": "18.14.0"
+            "chromeVersion": "112.0.5615.183"
         },
         {
             "version": "1.3.5",
@@ -2486,9 +3443,26 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.3.5/Obsidian-1.3.5-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.3.5/Obsidian.1.3.5.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "24.3.1",
+                    "chrome": "112.0.5615.183"
+                },
+                "appImageArm": {
+                    "electron": "24.3.1",
+                    "chrome": "112.0.5615.183"
+                },
+                "dmg": {
+                    "electron": "24.3.1",
+                    "chrome": "112.0.5615.183"
+                },
+                "exe": {
+                    "electron": "24.3.1",
+                    "chrome": "112.0.5615.183"
+                }
+            },
             "electronVersion": "24.3.1",
-            "chromeVersion": "112.0.5615.183",
-            "nodeVersion": "18.14.0"
+            "chromeVersion": "112.0.5615.183"
         },
         {
             "version": "1.3.6",
@@ -2497,7 +3471,8 @@
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.3.6.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "1.3.7",
@@ -2514,9 +3489,26 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.3.7/Obsidian-1.3.7-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.3.7/Obsidian.1.3.7.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "24.3.1",
+                    "chrome": "112.0.5615.183"
+                },
+                "appImageArm": {
+                    "electron": "24.3.1",
+                    "chrome": "112.0.5615.183"
+                },
+                "dmg": {
+                    "electron": "24.3.1",
+                    "chrome": "112.0.5615.183"
+                },
+                "exe": {
+                    "electron": "24.3.1",
+                    "chrome": "112.0.5615.183"
+                }
+            },
             "electronVersion": "24.3.1",
-            "chromeVersion": "112.0.5615.183",
-            "nodeVersion": "18.14.0"
+            "chromeVersion": "112.0.5615.183"
         },
         {
             "version": "1.4.0",
@@ -2525,7 +3517,8 @@
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.4.0.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "1.4.1",
@@ -2534,7 +3527,8 @@
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.4.1.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "1.4.2",
@@ -2543,7 +3537,8 @@
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.4.2.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "1.4.3",
@@ -2552,7 +3547,8 @@
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.4.3.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "1.4.4",
@@ -2561,7 +3557,8 @@
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.4.4.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "1.4.5",
@@ -2578,9 +3575,26 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.4.5/Obsidian-1.4.5-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.4.5/Obsidian.1.4.5.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "25.8.0",
+                    "chrome": "114.0.5735.289"
+                },
+                "appImageArm": {
+                    "electron": "25.8.0",
+                    "chrome": "114.0.5735.289"
+                },
+                "dmg": {
+                    "electron": "25.8.0",
+                    "chrome": "114.0.5735.289"
+                },
+                "exe": {
+                    "electron": "25.8.0",
+                    "chrome": "114.0.5735.289"
+                }
+            },
             "electronVersion": "25.8.0",
-            "chromeVersion": "114.0.5735.289",
-            "nodeVersion": "18.15.0"
+            "chromeVersion": "114.0.5735.289"
         },
         {
             "version": "1.4.6",
@@ -2589,21 +3603,24 @@
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.4.6.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "1.4.7",
             "minInstallerVersion": "0.14.5",
             "maxInstallerVersion": "1.4.5",
             "isBeta": true,
-            "downloads": {}
+            "downloads": {},
+            "installerInfo": {}
         },
         {
             "version": "1.4.8",
             "minInstallerVersion": "0.14.5",
             "maxInstallerVersion": "1.4.5",
             "isBeta": true,
-            "downloads": {}
+            "downloads": {},
+            "installerInfo": {}
         },
         {
             "version": "1.4.9",
@@ -2612,7 +3629,8 @@
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.4.9.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "1.4.10",
@@ -2629,9 +3647,26 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.4.10/Obsidian-1.4.10-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.4.10/Obsidian.1.4.10.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "25.8.0",
+                    "chrome": "114.0.5735.289"
+                },
+                "appImageArm": {
+                    "electron": "25.8.0",
+                    "chrome": "114.0.5735.289"
+                },
+                "dmg": {
+                    "electron": "25.8.0",
+                    "chrome": "114.0.5735.289"
+                },
+                "exe": {
+                    "electron": "25.8.0",
+                    "chrome": "114.0.5735.289"
+                }
+            },
             "electronVersion": "25.8.0",
-            "chromeVersion": "114.0.5735.289",
-            "nodeVersion": "18.15.0"
+            "chromeVersion": "114.0.5735.289"
         },
         {
             "version": "1.4.11",
@@ -2648,9 +3683,26 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.4.11/Obsidian-1.4.11-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.4.11/Obsidian.1.4.11.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "25.8.0",
+                    "chrome": "114.0.5735.289"
+                },
+                "appImageArm": {
+                    "electron": "25.8.0",
+                    "chrome": "114.0.5735.289"
+                },
+                "dmg": {
+                    "electron": "25.8.0",
+                    "chrome": "114.0.5735.289"
+                },
+                "exe": {
+                    "electron": "25.8.0",
+                    "chrome": "114.0.5735.289"
+                }
+            },
             "electronVersion": "25.8.0",
-            "chromeVersion": "114.0.5735.289",
-            "nodeVersion": "18.15.0"
+            "chromeVersion": "114.0.5735.289"
         },
         {
             "version": "1.4.12",
@@ -2667,9 +3719,26 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.4.12/Obsidian-1.4.12-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.4.12/Obsidian.1.4.12.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "25.8.0",
+                    "chrome": "114.0.5735.289"
+                },
+                "appImageArm": {
+                    "electron": "25.8.0",
+                    "chrome": "114.0.5735.289"
+                },
+                "dmg": {
+                    "electron": "25.8.0",
+                    "chrome": "114.0.5735.289"
+                },
+                "exe": {
+                    "electron": "25.8.0",
+                    "chrome": "114.0.5735.289"
+                }
+            },
             "electronVersion": "25.8.0",
-            "chromeVersion": "114.0.5735.289",
-            "nodeVersion": "18.15.0"
+            "chromeVersion": "114.0.5735.289"
         },
         {
             "version": "1.4.13",
@@ -2686,9 +3755,26 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.4.13/Obsidian-1.4.13-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.4.13/Obsidian.1.4.13.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "25.8.1",
+                    "chrome": "114.0.5735.289"
+                },
+                "appImageArm": {
+                    "electron": "25.8.1",
+                    "chrome": "114.0.5735.289"
+                },
+                "dmg": {
+                    "electron": "25.8.1",
+                    "chrome": "114.0.5735.289"
+                },
+                "exe": {
+                    "electron": "25.8.1",
+                    "chrome": "114.0.5735.289"
+                }
+            },
             "electronVersion": "25.8.1",
-            "chromeVersion": "114.0.5735.289",
-            "nodeVersion": "18.15.0"
+            "chromeVersion": "114.0.5735.289"
         },
         {
             "version": "1.4.14",
@@ -2705,9 +3791,26 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.4.14/Obsidian-1.4.14-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.4.14/Obsidian.1.4.14.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "25.8.1",
+                    "chrome": "114.0.5735.289"
+                },
+                "appImageArm": {
+                    "electron": "25.8.1",
+                    "chrome": "114.0.5735.289"
+                },
+                "dmg": {
+                    "electron": "25.8.1",
+                    "chrome": "114.0.5735.289"
+                },
+                "exe": {
+                    "electron": "25.8.1",
+                    "chrome": "114.0.5735.289"
+                }
+            },
             "electronVersion": "25.8.1",
-            "chromeVersion": "114.0.5735.289",
-            "nodeVersion": "18.15.0"
+            "chromeVersion": "114.0.5735.289"
         },
         {
             "version": "1.4.15",
@@ -2716,7 +3819,8 @@
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.4.15.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "1.4.16",
@@ -2733,9 +3837,26 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.4.16/Obsidian-1.4.16-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.4.16/Obsidian.1.4.16.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "25.8.1",
+                    "chrome": "114.0.5735.289"
+                },
+                "appImageArm": {
+                    "electron": "25.8.1",
+                    "chrome": "114.0.5735.289"
+                },
+                "dmg": {
+                    "electron": "25.8.1",
+                    "chrome": "114.0.5735.289"
+                },
+                "exe": {
+                    "electron": "25.8.1",
+                    "chrome": "114.0.5735.289"
+                }
+            },
             "electronVersion": "25.8.1",
-            "chromeVersion": "114.0.5735.289",
-            "nodeVersion": "18.15.0"
+            "chromeVersion": "114.0.5735.289"
         },
         {
             "version": "1.5.0",
@@ -2744,7 +3865,8 @@
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.5.0.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "1.5.1",
@@ -2753,7 +3875,8 @@
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.5.1.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "1.5.2",
@@ -2762,7 +3885,8 @@
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.5.2.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "1.5.3",
@@ -2779,9 +3903,26 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.5.3/Obsidian-1.5.3-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.5.3/Obsidian.1.5.3.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "25.8.1",
+                    "chrome": "114.0.5735.289"
+                },
+                "appImageArm": {
+                    "electron": "25.8.1",
+                    "chrome": "114.0.5735.289"
+                },
+                "dmg": {
+                    "electron": "25.8.1",
+                    "chrome": "114.0.5735.289"
+                },
+                "exe": {
+                    "electron": "25.8.1",
+                    "chrome": "114.0.5735.289"
+                }
+            },
             "electronVersion": "25.8.1",
-            "chromeVersion": "114.0.5735.289",
-            "nodeVersion": "18.15.0"
+            "chromeVersion": "114.0.5735.289"
         },
         {
             "version": "1.5.4",
@@ -2790,7 +3931,8 @@
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.5.4.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "1.5.5",
@@ -2799,7 +3941,8 @@
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.5.5.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "1.5.6",
@@ -2808,7 +3951,8 @@
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.5.6.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "1.5.7",
@@ -2817,7 +3961,8 @@
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.5.7.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "1.5.8",
@@ -2835,9 +3980,26 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.5.8/Obsidian-1.5.8-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.5.8/Obsidian.1.5.8.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "28.2.3",
+                    "chrome": "120.0.6099.283"
+                },
+                "appImageArm": {
+                    "electron": "28.2.3",
+                    "chrome": "120.0.6099.283"
+                },
+                "dmg": {
+                    "electron": "28.2.3",
+                    "chrome": "120.0.6099.283"
+                },
+                "exe": {
+                    "electron": "28.2.3",
+                    "chrome": "120.0.6099.283"
+                }
+            },
             "electronVersion": "28.2.3",
-            "chromeVersion": "120.0.6099.283",
-            "nodeVersion": "18.18.2"
+            "chromeVersion": "120.0.6099.283"
         },
         {
             "version": "1.5.9",
@@ -2846,7 +4008,8 @@
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.5.9.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "1.5.10",
@@ -2855,7 +4018,8 @@
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.5.10.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "1.5.11",
@@ -2873,9 +4037,26 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.5.11/Obsidian-1.5.11-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.5.11/Obsidian.1.5.11.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "28.2.3",
+                    "chrome": "120.0.6099.283"
+                },
+                "appImageArm": {
+                    "electron": "28.2.3",
+                    "chrome": "120.0.6099.283"
+                },
+                "dmg": {
+                    "electron": "28.2.3",
+                    "chrome": "120.0.6099.283"
+                },
+                "exe": {
+                    "electron": "28.2.3",
+                    "chrome": "120.0.6099.283"
+                }
+            },
             "electronVersion": "28.2.3",
-            "chromeVersion": "120.0.6099.283",
-            "nodeVersion": "18.18.2"
+            "chromeVersion": "120.0.6099.283"
         },
         {
             "version": "1.5.12",
@@ -2893,9 +4074,26 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.5.12/Obsidian-1.5.12-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.5.12/Obsidian.1.5.12.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "28.2.3",
+                    "chrome": "120.0.6099.283"
+                },
+                "appImageArm": {
+                    "electron": "28.2.3",
+                    "chrome": "120.0.6099.283"
+                },
+                "dmg": {
+                    "electron": "28.2.3",
+                    "chrome": "120.0.6099.283"
+                },
+                "exe": {
+                    "electron": "28.2.3",
+                    "chrome": "120.0.6099.283"
+                }
+            },
             "electronVersion": "28.2.3",
-            "chromeVersion": "120.0.6099.283",
-            "nodeVersion": "18.18.2"
+            "chromeVersion": "120.0.6099.283"
         },
         {
             "version": "1.6.0",
@@ -2904,7 +4102,8 @@
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.6.0.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "1.6.1",
@@ -2913,7 +4112,8 @@
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.6.1.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "1.6.2",
@@ -2931,9 +4131,26 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.6.2/Obsidian-1.6.2-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.6.2/Obsidian.1.6.2.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "28.3.3",
+                    "chrome": "120.0.6099.291"
+                },
+                "appImageArm": {
+                    "electron": "28.3.3",
+                    "chrome": "120.0.6099.291"
+                },
+                "dmg": {
+                    "electron": "28.3.3",
+                    "chrome": "120.0.6099.291"
+                },
+                "exe": {
+                    "electron": "28.3.3",
+                    "chrome": "120.0.6099.291"
+                }
+            },
             "electronVersion": "28.3.3",
-            "chromeVersion": "120.0.6099.291",
-            "nodeVersion": "18.18.2"
+            "chromeVersion": "120.0.6099.291"
         },
         {
             "version": "1.6.3",
@@ -2951,9 +4168,26 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.6.3/Obsidian-1.6.3-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.6.3/Obsidian.1.6.3.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "28.3.3",
+                    "chrome": "120.0.6099.291"
+                },
+                "appImageArm": {
+                    "electron": "28.3.3",
+                    "chrome": "120.0.6099.291"
+                },
+                "dmg": {
+                    "electron": "28.3.3",
+                    "chrome": "120.0.6099.291"
+                },
+                "exe": {
+                    "electron": "28.3.3",
+                    "chrome": "120.0.6099.291"
+                }
+            },
             "electronVersion": "28.3.3",
-            "chromeVersion": "120.0.6099.291",
-            "nodeVersion": "18.18.2"
+            "chromeVersion": "120.0.6099.291"
         },
         {
             "version": "1.6.4",
@@ -2962,7 +4196,8 @@
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.6.4.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "1.6.5",
@@ -2980,9 +4215,26 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.6.5/Obsidian-1.6.5.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.6.5/Obsidian-1.6.5.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "30.1.2",
+                    "chrome": "124.0.6367.243"
+                },
+                "appImageArm": {
+                    "electron": "30.1.2",
+                    "chrome": "124.0.6367.243"
+                },
+                "dmg": {
+                    "electron": "30.1.2",
+                    "chrome": "124.0.6367.243"
+                },
+                "exe": {
+                    "electron": "30.1.2",
+                    "chrome": "124.0.6367.243"
+                }
+            },
             "electronVersion": "30.1.2",
-            "chromeVersion": "124.0.6367.243",
-            "nodeVersion": "20.14.0"
+            "chromeVersion": "124.0.6367.243"
         },
         {
             "version": "1.6.6",
@@ -2991,7 +4243,8 @@
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.6.6.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "1.6.7",
@@ -3009,9 +4262,26 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.6.7/Obsidian-1.6.7.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.6.7/Obsidian-1.6.7.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "30.1.2",
+                    "chrome": "124.0.6367.243"
+                },
+                "appImageArm": {
+                    "electron": "30.1.2",
+                    "chrome": "124.0.6367.243"
+                },
+                "dmg": {
+                    "electron": "30.1.2",
+                    "chrome": "124.0.6367.243"
+                },
+                "exe": {
+                    "electron": "30.1.2",
+                    "chrome": "124.0.6367.243"
+                }
+            },
             "electronVersion": "30.1.2",
-            "chromeVersion": "124.0.6367.243",
-            "nodeVersion": "20.14.0"
+            "chromeVersion": "124.0.6367.243"
         },
         {
             "version": "1.7.0",
@@ -3020,7 +4290,8 @@
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.7.0.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "1.7.1",
@@ -3029,7 +4300,8 @@
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.7.1.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "1.7.2",
@@ -3038,7 +4310,8 @@
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.7.2.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "1.7.3",
@@ -3047,7 +4320,8 @@
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.7.3.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "1.7.4",
@@ -3065,9 +4339,26 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.7.4/Obsidian-1.7.4.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.7.4/Obsidian-1.7.4.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "31.6.0",
+                    "chrome": "126.0.6478.234"
+                },
+                "appImageArm": {
+                    "electron": "31.6.0",
+                    "chrome": "126.0.6478.234"
+                },
+                "dmg": {
+                    "electron": "31.6.0",
+                    "chrome": "126.0.6478.234"
+                },
+                "exe": {
+                    "electron": "31.6.0",
+                    "chrome": "126.0.6478.234"
+                }
+            },
             "electronVersion": "31.6.0",
-            "chromeVersion": "126.0.6478.234",
-            "nodeVersion": "20.17.0"
+            "chromeVersion": "126.0.6478.234"
         },
         {
             "version": "1.7.5",
@@ -3085,9 +4376,26 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.7.5/Obsidian-1.7.5.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.7.5/Obsidian-1.7.5.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "32.2.2",
+                    "chrome": "128.0.6613.186"
+                },
+                "appImageArm": {
+                    "electron": "32.2.2",
+                    "chrome": "128.0.6613.186"
+                },
+                "dmg": {
+                    "electron": "32.2.2",
+                    "chrome": "128.0.6613.186"
+                },
+                "exe": {
+                    "electron": "32.2.2",
+                    "chrome": "128.0.6613.186"
+                }
+            },
             "electronVersion": "32.2.2",
-            "chromeVersion": "128.0.6613.186",
-            "nodeVersion": "20.18.0"
+            "chromeVersion": "128.0.6613.186"
         },
         {
             "version": "1.7.6",
@@ -3105,9 +4413,26 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.7.6/Obsidian-1.7.6.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.7.6/Obsidian-1.7.6.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "32.2.3",
+                    "chrome": "128.0.6613.186"
+                },
+                "appImageArm": {
+                    "electron": "32.2.3",
+                    "chrome": "128.0.6613.186"
+                },
+                "dmg": {
+                    "electron": "32.2.3",
+                    "chrome": "128.0.6613.186"
+                },
+                "exe": {
+                    "electron": "32.2.3",
+                    "chrome": "128.0.6613.186"
+                }
+            },
             "electronVersion": "32.2.3",
-            "chromeVersion": "128.0.6613.186",
-            "nodeVersion": "20.18.0"
+            "chromeVersion": "128.0.6613.186"
         },
         {
             "version": "1.7.7",
@@ -3125,9 +4450,26 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.7.7/Obsidian-1.7.7.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.7.7/Obsidian-1.7.7.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "32.2.5",
+                    "chrome": "128.0.6613.186"
+                },
+                "appImageArm": {
+                    "electron": "32.2.5",
+                    "chrome": "128.0.6613.186"
+                },
+                "dmg": {
+                    "electron": "32.2.5",
+                    "chrome": "128.0.6613.186"
+                },
+                "exe": {
+                    "electron": "32.2.5",
+                    "chrome": "128.0.6613.186"
+                }
+            },
             "electronVersion": "32.2.5",
-            "chromeVersion": "128.0.6613.186",
-            "nodeVersion": "20.18.0"
+            "chromeVersion": "128.0.6613.186"
         },
         {
             "version": "1.8.0",
@@ -3136,7 +4478,8 @@
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.8.0.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "1.8.1",
@@ -3145,7 +4488,8 @@
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.8.1.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "1.8.2",
@@ -3154,7 +4498,8 @@
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.8.2.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "1.8.3",
@@ -3172,9 +4517,26 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.8.3/Obsidian-1.8.3.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.8.3/Obsidian-1.8.3.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "33.3.2",
+                    "chrome": "130.0.6723.191"
+                },
+                "appImageArm": {
+                    "electron": "33.3.2",
+                    "chrome": "130.0.6723.191"
+                },
+                "dmg": {
+                    "electron": "33.3.2",
+                    "chrome": "130.0.6723.191"
+                },
+                "exe": {
+                    "electron": "33.3.2",
+                    "chrome": "130.0.6723.191"
+                }
+            },
             "electronVersion": "33.3.2",
-            "chromeVersion": "130.0.6723.191",
-            "nodeVersion": "20.18.1"
+            "chromeVersion": "130.0.6723.191"
         },
         {
             "version": "1.8.4",
@@ -3192,9 +4554,26 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.8.4/Obsidian-1.8.4.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.8.4/Obsidian-1.8.4.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "33.3.2",
+                    "chrome": "130.0.6723.191"
+                },
+                "appImageArm": {
+                    "electron": "33.3.2",
+                    "chrome": "130.0.6723.191"
+                },
+                "dmg": {
+                    "electron": "33.3.2",
+                    "chrome": "130.0.6723.191"
+                },
+                "exe": {
+                    "electron": "33.3.2",
+                    "chrome": "130.0.6723.191"
+                }
+            },
             "electronVersion": "33.3.2",
-            "chromeVersion": "130.0.6723.191",
-            "nodeVersion": "20.18.1"
+            "chromeVersion": "130.0.6723.191"
         },
         {
             "version": "1.8.5",
@@ -3203,7 +4582,8 @@
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.8.5.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "1.8.6",
@@ -3212,7 +4592,8 @@
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.8.6.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "1.8.7",
@@ -3230,9 +4611,26 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.8.7/Obsidian-1.8.7.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.8.7/Obsidian-1.8.7.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "33.3.2",
+                    "chrome": "130.0.6723.191"
+                },
+                "appImageArm": {
+                    "electron": "33.3.2",
+                    "chrome": "130.0.6723.191"
+                },
+                "dmg": {
+                    "electron": "33.3.2",
+                    "chrome": "130.0.6723.191"
+                },
+                "exe": {
+                    "electron": "33.3.2",
+                    "chrome": "130.0.6723.191"
+                }
+            },
             "electronVersion": "33.3.2",
-            "chromeVersion": "130.0.6723.191",
-            "nodeVersion": "20.18.1"
+            "chromeVersion": "130.0.6723.191"
         },
         {
             "version": "1.8.8",
@@ -3241,7 +4639,8 @@
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.8.8.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "1.8.9",
@@ -3259,9 +4658,26 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.8.9/Obsidian-1.8.9.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.8.9/Obsidian-1.8.9.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "34.3.0",
+                    "chrome": "132.0.6834.210"
+                },
+                "appImageArm": {
+                    "electron": "34.3.0",
+                    "chrome": "132.0.6834.210"
+                },
+                "dmg": {
+                    "electron": "34.3.0",
+                    "chrome": "132.0.6834.210"
+                },
+                "exe": {
+                    "electron": "34.3.0",
+                    "chrome": "132.0.6834.210"
+                }
+            },
             "electronVersion": "34.3.0",
-            "chromeVersion": "132.0.6834.210",
-            "nodeVersion": "20.18.3"
+            "chromeVersion": "132.0.6834.210"
         },
         {
             "version": "1.8.10",
@@ -3279,9 +4695,26 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.8.10/Obsidian-1.8.10.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.8.10/Obsidian-1.8.10.exe"
             },
+            "installerInfo": {
+                "appImage": {
+                    "electron": "34.2.0",
+                    "chrome": "132.0.6834.196"
+                },
+                "appImageArm": {
+                    "electron": "34.5.2",
+                    "chrome": "132.0.6834.210"
+                },
+                "dmg": {
+                    "electron": "34.2.0",
+                    "chrome": "132.0.6834.196"
+                },
+                "exe": {
+                    "electron": "34.2.0",
+                    "chrome": "132.0.6834.196"
+                }
+            },
             "electronVersion": "34.2.0",
-            "chromeVersion": "132.0.6834.196",
-            "nodeVersion": "20.18.2"
+            "chromeVersion": "132.0.6834.196"
         },
         {
             "version": "1.9.0",
@@ -3290,7 +4723,8 @@
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.9.0.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "1.9.1",
@@ -3299,7 +4733,8 @@
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.9.1.asar.gz"
-            }
+            },
+            "installerInfo": {}
         },
         {
             "version": "1.9.2",
@@ -3308,7 +4743,8 @@
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.9.2.asar.gz"
-            }
+            },
+            "installerInfo": {}
         }
     ]
 }

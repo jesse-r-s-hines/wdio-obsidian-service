@@ -12,6 +12,11 @@ export type ObsidianVersionInfos = {
     versions: ObsidianVersionInfo[],
 }
 
+export type ObsidianInstallerInfo = {
+    electron: string,
+    chrome: string,
+}
+
 /**
  * Metadata about a specific Obsidian version, including the min/max compatible installer versions, download urls, and
  * the internal electron version.
@@ -33,9 +38,16 @@ export type ObsidianVersionInfo = {
         dmg?: string,
         exe?: string,
     },
+    installerInfo: {
+        appImage?: ObsidianInstallerInfo,
+        appImageArm?: ObsidianInstallerInfo,
+        dmg?: ObsidianInstallerInfo,
+        exe?: ObsidianInstallerInfo,
+    },
+    /** @deprecated Use installerInfo instead */
     electronVersion?: string,
+    /** @deprecated Use installerInfo instead */
     chromeVersion?: string,
-    nodeVersion?: string,
 }
 
 /**

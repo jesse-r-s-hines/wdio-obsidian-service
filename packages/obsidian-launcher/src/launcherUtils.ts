@@ -5,11 +5,10 @@ import child_process from "child_process"
 import spawn from "cross-spawn"
 import semver from "semver"
 import _ from "lodash"
-import CDP from 'chrome-remote-interface'
 import { pipeline } from "stream/promises";
 import zlib from "zlib"
-import { makeTmpDir, atomicCreate, maybe, withTimeout, sleep } from "./utils.js";
-import { ObsidianVersionInfo } from "./types.js";
+import { atomicCreate } from "./utils.js";
+import { ObsidianInstallerInfo, ObsidianVersionInfo } from "./types.js";
 
 
 export function normalizeGitHubRepo(repo: string) {
@@ -122,67 +121,51 @@ export function parseObsidianGithubRelease(gitHubRelease: any): Partial<Obsidian
 
 /**
  * Extract electron and chrome versions for an Obsidian version.
+ * Takes path to the installer (the whole folder, not just the entrypoint executable).
  */
-export async function getElectronVersionInfo(
-    version: string, binaryPath: string,
-):  Promise<Partial<ObsidianVersionInfo>> {
-    console.log(`${version}: Retrieving electron & chrome versions...`);
+export async function getInstallerInfo(installerPath: string):  Promise<ObsidianInstallerInfo> {
+    installerPath = path.resolve(installerPath);
+    console.log(`${installerPath}: Extracting electron & chrome versions...`);
 
-    const configDir = await makeTmpDir('fetch-obsidian-versions-');
+    // This is horrific but works...
+    // We grep the binary for the electron and chrome version strings. The proper way to do this would be to spin up
+    // Obsidian and use CDP protocol to extract `process.versions`. However, that requires running Obsidian, and we want
+    // to get the versions for all platforms and architectures. So we'd either have to set up some kind of GitHub
+    // job matrix to run this on all platform/arch combinations or we can just grep the binary.
 
-    const proc = child_process.spawn(binaryPath, [
-        `--remote-debugging-port=0`, // 0 will make it choose a random available port
-        '--test-type=webdriver',
-        `--user-data-dir=${configDir}`,
-        '--no-sandbox', // Workaround for SUID issue, see https://github.com/electron/electron/issues/42510
-    ]);
-    const procExit = new Promise<number>((resolve) => proc.on('close', (code) => resolve(code ?? -1)));
-    // proc.stdout.on('data', data => console.log(`stdout: ${data}`));
-    // proc.stderr.on('data', data => console.log(`stderr: ${data}`));
+    let matches: string[] = [];
+    const installerFiles = await fsAsync.readdir(installerPath, {recursive: true, withFileTypes: true});
+    for (const file of installerFiles) {
+        if (file.isFile() && !file.name.endsWith(".asar")) {
+            const stream = fs.createReadStream(path.join(file.parentPath, file.name), {encoding: "utf-8"});
 
-    let dependencyVersions: any;
-    try {
-        // Wait for the logs showing that Obsidian is ready, and pull the chosen DevTool Protocol port from it
-        const portPromise = new Promise<number>((resolve, reject) => {
-            void procExit.then(() => reject(Error("Processed ended without opening a port")))
-            proc.stderr.on('data', data => {
-                const port = data.toString().match(/ws:\/\/[\w.]+?:(\d+)/)?.[1];
-                if (port) {
-                    resolve(Number(port));
-                }
-            });
-        })
-
-        const port = await maybe(withTimeout(portPromise, 10 * 1000));
-        if (!port.success) {
-            throw new Error("Timed out waiting for Chrome DevTools protocol port");
+            let prev = "";
+            for await (let chunk of stream) {
+                const regex = /Chrome\/\d+\.\d+\.\d+\.\d+|Electron\/\d+\.\d+\.\d+/g;
+                chunk = prev + chunk; // include part of prev in case string gets split across chunks
+                matches.push(...[...(prev + chunk).matchAll(regex)].map(m => m[0]))
+                prev = chunk.slice(-64);
+            }
         }
-        const client = await CDP({port: port.result});
-        const response = await client.Runtime.evaluate({ expression: "JSON.stringify(process.versions)" });
-        dependencyVersions = JSON.parse(response.result.value);
-        await client.close();
-    } finally {
-        proc.kill("SIGTERM");
-        const timeout = await maybe(withTimeout(procExit, 4 * 1000));
-        if (!timeout.success) {
-            console.log(`${version}: Stuck process ${proc.pid}, using SIGKILL`);
-            proc.kill("SIGKILL");
-        }
-        await procExit;
-        await sleep(1000); // Need to wait a bit or sometimes the rm fails because something else is writing to it
-        await fsAsync.rm(configDir, { recursive: true, force: true });
     }
 
-    if (!dependencyVersions?.electron || !dependencyVersions?.chrome) {
-        throw Error(`Failed to extract electron and chrome versions for ${version}`)
+    matches = _(matches)
+        .map(v => v.split(/\/|\./))
+        .sortBy(0, ...[1, 2, 3, 4].map(i => (v: string[]) => Number(v[i] ?? -1)))
+        .map(([app, ...version]) => `${app}/${version.join('.')}`)
+        .reverse()
+        .value();
+    
+    const electron = matches.find(v => v.startsWith("Electron/"))?.split("/")[1];
+    const chrome = matches.find(v => v.startsWith("Chrome/"))?.split("/")[1];
+
+    if (!electron || !chrome) {
+        throw new Error(`Failed to extract Electron and Chrome versions from binary ${installerPath}`)
     }
 
-    return {
-        electronVersion: dependencyVersions.electron,
-        chromeVersion: dependencyVersions.chrome,
-        nodeVersion: dependencyVersions.node,
-    };
+    return { electron, chrome }
 }
+
 
 /**
  * Add some corrections to the Obsidian version data.
@@ -232,11 +215,18 @@ export function normalizeObsidianVersionInfo(versionInfo: Partial<ObsidianVersio
             dmg: versionInfo.downloads?.dmg,
             exe: versionInfo.downloads?.exe,
         },
-        electronVersion: versionInfo.electronVersion,
-        chromeVersion: versionInfo.chromeVersion,
-        nodeVersion: versionInfo.nodeVersion,
+        installerInfo: {
+            appImage: versionInfo.installerInfo?.appImage,
+            appImageArm: versionInfo.installerInfo?.appImageArm,
+            dmg: versionInfo.installerInfo?.dmg,
+            exe: versionInfo.installerInfo?.exe,
+        },
+        // kept for backwards compatibility
+        electronVersion: versionInfo.installerInfo?.appImage?.electron,
+        chromeVersion: versionInfo.installerInfo?.appImage?.chrome,
     };
     versionInfo.downloads = _.omitBy(versionInfo.downloads, v => v === undefined);
+    versionInfo.installerInfo = _.omitBy(versionInfo.installerInfo, v => v === undefined);
     versionInfo = _.omitBy(versionInfo, v => v === undefined);
     return versionInfo as ObsidianVersionInfo;
 }

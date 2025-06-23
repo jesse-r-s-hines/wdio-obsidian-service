@@ -8,16 +8,15 @@ import semver from "semver"
 import { fileURLToPath } from "url";
 import { fileExists, makeTmpDir, atomicCreate, linkOrCp, maybe, pool, mergeKeepUndefined } from "./utils.js";
 import {
-    ObsidianVersionInfo, ObsidianCommunityPlugin, ObsidianCommunityTheme,
+    ObsidianVersionInfo, ObsidianCommunityPlugin, ObsidianCommunityTheme, ObsidianVersionInfos, ObsidianInstallerInfo,
     PluginEntry, DownloadedPluginEntry, ThemeEntry, DownloadedThemeEntry,
-    ObsidianVersionInfos,
 } from "./types.js";
 import { fetchObsidianAPI, fetchGitHubAPIPaginated, downloadResponse } from "./apis.js";
 import ChromeLocalStorage from "./chromeLocalStorage.js";
 import {
     normalizeGitHubRepo, extractGz, extractObsidianAppImage, extractObsidianExe, extractObsidianDmg,
     parseObsidianDesktopRelease, parseObsidianGithubRelease, correctObsidianVersionInfo,
-    getElectronVersionInfo, normalizeObsidianVersionInfo,
+    getInstallerInfo, normalizeObsidianVersionInfo,
 } from "./launcherUtils.js";
 import _ from "lodash"
 
@@ -259,7 +258,7 @@ export class ObsidianLauncher {
         platform = platform ?? process.platform;
         arch = arch ?? process.arch;
         const installerVersionInfo = await this.getVersionInfo(installerVersion);
-        return await this.downloadInstallerFromVersionInfo(installerVersionInfo, platform, arch);
+        return (await this.downloadInstallerFromVersionInfo(installerVersionInfo, platform, arch))[1];
     }
 
     /**
@@ -268,15 +267,15 @@ export class ObsidianLauncher {
      */
     private async downloadInstallerFromVersionInfo(
         versionInfo: ObsidianVersionInfo, platform: NodeJS.Platform, arch: NodeJS.Architecture,
-    ): Promise<string> {
+    ): Promise<[string, string]> {
         const installerVersion = versionInfo.version;
         const cacheDir = path.join(this.cacheDir, `obsidian-installer/${platform}-${arch}/Obsidian-${installerVersion}`);
         
-        let installerPath: string
+        let binaryPath: string
         let downloader: ((tmpDir: string) => Promise<string>)|undefined
         
         if (platform == "linux") {
-            installerPath = path.join(cacheDir, "obsidian");
+            binaryPath = path.join(cacheDir, "obsidian");
             let installerUrl: string|undefined
             if (arch.startsWith("arm")) {
                 installerUrl = versionInfo.downloads.appImageArm;
@@ -293,7 +292,7 @@ export class ObsidianLauncher {
                 };
             }
         } else if (platform == "win32") {
-            installerPath = path.join(cacheDir, "Obsidian.exe")
+            binaryPath = path.join(cacheDir, "Obsidian.exe")
             const installerUrl = versionInfo.downloads.exe;
             let appArch: string|undefined
             if (arch == "x64") {
@@ -313,7 +312,7 @@ export class ObsidianLauncher {
                 };
             }
         } else if (platform == "darwin") {
-            installerPath = path.join(cacheDir, "Contents/MacOS/Obsidian");
+            binaryPath = path.join(cacheDir, "Contents/MacOS/Obsidian");
             const installerUrl = versionInfo.downloads.dmg;
             if (installerUrl) {
                 downloader = async (tmpDir) => {
@@ -332,11 +331,11 @@ export class ObsidianLauncher {
             throw Error(`No Obsidian installer found for v${installerVersion} ${process.platform} ${process.arch}`);
         }
 
-        if (!(await fileExists(installerPath))) {
+        if (!(await fileExists(binaryPath))) {
             console.log(`Downloading Obsidian installer v${installerVersion}...`)
             await atomicCreate(cacheDir, downloader);
         }
-        return installerPath;
+        return [cacheDir, binaryPath];
     }
 
     /**
@@ -963,7 +962,7 @@ export class ObsidianLauncher {
     
         const githubReleases = await fetchGitHubAPIPaginated(`repos/${repo}/releases`);
     
-        const versionMap: _.Dictionary<Partial<ObsidianVersionInfo>> = _.keyBy(
+        let versionMap: _.Dictionary<Partial<ObsidianVersionInfo>> = _.keyBy(
             original?.versions ?? [],
             v => v.version,
         );
@@ -984,19 +983,28 @@ export class ObsidianLauncher {
                 versionMap[release.name] = _.merge({}, versionMap[release.name], parseObsidianGithubRelease(release));
             }
         }
-    
-        const dependencyVersions = await pool(maxInstances,
-            Object.values(versionMap).filter(v => v.downloads?.appImage && !v.chromeVersion),
-            async (v) => {
-                const binaryPath = await this.downloadInstallerFromVersionInfo(
-                    v as ObsidianVersionInfo, process.platform, process.arch,
-                );
-                const electronVersionInfo = await getElectronVersionInfo(v.version!, binaryPath);
-                return {...v, ...electronVersionInfo};
-            },
-        )
-        for (const deps of dependencyVersions) {
-            versionMap[deps.version!] = _.merge({}, versionMap[deps.version!], deps);
+
+        // get all installers we need to extract info for
+        const newInstallers = Object.values(versionMap)
+            .filter(v => v.downloads?.appImage && !v.installerInfo)
+            .flatMap(v => [
+                [v, "appImage", "linux", "x64"],
+                [v, "appImageArm", "linux", "arm64"],
+                [v, "dmg", "darwin", "arm64"],
+                [v, "exe", "win32", "x64"],
+            ] as const)
+            .filter(([v, key]) => !!v.downloads![key])
+        const installerInfos = await pool(maxInstances, newInstallers, async ([v, key, platform, arch]) => {
+            const [installerPath, binaryPath] = await this.downloadInstallerFromVersionInfo(
+                v as ObsidianVersionInfo, platform, arch,
+            );
+            const installerInfo = await getInstallerInfo(installerPath);
+            return [v.version!, key, installerInfo] as const;
+        })
+
+        for (const [version, key, installerInfo] of installerInfos) {
+            versionMap[version].installerInfo = versionMap[version].installerInfo ?? {};
+            versionMap[version].installerInfo[key] = installerInfo;
         }
     
         // populate minInstallerVersion and maxInstallerVersion and add corrections
