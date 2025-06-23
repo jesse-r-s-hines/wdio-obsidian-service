@@ -33,6 +33,8 @@ async function downloadIfNotExists(url: string, dest: string) {
 
 async function testLaunch(proc: child_process.ChildProcess) {
     const procExit = new Promise<number>((resolve) => proc.on('close', (code) => resolve(code ?? -1)));
+    // proc.stdout!.on('data', data => console.log(`obsidian: ${data}`));
+    // proc.stderr!.on('data', data => console.log(`obsidian: ${data}`));
     const port = await new Promise<number>((resolve, reject) => {
         void procExit.then(() => reject(Error("Processed ended without opening a port")))
         proc.stderr!.on('data', data => {

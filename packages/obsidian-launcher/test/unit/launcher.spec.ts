@@ -55,7 +55,10 @@ describe('ObsdianLauncher resolve versions', () => {
         [["latest", "latest"], ["1.7.7", "1.7.7"]],
         [["latest", "earliest"], ["1.7.7", "1.1.9"]],
         [["latest-beta", "latest"], ["1.8.0", "1.7.7"]],
-        [["0.14.5", "earliest"], ["0.14.5", "0.11.0"]],
+        // There are no linux arm releases for older obsidian versions
+        [["0.14.5", "earliest"], ["0.14.5",
+            (process.platform == "linux" && process.arch.startsWith("arm")) ? "0.12.15" : "0.11.0"]
+        ],
         [["0.14.5", "latest"], ["0.14.5", "0.14.5"]],
     ]
 
