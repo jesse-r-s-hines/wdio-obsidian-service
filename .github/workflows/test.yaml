@@ -12,6 +12,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          # Test os and architecture combinations
           - os: ubuntu-latest
             node-version: "18.x"
             test-preset: "sample"
@@ -22,6 +23,15 @@ jobs:
             node-version: "18.x"
             test-preset: "first-and-last"
             max-instances: 1
+          - os: ubuntu-24.04-arm
+            node-version: "22.x"
+            test-preset: "basic"
+          - os: windows-11-arm
+            node-version: "22.x"
+            test-preset: "basic"
+          - os: macos-13 # x86
+            node-version: "18.x"
+            test-preset: "basic"
           # Also test other node versions
           - os: ubuntu-latest
             node-version: "20.x"
@@ -60,7 +70,7 @@ jobs:
       - name: Run e2e tests
         # On linux we need to use xvfb-run to setup a virtual display server
         run: |
-          ${{ matrix.os == 'ubuntu-latest' && 'xvfb-run --server-args="-screen 0 1280x1024x24"  \' || '' }}
+          ${{ startsWith(matrix.os, 'ubuntu-') && 'xvfb-run --server-args="-screen 0 1280x1024x24"  \' || '' }}
           npm run test:e2e
         env:
           TEST_PRESET: ${{matrix.test-preset}}
