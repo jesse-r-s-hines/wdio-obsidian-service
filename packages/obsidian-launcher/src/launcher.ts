@@ -262,11 +262,11 @@ export class ObsidianLauncher {
         const cacheDir = path.join(this.cacheDir, `obsidian-installer/${platform}-${arch}/Obsidian-${installerVersion}`);
 
         let binaryPath: string|undefined;
+        let installerUrl: string|undefined;
         let downloader: ((tmpDir: string) => Promise<string>)|undefined
         
         if (platform == "linux") {
             binaryPath = path.join(cacheDir, "obsidian");
-            let installerUrl: string|undefined
             if (arch == "x64") {
                 installerUrl = versionInfo.downloads.appImage;
             } else if (arch == "arm64"){
@@ -275,7 +275,7 @@ export class ObsidianLauncher {
             if (installerUrl) {
                 downloader = async (tmpDir) => {
                     const appImage = path.join(tmpDir, "Obsidian.AppImage");
-                    await downloadResponse(await fetch(installerUrl), appImage);
+                    await downloadResponse(await fetch(installerUrl!), appImage);
                     const obsidianFolder = path.join(tmpDir, "Obsidian");
                     await extractObsidianAppImage(appImage, obsidianFolder);
                     return obsidianFolder;
@@ -283,31 +283,25 @@ export class ObsidianLauncher {
             }
         } else if (platform == "win32") {
             binaryPath = path.join(cacheDir, "Obsidian.exe")
-            const installerUrl = versionInfo.downloads.exe;
-            let appArch: string|undefined
-            if (arch == "x64") {
-                appArch = "app-64"
-            } else if (arch == "ia32") {
-                appArch = "app-32"
-            } else if (arch == "arm64") {
-                appArch = "app-arm64"
+            if (["x64", "ia32", "arm64"].includes(arch)) {
+                installerUrl = versionInfo.downloads.exe;
             }
-            if (installerUrl && appArch) {
+            if (installerUrl) {
                 downloader = async (tmpDir) => {
                     const installerExecutable = path.join(tmpDir, "Obsidian.exe");
-                    await downloadResponse(await fetch(installerUrl), installerExecutable);
+                    await downloadResponse(await fetch(installerUrl!), installerExecutable);
                     const obsidianFolder = path.join(tmpDir, "Obsidian");
-                    await extractObsidianExe(installerExecutable, appArch, obsidianFolder);
+                    await extractObsidianExe(installerExecutable, arch, obsidianFolder);
                     return obsidianFolder;
                 };
             }
         } else if (platform == "darwin") {
             binaryPath = path.join(cacheDir, "Contents/MacOS/Obsidian");
-            const installerUrl = versionInfo.downloads.dmg;
+            installerUrl = versionInfo.downloads.dmg;
             if (installerUrl) {
                 downloader = async (tmpDir) => {
                     const dmg = path.join(tmpDir, "Obsidian.dmg");
-                    await downloadResponse(await fetch(installerUrl), dmg);
+                    await downloadResponse(await fetch(installerUrl!), dmg);
                     const obsidianFolder = path.join(tmpDir, "Obsidian");
                     await extractObsidianDmg(dmg, obsidianFolder);
                     return obsidianFolder;

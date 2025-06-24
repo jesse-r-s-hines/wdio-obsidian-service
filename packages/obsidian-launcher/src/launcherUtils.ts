@@ -59,9 +59,18 @@ export async function extractObsidianAppImage(appImage: string, dest: string) {
  * Obsidian appears to use NSIS to bundle their Window's installers. We want to extract the executable
  * files directly without running the installer. 7zip can extract the raw files from the exe.
  */
-export async function extractObsidianExe(exe: string, appArch: string, dest: string) {
-    // The installer contains several `.7z` files with files for different architectures 
-    const subArchive = `$PLUGINSDIR/${appArch}.7z`;
+export async function extractObsidianExe(exe: string, arch: NodeJS.Architecture, dest: string) {
+    // The installer contains several `.7z` files with files for different architectures
+    let subArchive: string
+    if (arch == "x64") {
+        subArchive = `$PLUGINSDIR/app-64.7z`;
+    } else if (arch == "ia32") {
+        subArchive = `$PLUGINSDIR/app-32.7z`;
+    } else if (arch == "arm64") {
+        subArchive = `$PLUGINSDIR/app-arm64.7z`;
+    } else {
+        throw Error(`No Obsidian installer found for ${process.platform} ${process.arch}`);
+    }
     await atomicCreate(dest, async (tmpDir) => {
         await sevenZ(["x", "-oinstaller", path.relative(tmpDir, exe), subArchive], {cwd: tmpDir});
         await sevenZ(["x", "-oobsidian", path.join("installer", subArchive)], {cwd: tmpDir});
@@ -140,7 +149,7 @@ export async function getInstallerInfo(
             await extractObsidianAppImage(installerPath, exractedPath);
             platforms = ['linux-' + (installerKey == "appImage" ? 'x64' : 'arm64')];
         } else if (installerKey == "exe") {
-            await extractObsidianExe(installerPath, "app-64", exractedPath);
+            await extractObsidianExe(installerPath, "x64", exractedPath);
             const {stdout} = await sevenZ(["l", '-ba', path.relative(tmpDir, installerPath)], {cwd: tmpDir});
             const lines = stdout.trim().split("\n").map(l => l.trim());
             const files = lines.map(l => l.split(/\s+/).at(-1)!.replace("\\", "/"));
