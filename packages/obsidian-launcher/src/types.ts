@@ -13,8 +13,12 @@ export type ObsidianVersionInfos = {
 }
 
 export type ObsidianInstallerInfo = {
+    /** Electron version */
     electron: string,
+    /** Chrome version */
     chrome: string,
+    /** platform-arch combinations supported by the installer */
+    platforms: string[],
 }
 
 /**

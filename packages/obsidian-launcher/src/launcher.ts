@@ -257,30 +257,20 @@ export class ObsidianLauncher {
     ): Promise<string> {
         platform = platform ?? process.platform;
         arch = arch ?? process.arch;
-        const installerVersionInfo = await this.getVersionInfo(installerVersion);
-        return (await this.downloadInstallerFromVersionInfo(installerVersionInfo, platform, arch))[1];
-    }
-
-    /**
-     * Helper for downloadInstaller, takes a ObsidianVersionInfo so it doesn't use obsidian-versions.json and can be
-     * used in updateObsidianVersionList.
-     */
-    private async downloadInstallerFromVersionInfo(
-        versionInfo: ObsidianVersionInfo, platform: NodeJS.Platform, arch: NodeJS.Architecture,
-    ): Promise<[string, string]> {
-        const installerVersion = versionInfo.version;
+        const versionInfo = await this.getVersionInfo(installerVersion);
+        installerVersion = versionInfo.version;
         const cacheDir = path.join(this.cacheDir, `obsidian-installer/${platform}-${arch}/Obsidian-${installerVersion}`);
-        
-        let binaryPath: string
+
+        let binaryPath: string|undefined;
         let downloader: ((tmpDir: string) => Promise<string>)|undefined
         
         if (platform == "linux") {
             binaryPath = path.join(cacheDir, "obsidian");
             let installerUrl: string|undefined
-            if (arch.startsWith("arm")) {
-                installerUrl = versionInfo.downloads.appImageArm;
-            } else {
+            if (arch == "x64") {
                 installerUrl = versionInfo.downloads.appImage;
+            } else if (arch == "arm64"){
+                installerUrl = versionInfo.downloads.appImageArm;
             }
             if (installerUrl) {
                 downloader = async (tmpDir) => {
@@ -299,7 +289,7 @@ export class ObsidianLauncher {
                 appArch = "app-64"
             } else if (arch == "ia32") {
                 appArch = "app-32"
-            } else if (arch.startsWith("arm")) {
+            } else if (arch == "arm64") {
                 appArch = "app-arm64"
             }
             if (installerUrl && appArch) {
@@ -323,11 +313,9 @@ export class ObsidianLauncher {
                     return obsidianFolder;
                 };
             }
-        } else {
-            throw Error(`Unsupported platform ${platform}`);
         }
 
-        if (!downloader) {
+        if (!downloader || !binaryPath) {
             throw Error(`No Obsidian installer found for v${installerVersion} ${process.platform} ${process.arch}`);
         }
 
@@ -335,7 +323,8 @@ export class ObsidianLauncher {
             console.log(`Downloading Obsidian installer v${installerVersion}...`)
             await atomicCreate(cacheDir, downloader);
         }
-        return [cacheDir, binaryPath];
+
+        return binaryPath;
     }
 
     /**
@@ -987,20 +976,12 @@ export class ObsidianLauncher {
         // get all installers we need to extract info for
         const newInstallers = Object.values(versionMap)
             .filter(v => v.downloads?.appImage && !v.installerInfo)
-            .flatMap(v => [
-                [v, "appImage", "linux", "x64"],
-                [v, "appImageArm", "linux", "arm64"],
-                [v, "dmg", "darwin", "arm64"],
-                [v, "exe", "win32", "x64"],
-            ] as const)
-            .filter(([v, key]) => !!v.downloads![key])
-        const installerInfos = await pool(maxInstances, newInstallers, async ([v, key, platform, arch]) => {
-            const [installerPath, binaryPath] = await this.downloadInstallerFromVersionInfo(
-                v as ObsidianVersionInfo, platform, arch,
-            );
-            const installerInfo = await getInstallerInfo(installerPath);
+            .flatMap(v => [[v, "appImage"], [v, "appImageArm"], [v, "dmg"], [v, "exe"]] as const)
+            .filter(([v, key]) => !!v.downloads![key]);
+        const installerInfos = await pool(maxInstances, newInstallers, async ([v, key]) => {
+            const installerInfo = await getInstallerInfo(key, v.downloads![key]!);
             return [v.version!, key, installerInfo] as const;
-        })
+        });
 
         for (const [version, key, installerInfo] of installerInfos) {
             versionMap[version].installerInfo = versionMap[version].installerInfo ?? {};

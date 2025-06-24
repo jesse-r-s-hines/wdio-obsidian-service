@@ -71,7 +71,7 @@ jobs:
           npm ci
           cd packages/obsidian-launcher
           npm run build
-          xvfb-run npx obsidian-launcher update-versions-list ../../obsidian-versions.json
+          npx obsidian-launcher update-versions-list --max-instances 4 ../../obsidian-versions.json
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - if: ${{ steps.check.outputs.result == 'true' }}

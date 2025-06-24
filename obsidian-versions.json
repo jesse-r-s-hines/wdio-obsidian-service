@@ -3,7 +3,7 @@
         "schemaVersion": "v1",
         "commitDate": "2025-06-05T16:47:21Z",
         "commitSha": "1d4401e3a1671936affe9017c3bffe7622183f2a",
-        "timestamp": "2025-06-23T00:47:16.226Z"
+        "timestamp": "2025-06-24T01:33:31.660Z"
     },
     "versions": [
         {
@@ -92,15 +92,25 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "8.2.5",
-                    "chrome": "80.0.3987.165"
+                    "chrome": "80.0.3987.165",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "dmg": {
                     "electron": "8.2.5",
-                    "chrome": "80.0.3987.165"
+                    "chrome": "80.0.3987.165",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "8.2.5",
-                    "chrome": "80.0.3987.165"
+                    "chrome": "80.0.3987.165",
+                    "platforms": [
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "8.2.5",
@@ -120,15 +130,25 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "8.2.5",
-                    "chrome": "80.0.3987.165"
+                    "chrome": "80.0.3987.165",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "dmg": {
                     "electron": "8.2.5",
-                    "chrome": "80.0.3987.165"
+                    "chrome": "80.0.3987.165",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "8.2.5",
-                    "chrome": "80.0.3987.165"
+                    "chrome": "80.0.3987.165",
+                    "platforms": [
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "8.2.5",
@@ -158,15 +178,25 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "8.2.5",
-                    "chrome": "80.0.3987.165"
+                    "chrome": "80.0.3987.165",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "dmg": {
                     "electron": "8.2.5",
-                    "chrome": "80.0.3987.165"
+                    "chrome": "80.0.3987.165",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "8.2.5",
-                    "chrome": "80.0.3987.165"
+                    "chrome": "80.0.3987.165",
+                    "platforms": [
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "8.2.5",
@@ -216,15 +246,25 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "8.2.5",
-                    "chrome": "80.0.3987.165"
+                    "chrome": "80.0.3987.165",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "dmg": {
                     "electron": "8.2.5",
-                    "chrome": "80.0.3987.165"
+                    "chrome": "80.0.3987.165",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "8.2.5",
-                    "chrome": "80.0.3987.165"
+                    "chrome": "80.0.3987.165",
+                    "platforms": [
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "8.2.5",
@@ -244,15 +284,25 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "8.2.5",
-                    "chrome": "80.0.3987.165"
+                    "chrome": "80.0.3987.165",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "dmg": {
                     "electron": "8.2.5",
-                    "chrome": "80.0.3987.165"
+                    "chrome": "80.0.3987.165",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "8.2.5",
-                    "chrome": "80.0.3987.165"
+                    "chrome": "80.0.3987.165",
+                    "platforms": [
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "8.2.5",
@@ -282,15 +332,25 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "8.2.5",
-                    "chrome": "80.0.3987.165"
+                    "chrome": "80.0.3987.165",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "dmg": {
                     "electron": "8.2.5",
-                    "chrome": "80.0.3987.165"
+                    "chrome": "80.0.3987.165",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "8.2.5",
-                    "chrome": "80.0.3987.165"
+                    "chrome": "80.0.3987.165",
+                    "platforms": [
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "8.2.5",
@@ -310,15 +370,25 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "8.2.5",
-                    "chrome": "80.0.3987.165"
+                    "chrome": "80.0.3987.165",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "dmg": {
                     "electron": "8.2.5",
-                    "chrome": "80.0.3987.165"
+                    "chrome": "80.0.3987.165",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "8.2.5",
-                    "chrome": "80.0.3987.165"
+                    "chrome": "80.0.3987.165",
+                    "platforms": [
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "8.2.5",
@@ -338,15 +408,25 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "8.2.5",
-                    "chrome": "80.0.3987.165"
+                    "chrome": "80.0.3987.165",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "dmg": {
                     "electron": "8.2.5",
-                    "chrome": "80.0.3987.165"
+                    "chrome": "80.0.3987.165",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "8.2.5",
-                    "chrome": "80.0.3987.165"
+                    "chrome": "80.0.3987.165",
+                    "platforms": [
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "8.2.5",
@@ -366,15 +446,25 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "8.2.5",
-                    "chrome": "80.0.3987.165"
+                    "chrome": "80.0.3987.165",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "dmg": {
                     "electron": "8.2.5",
-                    "chrome": "80.0.3987.165"
+                    "chrome": "80.0.3987.165",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "8.2.5",
-                    "chrome": "80.0.3987.165"
+                    "chrome": "80.0.3987.165",
+                    "platforms": [
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "8.2.5",
@@ -404,15 +494,25 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "8.2.5",
-                    "chrome": "80.0.3987.165"
+                    "chrome": "80.0.3987.165",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "dmg": {
                     "electron": "8.2.5",
-                    "chrome": "80.0.3987.165"
+                    "chrome": "80.0.3987.165",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "8.2.5",
-                    "chrome": "80.0.3987.165"
+                    "chrome": "80.0.3987.165",
+                    "platforms": [
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "8.2.5",
@@ -472,15 +572,25 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "8.2.5",
-                    "chrome": "80.0.3987.165"
+                    "chrome": "80.0.3987.165",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "dmg": {
                     "electron": "8.2.5",
-                    "chrome": "80.0.3987.165"
+                    "chrome": "80.0.3987.165",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "8.2.5",
-                    "chrome": "80.0.3987.165"
+                    "chrome": "80.0.3987.165",
+                    "platforms": [
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "8.2.5",
@@ -520,15 +630,25 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "10.1.1",
-                    "chrome": "85.0.4183.93"
+                    "chrome": "85.0.4183.93",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "dmg": {
                     "electron": "10.1.1",
-                    "chrome": "85.0.4183.93"
+                    "chrome": "85.0.4183.93",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "10.1.1",
-                    "chrome": "85.0.4183.93"
+                    "chrome": "85.0.4183.93",
+                    "platforms": [
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "10.1.1",
@@ -558,15 +678,25 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "10.1.1",
-                    "chrome": "85.0.4183.93"
+                    "chrome": "85.0.4183.93",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "dmg": {
                     "electron": "10.1.1",
-                    "chrome": "85.0.4183.93"
+                    "chrome": "85.0.4183.93",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "10.1.1",
-                    "chrome": "85.0.4183.93"
+                    "chrome": "85.0.4183.93",
+                    "platforms": [
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "10.1.1",
@@ -586,15 +716,25 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "10.1.1",
-                    "chrome": "85.0.4183.93"
+                    "chrome": "85.0.4183.93",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "dmg": {
                     "electron": "10.1.1",
-                    "chrome": "85.0.4183.93"
+                    "chrome": "85.0.4183.93",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "10.1.1",
-                    "chrome": "85.0.4183.93"
+                    "chrome": "85.0.4183.93",
+                    "platforms": [
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "10.1.1",
@@ -625,15 +765,25 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "10.1.1",
-                    "chrome": "85.0.4183.93"
+                    "chrome": "85.0.4183.93",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "dmg": {
                     "electron": "10.1.1",
-                    "chrome": "85.0.4183.93"
+                    "chrome": "85.0.4183.93",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "10.1.1",
-                    "chrome": "85.0.4183.93"
+                    "chrome": "85.0.4183.93",
+                    "platforms": [
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "10.1.1",
@@ -654,15 +804,25 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "10.1.1",
-                    "chrome": "85.0.4183.93"
+                    "chrome": "85.0.4183.93",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "dmg": {
                     "electron": "10.1.1",
-                    "chrome": "85.0.4183.93"
+                    "chrome": "85.0.4183.93",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "10.1.1",
-                    "chrome": "85.0.4183.93"
+                    "chrome": "85.0.4183.93",
+                    "platforms": [
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "10.1.1",
@@ -683,15 +843,25 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "10.1.1",
-                    "chrome": "85.0.4183.93"
+                    "chrome": "85.0.4183.93",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "dmg": {
                     "electron": "10.1.1",
-                    "chrome": "85.0.4183.93"
+                    "chrome": "85.0.4183.93",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "10.1.1",
-                    "chrome": "85.0.4183.93"
+                    "chrome": "85.0.4183.93",
+                    "platforms": [
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "10.1.1",
@@ -712,15 +882,25 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "10.1.1",
-                    "chrome": "85.0.4183.93"
+                    "chrome": "85.0.4183.93",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "dmg": {
                     "electron": "10.1.1",
-                    "chrome": "85.0.4183.93"
+                    "chrome": "85.0.4183.93",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "10.1.1",
-                    "chrome": "85.0.4183.93"
+                    "chrome": "85.0.4183.93",
+                    "platforms": [
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "10.1.1",
@@ -751,15 +931,25 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "10.1.1",
-                    "chrome": "85.0.4183.93"
+                    "chrome": "85.0.4183.93",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "dmg": {
                     "electron": "10.1.1",
-                    "chrome": "85.0.4183.93"
+                    "chrome": "85.0.4183.93",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "10.1.1",
-                    "chrome": "85.0.4183.93"
+                    "chrome": "85.0.4183.93",
+                    "platforms": [
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "10.1.1",
@@ -810,15 +1000,25 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "10.1.5",
-                    "chrome": "85.0.4183.121"
+                    "chrome": "85.0.4183.121",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "dmg": {
                     "electron": "10.1.5",
-                    "chrome": "85.0.4183.121"
+                    "chrome": "85.0.4183.121",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "10.1.5",
-                    "chrome": "85.0.4183.121"
+                    "chrome": "85.0.4183.121",
+                    "platforms": [
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "10.1.5",
@@ -839,15 +1039,25 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "10.1.5",
-                    "chrome": "85.0.4183.121"
+                    "chrome": "85.0.4183.121",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "dmg": {
                     "electron": "10.1.5",
-                    "chrome": "85.0.4183.121"
+                    "chrome": "85.0.4183.121",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "10.1.5",
-                    "chrome": "85.0.4183.121"
+                    "chrome": "85.0.4183.121",
+                    "platforms": [
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "10.1.5",
@@ -898,15 +1108,25 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "10.1.5",
-                    "chrome": "85.0.4183.121"
+                    "chrome": "85.0.4183.121",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "dmg": {
                     "electron": "10.1.5",
-                    "chrome": "85.0.4183.121"
+                    "chrome": "85.0.4183.121",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "10.1.5",
-                    "chrome": "85.0.4183.121"
+                    "chrome": "85.0.4183.121",
+                    "platforms": [
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "10.1.5",
@@ -939,19 +1159,32 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "11.0.3",
-                    "chrome": "87.0.4280.67"
+                    "chrome": "87.0.4280.67",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "appImageArm": {
                     "electron": "11.0.3",
-                    "chrome": "87.0.4280.67"
+                    "chrome": "87.0.4280.67",
+                    "platforms": [
+                        "linux-arm64"
+                    ]
                 },
                 "dmg": {
                     "electron": "11.0.3",
-                    "chrome": "87.0.4280.67"
+                    "chrome": "87.0.4280.67",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "11.0.3",
-                    "chrome": "87.0.4280.67"
+                    "chrome": "87.0.4280.67",
+                    "platforms": [
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "11.0.3",
@@ -992,15 +1225,25 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "11.0.3",
-                    "chrome": "87.0.4280.67"
+                    "chrome": "87.0.4280.67",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "dmg": {
                     "electron": "11.0.3",
-                    "chrome": "87.0.4280.67"
+                    "chrome": "87.0.4280.67",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "11.0.3",
-                    "chrome": "87.0.4280.67"
+                    "chrome": "87.0.4280.67",
+                    "platforms": [
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "11.0.3",
@@ -1031,15 +1274,25 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "11.1.0",
-                    "chrome": "87.0.4280.88"
+                    "chrome": "87.0.4280.88",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "dmg": {
                     "electron": "11.1.0",
-                    "chrome": "87.0.4280.88"
+                    "chrome": "87.0.4280.88",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "11.1.0",
-                    "chrome": "87.0.4280.88"
+                    "chrome": "87.0.4280.88",
+                    "platforms": [
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "11.1.0",
@@ -1070,15 +1323,25 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "11.1.0",
-                    "chrome": "87.0.4280.88"
+                    "chrome": "87.0.4280.88",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "dmg": {
                     "electron": "11.1.0",
-                    "chrome": "87.0.4280.88"
+                    "chrome": "87.0.4280.88",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "11.1.0",
-                    "chrome": "87.0.4280.88"
+                    "chrome": "87.0.4280.88",
+                    "platforms": [
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "11.1.0",
@@ -1139,15 +1402,25 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "11.1.0",
-                    "chrome": "87.0.4280.88"
+                    "chrome": "87.0.4280.88",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "dmg": {
                     "electron": "11.1.0",
-                    "chrome": "87.0.4280.88"
+                    "chrome": "87.0.4280.88",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "11.1.0",
-                    "chrome": "87.0.4280.88"
+                    "chrome": "87.0.4280.88",
+                    "platforms": [
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "11.1.0",
@@ -1168,15 +1441,25 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "11.1.0",
-                    "chrome": "87.0.4280.88"
+                    "chrome": "87.0.4280.88",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "dmg": {
                     "electron": "11.1.0",
-                    "chrome": "87.0.4280.88"
+                    "chrome": "87.0.4280.88",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "11.1.0",
-                    "chrome": "87.0.4280.88"
+                    "chrome": "87.0.4280.88",
+                    "platforms": [
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "11.1.0",
@@ -1197,15 +1480,25 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "11.1.0",
-                    "chrome": "87.0.4280.88"
+                    "chrome": "87.0.4280.88",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "dmg": {
                     "electron": "11.1.0",
-                    "chrome": "87.0.4280.88"
+                    "chrome": "87.0.4280.88",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "11.1.0",
-                    "chrome": "87.0.4280.88"
+                    "chrome": "87.0.4280.88",
+                    "platforms": [
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "11.1.0",
@@ -1226,15 +1519,25 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "11.1.0",
-                    "chrome": "87.0.4280.88"
+                    "chrome": "87.0.4280.88",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "dmg": {
                     "electron": "11.1.0",
-                    "chrome": "87.0.4280.88"
+                    "chrome": "87.0.4280.88",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "11.1.0",
-                    "chrome": "87.0.4280.88"
+                    "chrome": "87.0.4280.88",
+                    "platforms": [
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "11.1.0",
@@ -1265,15 +1568,25 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "11.2.1",
-                    "chrome": "87.0.4280.141"
+                    "chrome": "87.0.4280.141",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "dmg": {
                     "electron": "11.2.1",
-                    "chrome": "87.0.4280.141"
+                    "chrome": "87.0.4280.141",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "11.2.1",
-                    "chrome": "87.0.4280.141"
+                    "chrome": "87.0.4280.141",
+                    "platforms": [
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "11.2.1",
@@ -1304,15 +1617,25 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "11.2.1",
-                    "chrome": "87.0.4280.141"
+                    "chrome": "87.0.4280.141",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "dmg": {
                     "electron": "11.2.1",
-                    "chrome": "87.0.4280.141"
+                    "chrome": "87.0.4280.141",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "11.2.1",
-                    "chrome": "87.0.4280.141"
+                    "chrome": "87.0.4280.141",
+                    "platforms": [
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "11.2.1",
@@ -1333,15 +1656,25 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "11.2.3",
-                    "chrome": "87.0.4280.141"
+                    "chrome": "87.0.4280.141",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "dmg": {
                     "electron": "11.2.3",
-                    "chrome": "87.0.4280.141"
+                    "chrome": "87.0.4280.141",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "11.2.3",
-                    "chrome": "87.0.4280.141"
+                    "chrome": "87.0.4280.141",
+                    "platforms": [
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "11.2.3",
@@ -1382,15 +1715,25 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "11.3.0",
-                    "chrome": "87.0.4280.141"
+                    "chrome": "87.0.4280.141",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "dmg": {
                     "electron": "11.3.0",
-                    "chrome": "87.0.4280.141"
+                    "chrome": "87.0.4280.141",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "11.3.0",
-                    "chrome": "87.0.4280.141"
+                    "chrome": "87.0.4280.141",
+                    "platforms": [
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "11.3.0",
@@ -1421,15 +1764,25 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "11.3.0",
-                    "chrome": "87.0.4280.141"
+                    "chrome": "87.0.4280.141",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "dmg": {
                     "electron": "11.3.0",
-                    "chrome": "87.0.4280.141"
+                    "chrome": "87.0.4280.141",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "11.3.0",
-                    "chrome": "87.0.4280.141"
+                    "chrome": "87.0.4280.141",
+                    "platforms": [
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "11.3.0",
@@ -1480,15 +1833,25 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "11.3.0",
-                    "chrome": "87.0.4280.141"
+                    "chrome": "87.0.4280.141",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "dmg": {
                     "electron": "11.3.0",
-                    "chrome": "87.0.4280.141"
+                    "chrome": "87.0.4280.141",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "11.3.0",
-                    "chrome": "87.0.4280.141"
+                    "chrome": "87.0.4280.141",
+                    "platforms": [
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "11.3.0",
@@ -1539,15 +1902,25 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "11.3.0",
-                    "chrome": "87.0.4280.141"
+                    "chrome": "87.0.4280.141",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "dmg": {
                     "electron": "11.3.0",
-                    "chrome": "87.0.4280.141"
+                    "chrome": "87.0.4280.141",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "11.3.0",
-                    "chrome": "87.0.4280.141"
+                    "chrome": "87.0.4280.141",
+                    "platforms": [
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "11.3.0",
@@ -1598,15 +1971,25 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "12.0.6",
-                    "chrome": "89.0.4389.128"
+                    "chrome": "89.0.4389.128",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "dmg": {
                     "electron": "12.0.6",
-                    "chrome": "89.0.4389.128"
+                    "chrome": "89.0.4389.128",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "12.0.6",
-                    "chrome": "89.0.4389.128"
+                    "chrome": "89.0.4389.128",
+                    "platforms": [
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "12.0.6",
@@ -1627,15 +2010,25 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "12.0.6",
-                    "chrome": "89.0.4389.128"
+                    "chrome": "89.0.4389.128",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "dmg": {
                     "electron": "12.0.6",
-                    "chrome": "89.0.4389.128"
+                    "chrome": "89.0.4389.128",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "12.0.6",
-                    "chrome": "89.0.4389.128"
+                    "chrome": "89.0.4389.128",
+                    "platforms": [
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "12.0.6",
@@ -1656,15 +2049,25 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "12.0.11",
-                    "chrome": "89.0.4389.128"
+                    "chrome": "89.0.4389.128",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "dmg": {
                     "electron": "12.0.11",
-                    "chrome": "89.0.4389.128"
+                    "chrome": "89.0.4389.128",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "12.0.11",
-                    "chrome": "89.0.4389.128"
+                    "chrome": "89.0.4389.128",
+                    "platforms": [
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "12.0.11",
@@ -1725,15 +2128,25 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "12.0.14",
-                    "chrome": "89.0.4389.128"
+                    "chrome": "89.0.4389.128",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "dmg": {
                     "electron": "12.0.14",
-                    "chrome": "89.0.4389.128"
+                    "chrome": "89.0.4389.128",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "12.0.14",
-                    "chrome": "89.0.4389.128"
+                    "chrome": "89.0.4389.128",
+                    "platforms": [
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "12.0.14",
@@ -1764,15 +2177,25 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "12.0.14",
-                    "chrome": "89.0.4389.128"
+                    "chrome": "89.0.4389.128",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "dmg": {
                     "electron": "12.0.14",
-                    "chrome": "89.0.4389.128"
+                    "chrome": "89.0.4389.128",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "12.0.14",
-                    "chrome": "89.0.4389.128"
+                    "chrome": "89.0.4389.128",
+                    "platforms": [
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "12.0.14",
@@ -1815,19 +2238,32 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "12.0.18",
-                    "chrome": "89.0.4389.128"
+                    "chrome": "89.0.4389.128",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "appImageArm": {
                     "electron": "12.0.18",
-                    "chrome": "89.0.4389.128"
+                    "chrome": "89.0.4389.128",
+                    "platforms": [
+                        "linux-arm64"
+                    ]
                 },
                 "dmg": {
                     "electron": "12.0.18",
-                    "chrome": "89.0.4389.128"
+                    "chrome": "89.0.4389.128",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "12.0.18",
-                    "chrome": "89.0.4389.128"
+                    "chrome": "89.0.4389.128",
+                    "platforms": [
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "12.0.18",
@@ -1876,15 +2312,25 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "13.5.2",
-                    "chrome": "91.0.4472.164"
+                    "chrome": "91.0.4472.164",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "dmg": {
                     "electron": "13.5.2",
-                    "chrome": "91.0.4472.164"
+                    "chrome": "91.0.4472.164",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "13.5.2",
-                    "chrome": "91.0.4472.164"
+                    "chrome": "91.0.4472.164",
+                    "platforms": [
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "13.5.2",
@@ -2031,15 +2477,25 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "13.6.2",
-                    "chrome": "91.0.4472.164"
+                    "chrome": "91.0.4472.164",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "dmg": {
                     "electron": "13.6.2",
-                    "chrome": "91.0.4472.164"
+                    "chrome": "91.0.4472.164",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "13.6.2",
-                    "chrome": "91.0.4472.164"
+                    "chrome": "91.0.4472.164",
+                    "platforms": [
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "13.6.2",
@@ -2096,15 +2552,25 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "13.6.2",
-                    "chrome": "91.0.4472.164"
+                    "chrome": "91.0.4472.164",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "dmg": {
                     "electron": "13.6.2",
-                    "chrome": "91.0.4472.164"
+                    "chrome": "91.0.4472.164",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "13.6.2",
-                    "chrome": "91.0.4472.164"
+                    "chrome": "91.0.4472.164",
+                    "platforms": [
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "13.6.2",
@@ -2152,15 +2618,25 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "13.6.2",
-                    "chrome": "91.0.4472.164"
+                    "chrome": "91.0.4472.164",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "dmg": {
                     "electron": "13.6.2",
-                    "chrome": "91.0.4472.164"
+                    "chrome": "91.0.4472.164",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "13.6.2",
-                    "chrome": "91.0.4472.164"
+                    "chrome": "91.0.4472.164",
+                    "platforms": [
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "13.6.2",
@@ -2181,15 +2657,25 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "16.0.8",
-                    "chrome": "96.0.4664.110"
+                    "chrome": "96.0.4664.110",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "dmg": {
                     "electron": "16.0.8",
-                    "chrome": "96.0.4664.110"
+                    "chrome": "96.0.4664.110",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "16.0.8",
-                    "chrome": "96.0.4664.110"
+                    "chrome": "96.0.4664.110",
+                    "platforms": [
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "16.0.8",
@@ -2257,19 +2743,32 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "16.0.10",
-                    "chrome": "96.0.4664.174"
+                    "chrome": "96.0.4664.174",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "appImageArm": {
                     "electron": "16.0.10",
-                    "chrome": "96.0.4664.174"
+                    "chrome": "96.0.4664.174",
+                    "platforms": [
+                        "linux-arm64"
+                    ]
                 },
                 "dmg": {
                     "electron": "16.0.10",
-                    "chrome": "96.0.4664.174"
+                    "chrome": "96.0.4664.174",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "16.0.10",
-                    "chrome": "96.0.4664.174"
+                    "chrome": "96.0.4664.174",
+                    "platforms": [
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "16.0.10",
@@ -2292,19 +2791,32 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "17.1.1",
-                    "chrome": "98.0.4758.109"
+                    "chrome": "98.0.4758.109",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "appImageArm": {
                     "electron": "17.1.1",
-                    "chrome": "98.0.4758.109"
+                    "chrome": "98.0.4758.109",
+                    "platforms": [
+                        "linux-arm64"
+                    ]
                 },
                 "dmg": {
                     "electron": "17.1.1",
-                    "chrome": "98.0.4758.109"
+                    "chrome": "98.0.4758.109",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "17.1.1",
-                    "chrome": "98.0.4758.109"
+                    "chrome": "98.0.4758.109",
+                    "platforms": [
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "17.1.1",
@@ -2363,15 +2875,25 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "17.1.1",
-                    "chrome": "98.0.4758.109"
+                    "chrome": "98.0.4758.109",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "dmg": {
                     "electron": "17.1.1",
-                    "chrome": "98.0.4758.109"
+                    "chrome": "98.0.4758.109",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "17.1.1",
-                    "chrome": "98.0.4758.109"
+                    "chrome": "98.0.4758.109",
+                    "platforms": [
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "17.1.1",
@@ -2414,19 +2936,32 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "18.0.3",
-                    "chrome": "100.0.4896.75"
+                    "chrome": "100.0.4896.75",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "appImageArm": {
                     "electron": "18.0.3",
-                    "chrome": "100.0.4896.75"
+                    "chrome": "100.0.4896.75",
+                    "platforms": [
+                        "linux-arm64"
+                    ]
                 },
                 "dmg": {
                     "electron": "18.0.3",
-                    "chrome": "100.0.4896.75"
+                    "chrome": "100.0.4896.75",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "18.0.3",
-                    "chrome": "100.0.4896.75"
+                    "chrome": "100.0.4896.75",
+                    "platforms": [
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "18.0.3",
@@ -2449,19 +2984,32 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "18.0.4",
-                    "chrome": "100.0.4896.75"
+                    "chrome": "100.0.4896.75",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "appImageArm": {
                     "electron": "18.0.4",
-                    "chrome": "100.0.4896.75"
+                    "chrome": "100.0.4896.75",
+                    "platforms": [
+                        "linux-arm64"
+                    ]
                 },
                 "dmg": {
                     "electron": "18.0.4",
-                    "chrome": "100.0.4896.75"
+                    "chrome": "100.0.4896.75",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "18.0.4",
-                    "chrome": "100.0.4896.75"
+                    "chrome": "100.0.4896.75",
+                    "platforms": [
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "18.0.4",
@@ -2564,19 +3112,32 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "18.3.0",
-                    "chrome": "100.0.4896.160"
+                    "chrome": "100.0.4896.160",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "appImageArm": {
                     "electron": "18.3.0",
-                    "chrome": "100.0.4896.160"
+                    "chrome": "100.0.4896.160",
+                    "platforms": [
+                        "linux-arm64"
+                    ]
                 },
                 "dmg": {
                     "electron": "18.3.0",
-                    "chrome": "100.0.4896.160"
+                    "chrome": "100.0.4896.160",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "18.3.0",
-                    "chrome": "100.0.4896.160"
+                    "chrome": "100.0.4896.160",
+                    "platforms": [
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "18.3.0",
@@ -2659,19 +3220,32 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "18.3.5",
-                    "chrome": "100.0.4896.160"
+                    "chrome": "100.0.4896.160",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "appImageArm": {
                     "electron": "18.3.5",
-                    "chrome": "100.0.4896.160"
+                    "chrome": "100.0.4896.160",
+                    "platforms": [
+                        "linux-arm64"
+                    ]
                 },
                 "dmg": {
                     "electron": "18.3.5",
-                    "chrome": "100.0.4896.160"
+                    "chrome": "100.0.4896.160",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "18.3.5",
-                    "chrome": "100.0.4896.160"
+                    "chrome": "100.0.4896.160",
+                    "platforms": [
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "18.3.5",
@@ -2704,19 +3278,32 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "18.3.5",
-                    "chrome": "100.0.4896.160"
+                    "chrome": "100.0.4896.160",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "appImageArm": {
                     "electron": "18.3.5",
-                    "chrome": "100.0.4896.160"
+                    "chrome": "100.0.4896.160",
+                    "platforms": [
+                        "linux-arm64"
+                    ]
                 },
                 "dmg": {
                     "electron": "18.3.5",
-                    "chrome": "100.0.4896.160"
+                    "chrome": "100.0.4896.160",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "18.3.5",
-                    "chrome": "100.0.4896.160"
+                    "chrome": "100.0.4896.160",
+                    "platforms": [
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "18.3.5",
@@ -2740,19 +3327,32 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "18.3.5",
-                    "chrome": "100.0.4896.160"
+                    "chrome": "100.0.4896.160",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "appImageArm": {
                     "electron": "18.3.5",
-                    "chrome": "100.0.4896.160"
+                    "chrome": "100.0.4896.160",
+                    "platforms": [
+                        "linux-arm64"
+                    ]
                 },
                 "dmg": {
                     "electron": "18.3.5",
-                    "chrome": "100.0.4896.160"
+                    "chrome": "100.0.4896.160",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "18.3.5",
-                    "chrome": "100.0.4896.160"
+                    "chrome": "100.0.4896.160",
+                    "platforms": [
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "18.3.5",
@@ -2836,19 +3436,32 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "18.3.5",
-                    "chrome": "100.0.4896.160"
+                    "chrome": "100.0.4896.160",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "appImageArm": {
                     "electron": "18.3.5",
-                    "chrome": "100.0.4896.160"
+                    "chrome": "100.0.4896.160",
+                    "platforms": [
+                        "linux-arm64"
+                    ]
                 },
                 "dmg": {
                     "electron": "18.3.5",
-                    "chrome": "100.0.4896.160"
+                    "chrome": "100.0.4896.160",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "18.3.5",
-                    "chrome": "100.0.4896.160"
+                    "chrome": "100.0.4896.160",
+                    "platforms": [
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "18.3.5",
@@ -2892,19 +3505,32 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "18.3.5",
-                    "chrome": "100.0.4896.160"
+                    "chrome": "100.0.4896.160",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "appImageArm": {
                     "electron": "18.3.5",
-                    "chrome": "100.0.4896.160"
+                    "chrome": "100.0.4896.160",
+                    "platforms": [
+                        "linux-arm64"
+                    ]
                 },
                 "dmg": {
                     "electron": "18.3.5",
-                    "chrome": "100.0.4896.160"
+                    "chrome": "100.0.4896.160",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "18.3.5",
-                    "chrome": "100.0.4896.160"
+                    "chrome": "100.0.4896.160",
+                    "platforms": [
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "18.3.5",
@@ -3008,19 +3634,32 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "18.3.15",
-                    "chrome": "100.0.4896.160"
+                    "chrome": "100.0.4896.160",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "appImageArm": {
                     "electron": "18.3.15",
-                    "chrome": "100.0.4896.160"
+                    "chrome": "100.0.4896.160",
+                    "platforms": [
+                        "linux-arm64"
+                    ]
                 },
                 "dmg": {
                     "electron": "18.3.15",
-                    "chrome": "100.0.4896.160"
+                    "chrome": "100.0.4896.160",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "18.3.15",
-                    "chrome": "100.0.4896.160"
+                    "chrome": "100.0.4896.160",
+                    "platforms": [
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "18.3.15",
@@ -3044,19 +3683,32 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "21.3.3",
-                    "chrome": "106.0.5249.199"
+                    "chrome": "106.0.5249.199",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "appImageArm": {
                     "electron": "21.3.3",
-                    "chrome": "106.0.5249.199"
+                    "chrome": "106.0.5249.199",
+                    "platforms": [
+                        "linux-arm64"
+                    ]
                 },
                 "dmg": {
                     "electron": "21.3.3",
-                    "chrome": "106.0.5249.199"
+                    "chrome": "106.0.5249.199",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "21.3.3",
-                    "chrome": "106.0.5249.199"
+                    "chrome": "106.0.5249.199",
+                    "platforms": [
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "21.3.3",
@@ -3130,19 +3782,32 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "21.4.1",
-                    "chrome": "106.0.5249.199"
+                    "chrome": "106.0.5249.199",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "appImageArm": {
                     "electron": "21.4.1",
-                    "chrome": "106.0.5249.199"
+                    "chrome": "106.0.5249.199",
+                    "platforms": [
+                        "linux-arm64"
+                    ]
                 },
                 "dmg": {
                     "electron": "21.4.1",
-                    "chrome": "106.0.5249.199"
+                    "chrome": "106.0.5249.199",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "21.4.1",
-                    "chrome": "106.0.5249.199"
+                    "chrome": "106.0.5249.199",
+                    "platforms": [
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "21.4.1",
@@ -3166,19 +3831,32 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "21.4.1",
-                    "chrome": "106.0.5249.199"
+                    "chrome": "106.0.5249.199",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "appImageArm": {
                     "electron": "21.4.1",
-                    "chrome": "106.0.5249.199"
+                    "chrome": "106.0.5249.199",
+                    "platforms": [
+                        "linux-arm64"
+                    ]
                 },
                 "dmg": {
                     "electron": "21.4.1",
-                    "chrome": "106.0.5249.199"
+                    "chrome": "106.0.5249.199",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "21.4.1",
-                    "chrome": "106.0.5249.199"
+                    "chrome": "106.0.5249.199",
+                    "platforms": [
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "21.4.1",
@@ -3272,19 +3950,32 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "24.1.2",
-                    "chrome": "112.0.5615.87"
+                    "chrome": "112.0.5615.87",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "appImageArm": {
                     "electron": "24.1.2",
-                    "chrome": "112.0.5615.87"
+                    "chrome": "112.0.5615.87",
+                    "platforms": [
+                        "linux-arm64"
+                    ]
                 },
                 "dmg": {
                     "electron": "24.1.2",
-                    "chrome": "112.0.5615.87"
+                    "chrome": "112.0.5615.87",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "24.1.2",
-                    "chrome": "112.0.5615.87"
+                    "chrome": "112.0.5615.87",
+                    "platforms": [
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "24.1.2",
@@ -3308,19 +3999,32 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "24.1.2",
-                    "chrome": "112.0.5615.87"
+                    "chrome": "112.0.5615.87",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "appImageArm": {
                     "electron": "24.1.2",
-                    "chrome": "112.0.5615.87"
+                    "chrome": "112.0.5615.87",
+                    "platforms": [
+                        "linux-arm64"
+                    ]
                 },
                 "dmg": {
                     "electron": "24.1.2",
-                    "chrome": "112.0.5615.87"
+                    "chrome": "112.0.5615.87",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "24.1.2",
-                    "chrome": "112.0.5615.87"
+                    "chrome": "112.0.5615.87",
+                    "platforms": [
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "24.1.2",
@@ -3374,19 +4078,32 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "24.3.1",
-                    "chrome": "112.0.5615.183"
+                    "chrome": "112.0.5615.183",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "appImageArm": {
                     "electron": "24.3.1",
-                    "chrome": "112.0.5615.183"
+                    "chrome": "112.0.5615.183",
+                    "platforms": [
+                        "linux-arm64"
+                    ]
                 },
                 "dmg": {
                     "electron": "24.3.1",
-                    "chrome": "112.0.5615.183"
+                    "chrome": "112.0.5615.183",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "24.3.1",
-                    "chrome": "112.0.5615.183"
+                    "chrome": "112.0.5615.183",
+                    "platforms": [
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "24.3.1",
@@ -3410,19 +4127,32 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "24.3.1",
-                    "chrome": "112.0.5615.183"
+                    "chrome": "112.0.5615.183",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "appImageArm": {
                     "electron": "24.3.1",
-                    "chrome": "112.0.5615.183"
+                    "chrome": "112.0.5615.183",
+                    "platforms": [
+                        "linux-arm64"
+                    ]
                 },
                 "dmg": {
                     "electron": "24.3.1",
-                    "chrome": "112.0.5615.183"
+                    "chrome": "112.0.5615.183",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "24.3.1",
-                    "chrome": "112.0.5615.183"
+                    "chrome": "112.0.5615.183",
+                    "platforms": [
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "24.3.1",
@@ -3446,19 +4176,32 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "24.3.1",
-                    "chrome": "112.0.5615.183"
+                    "chrome": "112.0.5615.183",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "appImageArm": {
                     "electron": "24.3.1",
-                    "chrome": "112.0.5615.183"
+                    "chrome": "112.0.5615.183",
+                    "platforms": [
+                        "linux-arm64"
+                    ]
                 },
                 "dmg": {
                     "electron": "24.3.1",
-                    "chrome": "112.0.5615.183"
+                    "chrome": "112.0.5615.183",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "24.3.1",
-                    "chrome": "112.0.5615.183"
+                    "chrome": "112.0.5615.183",
+                    "platforms": [
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "24.3.1",
@@ -3492,19 +4235,32 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "24.3.1",
-                    "chrome": "112.0.5615.183"
+                    "chrome": "112.0.5615.183",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "appImageArm": {
                     "electron": "24.3.1",
-                    "chrome": "112.0.5615.183"
+                    "chrome": "112.0.5615.183",
+                    "platforms": [
+                        "linux-arm64"
+                    ]
                 },
                 "dmg": {
                     "electron": "24.3.1",
-                    "chrome": "112.0.5615.183"
+                    "chrome": "112.0.5615.183",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "24.3.1",
-                    "chrome": "112.0.5615.183"
+                    "chrome": "112.0.5615.183",
+                    "platforms": [
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "24.3.1",
@@ -3578,19 +4334,32 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "25.8.0",
-                    "chrome": "114.0.5735.289"
+                    "chrome": "114.0.5735.289",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "appImageArm": {
                     "electron": "25.8.0",
-                    "chrome": "114.0.5735.289"
+                    "chrome": "114.0.5735.289",
+                    "platforms": [
+                        "linux-arm64"
+                    ]
                 },
                 "dmg": {
                     "electron": "25.8.0",
-                    "chrome": "114.0.5735.289"
+                    "chrome": "114.0.5735.289",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "25.8.0",
-                    "chrome": "114.0.5735.289"
+                    "chrome": "114.0.5735.289",
+                    "platforms": [
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "25.8.0",
@@ -3650,19 +4419,32 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "25.8.0",
-                    "chrome": "114.0.5735.289"
+                    "chrome": "114.0.5735.289",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "appImageArm": {
                     "electron": "25.8.0",
-                    "chrome": "114.0.5735.289"
+                    "chrome": "114.0.5735.289",
+                    "platforms": [
+                        "linux-arm64"
+                    ]
                 },
                 "dmg": {
                     "electron": "25.8.0",
-                    "chrome": "114.0.5735.289"
+                    "chrome": "114.0.5735.289",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "25.8.0",
-                    "chrome": "114.0.5735.289"
+                    "chrome": "114.0.5735.289",
+                    "platforms": [
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "25.8.0",
@@ -3686,19 +4468,32 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "25.8.0",
-                    "chrome": "114.0.5735.289"
+                    "chrome": "114.0.5735.289",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "appImageArm": {
                     "electron": "25.8.0",
-                    "chrome": "114.0.5735.289"
+                    "chrome": "114.0.5735.289",
+                    "platforms": [
+                        "linux-arm64"
+                    ]
                 },
                 "dmg": {
                     "electron": "25.8.0",
-                    "chrome": "114.0.5735.289"
+                    "chrome": "114.0.5735.289",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "25.8.0",
-                    "chrome": "114.0.5735.289"
+                    "chrome": "114.0.5735.289",
+                    "platforms": [
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "25.8.0",
@@ -3722,19 +4517,32 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "25.8.0",
-                    "chrome": "114.0.5735.289"
+                    "chrome": "114.0.5735.289",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "appImageArm": {
                     "electron": "25.8.0",
-                    "chrome": "114.0.5735.289"
+                    "chrome": "114.0.5735.289",
+                    "platforms": [
+                        "linux-arm64"
+                    ]
                 },
                 "dmg": {
                     "electron": "25.8.0",
-                    "chrome": "114.0.5735.289"
+                    "chrome": "114.0.5735.289",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "25.8.0",
-                    "chrome": "114.0.5735.289"
+                    "chrome": "114.0.5735.289",
+                    "platforms": [
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "25.8.0",
@@ -3758,19 +4566,32 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "25.8.1",
-                    "chrome": "114.0.5735.289"
+                    "chrome": "114.0.5735.289",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "appImageArm": {
                     "electron": "25.8.1",
-                    "chrome": "114.0.5735.289"
+                    "chrome": "114.0.5735.289",
+                    "platforms": [
+                        "linux-arm64"
+                    ]
                 },
                 "dmg": {
                     "electron": "25.8.1",
-                    "chrome": "114.0.5735.289"
+                    "chrome": "114.0.5735.289",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "25.8.1",
-                    "chrome": "114.0.5735.289"
+                    "chrome": "114.0.5735.289",
+                    "platforms": [
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "25.8.1",
@@ -3794,19 +4615,32 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "25.8.1",
-                    "chrome": "114.0.5735.289"
+                    "chrome": "114.0.5735.289",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "appImageArm": {
                     "electron": "25.8.1",
-                    "chrome": "114.0.5735.289"
+                    "chrome": "114.0.5735.289",
+                    "platforms": [
+                        "linux-arm64"
+                    ]
                 },
                 "dmg": {
                     "electron": "25.8.1",
-                    "chrome": "114.0.5735.289"
+                    "chrome": "114.0.5735.289",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "25.8.1",
-                    "chrome": "114.0.5735.289"
+                    "chrome": "114.0.5735.289",
+                    "platforms": [
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "25.8.1",
@@ -3840,19 +4674,32 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "25.8.1",
-                    "chrome": "114.0.5735.289"
+                    "chrome": "114.0.5735.289",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "appImageArm": {
                     "electron": "25.8.1",
-                    "chrome": "114.0.5735.289"
+                    "chrome": "114.0.5735.289",
+                    "platforms": [
+                        "linux-arm64"
+                    ]
                 },
                 "dmg": {
                     "electron": "25.8.1",
-                    "chrome": "114.0.5735.289"
+                    "chrome": "114.0.5735.289",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "25.8.1",
-                    "chrome": "114.0.5735.289"
+                    "chrome": "114.0.5735.289",
+                    "platforms": [
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "25.8.1",
@@ -3906,19 +4753,32 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "25.8.1",
-                    "chrome": "114.0.5735.289"
+                    "chrome": "114.0.5735.289",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "appImageArm": {
                     "electron": "25.8.1",
-                    "chrome": "114.0.5735.289"
+                    "chrome": "114.0.5735.289",
+                    "platforms": [
+                        "linux-arm64"
+                    ]
                 },
                 "dmg": {
                     "electron": "25.8.1",
-                    "chrome": "114.0.5735.289"
+                    "chrome": "114.0.5735.289",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "25.8.1",
-                    "chrome": "114.0.5735.289"
+                    "chrome": "114.0.5735.289",
+                    "platforms": [
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "25.8.1",
@@ -3983,19 +4843,32 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "28.2.3",
-                    "chrome": "120.0.6099.283"
+                    "chrome": "120.0.6099.283",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "appImageArm": {
                     "electron": "28.2.3",
-                    "chrome": "120.0.6099.283"
+                    "chrome": "120.0.6099.283",
+                    "platforms": [
+                        "linux-arm64"
+                    ]
                 },
                 "dmg": {
                     "electron": "28.2.3",
-                    "chrome": "120.0.6099.283"
+                    "chrome": "120.0.6099.283",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "28.2.3",
-                    "chrome": "120.0.6099.283"
+                    "chrome": "120.0.6099.283",
+                    "platforms": [
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "28.2.3",
@@ -4040,19 +4913,32 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "28.2.3",
-                    "chrome": "120.0.6099.283"
+                    "chrome": "120.0.6099.283",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "appImageArm": {
                     "electron": "28.2.3",
-                    "chrome": "120.0.6099.283"
+                    "chrome": "120.0.6099.283",
+                    "platforms": [
+                        "linux-arm64"
+                    ]
                 },
                 "dmg": {
                     "electron": "28.2.3",
-                    "chrome": "120.0.6099.283"
+                    "chrome": "120.0.6099.283",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "28.2.3",
-                    "chrome": "120.0.6099.283"
+                    "chrome": "120.0.6099.283",
+                    "platforms": [
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "28.2.3",
@@ -4077,19 +4963,32 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "28.2.3",
-                    "chrome": "120.0.6099.283"
+                    "chrome": "120.0.6099.283",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "appImageArm": {
                     "electron": "28.2.3",
-                    "chrome": "120.0.6099.283"
+                    "chrome": "120.0.6099.283",
+                    "platforms": [
+                        "linux-arm64"
+                    ]
                 },
                 "dmg": {
                     "electron": "28.2.3",
-                    "chrome": "120.0.6099.283"
+                    "chrome": "120.0.6099.283",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "28.2.3",
-                    "chrome": "120.0.6099.283"
+                    "chrome": "120.0.6099.283",
+                    "platforms": [
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "28.2.3",
@@ -4134,19 +5033,32 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "28.3.3",
-                    "chrome": "120.0.6099.291"
+                    "chrome": "120.0.6099.291",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "appImageArm": {
                     "electron": "28.3.3",
-                    "chrome": "120.0.6099.291"
+                    "chrome": "120.0.6099.291",
+                    "platforms": [
+                        "linux-arm64"
+                    ]
                 },
                 "dmg": {
                     "electron": "28.3.3",
-                    "chrome": "120.0.6099.291"
+                    "chrome": "120.0.6099.291",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "28.3.3",
-                    "chrome": "120.0.6099.291"
+                    "chrome": "120.0.6099.291",
+                    "platforms": [
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "28.3.3",
@@ -4171,19 +5083,32 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "28.3.3",
-                    "chrome": "120.0.6099.291"
+                    "chrome": "120.0.6099.291",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "appImageArm": {
                     "electron": "28.3.3",
-                    "chrome": "120.0.6099.291"
+                    "chrome": "120.0.6099.291",
+                    "platforms": [
+                        "linux-arm64"
+                    ]
                 },
                 "dmg": {
                     "electron": "28.3.3",
-                    "chrome": "120.0.6099.291"
+                    "chrome": "120.0.6099.291",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "28.3.3",
-                    "chrome": "120.0.6099.291"
+                    "chrome": "120.0.6099.291",
+                    "platforms": [
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "28.3.3",
@@ -4218,19 +5143,34 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "30.1.2",
-                    "chrome": "124.0.6367.243"
+                    "chrome": "124.0.6367.243",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "appImageArm": {
                     "electron": "30.1.2",
-                    "chrome": "124.0.6367.243"
+                    "chrome": "124.0.6367.243",
+                    "platforms": [
+                        "linux-arm64"
+                    ]
                 },
                 "dmg": {
                     "electron": "30.1.2",
-                    "chrome": "124.0.6367.243"
+                    "chrome": "124.0.6367.243",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "30.1.2",
-                    "chrome": "124.0.6367.243"
+                    "chrome": "124.0.6367.243",
+                    "platforms": [
+                        "win32-arm64",
+                        "win32-ia32",
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "30.1.2",
@@ -4265,19 +5205,34 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "30.1.2",
-                    "chrome": "124.0.6367.243"
+                    "chrome": "124.0.6367.243",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "appImageArm": {
                     "electron": "30.1.2",
-                    "chrome": "124.0.6367.243"
+                    "chrome": "124.0.6367.243",
+                    "platforms": [
+                        "linux-arm64"
+                    ]
                 },
                 "dmg": {
                     "electron": "30.1.2",
-                    "chrome": "124.0.6367.243"
+                    "chrome": "124.0.6367.243",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "30.1.2",
-                    "chrome": "124.0.6367.243"
+                    "chrome": "124.0.6367.243",
+                    "platforms": [
+                        "win32-arm64",
+                        "win32-ia32",
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "30.1.2",
@@ -4342,19 +5297,34 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "31.6.0",
-                    "chrome": "126.0.6478.234"
+                    "chrome": "126.0.6478.234",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "appImageArm": {
                     "electron": "31.6.0",
-                    "chrome": "126.0.6478.234"
+                    "chrome": "126.0.6478.234",
+                    "platforms": [
+                        "linux-arm64"
+                    ]
                 },
                 "dmg": {
                     "electron": "31.6.0",
-                    "chrome": "126.0.6478.234"
+                    "chrome": "126.0.6478.234",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "31.6.0",
-                    "chrome": "126.0.6478.234"
+                    "chrome": "126.0.6478.234",
+                    "platforms": [
+                        "win32-arm64",
+                        "win32-ia32",
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "31.6.0",
@@ -4379,19 +5349,34 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "32.2.2",
-                    "chrome": "128.0.6613.186"
+                    "chrome": "128.0.6613.186",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "appImageArm": {
                     "electron": "32.2.2",
-                    "chrome": "128.0.6613.186"
+                    "chrome": "128.0.6613.186",
+                    "platforms": [
+                        "linux-arm64"
+                    ]
                 },
                 "dmg": {
                     "electron": "32.2.2",
-                    "chrome": "128.0.6613.186"
+                    "chrome": "128.0.6613.186",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "32.2.2",
-                    "chrome": "128.0.6613.186"
+                    "chrome": "128.0.6613.186",
+                    "platforms": [
+                        "win32-arm64",
+                        "win32-ia32",
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "32.2.2",
@@ -4416,19 +5401,34 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "32.2.3",
-                    "chrome": "128.0.6613.186"
+                    "chrome": "128.0.6613.186",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "appImageArm": {
                     "electron": "32.2.3",
-                    "chrome": "128.0.6613.186"
+                    "chrome": "128.0.6613.186",
+                    "platforms": [
+                        "linux-arm64"
+                    ]
                 },
                 "dmg": {
                     "electron": "32.2.3",
-                    "chrome": "128.0.6613.186"
+                    "chrome": "128.0.6613.186",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "32.2.3",
-                    "chrome": "128.0.6613.186"
+                    "chrome": "128.0.6613.186",
+                    "platforms": [
+                        "win32-arm64",
+                        "win32-ia32",
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "32.2.3",
@@ -4453,19 +5453,34 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "32.2.5",
-                    "chrome": "128.0.6613.186"
+                    "chrome": "128.0.6613.186",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "appImageArm": {
                     "electron": "32.2.5",
-                    "chrome": "128.0.6613.186"
+                    "chrome": "128.0.6613.186",
+                    "platforms": [
+                        "linux-arm64"
+                    ]
                 },
                 "dmg": {
                     "electron": "32.2.5",
-                    "chrome": "128.0.6613.186"
+                    "chrome": "128.0.6613.186",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "32.2.5",
-                    "chrome": "128.0.6613.186"
+                    "chrome": "128.0.6613.186",
+                    "platforms": [
+                        "win32-arm64",
+                        "win32-ia32",
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "32.2.5",
@@ -4520,19 +5535,34 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "33.3.2",
-                    "chrome": "130.0.6723.191"
+                    "chrome": "130.0.6723.191",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "appImageArm": {
                     "electron": "33.3.2",
-                    "chrome": "130.0.6723.191"
+                    "chrome": "130.0.6723.191",
+                    "platforms": [
+                        "linux-arm64"
+                    ]
                 },
                 "dmg": {
                     "electron": "33.3.2",
-                    "chrome": "130.0.6723.191"
+                    "chrome": "130.0.6723.191",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "33.3.2",
-                    "chrome": "130.0.6723.191"
+                    "chrome": "130.0.6723.191",
+                    "platforms": [
+                        "win32-arm64",
+                        "win32-ia32",
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "33.3.2",
@@ -4557,19 +5587,34 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "33.3.2",
-                    "chrome": "130.0.6723.191"
+                    "chrome": "130.0.6723.191",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "appImageArm": {
                     "electron": "33.3.2",
-                    "chrome": "130.0.6723.191"
+                    "chrome": "130.0.6723.191",
+                    "platforms": [
+                        "linux-arm64"
+                    ]
                 },
                 "dmg": {
                     "electron": "33.3.2",
-                    "chrome": "130.0.6723.191"
+                    "chrome": "130.0.6723.191",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "33.3.2",
-                    "chrome": "130.0.6723.191"
+                    "chrome": "130.0.6723.191",
+                    "platforms": [
+                        "win32-arm64",
+                        "win32-ia32",
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "33.3.2",
@@ -4614,19 +5659,34 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "33.3.2",
-                    "chrome": "130.0.6723.191"
+                    "chrome": "130.0.6723.191",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "appImageArm": {
                     "electron": "33.3.2",
-                    "chrome": "130.0.6723.191"
+                    "chrome": "130.0.6723.191",
+                    "platforms": [
+                        "linux-arm64"
+                    ]
                 },
                 "dmg": {
                     "electron": "33.3.2",
-                    "chrome": "130.0.6723.191"
+                    "chrome": "130.0.6723.191",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "33.3.2",
-                    "chrome": "130.0.6723.191"
+                    "chrome": "130.0.6723.191",
+                    "platforms": [
+                        "win32-arm64",
+                        "win32-ia32",
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "33.3.2",
@@ -4661,19 +5721,34 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "34.3.0",
-                    "chrome": "132.0.6834.210"
+                    "chrome": "132.0.6834.210",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "appImageArm": {
                     "electron": "34.3.0",
-                    "chrome": "132.0.6834.210"
+                    "chrome": "132.0.6834.210",
+                    "platforms": [
+                        "linux-arm64"
+                    ]
                 },
                 "dmg": {
                     "electron": "34.3.0",
-                    "chrome": "132.0.6834.210"
+                    "chrome": "132.0.6834.210",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "34.3.0",
-                    "chrome": "132.0.6834.210"
+                    "chrome": "132.0.6834.210",
+                    "platforms": [
+                        "win32-arm64",
+                        "win32-ia32",
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "34.3.0",
@@ -4698,19 +5773,34 @@
             "installerInfo": {
                 "appImage": {
                     "electron": "34.2.0",
-                    "chrome": "132.0.6834.196"
+                    "chrome": "132.0.6834.196",
+                    "platforms": [
+                        "linux-x64"
+                    ]
                 },
                 "appImageArm": {
                     "electron": "34.5.2",
-                    "chrome": "132.0.6834.210"
+                    "chrome": "132.0.6834.210",
+                    "platforms": [
+                        "linux-arm64"
+                    ]
                 },
                 "dmg": {
                     "electron": "34.2.0",
-                    "chrome": "132.0.6834.196"
+                    "chrome": "132.0.6834.196",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
                 },
                 "exe": {
                     "electron": "34.2.0",
-                    "chrome": "132.0.6834.196"
+                    "chrome": "132.0.6834.196",
+                    "platforms": [
+                        "win32-arm64",
+                        "win32-ia32",
+                        "win32-x64"
+                    ]
                 }
             },
             "electronVersion": "34.2.0",
