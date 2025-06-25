@@ -60,7 +60,7 @@ describe("ObsidianLauncher", function() {
     const testData = path.resolve("../../.obsidian-cache/test-data");
     let server: http.Server|undefined;
     let latest = "";
-    const earliestApp = "1.0.3";
+    const earliestApp = (process.platform == "win32" && process.arch == "arm64") ? "1.6.5" : "1.0.3";
     let earliestInstaller = "";
 
     before(async function() {

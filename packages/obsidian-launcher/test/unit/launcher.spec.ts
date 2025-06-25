@@ -51,16 +51,27 @@ describe('ObsdianLauncher resolve versions', () => {
         process.chdir(originalCwd);
     })
 
-    const resolveVersionsTests = [
+    let resolveVersionsTests = [
         [["latest", "latest"], ["1.7.7", "1.7.7"]],
-        [["latest", "earliest"], ["1.7.7", "1.1.9"]],
         [["latest-beta", "latest"], ["1.8.0", "1.7.7"]],
-        // There are no linux arm releases for older obsidian versions
-        [["0.14.5", "earliest"], ["0.14.5",
-            (process.platform == "linux" && process.arch.startsWith("arm")) ? "0.12.15" : "0.11.0"]
-        ],
-        [["0.14.5", "latest"], ["0.14.5", "0.14.5"]],
-    ]
+    ];
+    if (process.platform == "win32" && process.arch == "arm64") {
+        // windows arm support was only added in 1.6.5
+        resolveVersionsTests.push(
+            [["latest", "earliest"], ["1.7.7", "1.6.5"]],
+        )
+    } else {
+        resolveVersionsTests.push(
+            [["latest", "earliest"], ["1.7.7", "1.1.9"]],
+            [["0.14.5", "latest"], ["0.14.5", "0.14.5"]],
+        )
+        if (process.platform == "linux" && process.arch == "arm64") {
+            // Linux arm support was added in 0.12.15
+            resolveVersionsTests.push([["0.14.5", "earliest"], ["0.14.5",  "0.12.15"]])
+        } else {
+            resolveVersionsTests.push([["0.14.5", "earliest"], ["0.14.5",  "0.11.0"]])
+        }
+    }
 
     resolveVersionsTests.forEach(([[appVersion, installerVersion], expected]) => {
         it(`resolveVersions("${appVersion}", "${installerVersion}") == ${expected}`, async () => {

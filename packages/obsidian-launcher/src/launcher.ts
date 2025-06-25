@@ -261,87 +261,51 @@ export class ObsidianLauncher {
         installerVersion = versionInfo.version;
         const cacheDir = path.join(this.cacheDir, `obsidian-installer/${platform}-${arch}/Obsidian-${installerVersion}`);
 
-        let binaryPath: string|undefined;
-        let installerUrl: string|undefined;
-        let downloader: ((tmpDir: string) => Promise<string>)|undefined
-        
-        if (platform == "linux") {
-            binaryPath = path.join(cacheDir, "obsidian");
-            if (arch == "x64") {
-                installerUrl = versionInfo.downloads.appImage;
-            } else if (arch == "arm64"){
-                installerUrl = versionInfo.downloads.appImageArm;
-            }
-            if (installerUrl) {
-                downloader = async (tmpDir) => {
-                    const appImage = path.join(tmpDir, "Obsidian.AppImage");
-                    await downloadResponse(await fetch(installerUrl!), appImage);
-                    const obsidianFolder = path.join(tmpDir, "Obsidian");
-                    await extractObsidianAppImage(appImage, obsidianFolder);
-                    return obsidianFolder;
-                };
-            }
-        } else if (platform == "win32") {
-            binaryPath = path.join(cacheDir, "Obsidian.exe")
-            if (["x64", "ia32", "arm64"].includes(arch)) {
-                installerUrl = versionInfo.downloads.exe;
-            }
-            if (installerUrl) {
-                downloader = async (tmpDir) => {
-                    const installerExecutable = path.join(tmpDir, "Obsidian.exe");
-                    await downloadResponse(await fetch(installerUrl!), installerExecutable);
-                    const obsidianFolder = path.join(tmpDir, "Obsidian");
-                    await extractObsidianExe(installerExecutable, arch, obsidianFolder);
-                    return obsidianFolder;
-                };
-            }
-        } else if (platform == "darwin") {
-            binaryPath = path.join(cacheDir, "Contents/MacOS/Obsidian");
-            installerUrl = versionInfo.downloads.dmg;
-            if (installerUrl) {
-                downloader = async (tmpDir) => {
-                    const dmg = path.join(tmpDir, "Obsidian.dmg");
-                    await downloadResponse(await fetch(installerUrl!), dmg);
-                    const obsidianFolder = path.join(tmpDir, "Obsidian");
-                    await extractObsidianDmg(dmg, obsidianFolder);
-                    return obsidianFolder;
-                };
-            }
+        const installerUrl = this.getInstallerUrl(versionInfo, platform, arch);
+
+        if (!installerUrl) {
+            throw Error(`No Obsidian installer found for v${installerVersion} ${platform} ${arch}`);
         }
 
-        if (!downloader || !binaryPath) {
-            throw Error(`No Obsidian installer found for v${installerVersion} ${process.platform} ${process.arch}`);
+        let binaryPath: string;
+        let extractor: (installer: string, dest: string) => Promise<void>;
+
+        if (platform == "linux") {
+            binaryPath = path.join(cacheDir, "obsidian");
+            extractor = (installer, dest) => extractObsidianAppImage(installer, dest);
+        } else if (platform == "win32") {
+            binaryPath = path.join(cacheDir, "Obsidian.exe")
+            extractor = (installer, dest) => extractObsidianExe(installer, arch, dest);
+        } else if (platform == "darwin") {
+            binaryPath = path.join(cacheDir, "Contents/MacOS/Obsidian");
+            extractor = (installer, dest) => extractObsidianDmg(installer, dest);
+        } else {
+            throw Error(`Unsupported platform ${platform}`); // shouldn't happen
         }
 
         if (!(await fileExists(binaryPath))) {
             console.log(`Downloading Obsidian installer v${installerVersion}...`)
-            await atomicCreate(cacheDir, downloader);
+            await atomicCreate(cacheDir, async (tmpDir) => {
+                const installer = path.join(tmpDir, "installer");
+                await downloadResponse(await fetch(installerUrl), installer);
+                const extracted = path.join(tmpDir, "extracted");
+                await extractor(installer, extracted);
+                return extracted;
+            });
         }
 
         return binaryPath;
     }
 
-    /**
-     * Gets the installer download url for the current platform, if one exists.
-     * @param installerVersion 
-     * @returns 
-     */
+    /** Gets the installer download url for the current platform, if one exists. */
     private getInstallerUrl(
         installerVersionInfo: ObsidianVersionInfo, platform: NodeJS.Platform, arch: NodeJS.Architecture,
     ): string|undefined {
-        if (platform == "linux") {
-            if (arch.startsWith("arm")) {
-                return installerVersionInfo.downloads.appImageArm;
-            } else {
-                return installerVersionInfo.downloads.appImage;
-            }
-        } else if (platform == "win32") {
-            return installerVersionInfo.downloads.exe;
-        } else if (platform == "darwin") {
-            return installerVersionInfo.downloads.dmg;
+        const platformName = `${platform}-${arch}`;
+        const key = _.findKey(installerVersionInfo.installerInfo, v => v && v.platforms.includes(platformName));
+        if (key) {
+            return installerVersionInfo.downloads[key as keyof ObsidianVersionInfo['downloads']];
         }
-
-        return undefined;
     }
 
     /**
