@@ -7,14 +7,12 @@ import semver from "semver";
 import { ObsidianVersionInfo } from "obsidian-launcher"
 import _ from "lodash"
 
-// Select which Obsidian versions to run. Available options:
-//     latest - test latest version
-//     first-and-last - test first and last version
-//     sample - test first and last couple versions
-//     all - test all versions
-//     basic - test first and last version, only the basic launch path
-const testPreset = process.env['TEST_PRESET'] ?? 'first-and-last';
-
+let specs: string[];
+if (process.env.TEST_PRESET == "basic") {
+    specs = ['./test/e2e/basic.spec.ts'];
+} else {
+    specs = ['./test/e2e/**/*.ts'];
+}
 const maxInstances = Number(process.env['WDIO_MAX_INSTANCES'] ?? 4);
 const workspacePath = path.resolve(fileURLToPath(import.meta.url), "../../..")
 const obsidianVersionsJson = path.join(workspacePath, "obsidian-versions.json");
@@ -24,8 +22,6 @@ const cacheDir = path.join(workspacePath, ".obsidian-cache");
 const obsidianServiceOptions = {
     versionsUrl: pathToFileURL(obsidianVersionsJson).toString(),
 }
-const allSpecs = ['./test/e2e/**/*.ts'];
-const basicSpecs = ['./test/e2e/basic.spec.ts'];
 
 /**
  * Can't use the regular obsidianBetaAvailable as it fetches the obsidian-versions.json instead of using the local one
@@ -43,56 +39,52 @@ function minorVersion(v: string) {
     return v.split(".").slice(0, 2).join('.')
 };
 
-let versionsToTest: [string, string, string[]][]
-if (process.env.OBSIDIAN_VERSIONS) {
-    // Space separated list of appVersion/installerVersion, e.g. "1.7.7/latest latest/earliest"
-    versionsToTest = process.env.OBSIDIAN_VERSIONS.split(/[ ,]+/).map(v => {
-        const [app, installer = "earliest"] = v.split("/"); // default to earliest installer
-        return [app, installer, allSpecs];
-    })
-} if (testPreset == "all") {
+let versionsToTest: [string, string][]
+if (process.env.OBSIDIAN_VERSIONS == "all") {
     versionsToTest = allVersions
-        .filter(v => !!v.electronVersion && !v.isBeta && semver.gte(v.version, minInstallerVersion))
+        .filter(v => !v.isBeta && semver.gte(v.version, minInstallerVersion))
         .map(v => v.version)
-        .map(v => [semver.gte(v, minSupportedObsidianVersion) ? v : minSupportedObsidianVersion, v, allSpecs])
-    versionsToTest.push(["latest", "latest", allSpecs]);
-    // And test latest beta if available
+        .flatMap(v => {
+            if (semver.lte(v, minSupportedObsidianVersion)) {
+                return [[minSupportedObsidianVersion, v]];
+            } else {
+                return [[v, "earliest"], [v, "latest"]];
+            }
+        })
     if (await obsidianBetaAvailable(cacheDir)) {
-        versionsToTest.push(["latest-beta", "latest", allSpecs]);
+        versionsToTest.push(["latest-beta", "latest"]);
     }
-} else if (testPreset == "sample") {
+} else if (process.env.OBSIDIAN_VERSIONS == "sample") {
     // Test every minor installer version and every minor appVersion since minSupportedObsidianVersion
     const versionMap = _(allVersions)
-        .filter(v => !!v.electronVersion && !v.isBeta && semver.gte(v.version, minInstallerVersion))
+        .filter(v => !!v.installerInfo.appImage && !v.isBeta && semver.gte(v.version, minInstallerVersion))
         .map(v => v.version)
         .keyBy(v => minorVersion(v)) // keyBy keeps last
         .value();
     versionMap[minorVersion(minInstallerVersion)] = minInstallerVersion;
-    versionsToTest =  _.values(versionMap).map(v => [
-        semver.gte(v, minSupportedObsidianVersion) ? v : minSupportedObsidianVersion,
-        v,
-        allSpecs,
-    ]);
+    versionsToTest =  _.values(versionMap).map(v =>
+        [semver.gte(v, minSupportedObsidianVersion) ? v : minSupportedObsidianVersion, v]
+    );
     // test latest/earliest combination to make sure that minInstallerVersion is correct
-    versionsToTest.push(["latest", "earliest", allSpecs]);
-
-    // Only test first and last 3 minor versions
-    if (versionsToTest.length > 4) {
-        versionsToTest = [versionsToTest[0], ...versionsToTest.slice(-3)];
+    versionsToTest.push(["latest", "earliest"]);
+    // Only test first and last few minor versions
+    if (versionsToTest.length > 5) {
+        versionsToTest = [versionsToTest[0], ...versionsToTest.slice(-4)];
     }
-
-    // And test latest beta if available
     if (await obsidianBetaAvailable(cacheDir)) {
-        versionsToTest.push(["latest-beta", "latest", allSpecs]);
+        versionsToTest.push(["latest-beta", "latest"]);
     }
-} else if (testPreset == "first-and-last") {
-    versionsToTest = [[minSupportedObsidianVersion, "earliest", allSpecs], ["latest", "latest", allSpecs]];
-} else if (testPreset == "latest") {
-    versionsToTest = [["latest", "latest", allSpecs]];
-} else if (testPreset == "basic") {
-    versionsToTest = [[minSupportedObsidianVersion, "earliest", basicSpecs], ["latest", "latest", basicSpecs]];
+} else if (process.env.OBSIDIAN_VERSIONS) {
+    // Space separated list of appVersion/installerVersion, e.g. "1.7.7/latest latest/earliest"
+    versionsToTest = process.env.OBSIDIAN_VERSIONS.split(/[ ,]+/).map(v => {
+        let [app, installer = "earliest"] = v.split("/"); // default to earliest installer
+        if (app == "min-supported") {
+            app = minSupportedObsidianVersion;
+        }
+        return [app, installer];
+    })
 } else {
-    throw Error(`Unknown TEST_PRESET ${testPreset}`)
+    versionsToTest = [[minSupportedObsidianVersion, "earliest"], ["latest", "latest"]];
 }
 
 export const config: WebdriverIO.Config = {
@@ -101,7 +93,7 @@ export const config: WebdriverIO.Config = {
     // How many instances of Obsidian should be launched in parallel during testing.
     maxInstances: maxInstances,
 
-    capabilities: versionsToTest.map(([appVersion, installerVersion, specs]) => ({
+    capabilities: versionsToTest.map(([appVersion, installerVersion]) => ({
         browserName: "obsidian",
         browserVersion: appVersion,
         "wdio:specs": specs,
