@@ -31,7 +31,7 @@ describe('ObsdianLauncher resolve versions', () => {
         const tmpDir = await createDirectory({
             "obsidian-versions.json": JSON.stringify({
                 metadata: {
-                    schemaVersion: "v1",
+                    schemaVersion: '2.0.0',
                     commitDate: "2025-01-07T00:00:00Z",
                     commitSha: "0000000"
                 },
