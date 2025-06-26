@@ -12,23 +12,45 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          # Test os and architecture combinations
           - os: ubuntu-latest
             node-version: "18.x"
-            test-preset: "sample"
+            test-preset: "all"
+            obsidian-versions: "sample"
           - os: windows-latest
             node-version: "18.x"
-            test-preset: "first-and-last"
-          - os: macos-latest
+            test-preset: "all"
+            obsidian-versions: "latest/latest min-supported/earliest"
+          - os: macos-latest # arm
             node-version: "18.x"
-            test-preset: "first-and-last"
+            test-preset: "all"
+            obsidian-versions: "latest/latest min-supported/earliest"
             max-instances: 1
+          - os: ubuntu-24.04-arm
+            node-version: "22.x"
+            test-preset: "basic"
+            obsidian-versions: "latest/latest min-supported/earliest"
+          - os: windows-11-arm
+            node-version: "22.x"
+            test-preset: "basic"
+            obsidian-versions: "latest/latest latest/1.6.5"
+          - os: macos-13 # x86
+            node-version: "18.x"
+            test-preset: "basic"
+            obsidian-versions: "latest/latest min-supported/earliest"
           # Also test other node versions
           - os: ubuntu-latest
             node-version: "20.x"
-            test-preset: "last"
+            test-preset: "all"
+            obsidian-versions: "latest/latest"
           - os: ubuntu-latest
             node-version: "22.x"
-            test-preset: "last"
+            test-preset: "all"
+            obsidian-versions: "latest/latest"
+          - os: ubuntu-latest
+            node-version: "24.x"
+            test-preset: "all"
+            obsidian-versions: "latest/latest"
     runs-on: ${{ matrix.os }}
     name: e2e-test-${{ matrix.os }}-node-${{ matrix.node-version }}
     steps:
@@ -43,13 +65,12 @@ jobs:
         uses: actions/cache@v4
         with:
           path: .obsidian-cache
-          key: obsidian-cache-${{ matrix.os }}-${{ matrix.node-version }}-${{ hashFiles('./obsidian-versions.json') }}
+          key: obsidian-cache-${{ matrix.os }}-${{matrix.obsidian-versions}}-${{ hashFiles('./obsidian-versions.json') }}
           restore-keys: obsidian-cache-${{matrix.os}}-${{ matrix.node-version }}
 
+      - run: npm ci
       - name: Build
-        run: |
-          npm ci
-          npm run build
+        run: npm run build
       
       - name: Run unit tests
         run: npm run test:unit
@@ -57,11 +78,22 @@ jobs:
       - name: Run e2e tests
         # On linux we need to use xvfb-run to setup a virtual display server
         run: |
-          ${{ matrix.os == 'ubuntu-latest' && 'xvfb-run --server-args="-screen 0 1280x1024x24"  \' || '' }}
+          ${{ startsWith(matrix.os, 'ubuntu-') && 'xvfb-run --server-args="-screen 0 1280x1024x24"  \' || '' }}
           npm run test:e2e
         env:
           TEST_PRESET: ${{matrix.test-preset}}
+          OBSIDIAN_VERSIONS: ${{matrix.obsidian-versions}}
           WDIO_MAX_INSTANCES: ${{matrix.max-instances || '4'}}
           # Secrets won't be available when run as on a PR
           OBSIDIAN_USERNAME: ${{ secrets.OBSIDIAN_USERNAME }}
           OBSIDIAN_PASSWORD: ${{ secrets.OBSIDIAN_PASSWORD }}
+
+  check:
+    if: always()
+    needs: [test]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check all tests passed
+        uses: re-actors/alls-green@release/v1
+        with:
+          jobs: ${{ toJSON(needs) }}

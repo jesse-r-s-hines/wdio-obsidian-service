@@ -13,6 +13,9 @@
         "Example": "https://github.com/jesse-r-s-hines/wdio-obsidian-service-sample-plugin",
         "GitHub": "https://github.com/jesse-r-s-hines/wdio-obsidian-service"
     },
+    "navigation": {
+        "includeCategories": true
+    },
     "visibilityFilters": {},
     "headings": {
         "readme": false,
@@ -26,6 +29,8 @@
     "packageOptions": {
         "entryPoints": ["src/index.ts"],
         "readme": "none",
+        "defaultCategory": "none",
+        "categoryOrder": ["Options", "Utilities", "WDIO Helpers", "*", "Types"],
         "sort": [
             "kind",
             "instance-first",

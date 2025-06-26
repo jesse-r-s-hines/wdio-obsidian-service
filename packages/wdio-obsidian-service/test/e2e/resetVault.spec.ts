@@ -1,11 +1,11 @@
-import { browser } from '@wdio/globals'
+import { browser, expect } from '@wdio/globals'
 import { obsidianPage } from 'wdio-obsidian-service';
 import { TFile } from 'obsidian';
 import fsAsync from "fs/promises"
 import path from "path"
 
 
-describe("resetVault", async () => {
+describe("resetVault", () => {
     async function getAllFiles() {
         return await browser.executeObsidian(async ({app}) => {
             const result: Record<string, string> = {};
@@ -29,7 +29,7 @@ describe("resetVault", async () => {
 
     async function getAllFilesFromDisk() {
         const result: Record<string, string> = {};
-        const vault = (await obsidianPage.getVaultPath())!;
+        const vault = obsidianPage.getVaultPath();
         for (const file of await fsAsync.readdir(vault, {recursive: true, withFileTypes: true})) {
             if (file.isFile()) {
                 const absPath = path.join(file.parentPath, file.name);
@@ -42,6 +42,11 @@ describe("resetVault", async () => {
         }
         return result;
     }
+
+    it("no vault open", async () => {
+        await obsidianPage.resetVault({"foo.md": "BAR"});
+        expect(await getAllFiles()).toEqual({"foo.md": "BAR"});
+    })
 
     it("no change", async () => {
         await browser.reloadObsidian({vault: "./test/vaults/basic"});

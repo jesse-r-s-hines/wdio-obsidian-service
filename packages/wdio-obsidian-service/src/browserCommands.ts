@@ -1,22 +1,8 @@
-import { OBSIDIAN_CAPABILITY_KEY } from "./types.js";
 import type * as obsidian from "obsidian"
-import obsidianPage, { ObsidianPage } from "./pageobjects/obsidianPage.js"
+import { ObsidianPage } from "./pageobjects/obsidianPage.js"
+import { NormalizedObsidianCapabilityOptions, OBSIDIAN_CAPABILITY_KEY } from "./types.js";
 
-const browserCommands = {
-    /**
-     * Returns the Obsidian app version this test is running under.
-     */
-    async getObsidianVersion(this: WebdriverIO.Browser): Promise<string> {
-        return this.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].appVersion;
-    },
-
-    /**
-     * Returns the Obsidian installer version this test is running under.
-     */
-    async getObsidianInstallerVersion(this: WebdriverIO.Browser): Promise<string> {
-        return this.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].installerVersion;
-    },
-
+export const asyncBrowserCommands = {
     /**
      * Wrapper around browser.execute that passes the Obsidian API to the function. The first argument to the function
      * is an object containing keys:
@@ -42,8 +28,8 @@ const browserCommands = {
      * 
      * This *won't* work:
      * ```ts
-     * import { FileView } from Obsidian
-     * browser.executeObsidian(({app, obsidian}) => {
+     * import { FileView } from "obsidian"
+     * browser.executeObsidian(({app}) => {
      *     if (leaf.view instanceof FileView) {
      *         ...
      *     }
@@ -63,8 +49,9 @@ const browserCommands = {
         func: (obs: ExecuteObsidianArg, ...params: Params) => Return,
         ...params: Params
     ): Promise<Return> {
-        if (this.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].vault == undefined) {
-            throw Error("No vault open")
+        const obsidianOptions = this.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY] as NormalizedObsidianCapabilityOptions;
+        if (obsidianOptions.vault === undefined) {
+            throw Error("No vault open, set vault in wdio.conf or use reloadObsidian to open a vault dynamically.")
         }
         return await this.execute<Return, Params>(`
             const require = window.wdioObsidianService().require;
@@ -82,41 +69,65 @@ const browserCommands = {
             throw Error(`Obsidian command ${id} not found or failed.`);
         }
     },
+} as const
+
+/** Define this type separately so we can @inline it in typedoc */
+type AsyncObsidianBrowserCommands = typeof asyncBrowserCommands;
+
+/**
+ * addCommand always makes the command async, we manually add these methods to the browser instance so they can be
+ * sync.
+ */
+export const syncBrowserCommands = {
+    /**
+     * Returns the Obsidian app version this test is running under.
+     */
+    getObsidianVersion(this: WebdriverIO.Browser): string {
+        const obsidianOptions = this.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY] as NormalizedObsidianCapabilityOptions;
+        return obsidianOptions.appVersion;
+    },
+    
+    /**
+     * Returns the Obsidian installer version this test is running under.
+     */
+    getObsidianInstallerVersion(this: WebdriverIO.Browser): string {
+        const obsidianOptions = this.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY] as NormalizedObsidianCapabilityOptions;
+        return obsidianOptions.installerVersion;
+    },
 
     /**
-     * Returns the Workspace page object with convenience helper functions.
+     * Returns the ObsidianPage object with convenience helper functions.
      * You can also just import the page object directly with
      * ```ts
      * import { obsidianPage } from "wdio-obsidian-service"
      * ```
      */
-    async getObsidianPage(this: WebdriverIO.Browser): Promise<ObsidianPage> {
-        return obsidianPage;
+    getObsidianPage(this: WebdriverIO.Browser): ObsidianPage {
+        return new ObsidianPage(this);
     },
-} as const
+}
 
 /** Define this type separately so we can @inline it in typedoc */
-type PlainObsidianBrowserCommands = typeof browserCommands;
+type SyncObsidianBrowserCommands = typeof syncBrowserCommands;
 
 /**
  * Extra commands added to the WDIO Browser instance.
  * 
  * See also: https://webdriver.io/docs/api/browser
  * @interface
+ * @category Utilities
  */
-export type ObsidianBrowserCommands = PlainObsidianBrowserCommands & {
-    // This command is implemented in the service hooks.
+export type ObsidianBrowserCommands = AsyncObsidianBrowserCommands & SyncObsidianBrowserCommands & {
     /**
-     * Relaunch obsidian. Can be used to switch to a new vault, change the plugin list, or just to reboot
-     * Obsidian.
+     * Relaunch obsidian. Can be used to switch to a new vault, change the plugin list, or just to reboot Obsidian.
      * 
-     * As this does a full reboot of Obsidian, avoid calling this too often so you don't slow your tests down.
-     * You can also set the vault in the `wdio.conf.(m)ts` capabilities section which may be useful if all your
-     * tests use the same vault.
+     * As this does a full reboot of Obsidian, this is rather slow. In many cases you can use {@link ObsidianPage.resetVault}
+     * instead, which modifies vault files in place without rebooting Obsidian. If all your tests use the same vault,
+     * you can also just set the vault in the `wdio.conf.(m)ts` capabilities section.
      * 
      * @param params.vault Path to the vault to open. The vault will be copied, so any changes made in your tests won't
-     *     be persited to the original. If omitted, it will reboot Obsidian with the current vault, without
-     *     creating a new copy of the vault.
+     *     be persited to the original. If omitted, it will reboot Obsidian with the current vault without creating a
+     *     new copy of the vault.
      * @param params.plugins List of plugin ids to enable. If omitted it will keep current plugin list. Note, all the
      *     plugins must be defined in your wdio.conf.ts capabilities. You can also use the enablePlugin and 
      *     disablePlugin commands to change plugins without relaunching Obsidian.
@@ -128,10 +139,12 @@ export type ObsidianBrowserCommands = PlainObsidianBrowserCommands & {
         vault?: string,
         plugins?: string[], theme?: string,
     }): Promise<string>;
+    // This command is implemented in the service hooks.
 };
 
 /**
- * Argument passed to the `executeObsidian` browser command.
+ * Argument passed to the {@link ObsidianBrowserCommands.executeObsidian | executeObsidian} browser command.
+ * @category Types
  */
 export interface ExecuteObsidianArg {
     /**
@@ -168,8 +181,9 @@ export interface ExecuteObsidianArg {
     require: NodeJS.Require,
 }
 
-/** Installed plugins, mapped by their id converted to camelCase */
+/**
+ * Installed plugins, mapped by their id converted to camelCase
+ * @category Types
+ */
 export interface InstalledPlugins extends Record<string, obsidian.Plugin> {
 }
-
-export default browserCommands;

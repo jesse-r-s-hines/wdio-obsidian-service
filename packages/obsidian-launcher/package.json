@@ -27,7 +27,8 @@
     "scripts": {
         "build": "tsup",
         "test": "run-s test:*",
-        "test:unit": "tsc --noEmit && mocha"
+        "test:unit": "tsc --noEmit && mocha --config .mocharc.unit.json",
+        "test:e2e": "tsc --noEmit && mocha --config .mocharc.e2e.json"
     },
     "repository": {
         "type": "git",
@@ -43,13 +44,17 @@
     "devDependencies": {
         "@types/chai": "^5.0.1",
         "@types/chrome-remote-interface": "^0.31.14",
+        "@types/cross-spawn": "^6.0.6",
         "@types/lodash": "^4.17.14",
         "@types/mocha": "^10.0.10",
         "@types/node": "^18.11.9",
         "@types/semver": "^7.5.8",
+        "@types/serve-handler": "^6.1.4",
         "chai": "^5.1.2",
         "mocha": "^11.0.1",
         "npm-run-all": "^4.1.5",
+        "serve": "^14.2.4",
+        "serve-handler": "^6.1.6",
         "ts-node": "^10.9.2",
         "tsup": "^8.3.5",
         "tsx": "^4.19.2",
@@ -57,10 +62,12 @@
     },
     "dependencies": {
         "@electron/get": "^3.1.0",
+        "7z-wasm": "1.2.0",
         "@supercharge/promise-pool": "^3.2.0",
         "chrome-remote-interface": "^0.33.2",
         "classic-level": "^2.0.0",
         "commander": "^13.0.0",
+        "cross-spawn": "^7.0.6",
         "extract-zip": "^2.0.1",
         "lodash": "^4.17.21",
         "semver": "^7.6.3",

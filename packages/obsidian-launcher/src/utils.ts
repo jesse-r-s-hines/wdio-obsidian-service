@@ -1,4 +1,5 @@
 import fsAsync from "fs/promises"
+import fs from "fs";
 import path from "path"
 import os from "os"
 import { PromisePool } from '@supercharge/promise-pool'
@@ -25,20 +26,25 @@ export async function makeTmpDir(prefix?: string) {
 }
 
 /**
- * Handles creating a file "atomically" by creating a tmpDir, then downloading or otherwise creating the file under it,
- * then renaming it to the final location when done.
- * @param dest Path the file should end up at.
+ * Handles creating a file or folder "atomically" by creating a tmpDir, then downloading or otherwise creating the file
+ * under it, then renaming it to the final location when done.
+ * @param dest Path the file or folder should end up at.
  * @param func Function takes path to a temporary directory it can use as scratch space. The path it returns will be
  *     moved to `dest`. If no path is returned, it will move the whole tmpDir to dest.
+ * @param options.preserveTmpDir Don't delete tmpDir on failure. Default false.
  */
-export async function withTmpDir(dest: string, func: (tmpDir: string) => Promise<string|void>): Promise<void> {
+export async function atomicCreate(
+    dest: string, func: (tmpDir: string) => Promise<string|void>,
+    options: {preserveTmpDir?: boolean} = {},
+): Promise<void> {
     dest = path.resolve(dest);
+    // mkdir returns first parent created, or undefined if none were created
+    const createdParentDir = await fsAsync.mkdir(path.dirname(dest), { recursive: true });
     const tmpDir = await fsAsync.mkdtemp(path.join(path.dirname(dest), `.${path.basename(dest)}.tmp.`));
     try {
         let result = await func(tmpDir) ?? tmpDir;
-        if (!path.isAbsolute(result)) {
-            result = path.join(tmpDir, result);
-        } else if (!path.resolve(result).startsWith(tmpDir)) {
+        result = path.resolve(tmpDir, result);
+        if (!result.startsWith(tmpDir)) {
             throw new Error(`Returned path ${result} not under tmpDir`)
         }
         // rename will overwrite files but not directories
@@ -48,8 +54,12 @@ export async function withTmpDir(dest: string, func: (tmpDir: string) => Promise
         
         await fsAsync.rename(result, dest);
         await fsAsync.rm(tmpDir + ".old", { recursive: true, force: true });
-    } finally {
         await fsAsync.rm(tmpDir, { recursive: true, force: true });
+    } catch (e) {
+        if (!options.preserveTmpDir) {
+            await fsAsync.rm(createdParentDir ?? tmpDir, { recursive: true, force: true });
+        }
+        throw e;
     }
 }
 
@@ -121,4 +131,23 @@ export function mergeKeepUndefined(object: any, ...sources: any[]) {
             }
         }
     );
+}
+
+
+/**
+ * Watch a list of files and call func whenever they change.
+ */
+export function watchFiles(
+    files: string[],
+    func: (curr: fs.Stats, prev: fs.Stats) => void,
+    options: { interval: number, persistent: boolean, debounce: number },
+) {
+    const debouncedFunc = _.debounce((curr: fs.Stats, prev: fs.Stats) => {
+        if (curr.mtimeMs > prev.mtimeMs || (curr.mtimeMs == 0 && prev.mtimeMs != 0)) {
+            func(curr, prev)
+        }
+    }, options.debounce);
+    for (const file of files) {
+        fs.watchFile(file, {interval: options.interval, persistent: options.persistent}, debouncedFunc);
+    }
 }
