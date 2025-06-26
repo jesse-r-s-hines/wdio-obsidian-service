@@ -738,35 +738,40 @@ export class ObsidianLauncher {
      * @param params.appVersion Obsidian app version
      * @param params.installerVersion Obsidian version string.
      * @param params.appPath Path to the asar file to install. Will download if omitted.
-     * @param params.vault Path to the vault to open in Obsidian.
+     * @param params.vault Path to the vault to open in Obsidian
      * @param params.localStorage items to add to localStorage. `$vaultId` in the keys will be replaced with the vaultId
+     * @param params.chromePreferences Chrome preferences to add to the Preferences file
      */
     async setupConfigDir(params: {
         appVersion: string, installerVersion: string,
         appPath?: string,
         vault?: string,
         localStorage?: Record<string, string>,
+        chromePreferences?: Record<string, any>,
     }): Promise<string> {
         const [appVersion, installerVersion] = await this.resolveVersions(params.appVersion, params.installerVersion);
-        // configDir will be passed to --user-data-dir, so Obsidian is somewhat sandboxed. We set up "obsidian.json" so
-        // that Obsidian opens the vault by default and doesn't check for updates.
-        const configDir = await makeTmpDir('obs-launcher-config-');
+        const configDir = await makeTmpDir('obsidian-launcher-config-');
+        const vaultId = crypto.randomBytes(8).toString("hex");
     
-        let obsidianJson: any = {
-            updateDisabled: true, // Prevents Obsidian trying to auto-update on boot.
-        }
         const localStorageData: Record<string, string> = {
             "most-recently-installed-version": appVersion, // prevents the changelog page on boot
+            [`enable-plugin-${vaultId}`]: "true", // Disable "safe mode" and enable plugins
+            ..._.mapKeys(params.localStorage ?? {}, (v, k) => k.replace('$vaultId', vaultId ?? '')),
+        }
+        const chromePreferences = _.merge(
+            // disables the "allow pasting" bit in the dev tools console
+            {"electron": {"devtools": {"preferences": {"disable-self-xss-warning": "true"}}}},
+            params.chromePreferences ?? {},
+        )
+        const obsidianJson: any = {
+            updateDisabled: true, // prevents Obsidian trying to auto-update on boot.
         }
 
-        let vaultId: string|undefined = undefined;
         if (params.vault !== undefined) {
             if (!await fileExists(params.vault)) {
                 throw Error(`Vault path ${params.vault} doesn't exist.`)
             }
-            vaultId = crypto.randomBytes(8).toString("hex");
-            obsidianJson = {
-                ...obsidianJson,
+            Object.assign(obsidianJson, {
                 vaults: {
                     [vaultId]: {
                         path: path.resolve(params.vault),
@@ -774,16 +779,11 @@ export class ObsidianLauncher {
                         open: true,
                     },
                 },
-            };
-            Object.assign(localStorageData, {
-                [`enable-plugin-${vaultId}`]: "true", // Disable "safe mode" and enable plugins
-            })
+            });
         }
-        Object.assign(localStorageData, _.mapKeys(params.localStorage ?? {},
-            (v, k) => k.replace('$vaultId', vaultId ?? ''),
-        ));
 
         await fsAsync.writeFile(path.join(configDir, 'obsidian.json'), JSON.stringify(obsidianJson));
+        await fsAsync.writeFile(path.join(configDir, 'Preferences'), JSON.stringify(chromePreferences));
 
         let appPath = params.appPath;
         if (!appPath) {

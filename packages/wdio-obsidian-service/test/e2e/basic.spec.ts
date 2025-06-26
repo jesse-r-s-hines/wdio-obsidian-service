@@ -37,7 +37,7 @@ describe("Basic obsidian launch", () => {
     it('Sandboxed config', async () => {
         const configDir: string = await browser.execute("return electron.remote.app.getPath('userData')")
         // Should be using sandboxed config dir
-        expect(configDir).toContain("obs-launcher-config-");
+        expect(configDir).toContain("obsidian-launcher-config-");
     })
 
     it('plugin was installed and enabled', async () => {
