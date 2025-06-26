@@ -9,7 +9,7 @@ import { fileURLToPath } from "url";
 import { fileExists, makeTmpDir, atomicCreate, linkOrCp, maybe, pool, mergeKeepUndefined } from "./utils.js";
 import {
     ObsidianVersionInfo, ObsidianCommunityPlugin, ObsidianCommunityTheme, ObsidianVersionInfos, ObsidianInstallerInfo,
-    PluginEntry, DownloadedPluginEntry, ThemeEntry, DownloadedThemeEntry,
+    PluginEntry, DownloadedPluginEntry, ThemeEntry, DownloadedThemeEntry, obsidianVersionsSchemaVersion,
 } from "./types.js";
 import { fetchObsidianAPI, fetchGitHubAPIPaginated, downloadResponse } from "./apis.js";
 import ChromeLocalStorage from "./chromeLocalStorage.js";
@@ -73,43 +73,59 @@ export class ObsidianLauncher {
      * Returns file content fetched from url as JSON. Caches content to dest and uses that cache if its more recent than
      * cacheDuration ms or if there are network errors.
      */
-    private async cachedFetch(url: string, dest: string): Promise<any> {
+    private async cachedFetch(url: string, dest: string, cacheValid?: (data: any) => boolean): Promise<any> {
+        cacheValid = cacheValid ?? (() => true);
         dest = path.join(this.cacheDir, dest);
+
         if (!(dest in this.metadataCache)) {
-            let fileContent: string;
+            let data: any;
+            let error: any;
+            const cacheMtime = (await fsAsync.stat(dest).catch(() => undefined))?.mtime;
 
+            // read file urls directly
             if (url.startsWith("file:")) {
-                fileContent = await fsAsync.readFile(fileURLToPath(url), 'utf-8');
-            } else {
-                const mtime = await fileExists(dest) ? (await fsAsync.stat(dest)).mtime : undefined;
-
-                // read from cache if its recent
-                if (mtime && new Date().getTime() - mtime.getTime() < this.cacheDuration) {
-                    fileContent = await fsAsync.readFile(dest, 'utf-8');
-                } else { // otherwise try to fetch the url
-                    const request = await maybe(fetch(url).then(r => r.text()));
-                    if (request.success) {
-                        await atomicCreate(dest, async (tmpDir) => {
-                            try {
-                                JSON.parse(request.result);
-                            } catch (e) {
-                                throw Error(`Failed to parse response from ${url}: ${e}`)
-                            }
-                            await fsAsync.writeFile(path.join(tmpDir, 'download.json'), request.result);
-                            return path.join(tmpDir, 'download.json');
-                        })
-                        fileContent = request.result;
-                    } else if (await fileExists(dest)) { // use cache on network error
-                        console.warn(request.error)
-                        console.warn(`Unable to download ${dest}, using cached file.`);
-                        fileContent = await fsAsync.readFile(dest, 'utf-8');
-                    } else {
-                        throw request.error;
-                    }
+                data = JSON.parse(await fsAsync.readFile(fileURLToPath(url), 'utf-8'));
+            }
+            // read from cache if its recent and valid
+            if (!data && cacheMtime && new Date().getTime() - cacheMtime.getTime() < this.cacheDuration) {
+                const parsed = JSON.parse(await fsAsync.readFile(dest, 'utf-8'));
+                if (cacheValid(parsed)) {
+                    data = parsed;
                 }
             }
+            // otherwise try to fetch the url
+            if (!data) {
+                const response = await maybe(fetch(url).then(async (r) => {
+                    if (!r.ok) throw Error(`Fetch ${url} failed with status ${r.status}`);
+                    const d = await r.text();
+                    // throw if invalid JSON, but keep original formatting
+                    if (_.isError(_.attempt(JSON.parse, d))) throw Error(`Failed to parse response from ${url}`);
+                    return d;
+                }));
+                if (response.success) {
+                    await atomicCreate(dest, async (tmpDir) => {
+                        await fsAsync.writeFile(path.join(tmpDir, 'download.json'), response.result);
+                        return path.join(tmpDir, 'download.json');
+                    });
+                    data = JSON.parse(response.result);
+                } else {
+                    error = response.error;
+                }
+            }
+            // use cache on network error, even if old
+            if (!data && (await fileExists(dest))) {
+                const parsed = JSON.parse(await fsAsync.readFile(dest, 'utf-8'));
+                if (cacheValid(parsed)) {
+                    console.warn(error)
+                    console.warn(`Unable to download ${url}, using cached file.`);
+                    data = parsed;
+                }
+            }
+            if (!data) {
+                throw error;
+            }
 
-            this.metadataCache[dest] = JSON.parse(fileContent);
+            this.metadataCache[dest] = data;
         }
         return this.metadataCache[dest];
     }
@@ -138,12 +154,13 @@ export class ObsidianLauncher {
      * Get information about all available Obsidian versions.
      */
     async getVersions(): Promise<ObsidianVersionInfo[]> {
-        const versionsFile: ObsidianVersionInfos = await this.cachedFetch(this.versionsUrl, "obsidian-versions.json");
-        const schemaVersion = versionsFile.metadata.schemaVersion ?? "v1";
-        if (schemaVersion != "v1") {
+        const isValid = (d: ObsidianVersionInfos) =>
+            semver.satisfies(versions.metadata.schemaVersion ?? '1.0.0', `~${obsidianVersionsSchemaVersion}`);
+        let versions = await this.cachedFetch(this.versionsUrl, "obsidian-versions.json", isValid);
+        if (!isValid(versions)) {
             throw new Error(`${this.versionsUrl} format has changed, please update obsidian-launcher and wdio-obsidian-service`)
         }
-        return versionsFile.versions;
+        return versions.versions;
     }
 
     /**
@@ -969,7 +986,7 @@ export class ObsidianLauncher {
     
         const result: ObsidianVersionInfos = {
             metadata: {
-                schemaVersion: "v1",
+                schemaVersion: obsidianVersionsSchemaVersion,
                 commitDate: commitHistory.at(-1)?.commit.committer.date ?? original?.metadata.commitDate,
                 commitSha: commitHistory.at(-1)?.sha ?? original?.metadata.commitSha,
                 timestamp: original?.metadata.timestamp ?? "", // set down below
