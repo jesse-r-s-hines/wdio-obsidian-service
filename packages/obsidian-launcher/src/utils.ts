@@ -28,13 +28,18 @@ export async function makeTmpDir(prefix?: string) {
 /**
  * Handles creating a file or folder "atomically" by creating a tmpDir, then downloading or otherwise creating the file
  * under it, then renaming it to the final location when done.
- * @param dest Path the file should end up at.
+ * @param dest Path the file or folder should end up at.
  * @param func Function takes path to a temporary directory it can use as scratch space. The path it returns will be
  *     moved to `dest`. If no path is returned, it will move the whole tmpDir to dest.
+ * @param options.preserveTmpDir Don't delete tmpDir on failure. Default false.
  */
-export async function atomicCreate(dest: string, func: (tmpDir: string) => Promise<string|void>): Promise<void> {
+export async function atomicCreate(
+    dest: string, func: (tmpDir: string) => Promise<string|void>,
+    options: {preserveTmpDir?: boolean} = {},
+): Promise<void> {
     dest = path.resolve(dest);
-    await fsAsync.mkdir(path.dirname(dest), { recursive: true });
+    // mkdir returns first parent created, or undefined if none were created
+    const createdParentDir = await fsAsync.mkdir(path.dirname(dest), { recursive: true });
     const tmpDir = await fsAsync.mkdtemp(path.join(path.dirname(dest), `.${path.basename(dest)}.tmp.`));
     try {
         let result = await func(tmpDir) ?? tmpDir;
@@ -49,8 +54,12 @@ export async function atomicCreate(dest: string, func: (tmpDir: string) => Promi
         
         await fsAsync.rename(result, dest);
         await fsAsync.rm(tmpDir + ".old", { recursive: true, force: true });
-    } finally {
         await fsAsync.rm(tmpDir, { recursive: true, force: true });
+    } catch (e) {
+        if (!options.preserveTmpDir) {
+            await fsAsync.rm(createdParentDir ?? tmpDir, { recursive: true, force: true });
+        }
+        throw e;
     }
 }
 
