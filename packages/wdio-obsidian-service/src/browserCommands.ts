@@ -53,10 +53,13 @@ export const asyncBrowserCommands = {
         if (obsidianOptions.vault === undefined) {
             throw Error("No vault open, set vault in wdio.conf or use reloadObsidian to open a vault dynamically.")
         }
-        return await this.execute<Return, Params>(`
+        const result = await this.execute<Return, Params>(`
             const require = window.wdioObsidianService().require;
             return (${func.toString()}).call(null, {...window.wdioObsidianService()}, ...arguments)
-        `, ...params)
+        `, ...params);
+        // TODO Should maybe add in the TransformReturn and TransformElement bit that wdio has recently added to the
+        // execute types, though it causes weird affects if `func` returns type any.
+        return result as Return;
     },
 
     /**
