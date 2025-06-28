@@ -29,7 +29,7 @@ export const config: WebdriverIO.Config = {
         'appium:avd': "Pixel_9",
         'appium:autoWebview': true,
         'appium:noReset': false,
-        'appium:fullReset': true,
+        'appium:fullReset': false,
         'appium:chromedriverExecutableDir': path.join(cacheDir, "./appium-chromedriver"),
     }],
 
