@@ -6,127 +6,48 @@ import fsAsync from "fs/promises"
 import semver from "semver";
 import { ObsidianVersionInfo } from "obsidian-launcher"
 import _ from "lodash"
+import { Options } from "@wdio/types";
 
-let specs: string[];
-if (process.env.TEST_PRESET == "basic") {
-    specs = ['./test/e2e/basic.spec.ts'];
-} else {
-    specs = ['./test/e2e/**/*.ts'];
-}
-const maxInstances = Number(process.env['WDIO_MAX_INSTANCES'] ?? 4);
-const workspacePath = path.resolve(fileURLToPath(import.meta.url), "../../..")
-const obsidianVersionsJson = path.join(workspacePath, "obsidian-versions.json");
-const allVersions: ObsidianVersionInfo[] = JSON.parse(await fsAsync.readFile(obsidianVersionsJson, 'utf-8')).versions;
-const minInstallerVersion = allVersions.find(v => v.version == minSupportedObsidianVersion)!.minInstallerVersion!;
-const cacheDir = path.join(workspacePath, ".obsidian-cache");
-const obsidianServiceOptions = {
-    versionsUrl: pathToFileURL(obsidianVersionsJson).toString(),
-}
 
-/**
- * Can't use the regular obsidianBetaAvailable as it fetches the obsidian-versions.json instead of using the local one
- */
-async function obsidianBetaAvailable(cacheDir?: string) {
-    const launcher = new ObsidianLauncher({
-        cacheDir: cacheDir,
-        versionsUrl: obsidianServiceOptions.versionsUrl,
-    });
-    const versionInfo = await launcher.getVersionInfo("latest-beta");
-    return versionInfo.isBeta && await launcher.isAvailable(versionInfo.version);
-}
+const cacheDir = path.join("/home/jesse/Documents/Projects/Obsidian/wdio-obsidian-service/.obsidian-cache");
 
-function minorVersion(v: string) {
-    return v.split(".").slice(0, 2).join('.')
-};
 
-let versionsToTest: [string, string][]
-if (process.env.OBSIDIAN_VERSIONS == "all") {
-    versionsToTest = allVersions
-        .filter(v => !v.isBeta && semver.gte(v.version, minInstallerVersion))
-        .map(v => v.version)
-        .flatMap(v => {
-            if (semver.lte(v, minSupportedObsidianVersion)) {
-                return [[minSupportedObsidianVersion, v]];
-            } else {
-                return [[v, "earliest"], [v, "latest"]];
-            }
-        })
-    if (await obsidianBetaAvailable(cacheDir)) {
-        versionsToTest.push(["latest-beta", "latest"]);
-    }
-} else if (process.env.OBSIDIAN_VERSIONS == "sample") {
-    // Test every minor installer version and every minor appVersion since minSupportedObsidianVersion
-    const versionMap = _(allVersions)
-        .filter(v => !!v.installerInfo.appImage && !v.isBeta && semver.gte(v.version, minInstallerVersion))
-        .map(v => v.version)
-        .keyBy(v => minorVersion(v)) // keyBy keeps last
-        .value();
-    versionMap[minorVersion(minInstallerVersion)] = minInstallerVersion;
-    versionsToTest =  _.values(versionMap).map(v =>
-        [semver.gte(v, minSupportedObsidianVersion) ? v : minSupportedObsidianVersion, v]
-    );
-    // test latest/earliest combination to make sure that minInstallerVersion is correct
-    versionsToTest.push(["latest", "earliest"]);
-    // Only test first and last few minor versions
-    if (versionsToTest.length > 5) {
-        versionsToTest = [versionsToTest[0], ...versionsToTest.slice(-4)];
-    }
-    if (await obsidianBetaAvailable(cacheDir)) {
-        versionsToTest.push(["latest-beta", "latest"]);
-    }
-} else if (process.env.OBSIDIAN_VERSIONS) {
-    // Space separated list of appVersion/installerVersion, e.g. "1.7.7/latest latest/earliest"
-    versionsToTest = process.env.OBSIDIAN_VERSIONS.split(/[ ,]+/).map(v => {
-        let [app, installer = "earliest"] = v.split("/"); // default to earliest installer
-        if (app == "min-supported") {
-            app = minSupportedObsidianVersion;
-        }
-        return [app, installer];
-    })
-} else {
-    versionsToTest = [[minSupportedObsidianVersion, "earliest"], ["latest", "latest"]];
-}
 
 export const config: WebdriverIO.Config = {
-    runner: 'local',
+    // runner: 'local',
+    maxInstances: 1,
+    specs: ["./test/e2e/basic.spec.ts"],
 
-    // How many instances of Obsidian should be launched in parallel during testing.
-    maxInstances: maxInstances,
+    hostname: process.env.APPIUM_HOST || 'localhost',
+    port: parseInt(process.env.APPIUM_PORT || "4723", 10),
 
-    capabilities: versionsToTest
-        .flatMap(v => [[...v, "desktop"], [...v, "emulate-mobile"]] as const)
-        .map(([appVersion, installerVersion, platform]) => ({
-            browserName: "obsidian",
-            browserVersion: appVersion,
-            "wdio:specs": specs,
-            'wdio:obsidianOptions': {
-                platform: platform,
-                installerVersion: installerVersion,
-                plugins: [
-                    "./test/plugins/basic-plugin",
-                ],
-                themes: [
-                    "./test/themes/basic-theme",
-                ],
-            }
-        })),
+    capabilities: [{
+        platformName: 'Android',
+        'appium:automationName': 'UiAutomator2',
+        // 'appium:appPackage': 'com.android.settings',
+        'appium:app': path.resolve("./Obsidian-1.8.10.apk"),
+        'appium:deviceName': "Pixel_9",
+        'appium:platformVersion': "15.0",
+        'appium:avd': "Pixel_9",
+        'appium:autoWebview': true,
+        'appium:noReset': true,
+        'appium:dontStopAppOnReset': true,
+        'appium:chromedriverExecutableDir': path.resolve("./appium-chromedriver-downloads")
+    }],
 
-    services: [["obsidian", obsidianServiceOptions]],
+    services: [
+        ['appium', {
+            args: {
+                allowInsecure: "chromedriver_autodownload",
+            },
+        }]
+    ],
 
     cacheDir: cacheDir,
 
     framework: 'mocha',
     
-    reporters: ["obsidian"],
-
-    bail: 4,
-
-    mochaOpts: {
-        ui: 'bdd',
-        timeout: 60000
-    },
-
-    logLevel: "warn",
+    logLevel: "info",
 
     injectGlobals: false,
 }
