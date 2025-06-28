@@ -11,8 +11,6 @@ import { Options } from "@wdio/types";
 
 const cacheDir = path.join("/home/jesse/Documents/Projects/Obsidian/wdio-obsidian-service/.obsidian-cache");
 
-
-
 export const config: WebdriverIO.Config = {
     // runner: 'local',
     maxInstances: 1,
@@ -30,9 +28,9 @@ export const config: WebdriverIO.Config = {
         'appium:platformVersion': "15.0",
         'appium:avd': "Pixel_9",
         'appium:autoWebview': true,
-        'appium:noReset': true,
-        'appium:dontStopAppOnReset': true,
-        'appium:chromedriverExecutableDir': path.resolve("./appium-chromedriver-downloads")
+        'appium:noReset': false,
+        'appium:fullReset': true,
+        'appium:chromedriverExecutableDir': path.join(cacheDir, "./appium-chromedriver"),
     }],
 
     services: [
@@ -42,6 +40,11 @@ export const config: WebdriverIO.Config = {
             },
         }]
     ],
+
+    mochaOpts: {
+        ui: 'bdd',
+        timeout: 60000
+    },
 
     cacheDir: cacheDir,
 
