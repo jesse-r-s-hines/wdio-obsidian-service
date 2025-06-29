@@ -23,13 +23,12 @@ export const config: WebdriverIO.Config = {
         platformName: 'Android',
         'appium:automationName': 'UiAutomator2',
         // 'appium:appPackage': 'com.android.settings',
-        'appium:app': path.resolve("./Obsidian-1.8.10.apk"),
+        'appium:app': "/home/jesse/Downloads/apk/Obsidian-1.8.10.apk",
         'appium:deviceName': "Pixel_9",
         'appium:platformVersion': "15.0",
         'appium:avd': "Pixel_9",
         'appium:autoWebview': true,
-        'appium:noReset': false,
-        'appium:fullReset': false,
+        'appium:fullReset': true,
         'appium:chromedriverExecutableDir': path.join(cacheDir, "./appium-chromedriver"),
     }],
 
@@ -37,6 +36,7 @@ export const config: WebdriverIO.Config = {
         ['appium', {
             args: {
                 allowInsecure: "chromedriver_autodownload",
+                relaxedSecurity: true,
             },
         }]
     ],
