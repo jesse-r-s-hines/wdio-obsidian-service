@@ -6,9 +6,9 @@ import { sleep } from '../../src/utils.js';
 
 describe("Basic obsidian launch", () => {
     it('Basic', async () => {
-        const elem = await browser.$("body");
-        // console.log(elem, await elem.getHTML())
-        const data = await browser.execute(() => {
+       const elem = await browser.$("body");
+        // // console.log(elem, await elem.getHTML())
+        const localStorage = await browser.execute(() => {
             const rand = Math.trunc(Math.random() * 1_000_000).toString();
             localStorage.setItem(`foo-${rand}`, rand);
             const data: any = {}
@@ -19,7 +19,7 @@ describe("Basic obsidian launch", () => {
             }
             return data;
         });
-        console.log(`RETURNED ${JSON.stringify(data, undefined, 4)}`);
-        await sleep(10 * 1000);
+        console.log({localStorage});
+        await sleep(1000 * 1000);
     })
 })

@@ -6,10 +6,11 @@ import fsAsync from "fs/promises"
 import semver from "semver";
 import { ObsidianVersionInfo } from "obsidian-launcher"
 import _ from "lodash"
-import { Options } from "@wdio/types";
+import type { Capabilities, Options, Services } from '@wdio/types'
+import crypto from "crypto";
 
-
-const cacheDir = path.join("/home/jesse/Documents/Projects/Obsidian/wdio-obsidian-service/.obsidian-cache");
+const workspacePath = path.resolve(fileURLToPath(import.meta.url), "../../..");
+const cacheDir = path.join(workspacePath, ".obsidian-cache");
 
 export const config: WebdriverIO.Config = {
     // runner: 'local',
@@ -35,15 +36,14 @@ export const config: WebdriverIO.Config = {
     services: [
         ['appium', {
             args: {
-                allowInsecure: "chromedriver_autodownload",
-                relaxedSecurity: true,
+                allowInsecure: "chromedriver_autodownload,adb_shell",
             },
         }]
     ],
 
     mochaOpts: {
         ui: 'bdd',
-        timeout: 60000
+        timeout: 600000
     },
 
     cacheDir: cacheDir,
@@ -53,4 +53,37 @@ export const config: WebdriverIO.Config = {
     logLevel: "info",
 
     injectGlobals: false,
+
+    async onPrepare(config: Options.Testrunner, capabilities: Capabilities.TestrunnerCapabilities) {
+
+    },
+
+    async beforeSession(config: Options.Testrunner, capabilities: WebdriverIO.Capabilities) {
+    },
+
+    async before(capabilities: WebdriverIO.Capabilities, specs: unknown, browser: WebdriverIO.Browser) {
+        const vaultPath = path.join(workspacePath, 'packages/wdio-obsidian-service/test/vaults/basic');
+        const mobileVaultsDir = "/storage/emulated/0/Documents/wdio-obsidian-service-vaults"
+
+        // this requires the allow-insecure adb_shell arg
+        // There is also a "mobile: deleteFile" option, but it seems to be bugged and doesn't
+        // work on folders. See https://github.com/appium/appium-android-driver/issues/1003
+        await browser.executeScript("mobile: shell", [{
+            command: "rm",
+            args: ["-rf", mobileVaultsDir],
+            includeStderr: true,
+        }])
+
+        const slug = crypto.randomBytes(8).toString("base64url").replace(/[-_]/g, '0');
+        const mobileVaultPath = path.join(mobileVaultsDir, `${path.basename(vaultPath)}-${slug}`)
+        
+        const vaultFiles = await fsAsync.readdir(vaultPath, {recursive: true, withFileTypes: true});
+        for (const file of vaultFiles) {
+            const filePath = path.relative(vaultPath, path.join(file.parentPath, file.name));
+            if (file.isFile()) {
+                const contents = await fsAsync.readFile(path.join(vaultPath, filePath))
+                await browser.pushFile(path.join(mobileVaultPath, filePath), contents.toString('base64'));
+            }
+        }
+    }
 }
