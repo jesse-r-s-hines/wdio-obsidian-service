@@ -1,5 +1,4 @@
-# Obsidian Launcher
-[![NPM](https://img.shields.io/npm/v/obsidian-launcher)](https://www.npmjs.com/package/obsidian-launcher)
+# Obsidian Launcher [![NPM](https://img.shields.io/npm/v/obsidian-launcher)](https://www.npmjs.com/package/obsidian-launcher)
 
 `obsidian-launcher` is a package for downloading and launching different versions of [Obsidian](https://obsidian.md) for testing and development of Obsidian plugins. It can download Obsidian, install plugins and themes into Obsidian vaults, and launch sandboxed Obsidian instances with isolated user configuration directories. You can use it either as a JavaScript package or as a command line interface.
 
