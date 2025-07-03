@@ -1,5 +1,5 @@
 import { browser, expect } from '@wdio/globals'
-import path from "path"
+import path from "path";
 import { OBSIDIAN_CAPABILITY_KEY } from '../../src/types.js';
 
 
@@ -20,6 +20,11 @@ describe("Basic obsidian launch", () => {
         expect(browser.getObsidianInstallerVersion()).toEqual(expectedInstallerVersion);
         const actualInstallerVersion = await browser.execute("return electron.remote.app.getVersion()");
         expect(actualInstallerVersion).toEqual(expectedInstallerVersion);
+    })
+
+    it('Chrome version matches', async () => {
+        const chromeVersion = await browser.execute(() => process.versions.chrome);
+        expect(chromeVersion).toEqual(browser.capabilities.browserVersion);
     })
 
     it('Vault opened', async () => {

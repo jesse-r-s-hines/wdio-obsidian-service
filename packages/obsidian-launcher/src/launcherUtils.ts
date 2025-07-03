@@ -7,6 +7,7 @@ import semver from "semver"
 import _ from "lodash"
 import { pipeline } from "stream/promises";
 import zlib from "zlib"
+import { DeepPartial } from "ts-essentials";
 import { atomicCreate, makeTmpDir, normalizeObject } from "./utils.js";
 import { downloadResponse } from "./apis.js"
 import { ObsidianInstallerInfo, ObsidianVersionInfo } from "./types.js";
@@ -109,36 +110,84 @@ export async function extractObsidianDmg(dmg: string, dest: string) {
     })
 }
 
+/** Obsidian assets that have broken download links */
+const BROKEN_ASSETS = [
+    "https://releases.obsidian.md/release/obsidian-0.12.16.asar.gz",
+    "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.16/obsidian-0.12.16.asar.gz",
+    "https://releases.obsidian.md/release/obsidian-1.4.7.asar.gz",
+    "https://releases.obsidian.md/release/obsidian-1.4.8.asar.gz",
+];
 
-export function parseObsidianDesktopRelease(fileRelease: any, isBeta: boolean): Partial<ObsidianVersionInfo> {
-    return {
-        version: fileRelease.latestVersion,
-        minInstallerVersion: fileRelease.minimumVersion != '0.0.0' ? fileRelease.minimumVersion : undefined,
-        isBeta: isBeta,
-        downloads: {
-            asar: fileRelease.downloadUrl,
-        },
+type ParsedDesktopRelease = {current: DeepPartial<ObsidianVersionInfo>, beta?: DeepPartial<ObsidianVersionInfo>}
+export function parseObsidianDesktopRelease(fileRelease: any): ParsedDesktopRelease {
+    const parse = (r: any, isBeta: boolean): DeepPartial<ObsidianVersionInfo> => {
+        const version = r.latestVersion;
+        let minInstallerVersion = r.minimumVersion;
+        if (minInstallerVersion == "0.0.0") {
+            minInstallerVersion = undefined;
+        // there's some errors in the minInstaller versions listed that we need to correct manually
+        } else if (semver.satisfies(version, '>=1.3.0 <=1.3.4')) {
+            minInstallerVersion = "0.14.5"
+        // running Obsidian with installer older than 1.1.9 won't boot with errors about "ERR_BLOCKED_BY_CLIENT"
+        } else if (semver.gte(version, "1.5.3") && semver.lt(minInstallerVersion, "1.1.9")) {
+            minInstallerVersion = "1.1.9"
+        }
+
+        return {
+            version: r.latestVersion,
+            minInstallerVersion: minInstallerVersion,
+            isBeta: isBeta,
+            downloads: {
+                asar: BROKEN_ASSETS.includes(r.downloadUrl) ? undefined : r.downloadUrl,
+            },
+        };
     };
+
+    let result: ParsedDesktopRelease = { current: parse(fileRelease, false) };
+    if (fileRelease.beta && fileRelease.beta.latestVersion !== fileRelease.latestVersion) {
+        result.beta = parse(fileRelease.beta, true);
+    }
+    return result;
 }
 
-export function parseObsidianGithubRelease(gitHubRelease: any): Partial<ObsidianVersionInfo> {
+export function parseObsidianGithubRelease(gitHubRelease: any): DeepPartial<ObsidianVersionInfo> {
     const version = gitHubRelease.name;
-    const assets: string[] = gitHubRelease.assets.map((a: any) => a.browser_download_url);
-    const downloads = {
-        appImage: assets.find(u => u.match(`${version}.AppImage$`)),
-        appImageArm: assets.find(u => u.match(`${version}-arm64.AppImage$`)),
-        tar: assets.find(u => u.match(`${version}.tar.gz$`)),
-        tarArm: assets.find(u => u.match(`${version}-arm64.tar.gz$`)),
-        apk: assets.find(u => u.match(`${version}.apk$`)),
-        asar: assets.find(u => u.match(`${version}.asar.gz$`)),
-        dmg: assets.find(u => u.match(`${version}(-universal)?.dmg$`)),
-        exe: assets.find(u => u.match(`${version}.exe$`)),
-    }
+    let assets: {url: string, digest?: string}[] = gitHubRelease.assets.map((a: any) => ({
+        url: a.browser_download_url,
+        digest: a.digest ?? undefined,
+    }));
+    assets = assets.filter(a => !BROKEN_ASSETS.includes(a.url));
+
+    const asar = assets.find(a => a.url.match(`${version}.asar.gz$`));
+    const appImage = assets.find(a => a.url.match(`${version}.AppImage$`));
+    const appImageArm = assets.find(a => a.url.match(`${version}-arm64.AppImage$`));
+    const tar = assets.find(a => a.url.match(`${version}.tar.gz$`));
+    const tarArm = assets.find(a => a.url.match(`${version}-arm64.tar.gz$`));
+    const dmg = assets.find(a => a.url.match(`${version}(-universal)?.dmg$`));
+    const exe = assets.find(a => a.url.match(`${version}.exe$`));
+    const apk = assets.find(a => a.url.match(`${version}.apk$`));
 
     return {
         version: version,
         gitHubRelease: gitHubRelease.html_url,
-        downloads: downloads,
+        downloads: {
+            asar: asar?.url,
+            appImage: appImage?.url,
+            appImageArm: appImageArm?.url,
+            tar: tar?.url,
+            tarArm: tarArm?.url,
+            dmg: dmg?.url,
+            exe: exe?.url,
+            apk: apk?.url,
+        },
+        installerInfo: {
+            appImage: appImage?.digest ? {digest: appImage.digest} : undefined,
+            appImageArm: appImageArm?.digest ? {digest: appImageArm.digest} : undefined,
+            tar: tar?.digest ? {digest: tar.digest} : undefined,
+            tarArm: tarArm?.digest ? {digest: tarArm.digest} : undefined,
+            dmg: dmg?.digest ? {digest: dmg.digest} : undefined,
+            exe: exe?.digest ? {digest: exe.digest} : undefined,
+        },
     }
 }
 
@@ -148,9 +197,9 @@ export function parseObsidianGithubRelease(gitHubRelease: any): Partial<Obsidian
  */
 export async function getInstallerInfo(
     installerKey: keyof ObsidianVersionInfo['installerInfo'], url: string,
-): Promise<ObsidianInstallerInfo> {
+): Promise<Partial<ObsidianInstallerInfo>> {
     const installerName = url.split("/").at(-1)!;
-    console.log(`Extrating installer info for ${installerName}`)
+    console.log(`Extrating installer info for ${installerName}...`)
     const tmpDir = await makeTmpDir("obsidian-launcher-");
     try {
         const installerPath = path.join(tmpDir, url.split("/").at(-1)!)
@@ -217,6 +266,7 @@ export async function getInstallerInfo(
             throw new Error(`Failed to extract Electron and Chrome versions from binary ${installerPath}`);
         }
 
+        console.log(`Extracted installer info for ${installerName}`)
         return { electron, chrome, platforms };
     } finally {
         await fsAsync.rm(tmpDir, { recursive: true, force: true });
@@ -225,37 +275,9 @@ export async function getInstallerInfo(
 
 
 /**
- * Add some corrections to the Obsidian version data.
- */
-export function correctObsidianVersionInfo(versionInfo: Partial<ObsidianVersionInfo>): Partial<ObsidianVersionInfo> {
-    const corrections: Partial<ObsidianVersionInfo>[] = [
-        // These version's downloads are missing or broken.
-        {version: '0.12.16', downloads: { asar: undefined }},
-        {version: '1.4.7', downloads: { asar: undefined }},
-        {version: '1.4.8', downloads: { asar: undefined }},
-        
-        // The minInstallerVersion here is incorrect
-        {version: "1.3.4", minInstallerVersion: "0.14.5"},
-        {version: "1.3.3", minInstallerVersion: "0.14.5"},
-        {version: "1.3.2", minInstallerVersion: "0.14.5"},
-        {version: "1.3.1", minInstallerVersion: "0.14.5"},
-        {version: "1.3.0", minInstallerVersion: "0.14.5"},
-    ]
-
-    const result = corrections.find(v => v.version == versionInfo.version) ?? {};
-    // minInstallerVersion is incorrect, running Obsidian with installer older than 1.1.9 won't boot with errors like
-    // `(node:11592) electron: Failed to load URL: app://obsidian.md/starter.html with error: ERR_BLOCKED_BY_CLIENT`
-    if (semver.gte(versionInfo.version!, "1.5.3") && semver.lt(versionInfo.minInstallerVersion!, "1.1.9")) {
-        result.minInstallerVersion = "1.1.9"
-    }
-
-    return result;
-}
-
-/**
  * Normalize order and remove undefined values.
  */
-export function normalizeObsidianVersionInfo(versionInfo: Partial<ObsidianVersionInfo>): ObsidianVersionInfo {
+export function normalizeObsidianVersionInfo(versionInfo: DeepPartial<ObsidianVersionInfo>): ObsidianVersionInfo {
     versionInfo = {
         ...versionInfo,
         // kept for backwards compatibility
@@ -279,12 +301,12 @@ export function normalizeObsidianVersionInfo(versionInfo: Partial<ObsidianVersio
             apk: null,
         },
         installerInfo: {
-            appImage: {electron: null, chrome: null, platforms: null},
-            appImageArm: {electron: null, chrome: null, platforms: null},
-            tar: {electron: null, chrome: null, platforms: null},
-            tarArm: {electron: null, chrome: null, platforms: null},
-            dmg: {electron: null, chrome: null, platforms: null},
-            exe: {electron: null, chrome: null, platforms: null},
+            appImage: {digest: null, electron: null, chrome: null, platforms: null},
+            appImageArm: {digest: null, electron: null, chrome: null, platforms: null},
+            tar: {digest: null, electron: null, chrome: null, platforms: null},
+            tarArm: {digest: null, electron: null, chrome: null, platforms: null},
+            dmg: {digest: null, electron: null, chrome: null, platforms: null},
+            exe: {digest: null, electron: null, chrome: null, platforms: null},
         },
         electronVersion: null,
         chromeVersion: null,

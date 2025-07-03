@@ -15,6 +15,7 @@ export type ObsidianVersionInfos = {
 }
 
 export type ObsidianInstallerInfo = {
+    digest?: string,
     /** Electron version */
     electron: string,
     /** Chrome version */

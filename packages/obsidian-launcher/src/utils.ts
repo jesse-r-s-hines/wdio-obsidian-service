@@ -121,20 +121,6 @@ export async function maybe<T>(promise: Promise<T>): Promise<Maybe<T>> {
 
 
 /**
- * Lodash _.merge but overwrites values with undefined if present, instead of ignoring undefined.
- */
-export function mergeKeepUndefined(object: any, ...sources: any[]) {
-    return _.mergeWith(object, ...sources,
-        (objValue: any, srcValue: any, key: any, obj: any) => {
-            if (_.isPlainObject(obj) && objValue !== srcValue && srcValue === undefined) {
-                obj[key] = srcValue
-            }
-        }
-    );
-}
-
-
-/**
  * Watch a list of files and call func whenever they change.
  */
 export function watchFiles(
