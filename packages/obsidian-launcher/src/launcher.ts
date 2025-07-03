@@ -949,10 +949,10 @@ export class ObsidianLauncher {
         }
 
         // get all installers we need to extract info for
+        const installerKeys = ["appImage", "appImageArm", "tar", "tarArm", "dmg", "exe"] as const;
         const newInstallers = Object.values(versionMap)
-            .filter(v => v.downloads?.appImage && !v.installerInfo)
-            .flatMap(v => [[v, "appImage"], [v, "appImageArm"], [v, "dmg"], [v, "exe"]] as const)
-            .filter(([v, key]) => !!v.downloads![key]);
+            .flatMap(v => installerKeys.map(k => [v, k] as const))
+            .filter(([v, key]) => v.downloads?.[key] && !v.installerInfo);
         const installerInfos = await pool(maxInstances, newInstallers, async ([v, key]) => {
             const installerInfo = await getInstallerInfo(key, v.downloads![key]!);
             return [v.version!, key, installerInfo] as const;

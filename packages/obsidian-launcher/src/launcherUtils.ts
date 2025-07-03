@@ -55,6 +55,19 @@ export async function extractObsidianAppImage(appImage: string, dest: string) {
     })
 }
 
+
+/**
+ * Extract the obsidian.tar.gz
+ */
+export async function extractObsidianTar(tar: string, dest: string) {
+    await atomicCreate(dest, async (tmpDir) => {
+        await extractGz(tar, path.join(tmpDir, "inflated.tar"));
+        await sevenZ(["x", "-o.", "inflated.tar"], {cwd: tmpDir});
+        return (await fsAsync.readdir(tmpDir)).find(p => p.match("obsidian-"))!;
+    })
+}
+
+
 /**
  * Obsidian appears to use NSIS to bundle their Window's installers. We want to extract the executable
  * files directly without running the installer. 7zip can extract the raw files from the exe.
@@ -148,6 +161,9 @@ export async function getInstallerInfo(
         if (installerKey == "appImage" || installerKey == "appImageArm") {
             await extractObsidianAppImage(installerPath, exractedPath);
             platforms = ['linux-' + (installerKey == "appImage" ? 'x64' : 'arm64')];
+        } else if (installerKey == "tar" || installerKey == "tarArm") {
+            await extractObsidianTar(installerPath, exractedPath);
+            platforms = ['linux-' + (installerKey == "tar" ? 'x64' : 'arm64')];
         } else if (installerKey == "exe") {
             await extractObsidianExe(installerPath, "x64", exractedPath);
             const {stdout} = await sevenZ(["l", '-ba', path.relative(tmpDir, installerPath)], {cwd: tmpDir});
@@ -185,15 +201,17 @@ export async function getInstallerInfo(
             }
         }
 
-        matches = _(matches)
-            .map(v => v.split(/\/|\./))
-            .sortBy(0, ...[1, 2, 3, 4].map(i => (v: string[]) => Number(v[i] ?? -1)))
-            .map(([app, ...version]) => `${app}/${version.join('.')}`)
-            .reverse()
+        // get most recent versions
+        const versionSortKey = (v: string) => v.split(".").map(s => s.padStart(9, '0')).join(".");
+        const versions = _(matches)
+            .map(m => m.split("/"))
+            .groupBy(0)
+            .mapValues(ms => ms.map(m => m[1]))
+            .mapValues(ms => _.sortBy(ms, versionSortKey).at(-1)!)
             .value();
     
-        const electron = matches.find(v => v.startsWith("Electron/"))?.split("/")[1];
-        const chrome = matches.find(v => v.startsWith("Chrome/"))?.split("/")[1];
+        const electron = versions['Electron'];
+        const chrome = versions['Chrome'];
 
         if (!electron || !chrome) {
             throw new Error(`Failed to extract Electron and Chrome versions from binary ${installerPath}`);
@@ -256,13 +274,15 @@ export function normalizeObsidianVersionInfo(versionInfo: Partial<ObsidianVersio
             appImageArm: null,
             tar: null,
             tarArm: null,
-            apk: null,
             dmg: null,
             exe: null,
+            apk: null,
         },
         installerInfo: {
             appImage: {electron: null, chrome: null, platforms: null},
             appImageArm: {electron: null, chrome: null, platforms: null},
+            tar: {electron: null, chrome: null, platforms: null},
+            tarArm: {electron: null, chrome: null, platforms: null},
             dmg: {electron: null, chrome: null, platforms: null},
             exe: {electron: null, chrome: null, platforms: null},
         },
