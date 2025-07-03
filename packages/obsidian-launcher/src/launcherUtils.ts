@@ -13,7 +13,7 @@ import { ObsidianInstallerInfo, ObsidianVersionInfo } from "./types.js";
 
 
 export function normalizeGitHubRepo(repo: string) {
-    return repo.replace(/^(https?:\/\/)?(github.com\/)/, '')
+    return repo.match(/^(https?:\/\/)?(github.com\/)?(.*?)\/?$/)?.[3] ?? repo;
 }
 
 export async function extractGz(archive: string, dest: string) {
