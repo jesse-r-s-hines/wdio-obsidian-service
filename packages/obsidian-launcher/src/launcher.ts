@@ -967,9 +967,9 @@ export class ObsidianLauncher {
         let minInstallerVersion: string|undefined = undefined;
         let maxInstallerVersion: string|undefined = undefined;
         for (const version of Object.keys(versionMap).sort(semver.compare)) {
-            // older versions have 0.0.0 as there min version, which doesn't exist anywhere we can download.
+            // older versions have 0.0.0 as their min version, which doesn't exist anywhere we can download.
             // we'll set those to the first available installer version.
-            if (!minInstallerVersion && versionMap[version].chromeVersion) {
+            if (!minInstallerVersion && versionMap[version].installerInfo?.appImage) {
                 minInstallerVersion = version;
             }
             if (versionMap[version].downloads!.appImage) {

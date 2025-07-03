@@ -1,9 +1,9 @@
 {
     "metadata": {
         "schemaVersion": "2.0.0",
-        "commitDate": "2025-06-05T16:47:21Z",
-        "commitSha": "1d4401e3a1671936affe9017c3bffe7622183f2a",
-        "timestamp": "2025-06-24T01:33:31.660Z"
+        "commitDate": "2025-06-27T22:21:34Z",
+        "commitSha": "53c436fbf2a9681c815b56a464598214248ac277",
+        "timestamp": "2025-07-03T16:32:13.451Z"
     },
     "versions": [
         {
@@ -80,6 +80,7 @@
         },
         {
             "version": "0.6.4",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.6.4",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.6.4",
@@ -118,6 +119,7 @@
         },
         {
             "version": "0.6.5",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.6.5",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.6.5",
@@ -156,6 +158,7 @@
         },
         {
             "version": "0.6.6",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.6.5",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.6.6",
@@ -166,6 +169,7 @@
         },
         {
             "version": "0.6.7",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.6.7",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.6.7",
@@ -204,6 +208,7 @@
         },
         {
             "version": "0.7.0",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.6.7",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.7.0",
@@ -214,6 +219,7 @@
         },
         {
             "version": "0.7.1",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.6.7",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.7.1",
@@ -224,6 +230,7 @@
         },
         {
             "version": "0.7.2",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.6.7",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.7.2",
@@ -234,6 +241,7 @@
         },
         {
             "version": "0.7.3",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.7.3",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.7.3",
@@ -272,6 +280,7 @@
         },
         {
             "version": "0.7.4",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.7.4",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.7.4",
@@ -310,6 +319,7 @@
         },
         {
             "version": "0.7.5",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.7.4",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.7.5",
@@ -320,6 +330,7 @@
         },
         {
             "version": "0.7.6",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.7.6",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.7.6",
@@ -358,6 +369,7 @@
         },
         {
             "version": "0.8.0",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.8.0",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.8.0",
@@ -396,6 +408,7 @@
         },
         {
             "version": "0.8.1",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.8.1",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.8.1",
@@ -434,6 +447,7 @@
         },
         {
             "version": "0.8.2",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.8.2",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.8.2",
@@ -472,6 +486,7 @@
         },
         {
             "version": "0.8.3",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.8.2",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.8.3",
@@ -482,6 +497,7 @@
         },
         {
             "version": "0.8.4",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.8.4",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.8.4",
@@ -520,6 +536,7 @@
         },
         {
             "version": "0.8.5",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.8.4",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.8.5",
@@ -530,6 +547,7 @@
         },
         {
             "version": "0.8.6",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.8.4",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.8.6",
@@ -540,6 +558,7 @@
         },
         {
             "version": "0.8.7",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.8.4",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.8.7",
@@ -550,6 +569,7 @@
         },
         {
             "version": "0.8.8",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.8.4",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.8.8",
@@ -560,6 +580,7 @@
         },
         {
             "version": "0.8.9",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.8.9",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.8.9",
@@ -598,6 +619,7 @@
         },
         {
             "version": "0.8.10",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.8.9",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.8.10",
@@ -608,6 +630,7 @@
         },
         {
             "version": "0.8.11",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.8.9",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.8.11",
@@ -618,6 +641,7 @@
         },
         {
             "version": "0.8.12",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.8.12",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.8.12",
@@ -656,6 +680,7 @@
         },
         {
             "version": "0.8.13",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.8.12",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.8.13",
@@ -666,6 +691,7 @@
         },
         {
             "version": "0.8.14",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.8.14",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.8.14",
@@ -704,6 +730,7 @@
         },
         {
             "version": "0.8.15",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.8.15",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.8.15",
@@ -742,6 +769,7 @@
         },
         {
             "version": "0.9.0",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.8.15",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.9.0",
@@ -752,6 +780,7 @@
         },
         {
             "version": "0.9.1",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.9.1",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.9.1",
@@ -791,6 +820,7 @@
         },
         {
             "version": "0.9.2",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.9.2",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.9.2",
@@ -830,6 +860,7 @@
         },
         {
             "version": "0.9.3",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.9.3",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.9.3",
@@ -869,6 +900,7 @@
         },
         {
             "version": "0.9.4",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.9.4",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.9.4",
@@ -908,6 +940,7 @@
         },
         {
             "version": "0.9.5",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.9.4",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.9.5",
@@ -918,6 +951,7 @@
         },
         {
             "version": "0.9.6",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.9.6",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.9.6",
@@ -957,6 +991,7 @@
         },
         {
             "version": "0.9.7",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.9.6",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.9.7",
@@ -967,6 +1002,7 @@
         },
         {
             "version": "0.9.8",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.9.6",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.9.8",
@@ -977,6 +1013,7 @@
         },
         {
             "version": "0.9.9",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.9.6",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.9.9",
@@ -987,6 +1024,7 @@
         },
         {
             "version": "0.9.10",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.9.10",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.9.10",
@@ -1026,6 +1064,7 @@
         },
         {
             "version": "0.9.11",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.9.11",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.9.11",
@@ -1065,6 +1104,7 @@
         },
         {
             "version": "0.9.12",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.9.11",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.9.12",
@@ -1075,6 +1115,7 @@
         },
         {
             "version": "0.9.13",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.9.11",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.9.13",
@@ -1085,6 +1126,7 @@
         },
         {
             "version": "0.9.14",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.9.11",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.9.14",
@@ -1095,6 +1137,7 @@
         },
         {
             "version": "0.9.15",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.9.15",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.9.15",
@@ -1134,6 +1177,7 @@
         },
         {
             "version": "0.9.16",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.9.15",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.9.16",
@@ -1144,6 +1188,7 @@
         },
         {
             "version": "0.9.17",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.9.17",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.9.17",
@@ -1192,6 +1237,7 @@
         },
         {
             "version": "0.9.18",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.9.17",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.9.18",
@@ -1202,6 +1248,7 @@
         },
         {
             "version": "0.9.19",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.9.17",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.9.19",
@@ -1212,6 +1259,7 @@
         },
         {
             "version": "0.9.20",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.9.20",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.9.20",
@@ -1251,6 +1299,7 @@
         },
         {
             "version": "0.9.21",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.9.20",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.9.21",
@@ -1261,6 +1310,7 @@
         },
         {
             "version": "0.9.22",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.9.22",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.9.22",
@@ -1300,6 +1350,7 @@
         },
         {
             "version": "0.10.0",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.9.22",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.10.0",
@@ -1310,6 +1361,7 @@
         },
         {
             "version": "0.10.1",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.10.1",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.10.1",
@@ -1349,6 +1401,7 @@
         },
         {
             "version": "0.10.2",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.10.1",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.10.2",
@@ -1359,6 +1412,7 @@
         },
         {
             "version": "0.10.3",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.10.1",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.10.3",
@@ -1369,6 +1423,7 @@
         },
         {
             "version": "0.10.4",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.10.1",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.10.4",
@@ -1379,6 +1434,7 @@
         },
         {
             "version": "0.10.5",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.10.1",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.10.5",
@@ -1389,6 +1445,7 @@
         },
         {
             "version": "0.10.6",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.10.6",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.10.6",
@@ -1428,6 +1485,7 @@
         },
         {
             "version": "0.10.7",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.10.7",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.10.7",
@@ -1467,6 +1525,7 @@
         },
         {
             "version": "0.10.8",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.10.8",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.10.8",
@@ -1506,6 +1565,7 @@
         },
         {
             "version": "0.10.9",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.10.9",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.10.9",
@@ -1545,6 +1605,7 @@
         },
         {
             "version": "0.10.10",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.10.9",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.10.10",
@@ -1555,6 +1616,7 @@
         },
         {
             "version": "0.10.11",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.10.11",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.10.11",
@@ -1594,6 +1656,7 @@
         },
         {
             "version": "0.10.12",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.10.11",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.10.12",
@@ -1604,6 +1667,7 @@
         },
         {
             "version": "0.10.13",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.10.13",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.10.13",
@@ -1643,6 +1707,7 @@
         },
         {
             "version": "0.11.0",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.11.0",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.11.0",
@@ -1682,6 +1747,7 @@
         },
         {
             "version": "0.11.1",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.11.0",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.11.1",
@@ -1692,6 +1758,7 @@
         },
         {
             "version": "0.11.2",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.11.0",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.11.2",
@@ -1702,6 +1769,7 @@
         },
         {
             "version": "0.11.3",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.11.3",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.11.3",
@@ -1741,6 +1809,7 @@
         },
         {
             "version": "0.11.4",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.11.3",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.11.4",
@@ -1751,6 +1820,7 @@
         },
         {
             "version": "0.11.5",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.11.5",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.11.5",
@@ -1790,6 +1860,7 @@
         },
         {
             "version": "0.11.6",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.11.5",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.11.6",
@@ -1800,6 +1871,7 @@
         },
         {
             "version": "0.11.7",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.11.5",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.11.7",
@@ -1810,6 +1882,7 @@
         },
         {
             "version": "0.11.8",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.11.5",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.11.8",
@@ -1820,6 +1893,7 @@
         },
         {
             "version": "0.11.9",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.11.9",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.11.9",
@@ -1859,6 +1933,7 @@
         },
         {
             "version": "0.11.10",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.11.9",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.11.10",
@@ -1869,6 +1944,7 @@
         },
         {
             "version": "0.11.11",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.11.9",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.11.11",
@@ -1879,6 +1955,7 @@
         },
         {
             "version": "0.11.12",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.11.9",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.11.12",
@@ -1889,6 +1966,7 @@
         },
         {
             "version": "0.11.13",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.11.13",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.11.13",
@@ -1928,6 +2006,7 @@
         },
         {
             "version": "0.12.0",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.11.13",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.12.0",
@@ -1938,6 +2017,7 @@
         },
         {
             "version": "0.12.1",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.11.13",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.12.1",
@@ -1948,6 +2028,7 @@
         },
         {
             "version": "0.12.2",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.11.13",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.12.2",
@@ -1958,6 +2039,7 @@
         },
         {
             "version": "0.12.3",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.12.3",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.12.3",
@@ -1997,6 +2079,7 @@
         },
         {
             "version": "0.12.4",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.12.4",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.12.4",
@@ -2036,6 +2119,7 @@
         },
         {
             "version": "0.12.5",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.12.5",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.12.5",
@@ -2075,6 +2159,7 @@
         },
         {
             "version": "0.12.6",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.12.5",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.12.6",
@@ -2085,6 +2170,7 @@
         },
         {
             "version": "0.12.7",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.12.5",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.12.7",
@@ -2095,6 +2181,7 @@
         },
         {
             "version": "0.12.8",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.12.5",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.12.8",
@@ -2105,6 +2192,7 @@
         },
         {
             "version": "0.12.9",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.12.5",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.12.9",
@@ -2115,6 +2203,7 @@
         },
         {
             "version": "0.12.10",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.12.10",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.12.10",
@@ -2154,6 +2243,7 @@
         },
         {
             "version": "0.12.11",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.12.10",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.12.11",
@@ -2164,6 +2254,7 @@
         },
         {
             "version": "0.12.12",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.12.12",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.12.12",
@@ -2203,6 +2294,7 @@
         },
         {
             "version": "0.12.13",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.12.12",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.12.13",
@@ -2213,6 +2305,7 @@
         },
         {
             "version": "0.12.14",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.12.12",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.12.14",
@@ -2223,6 +2316,7 @@
         },
         {
             "version": "0.12.15",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.12.15",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.12.15",
@@ -2271,6 +2365,7 @@
         },
         {
             "version": "0.12.16",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.12.15",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.12.16",
@@ -2279,6 +2374,7 @@
         },
         {
             "version": "0.12.17",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.12.15",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.12.17",
@@ -2289,6 +2385,7 @@
         },
         {
             "version": "0.12.18",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.12.15",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.12.18",
@@ -2299,6 +2396,7 @@
         },
         {
             "version": "0.12.19",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.12.19",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.12.19",
@@ -2338,6 +2436,7 @@
         },
         {
             "version": "0.13.0",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.12.19",
             "isBeta": true,
             "downloads": {
@@ -2347,6 +2446,7 @@
         },
         {
             "version": "0.13.1",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.12.19",
             "isBeta": true,
             "downloads": {
@@ -2356,6 +2456,7 @@
         },
         {
             "version": "0.13.2",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.12.19",
             "isBeta": true,
             "downloads": {
@@ -2365,6 +2466,7 @@
         },
         {
             "version": "0.13.3",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.12.19",
             "isBeta": true,
             "downloads": {
@@ -2374,6 +2476,7 @@
         },
         {
             "version": "0.13.4",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.12.19",
             "isBeta": true,
             "downloads": {
@@ -2383,6 +2486,7 @@
         },
         {
             "version": "0.13.5",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.12.19",
             "isBeta": true,
             "downloads": {
@@ -2392,6 +2496,7 @@
         },
         {
             "version": "0.13.6",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.12.19",
             "isBeta": true,
             "downloads": {
@@ -2401,6 +2506,7 @@
         },
         {
             "version": "0.13.7",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.12.19",
             "isBeta": true,
             "downloads": {
@@ -2410,6 +2516,7 @@
         },
         {
             "version": "0.13.8",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.12.19",
             "isBeta": true,
             "downloads": {
@@ -2419,6 +2526,7 @@
         },
         {
             "version": "0.13.9",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.12.19",
             "isBeta": true,
             "downloads": {
@@ -2428,6 +2536,7 @@
         },
         {
             "version": "0.13.10",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.12.19",
             "isBeta": true,
             "downloads": {
@@ -2437,6 +2546,7 @@
         },
         {
             "version": "0.13.11",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.12.19",
             "isBeta": true,
             "downloads": {
@@ -2446,6 +2556,7 @@
         },
         {
             "version": "0.13.12",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.12.19",
             "isBeta": true,
             "downloads": {
@@ -2455,6 +2566,7 @@
         },
         {
             "version": "0.13.13",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.12.19",
             "isBeta": true,
             "downloads": {
@@ -2464,6 +2576,7 @@
         },
         {
             "version": "0.13.14",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.13.14",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.13.14",
@@ -2503,6 +2616,7 @@
         },
         {
             "version": "0.13.15",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.13.14",
             "isBeta": true,
             "downloads": {
@@ -2512,6 +2626,7 @@
         },
         {
             "version": "0.13.16",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.13.14",
             "isBeta": true,
             "downloads": {
@@ -2521,6 +2636,7 @@
         },
         {
             "version": "0.13.17",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.13.14",
             "isBeta": true,
             "downloads": {
@@ -2530,6 +2646,7 @@
         },
         {
             "version": "0.13.18",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.13.14",
             "isBeta": true,
             "downloads": {
@@ -2539,6 +2656,7 @@
         },
         {
             "version": "0.13.19",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.13.19",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.13.19",
@@ -2578,6 +2696,7 @@
         },
         {
             "version": "0.13.20",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.13.19",
             "isBeta": true,
             "downloads": {
@@ -2587,6 +2706,7 @@
         },
         {
             "version": "0.13.21",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.13.19",
             "isBeta": true,
             "downloads": {
@@ -2596,6 +2716,7 @@
         },
         {
             "version": "0.13.22",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.13.19",
             "isBeta": true,
             "downloads": {
@@ -2605,6 +2726,7 @@
         },
         {
             "version": "0.13.23",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.13.23",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.13.23",
@@ -2644,6 +2766,7 @@
         },
         {
             "version": "0.13.24",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.13.24",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.13.24",
@@ -2683,6 +2806,7 @@
         },
         {
             "version": "0.13.25",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.13.24",
             "isBeta": true,
             "downloads": {
@@ -2692,6 +2816,7 @@
         },
         {
             "version": "0.13.26",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.13.24",
             "isBeta": true,
             "downloads": {
@@ -2701,6 +2826,7 @@
         },
         {
             "version": "0.13.27",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.13.24",
             "isBeta": true,
             "downloads": {
@@ -2710,6 +2836,7 @@
         },
         {
             "version": "0.13.28",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.13.24",
             "isBeta": true,
             "downloads": {
@@ -2719,6 +2846,7 @@
         },
         {
             "version": "0.13.29",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.13.24",
             "isBeta": true,
             "downloads": {
@@ -2728,6 +2856,7 @@
         },
         {
             "version": "0.13.30",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.13.30",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.13.30",
@@ -2776,6 +2905,7 @@
         },
         {
             "version": "0.13.31",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.13.31",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.13.31",
@@ -2824,6 +2954,7 @@
         },
         {
             "version": "0.13.32",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.13.31",
             "isBeta": true,
             "downloads": {
@@ -2833,6 +2964,7 @@
         },
         {
             "version": "0.13.33",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.13.31",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.13.33",
@@ -2843,6 +2975,7 @@
         },
         {
             "version": "0.14.0",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.13.31",
             "isBeta": true,
             "downloads": {
@@ -2852,6 +2985,7 @@
         },
         {
             "version": "0.14.1",
+            "minInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.13.31",
             "isBeta": true,
             "downloads": {
@@ -5835,6 +5969,24 @@
                 "asar": "https://releases.obsidian.md/release/obsidian-1.9.2.asar.gz"
             },
             "installerInfo": {}
+        },
+        {
+            "version": "1.9.3",
+            "minInstallerVersion": "1.1.9",
+            "maxInstallerVersion": "1.8.10",
+            "isBeta": true,
+            "downloads": {
+                "asar": "https://releases.obsidian.md/release/obsidian-1.9.3.asar.gz"
+            }
+        },
+        {
+            "version": "1.9.4",
+            "minInstallerVersion": "1.1.9",
+            "maxInstallerVersion": "1.8.10",
+            "isBeta": true,
+            "downloads": {
+                "asar": "https://releases.obsidian.md/release/obsidian-1.9.4.asar.gz"
+            }
         }
     ]
 }
