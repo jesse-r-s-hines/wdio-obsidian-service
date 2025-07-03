@@ -107,6 +107,9 @@ export async function fetchObsidianAPI(url: string) {
  * Downloads a url to disk.
  */
 export async function downloadResponse(response: Response, dest: string) {
+    if (!response.ok) {
+        throw Error(`${response.url} failed with ${response.status}`);
+    }
     const fileStream = fs.createWriteStream(dest, { flags: 'w' });
     // not sure why I have to cast this
     const fetchStream = Readable.fromWeb(response.body as ReadableStream);
