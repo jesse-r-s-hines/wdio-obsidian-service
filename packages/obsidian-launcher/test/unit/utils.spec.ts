@@ -4,7 +4,8 @@ import fsAsync from "fs/promises";
 import path from "path"
 import { createDirectory } from "../helpers.js";
 import {
-    fileExists, atomicCreate, linkOrCp, sleep, withTimeout, pool, maybe, mergeKeepUndefined,
+    fileExists, atomicCreate, linkOrCp, sleep, withTimeout, pool, maybe, mergeKeepUndefined, normalizeObject,
+    CanonicalForm,
 } from "../../src/utils.js";
 
 
@@ -200,4 +201,71 @@ describe("mergeKeepUndefined", () => {
             {a: 2, c: {x: undefined}},
         )).to.eql({a: 2, c: {x: undefined, y: 2}});
     });
+})
+
+
+describe("normalizeObject", () => {
+    const tests: {name: string, canonical: CanonicalForm, input: any, expected: any}[] = [
+        {
+            name: "empty",
+            canonical: {},
+            input: {},
+            expected: {},
+        }, {
+            name: "basic",
+            canonical: {a: null, b: null},
+            input: {b: 2, a: 1},
+            expected: {a: 1, b: 2},
+        }, {
+            name: "nested",
+            canonical: {a: null, b: {c: null, a: null}},
+            input: {b: {a: 1, c: 2}, a: 3},
+            expected: {a: 3, b: {c: 2, a: 1}},
+        }, {
+            name: "missing",
+            canonical: {a: null, b: {c: null, a: null}},
+            input: {a: 3},
+            expected: {a: 3},
+        }, {
+            name: "missing undefined",
+            canonical: {a: null, b: {c: null, a: null}},
+            input: {a: 3, b: undefined},
+            expected: {a: 3},
+        }, {
+            name: "missing nested",
+            canonical: {a: null, b: {c: {d: null}, f: null}},
+            input: {b: {f: 2}, a: 3},
+            expected: {a: 3, b: {f: 2}},
+        }, {
+            name: "empty object",
+            canonical: {a: null, b: {c: null, a: null}},
+            input: {},
+            expected: {},
+        }, {
+            name: "extra",
+            canonical: {a: null, b: {c: null, a: null}},
+            input: {a: 1, b: {c: 2, a: 3, x: 4}, x: 4},
+            expected: {a: 1, b: {c: 2, a: 3}}
+        }, {
+            name: "undefined",
+            canonical: {a: null, b: {c: null, a: null}},
+            input: {a: undefined, b: {c: undefined, a: undefined}},
+            expected: {b: {}},
+        }, {
+            name: "null with object value",
+            canonical: {a: null, b: null},
+            input: {b: {c: 1, x: 2}, a: 1},
+            expected: {a: 1, b: {c: 1, x: 2}},
+        },
+    ];
+    
+    tests.forEach(({name, canonical, input, expected}) => {
+        it(`normalizeObject ${name}`, () => {
+            const actual = normalizeObject(canonical, input);
+            // make sure undefined were removed
+            expect(actual).to.eql(expected);
+            // make sure order matches
+            expect(JSON.stringify(actual)).to.eql(JSON.stringify(expected));
+        });
+    })
 })

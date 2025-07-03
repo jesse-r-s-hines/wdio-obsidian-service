@@ -151,3 +151,38 @@ export function watchFiles(
         fs.watchFile(file, {interval: options.interval, persistent: options.persistent}, debouncedFunc);
     }
 }
+
+
+export type CanonicalForm = {
+    [key: string]: CanonicalForm|null,
+};
+
+/**
+ * Normalize object key order and remove any undefined values.
+ * CanonicalForm is an object with keys in the order you want.
+ * - If a value is "null" the value under that key won't be changed
+ * - if its an object, the value will also be normalized to match that object's key order
+ */
+export function normalizeObject<T>(canonical: CanonicalForm, obj: T): T {
+    // might be better to just use zod or something for this
+    const rootCanonical = canonical, rootObj = obj;
+    function helper(canonical: any, obj: any) {
+        if (_.isPlainObject(canonical)) {
+            if (_.isPlainObject(obj)) {
+                obj = _.pick(obj, Object.keys(canonical))
+                obj = _.mapValues(obj, (v, k) => helper(canonical[k], v));
+                obj = _.omitBy(obj, v => v === undefined);
+                return obj;
+            } else {
+                return obj;
+            }
+        } else if (canonical === null) {
+            return obj;
+        } else if (_.isPlainObject(canonical)) {
+            
+        } else {
+            throw Error(`Invalid canonical form ${JSON.stringify(rootCanonical)}`);
+        }
+    }
+    return helper(rootCanonical, rootObj);
+}

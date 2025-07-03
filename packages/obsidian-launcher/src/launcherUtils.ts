@@ -7,7 +7,7 @@ import semver from "semver"
 import _ from "lodash"
 import { pipeline } from "stream/promises";
 import zlib from "zlib"
-import { atomicCreate, makeTmpDir } from "./utils.js";
+import { atomicCreate, makeTmpDir, normalizeObject } from "./utils.js";
 import { downloadResponse } from "./apis.js"
 import { ObsidianInstallerInfo, ObsidianVersionInfo } from "./types.js";
 
@@ -239,33 +239,35 @@ export function correctObsidianVersionInfo(versionInfo: Partial<ObsidianVersionI
  */
 export function normalizeObsidianVersionInfo(versionInfo: Partial<ObsidianVersionInfo>): ObsidianVersionInfo {
     versionInfo = {
-        version: versionInfo.version,
-        minInstallerVersion: versionInfo.minInstallerVersion,
-        maxInstallerVersion: versionInfo.maxInstallerVersion,
-        isBeta: versionInfo.isBeta,
-        gitHubRelease: versionInfo.gitHubRelease,
-        downloads: {
-            asar: versionInfo.downloads?.asar,
-            appImage: versionInfo.downloads?.appImage,
-            appImageArm: versionInfo.downloads?.appImageArm,
-            tar: versionInfo.downloads?.tar,
-            tarArm: versionInfo.downloads?.tarArm,
-            apk: versionInfo.downloads?.apk,
-            dmg: versionInfo.downloads?.dmg,
-            exe: versionInfo.downloads?.exe,
-        },
-        installerInfo: {
-            appImage: versionInfo.installerInfo?.appImage,
-            appImageArm: versionInfo.installerInfo?.appImageArm,
-            dmg: versionInfo.installerInfo?.dmg,
-            exe: versionInfo.installerInfo?.exe,
-        },
+        ...versionInfo,
         // kept for backwards compatibility
         electronVersion: versionInfo.installerInfo?.appImage?.electron,
         chromeVersion: versionInfo.installerInfo?.appImage?.chrome,
     };
-    versionInfo.downloads = _.omitBy(versionInfo.downloads, v => v === undefined);
-    versionInfo.installerInfo = _.omitBy(versionInfo.installerInfo, v => v === undefined);
-    versionInfo = _.omitBy(versionInfo, v => v === undefined);
-    return versionInfo as ObsidianVersionInfo;
+    const canonicalForm = {
+        version: null,
+        minInstallerVersion: null,
+        maxInstallerVersion: null,
+        isBeta: null,
+        gitHubRelease: null,
+        downloads: {
+            asar: null,
+            appImage: null,
+            appImageArm: null,
+            tar: null,
+            tarArm: null,
+            apk: null,
+            dmg: null,
+            exe: null,
+        },
+        installerInfo: {
+            appImage: {electron: null, chrome: null, platforms: null},
+            appImageArm: {electron: null, chrome: null, platforms: null},
+            dmg: {electron: null, chrome: null, platforms: null},
+            exe: {electron: null, chrome: null, platforms: null},
+        },
+        electronVersion: null,
+        chromeVersion: null,
+    };
+    return normalizeObject(canonicalForm, versionInfo) as ObsidianVersionInfo;
 }
