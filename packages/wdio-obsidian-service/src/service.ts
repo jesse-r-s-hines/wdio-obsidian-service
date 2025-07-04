@@ -33,6 +33,14 @@ function resolveEntry(rootDir: string, entry: PluginEntry|ThemeEntry): PluginEnt
     }
 }
 
+function getServiceErrorMessage(e: any) {
+    return (
+        `Failed to download and setup Obsidian. Caused by:\n` +
+        `${e.stack}\n`+
+        ` ------The above causes:-----`
+    );
+}
+
 /**
  * Minimum Obsidian version that wdio-obsidian-service supports.
  * @category WDIO Helpers
@@ -71,21 +79,21 @@ export class ObsidianLauncherService implements Services.ServiceInstance {
      * Validates wdio:obsidianOptions and downloads Obsidian, plugins, and themes.
      */
     async onPrepare(config: Options.Testrunner, capabilities: Capabilities.TestrunnerCapabilities) {
-        if (!Array.isArray(capabilities)) {
-            capabilities = Object.values(capabilities).map(
-                (multiremoteOption) => (multiremoteOption as Capabilities.WithRequestedCapabilities).capabilities,
-            );
-        }
-
-        const obsidianCapabilities = capabilities.flatMap((cap) => {
-            if (("browserName" in cap) && cap.browserName === "obsidian") {
-                return [cap as WebdriverIO.Capabilities];
-            } else {
-                return [];
-            }
-        });
-
         try {
+            if (!Array.isArray(capabilities)) {
+                capabilities = Object.values(capabilities).map(
+                    (multiremoteOption) => (multiremoteOption as Capabilities.WithRequestedCapabilities).capabilities,
+                );
+            }
+
+            const obsidianCapabilities = capabilities.flatMap((cap) => {
+                if (("browserName" in cap) && cap.browserName === "obsidian") {
+                    return [cap as WebdriverIO.Capabilities];
+                } else {
+                    return [];
+                }
+            });
+
             for (const cap of obsidianCapabilities) {
                 const obsidianOptions = cap[OBSIDIAN_CAPABILITY_KEY] ?? {};
     
@@ -173,9 +181,8 @@ export class ObsidianLauncherService implements Services.ServiceInstance {
                 cap["wdio:enforceWebDriverClassic"] = true;
             }
         } catch (e: any) {
-            // By default wdio just logs service errors, throwing this makes it bail if anything goes wrong.
-            throw new SevereServiceError(`Failed to download and setup Obsidian. Caused by: ${e.stack}\n`+
-                                         ` ------The above causes:-----`);
+            // by default wdio continues on service errors, this makes it bail
+            throw new SevereServiceError(getServiceErrorMessage(e));
         }
     }
 }
@@ -280,17 +287,21 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
      * Handles vault and sandboxed config directory setup.
      */
     async beforeSession(config: Options.Testrunner, capabilities: WebdriverIO.Capabilities) {
-        if (!capabilities[OBSIDIAN_CAPABILITY_KEY]) return;
-        const obsidianOptions = capabilities[OBSIDIAN_CAPABILITY_KEY] as NormalizedObsidianCapabilityOptions;
+        try {
+            if (!capabilities[OBSIDIAN_CAPABILITY_KEY]) return;
+            const obsidianOptions = capabilities[OBSIDIAN_CAPABILITY_KEY] as NormalizedObsidianCapabilityOptions;
 
-        const [configDir, vaultCopy] = await this.setupObsidianDirs(obsidianOptions);
+            const [configDir, vaultCopy] = await this.setupObsidianDirs(obsidianOptions);
 
-        // for use in getVaultPath()
-        obsidianOptions.vaultCopy = vaultCopy;
-        capabilities['goog:chromeOptions']!.args = [
-            `--user-data-dir=${configDir}`,
-            ...(capabilities['goog:chromeOptions']!.args ?? [])
-        ];
+            // for use in getVaultPath()
+            obsidianOptions.vaultCopy = vaultCopy;
+            capabilities['goog:chromeOptions']!.args = [
+                `--user-data-dir=${configDir}`,
+                ...(capabilities['goog:chromeOptions']!.args ?? [])
+            ];
+        } catch (e: any) {
+            throw new SevereServiceError(getServiceErrorMessage(e));
+        }
     }
 
     /**
@@ -329,99 +340,103 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
      * Setup custom browser commands.
      */
     async before(capabilities: WebdriverIO.Capabilities, specs: unknown, browser: WebdriverIO.Browser) {
-        // There's a slow event listener link on the browser "command" event when you reloadSession that causes some
-        // warnings. This will silence them. TODO: Make issue or PR to wdio to fix this.
-        browser.setMaxListeners(1000);
+        try {
+            // There's a slow event listener link on the browser "command" event when you reloadSession that causes some
+            // warnings. This will silence them. TODO: Make issue or PR to wdio to fix this.
+            browser.setMaxListeners(1000);
 
-        if (!capabilities[OBSIDIAN_CAPABILITY_KEY]) return;
+            if (!capabilities[OBSIDIAN_CAPABILITY_KEY]) return;
 
-        const service = this; // eslint-disable-line @typescript-eslint/no-this-alias
-        const reloadObsidian: typeof browser['reloadObsidian'] = async function(
-            this: WebdriverIO.Browser,
-            {vault, plugins, theme} = {},
-        ) {
-            const oldObsidianOptions: NormalizedObsidianCapabilityOptions = this.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY];
-            let newCapabilities: WebdriverIO.Capabilities
+            const service = this; // eslint-disable-line @typescript-eslint/no-this-alias
+            const reloadObsidian: typeof browser['reloadObsidian'] = async function(
+                this: WebdriverIO.Browser,
+                {vault, plugins, theme} = {},
+            ) {
+                const oldObsidianOptions: NormalizedObsidianCapabilityOptions = this.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY];
+                let newCapabilities: WebdriverIO.Capabilities
 
-            if (vault) {
-                const newObsidianOptions: NormalizedObsidianCapabilityOptions = {
-                    ...oldObsidianOptions,
-                    // Resolve relative to PWD instead of root dir during tests
-                    vault: path.resolve(vault),
-                    plugins: service.selectPlugins(oldObsidianOptions.plugins, plugins),
-                    themes: service.selectThemes(oldObsidianOptions.themes, theme),
-                }
-    
-                const [configDir, vaultCopy] = await service.setupObsidianDirs(newObsidianOptions);
-                // for use in getVaultPath()
-                newObsidianOptions.vaultCopy = vaultCopy;
-                
-                const newArgs = [
-                    `--user-data-dir=${configDir}`,
-                    ...this.requestedCapabilities['goog:chromeOptions'].args.filter((arg: string) => {
-                        const match = arg.match(/^--user-data-dir=(.*)$/);
-                        return !match || !service.tmpDirs.includes(match[1]);
-                    }),
-                ]
-                
-                newCapabilities = {
-                    [OBSIDIAN_CAPABILITY_KEY]: newObsidianOptions,
-                    'goog:chromeOptions': {
-                        ...this.requestedCapabilities['goog:chromeOptions'],
-                        args: newArgs,
-                    },
-                };
-            } else {
-                // preserve vault and config dir
-                const obsidianPage = browser.getObsidianPage();
-                newCapabilities = {};
-                // Since we aren't recreating the vault, we'll need to reset plugins and themes here if specified.
-                if (plugins) {
-                    const enabledPlugins = await browser.executeObsidian(({app}) =>
-                        [...(app as any).plugins.enabledPlugins].sort()
-                    )
-                    for (const pluginId of _.difference(enabledPlugins, plugins, ['wdio-obsidian-service-plugin'])) {
-                        await obsidianPage.disablePlugin(pluginId);
+                if (vault) {
+                    const newObsidianOptions: NormalizedObsidianCapabilityOptions = {
+                        ...oldObsidianOptions,
+                        // Resolve relative to PWD instead of root dir during tests
+                        vault: path.resolve(vault),
+                        plugins: service.selectPlugins(oldObsidianOptions.plugins, plugins),
+                        themes: service.selectThemes(oldObsidianOptions.themes, theme),
                     }
-                    for (const pluginId of _.difference(plugins, enabledPlugins)) {
-                        await obsidianPage.enablePlugin(pluginId);
+        
+                    const [configDir, vaultCopy] = await service.setupObsidianDirs(newObsidianOptions);
+                    // for use in getVaultPath()
+                    newObsidianOptions.vaultCopy = vaultCopy;
+                    
+                    const newArgs = [
+                        `--user-data-dir=${configDir}`,
+                        ...this.requestedCapabilities['goog:chromeOptions'].args.filter((arg: string) => {
+                            const match = arg.match(/^--user-data-dir=(.*)$/);
+                            return !match || !service.tmpDirs.includes(match[1]);
+                        }),
+                    ]
+                    
+                    newCapabilities = {
+                        [OBSIDIAN_CAPABILITY_KEY]: newObsidianOptions,
+                        'goog:chromeOptions': {
+                            ...this.requestedCapabilities['goog:chromeOptions'],
+                            args: newArgs,
+                        },
+                    };
+                } else {
+                    // preserve vault and config dir
+                    const obsidianPage = browser.getObsidianPage();
+                    newCapabilities = {};
+                    // Since we aren't recreating the vault, we'll need to reset plugins and themes here if specified.
+                    if (plugins) {
+                        const enabledPlugins = await browser.executeObsidian(({app}) =>
+                            [...(app as any).plugins.enabledPlugins].sort()
+                        )
+                        for (const pluginId of _.difference(enabledPlugins, plugins, ['wdio-obsidian-service-plugin'])) {
+                            await obsidianPage.disablePlugin(pluginId);
+                        }
+                        for (const pluginId of _.difference(plugins, enabledPlugins)) {
+                            await obsidianPage.enablePlugin(pluginId);
+                        }
                     }
+                    if (theme) {
+                        await obsidianPage.setTheme(theme);
+                    }
+                    // Obsidian debounces saves to the config dir, and so changes to configuration made in the tests may not
+                    // get saved to disk before the reboot. Here I manually trigger save for plugins and themes, but other
+                    // configurations might not get saved. I haven't found a better way to flush everything than just
+                    // waiting a bit. Wdio has ways to mock the clock, which might work, but it's only supported when using
+                    // BiDi, which I can't get working on Obsidian.
+                    await browser.executeObsidian(async ({app}) => await Promise.all([
+                        (app as any).plugins.saveConfig(),
+                        (app.vault as any).saveConfig(),
+                    ]))
+                    await sleep(2000);
                 }
-                if (theme) {
-                    await obsidianPage.setTheme(theme);
-                }
-                // Obsidian debounces saves to the config dir, and so changes to configuration made in the tests may not
-                // get saved to disk before the reboot. Here I manually trigger save for plugins and themes, but other
-                // configurations might not get saved. I haven't found a better way to flush everything than just
-                // waiting a bit. Wdio has ways to mock the clock, which might work, but it's only supported when using
-                // BiDi, which I can't get working on Obsidian.
-                await browser.executeObsidian(async ({app}) => await Promise.all([
-                    (app as any).plugins.saveConfig(),
-                    (app.vault as any).saveConfig(),
-                ]))
-                await sleep(2000);
+
+                const sessionId = await browser.reloadSession({
+                    // if browserName is set, reloadSession tries to restart the driver entirely, so unset those
+                    ..._.omit(this.requestedCapabilities, ['browserName', 'browserVersion']),
+                    ...newCapabilities,
+                });
+                await service.setupObsidianApp(this);
+                return sessionId;
             }
 
-            const sessionId = await browser.reloadSession({
-                // if browserName is set, reloadSession tries to restart the driver entirely, so unset those
-                ..._.omit(this.requestedCapabilities, ['browserName', 'browserVersion']),
-                ...newCapabilities,
-            });
-            await service.setupObsidianApp(this);
-            return sessionId;
-        }
+            browser.addCommand("reloadObsidian", reloadObsidian);
 
-        browser.addCommand("reloadObsidian", reloadObsidian);
+            for (const [name, cmd] of Object.entries(asyncBrowserCommands)) {
+                browser.addCommand(name, cmd);
+            }
+            // Hack to allow adding a few sync methods to browser
+            for (const [name, cmd] of Object.entries(syncBrowserCommands)) {
+                (browser as any)[name] = cmd;
+            }
 
-        for (const [name, cmd] of Object.entries(asyncBrowserCommands)) {
-            browser.addCommand(name, cmd);
+            await service.setupObsidianApp(browser);
+        } catch (e: any) {
+            throw new SevereServiceError(getServiceErrorMessage(e));
         }
-        // Hack to allow adding a few sync methods to browser
-        for (const [name, cmd] of Object.entries(syncBrowserCommands)) {
-            (browser as any)[name] = cmd;
-        }
-
-        await service.setupObsidianApp(browser);
     }
 
     /**
