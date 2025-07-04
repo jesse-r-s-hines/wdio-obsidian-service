@@ -346,15 +346,15 @@ export class ObsidianLauncher {
      * @param appVersion Obsidian version to download
      */
     async downloadApp(appVersion: string): Promise<string> {
-        const appVersionInfo = await this.getVersionInfo(appVersion);
-        const appUrl = appVersionInfo.downloads.asar;
+        const versionInfo = await this.getVersionInfo(appVersion);
+        const appUrl = versionInfo.downloads.asar;
         if (!appUrl) {
             throw Error(`No asar found for Obsidian version ${appVersion}`);
         }
-        const appPath = path.join(this.cacheDir, 'obsidian-app', `obsidian-${appVersionInfo.version}.asar`);
+        const appPath = path.join(this.cacheDir, 'obsidian-app', `obsidian-${versionInfo.version}.asar`);
 
         if (!(await fileExists(appPath))) {
-            console.log(`Downloading Obsidian app v${appVersion} ...`)
+            console.log(`Downloading Obsidian app v${versionInfo.version} ...`)
             await atomicCreate(appPath, async (tmpDir) => {
                 const isInsidersBuild = new URL(appUrl).hostname.endsWith('.obsidian.md');
                 const response = isInsidersBuild ? await fetchObsidianAPI(appUrl) : await fetch(appUrl);
@@ -410,6 +410,29 @@ export class ObsidianLauncher {
             })
         }
         return chromedriverPath;
+    }
+
+    /**
+     * Downloads the Obsidian apk.
+     */
+    async downloadAndroid(version: string): Promise<string> {
+        const versionInfo = await this.getVersionInfo(version);
+        const apkUrl = versionInfo.downloads.apk;
+        if (!apkUrl) {
+            throw Error(`No apk found for Obsidian version ${version}`);
+        }
+        const apkPath = path.join(this.cacheDir, 'obsidian-apk', `obsidian-${versionInfo.version}.apk`);
+
+        if (!(await fileExists(apkPath))) {
+            console.log(`Downloading Obsidian apk v${versionInfo.version} ...`)
+            await atomicCreate(apkPath, async (tmpDir) => {
+                const dest = path.join(tmpDir, 'obsidian.apk')
+                await downloadResponse(await fetch(apkUrl), dest);
+                return dest;
+            })
+        }
+
+        return apkPath;
     }
 
     /** Gets the latest version of a plugin. */
