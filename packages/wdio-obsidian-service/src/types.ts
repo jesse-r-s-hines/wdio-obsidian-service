@@ -1,8 +1,24 @@
 import type { ObsidianBrowserCommands } from "./browserCommands.js";
-import type { PluginEntry, ThemeEntry } from "obsidian-launcher";
+import type { PluginEntry, ThemeEntry, DownloadedPluginEntry, DownloadedThemeEntry } from "obsidian-launcher";
 
-export const OBSIDIAN_CAPABILITY_KEY = "wdio:obsidianOptions" as const;
+export const OBSIDIAN_CAPABILITY_KEY = "wdio:obsidianOptions";
 
+/**
+ * Options passed to an "wdio:obsidianOptions" capability in wdio.conf.ts. E.g.
+ * ```ts
+ * // ...
+ * capabilities: [{
+ *     browserName: "obsidian",
+ *     browserVersion: "latest",
+ *     'wdio:obsidianOptions': {
+ *         installerVersion: 'earliest',
+ *         plugins: ["."],
+ *     },
+ * }],
+ * ```
+ * 
+ * @category Options
+ */
 export interface ObsidianCapabilityOptions {
     /**
      * Version of Obsidian to download and run.
@@ -42,21 +58,22 @@ export interface ObsidianCapabilityOptions {
     /**
      * List of plugins to install.
      * 
-     * Each entry is a path to the local plugin to install, e.g. ["."] or ["dist"] depending on your build setup. You
-     * can also pass objects. If you pass an object it can contain one of either `path` (to install a local plugin),
-     * `repo` (to install a plugin from github), or `id` (to install a community plugin). You can set `enabled: false`
-     * to install the plugin but start it disabled. You can enable the plugin later using `reloadObsidian` or the
-     * `enablePlugin` command.
+     * Each entry is a path to the local plugin to install, e.g. ["."] or ["dist"] depending on your build setup. Paths
+     * are relative to your `wdio.conf.ts`.You can also pass objects. If you pass an object it should contain one of
+     * `path` (to install a local plugin), `repo` (to install a plugin from GitHub), or `id` (to install a community
+     * plugin). You can set `enabled: false` to install the plugin but start it disabled. You can enable the plugin
+     * later using `browser.reloadObsidian` or the `obsidianPage.enablePlugin`.
      */
     plugins?: PluginEntry[],
 
     /**
      * List of themes to install.
      * 
-     * Each entry is a path to the local theme to install. You can also pass an object. If you pass an object it can
-     * contain one of either `path` (to install a local theme), `repo` (to install a theme from github), or `name` (to
-     * install a community theme). You can set `enabled: false` to install the theme, but start it disabled. You can
-     * only have one enabled theme, so if you pass multiple you'll have to disable all but one.
+     * Each entry is a path to the local theme to install. Paths are relative to your `wdio.conf.ts`. You can also pass
+     * an object. If you pass an object it should contain one of `path` (to install a local theme), `repo` (to install a
+     * theme from GitHub), or `name` (to install a community theme). You can set `enabled: false` to install the theme,
+     * but start it disabled. You can only have one enabled theme, so if you pass multiple you'll have to disable all
+     * but one.
      */
     themes?: ThemeEntry[],
 
@@ -64,7 +81,8 @@ export interface ObsidianCapabilityOptions {
      * The path to the vault to open.
      * 
      * The vault will be copied, so any changes made in your tests won't affect the original. If omitted, no vault will
-     * be opened and you'll need to call `browser.reloadObsidian` to open a vault during your tests.
+     * be opened and you'll need to call `browser.reloadObsidian` to open a vault during your tests. Path is relative
+     * to your `wdio.conf.ts`.
      */
     vault?: string,
 
@@ -80,20 +98,45 @@ export interface ObsidianCapabilityOptions {
 }
 
 
+/** Internal type, capability options after being normalized by onPrepare */
+export interface NormalizedObsidianCapabilityOptions {
+    appVersion: string
+    installerVersion: string,
+    plugins: DownloadedPluginEntry[],
+    themes: DownloadedThemeEntry[],
+    vault?: string,
+    vaultCopy?: string,
+    binaryPath: string,
+    appPath: string,
+}
+
+
+/**
+ * Options based to the obsidian service in wdio.conf.ts. E.g.
+ * ```js
+ * // ...
+ * services: [["obsidian", {versionsUrl: "file:///path/to/obsidian-versions.json"}]]
+ * ```
+ * You'll usually want to leave these options as the default, they are mostly useful for wdio-obsidian-service's
+ * internal tests.
+ * 
+ * @category Options
+ */
 export interface ObsidianServiceOptions {
     /**
      * Override the `obsidian-versions.json` used by the service. Can be a file URL.
-     * This is only really useful for this package's own internal tests.
+     * Defaults to https://github.com/jesse-r-s-hines/wdio-obsidian-service/blob/HEAD/obsidian-versions.json which is
+     * auto-updated to contain information on available Obsidian versions.
      */
     versionsUrl?: string,
     /**
      * Override the `community-plugins.json` used by the service. Can be a file URL.
-     * This is only really useful for this package's own internal tests.
+     * Defaults to https://github.com/obsidianmd/obsidian-releases/blob/HEAD/community-plugins.json
      */
     communityPluginsUrl?: string,
     /**
      * Override the `community-css-themes.json` used by the service. Can be a file URL.
-     * This is only really useful for this package's own internal tests.
+     * Defaults tohttps://github.com/obsidianmd/obsidian-releases/blob/HEAD/community-css-themes.json
      */
     communityThemesUrl?: string,
 }

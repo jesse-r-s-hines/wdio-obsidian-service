@@ -1,7 +1,9 @@
 import * as path from "path"
 import * as fs from "fs"
 import * as fsAsync from "fs/promises"
-import { OBSIDIAN_CAPABILITY_KEY } from "../types.js";
+import { fileURLToPath } from "url";
+import { OBSIDIAN_CAPABILITY_KEY, NormalizedObsidianCapabilityOptions } from "../types.js";
+import { BasePage } from "./basePage.js";
 import { TFile } from "obsidian";
 import _ from "lodash";
 
@@ -19,41 +21,44 @@ import _ from "lodash";
  * ```
  * 
  * @hideconstructor
+ * @category Utilities
  */
-class ObsidianPage {
+class ObsidianPage extends BasePage {
+    private getObsidianCapabilities(): NormalizedObsidianCapabilityOptions {
+        return this.browser.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY];
+    }
+
     /**
      * Returns the path to the vault opened in Obsidian.
      * 
      * wdio-obsidian-service copies your vault before running tests, so this is the path to the temporary copy.
      */
-    async getVaultPath(): Promise<string|undefined> {
-        if (browser.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].vault == undefined) {
-            return undefined; // no vault open
-        } else { // return the actual path to the vault
-            return await browser.executeObsidian(({app, obsidian}) => {
-                if (app.vault.adapter instanceof obsidian.FileSystemAdapter) {
-                    return app.vault.adapter.getBasePath()
-                } else { // TODO handle CapacitorAdapater
-                    throw new Error(`Unrecognized DataAdapater type`)
-                };
-            })
+    getVaultPath(): string {
+        const obsidianOptions = this.getObsidianCapabilities();
+        if (obsidianOptions.vaultCopy === undefined) {
+            throw Error("No vault open, set vault in wdio.conf or use reloadObsidian to open a vault dynamically.")
         }
+        return obsidianOptions.vaultCopy;
     }
 
     /**
-     * Return the path to the Obsidian config dir (".obsidian" unless you've changed it explicitly)
+     * Return the full path to the Obsidian config dir ("path/to/vault/.obsidian" unless you changed the config dir
+     * name).
      */
     async getConfigDir(): Promise<string> {
-        return await browser.executeObsidian(({app}) => {
+        // You can theoretically change the config dir name
+        const dirName = await this.browser.executeObsidian(({app}) => {
             return app.vault.configDir;
         })
+        const vaultPath = this.getVaultPath();
+        return path.join(vaultPath, dirName);
     }
 
     /**
      * Enables a plugin by ID
      */
     async enablePlugin(pluginId: string): Promise<void> {
-        await browser.executeObsidian(
+        await this.browser.executeObsidian(
             async ({app}, pluginId) => await (app as any).plugins.enablePluginAndSave(pluginId),
             pluginId,
         );
@@ -63,7 +68,7 @@ class ObsidianPage {
      * Disables a plugin by ID
      */
     async disablePlugin(pluginId: string): Promise<void> {
-        await browser.executeObsidian(
+        await this.browser.executeObsidian(
             async ({app}, pluginId) => await (app as any).plugins.disablePluginAndSave(pluginId),
             pluginId,
         );
@@ -74,7 +79,7 @@ class ObsidianPage {
      */
     async setTheme(themeName: string): Promise<void> {
         themeName = themeName == 'default' ? '' : themeName;
-        await browser.executeObsidian(
+        await this.browser.executeObsidian(
             async ({app}, themeName) => await (app as any).customCss.setTheme(themeName),
             themeName,
         )
@@ -84,10 +89,12 @@ class ObsidianPage {
      * Opens a file in a new tab.
      */
     async openFile(path: string) {
-        await browser.executeObsidian(async ({app, obsidian}, path) => {
+        await this.browser.executeObsidian(async ({app, obsidian}, path) => {
             const file = app.vault.getAbstractFileByPath(path);
             if (file instanceof obsidian.TFile) {
-                await app.workspace.getLeaf('tab').openFile(file);
+                const leaf = app.workspace.getLeaf('tab');
+                await leaf.openFile(file);
+                app.workspace.setActiveLeaf(leaf, {focus: true});
             } else {
                 throw Error(`No file ${path} exists`);
             }
@@ -101,42 +108,45 @@ class ObsidianPage {
     async loadWorkspaceLayout(layout: any): Promise<void> {
         if (typeof layout == "string") {
             // read from .obsidian/workspaces.json like the built-in workspaces plugin does
-            const vaultPath = (await this.getVaultPath())!;
             const configDir = await this.getConfigDir();
-            const workspacesPath = path.join(vaultPath, configDir, 'workspaces.json');
+            const workspacesPath = path.join(configDir, 'workspaces.json');
             const layoutName = layout;
             try {
                 const fileContent = await fsAsync.readFile(workspacesPath, 'utf-8');
                 layout = JSON.parse(fileContent)?.workspaces?.[layoutName];
             } catch {
+                throw new Error(`Failed to load ${configDir}/workspaces.json`);
+            }
+            if (!layout) {
                 throw new Error(`No workspace ${layoutName} found in ${configDir}/workspaces.json`);
             }
         }
 
-        await browser.executeObsidian(async ({app}, layout) => {
+        await this.browser.executeObsidian(async ({app}, layout) => {
             await app.workspace.changeLayout(layout)
         }, layout)
     }
 
     /**
-     * Resets the vault files to the original state by deleting/creating/modifying vault files in place without
-     * reloading Obsidian.
+     * Updates the vault by modifying files in place without reloading Obsidian. Can be used to reset the vault back to
+     * its original state or to "switch" to an entirely different vault without rebooting Obsidian
      * 
-     * This will only reset regular vault files, it won't touch anything under `.obsidian`, and it won't reset any
+     * This will only update regular vault files, it won't touch anything under `.obsidian`, and it won't reset any
      * config and app state you've set in Obsidian. But if all you need is to reset the vault files, this can be used as
      * a faster alternative to reloadObsidian.
      * 
      * If no vault is passed, it resets the vault back to the oringal vault opened by the tests. You can also pass a
-     * path to a different vault, and it will sync the current vault to match that one (similar to "rsync"). Or,
-     * instead of passing a vault path you can pass an object mapping vault file paths to file content. E.g.
+     * path to a different vault, and it will replace the current files with the files of that vault (similar to an
+     * "rsync"). Or, instead of passing a vault path you can pass an object mapping vault file paths to file content.
+     * E.g.
      * ```ts
      * obsidianPage.resetVault({
      *     'path/in/vault.md': "Hello World",
      * })
      * ```
      * 
-     * You can also pass multiple vaults and the files will be merged. This can be useful if you want to add a few small
-     * modifications to the base vault. e.g:
+     * You can also pass multiple vaults and objects, and they will be merged. This can be useful if you want to add a
+     * few small modifications to the base vault. e.g:
      * ```ts
      * obsidianPage.resetVault('./path/to/vault', {
      *    "books/leviathan-wakes.md": "...",
@@ -144,9 +154,17 @@ class ObsidianPage {
      * ```
      */
     async resetVault(...vaults: (string|Record<string, string>)[]) {
-        const origVaultPath: string = browser.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].vault;
+        const obsidianOptions = this.getObsidianCapabilities();
+        if (!obsidianOptions.vault) {
+            // open an empty vault if there's no vault open
+            const defaultVaultPath = path.resolve(fileURLToPath(import.meta.url), '../../default-vault');
+            await this.browser.reloadObsidian({vault: defaultVaultPath});
+        }
+
+        const origVaultPath = obsidianOptions.vault!;
+
         vaults = vaults.length == 0 ? [origVaultPath] : vaults;
-        const configDir = await this.getConfigDir();
+        const configDir = path.basename(await this.getConfigDir());
 
         async function readVaultFiles(vault: string): Promise<Map<string, fs.Stats>> {
             const files = await fsAsync.readdir(vault, { recursive: true, withFileTypes: true });
@@ -179,7 +197,7 @@ class ObsidianPage {
 
         // calculate the changes needed to the current vault
         const newFolders = getFolders(newFiles.keys());
-        const currFiles = await readVaultFiles((await obsidianPage.getVaultPath())!);
+        const currFiles = await readVaultFiles(this.getVaultPath());
         const currFolders = getFolders(currFiles.keys());
 
         type FileUpdateInstruction = {
@@ -207,7 +225,7 @@ class ObsidianPage {
             }
         }
         // create/modify files
-        for (let [newFile, newFileInfo] of newFiles.entries()) {
+        for (const [newFile, newFileInfo] of newFiles.entries()) {
             const {stat: newStat, sourcePath, sourceContent} = newFileInfo;
             const args = {path: newFile, sourcePath, sourceContent};
             const currStat = currFiles.get(newFile);
@@ -222,7 +240,7 @@ class ObsidianPage {
             }
         }
 
-        await browser.executeObsidian(async ({app, require}, instructions) => {
+        await this.browser.executeObsidian(async ({app, require}, instructions) => {
             // the require is getting transpiled by tsup, so use it from args instead of globally
             const fs = require('fs');
     
@@ -265,6 +283,7 @@ class ObsidianPage {
 
 /**
  * Instance of {@link ObsidianPage} with helper methods for writing Obsidian tests.
+ * @category Utilities
  */
 const obsidianPage = new ObsidianPage()
 export default obsidianPage;
