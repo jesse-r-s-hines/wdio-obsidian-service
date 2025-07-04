@@ -271,7 +271,7 @@ export class ObsidianLauncher {
     }
 
     /**
-     * Gets details about an the Obsidian installer for the given platform.
+     * Gets details about the Obsidian installer for the given platform.
      * @param installerVersion Obsidian installer version
      * @param platform Platform/os (defaults to host platform)
      * @param arch Architecture (defaults to host architecture)
