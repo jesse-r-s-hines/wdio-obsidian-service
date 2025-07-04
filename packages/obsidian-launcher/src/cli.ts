@@ -11,11 +11,13 @@ import fsAsync from "fs/promises";
 function parsePlugins(plugins: string[] = []): PluginEntry[] {
     return plugins.map((p: string) => {
         if (p.startsWith("id:")) {
-            return {id: p.slice(3)}
+            const [id, version] = p.slice(3).split('=');
+            return {id, version};
         } else if (p.startsWith("repo:")) {
-            return {repo: p.slice(5)}
+            const [id, version] = p.slice(5).split('=');
+            return {id, version};
         } else {
-            return {path: p}
+            return {path: p};
         }
     })
 }
@@ -24,11 +26,11 @@ function parseThemes(themes: string[] = []): ThemeEntry[] {
     return themes.map((t: string, i: number) => {
         let result: ThemeEntry
         if (t.startsWith("name:")) {
-            result = {name: t.slice(5)}
+            result = {name: t.slice(5)};
         } else if (t.startsWith("repo:")) {
-            result = {repo: t.slice(5)}
+            result = {repo: t.slice(5)};
         } else {
-            result = {path: t}
+            result = {path: t};;
         }
         return {...result, enabled: i == themes.length - 1}
     })

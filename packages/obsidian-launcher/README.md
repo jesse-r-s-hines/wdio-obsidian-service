@@ -61,6 +61,8 @@ Several commands can take a list of plugins and themes to install. You can speci
 - `id:<community-id>`: For plugins, id of a community plugin, e.g. `id:templater-obsidian`
 - `name:<community-name>`: For themes, name of a community theme, e.g. `name:Minimal`
 
+You can install a specific version of a plugin with `-p id:myplugin=1.2.3`.
+
 ### launch
 Download and launch Obsidian, opening the specified vault.
 
