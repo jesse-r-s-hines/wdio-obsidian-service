@@ -145,13 +145,37 @@ Note, to use top-level await you'll need to rename `wdio.conf.ts` to `wdio.conf.
 
 You can see the [sample plugin](https://github.com/jesse-r-s-hines/wdio-obsidian-service-sample-plugin) for more examples of how to write your wdio.conf and e2e tests.
 
-### Platform Support
+## Platform Support
 
 `wdio-obsidian-service` works for Obsidian desktop on Windows, Linux, and MacOS.
 
 Windows firewall will sometimes complain about NodeJS, you can just cancel the popup it makes.
 
-### Test Frameworks
+### Mobile Emulation
+
+Currently, `wdio-obsidian-service` only works for Obsidian Desktop. However, it does support emulating Obsidian Mobile. It uses Obsidian `app.emulateMobile()` to switch Obsidian to the mobile UI, and you can use Chrome's mobileEmulation to set the screen size. You can compare tablet vs phone UIs by setting the screen size or the emulated device, Obsidian tablet UI triggers at width/height >= 600.
+
+Note that Obsidian Mobile runs on Capacitor instead of Electron so there are various platform differences that can't be emulated. But it's good enough for most cases as long as you aren't interacting directly with the operating system or Electron APIs.
+
+Example `wdio.conf`:
+```js
+// ...
+capabilities: [{
+    browserName: "obsidian",
+    browserVersion: "latest",
+    'wdio:obsidianOptions': {
+        emulateMobile: true,
+    },
+    'goog:chromeOptions': {
+        mobileEmulation: {
+            // can also set deviceName: "iPad" etc. instead of hard-coding size
+            deviceMetrics: { width: 390, height: 844 },
+        },
+    },
+}],
+```
+
+## Test Frameworks
 
 WebdriverIO can run tests using [Mocha](https://mochajs.org), [Jasmine](https://jasmine.github.io), and [Cucumber](https://cucumber.io/). Mocha is the easiest to set up and is used in all the wdio-obsidian-service examples. Mocha can also run your unit tests, typically with the addition of an assertion library like [Chai](https://www.chaijs.com). You can't run WebdriverIO using [Jest](https://jestjs.io), but if you already have Jest unit tests (or just prefer Jest) you can easily continue using Jest for your unit tests and Mocha just for your e2e tests. The built-in WebdriverIO [expect](https://webdriver.io/docs/api/expect-webdriverio) is very similar to Jest matchers, so should be familiar to use.
 

@@ -87,6 +87,19 @@ export interface ObsidianCapabilityOptions {
     vault?: string,
 
     /**
+     * Set true to simulate the mobile app on Electron. This uses Obsidian `app.emulateMobile()` to switch Obsidian to
+     * the mobile UI, and you can use Chrome's mobileEmulation to set the screen size. You can compare tablet vs phone
+     * UIs by setting the screen size or emulated device, Obsidian tablet UI triggers at width/height >= 600.
+     *
+     * Note that Obsidian Mobile runs on Capacitor instead of Electron so there are various platform differences that
+     * can't be emulated. But it's good enough for most cases as long as you aren't interacting directly with the
+     * operating system or Electron APIs.
+     *
+     * See [Mobile Emulation](../README.md#mobile-emulation)
+     */
+    emulateMobile?: boolean,
+
+    /**
      * Path to the Obsidian binary to use. If omitted it will be downloaded automatically.
      */
     binaryPath?: string,
@@ -106,6 +119,7 @@ export interface NormalizedObsidianCapabilityOptions {
     themes: DownloadedThemeEntry[],
     vault?: string,
     vaultCopy?: string,
+    emulateMobile: boolean,
     binaryPath: string,
     appPath: string,
 }

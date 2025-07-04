@@ -55,6 +55,52 @@ class ObsidianPage extends BasePage {
     }
 
     /**
+     * Returns the Obsidian Platform object. Useful for skipping tests based on whether we running in desktop or
+     * (emulated) mobile, or based on OS.
+     */
+    async getPlatform(): Promise<Platform> {
+        const obsidianOptions = this.getObsidianCapabilities();
+        if (obsidianOptions.vault !== undefined) {
+            return await this.browser.executeObsidian(({obsidian}) => {
+                const p = obsidian.Platform;
+                return {
+                    isDesktop: p.isDesktop,
+                    isMobile: p.isMobile,
+                    isPhone: p.isPhone,
+                    isTablet: p.isTablet,
+                    isMacOS: p.isMacOS,
+                    isWin: p.isWin,
+                    isLinux: p.isLinux,
+                };
+            });
+        } else {
+            // hack to allow calling getPlatform before opening a vault. This is needed so you can use getPlatform to
+            // skip a test before wasting time opening the vault.
+            // we don't use this method normally as you can technically change the size or switch emulation mode during
+            // tests
+            const emulateMobile = obsidianOptions.emulateMobile;
+            const [width, height] = await this.browser.execute(() => [window.innerWidth, window.innerHeight]);
+
+            let isTablet = false;
+            let isPhone = false;
+            if (emulateMobile) {
+                // replicate Obsidian's tablet vs phone breakpoint
+                isTablet = (width >= 600 && height >= 600);
+                isPhone = !isTablet;
+            }
+
+            return {
+                isDesktop: !emulateMobile,
+                isMobile: emulateMobile,
+                isPhone: isPhone, isTablet: isTablet,
+                isMacOS: process.platform == 'darwin',
+                isWin: process.platform == "win32",
+                isLinux: process.platform == "linux",
+            };
+        }
+    }
+
+    /**
      * Enables a plugin by ID
      */
     async enablePlugin(pluginId: string): Promise<void> {
@@ -240,9 +286,9 @@ class ObsidianPage extends BasePage {
             }
         }
 
-        await this.browser.executeObsidian(async ({app, require}, instructions) => {
-            // the require is getting transpiled by tsup, so use it from args instead of globally
-            const fs = require('fs');
+        await this.browser.executeObsidian(async ({app}, instructions) => {
+            // The plugin require blocks node imports when emulating mobile, so use window.require to bypass that.
+            const fs = window.require('fs');
     
             for (const {action, path, sourcePath, sourceContent} of instructions) {
                 const isHidden = path.split("/").some(p => p.startsWith("."));
@@ -280,6 +326,43 @@ class ObsidianPage extends BasePage {
         }, instructions);
     }
 }
+
+/**
+ * Info on the platform we are running on or emulating, in similar format as
+ * [obsidian.Platform](https://docs.obsidian.md/Reference/TypeScript+API/Platform)
+ * @category Types
+ */
+export interface Platform {
+    /**
+     * The UI is in desktop mode.
+     */
+    isDesktop: boolean;
+    /**
+     * The UI is in mobile mode.
+     */
+    isMobile: boolean;
+    /**
+     * We're in a mobile app that has very limited screen space.
+     */
+    isPhone: boolean;
+    /**
+     * We're in a mobile app that has sufficiently large screen space.
+     */
+    isTablet: boolean;
+    /**
+     * We're on a macOS device, or a device that pretends to be one (like iPhones and iPads).
+     * Typically used to detect whether to use command-based hotkeys vs ctrl-based hotkeys.
+     */
+    isMacOS: boolean;
+    /**
+     * We're on a Windows device.
+     */
+    isWin: boolean;
+    /**
+     * We're on a Linux device.
+     */
+    isLinux: boolean;
+};
 
 /**
  * Instance of {@link ObsidianPage} with helper methods for writing Obsidian tests.

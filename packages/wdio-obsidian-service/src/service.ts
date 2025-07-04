@@ -150,6 +150,7 @@ export class ObsidianLauncherService implements Services.ServiceInstance {
                     vault: vault,
                     appVersion: appVersion,
                     installerVersion: installerVersion,
+                    emulateMobile: obsidianOptions.emulateMobile ?? false,
                 }
 
                 cap.browserName = "chrome";
@@ -230,6 +231,9 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
             appVersion: obsidianOptions.appVersion, installerVersion: obsidianOptions.installerVersion,
             appPath: obsidianOptions.appPath,
             vault: vault,
+            // `app.emulateMobile` just sets this localStorage variable. Setting it ourselves here instead of calling
+            // the function simplifies the boot/plugin load sequence and makes sure plugins load in mobile mode.
+            localStorage: obsidianOptions.emulateMobile ? {"EmulateMobile": "1"} : {},
         });
         this.tmpDirs.push(configDir);
 
@@ -237,11 +241,25 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
     }
 
     /**
-     * Wait for Obsidian to fully boot.
+     * Wait for Obsidian to fully boot and do some other setup
      */
     private async setupObsidianApp(browser: WebdriverIO.Browser) {
         const obsidianOptions: NormalizedObsidianCapabilityOptions = browser.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY];
         if (obsidianOptions.vault != undefined) {
+            // I don't think this is technically necessary, but when you set the window size via emulateMobile it sets
+            // the window size in the browser view, but not the actual window size which looks weird and makes it hard
+            // to manually debug a paused test.
+            // The normal ways to set window size don't work on Obsidian. Obsidian doesn't respect the `--window-size`
+            // argument, and wdio setViewport and setWindowSize don't work without BiDi. This method resizes the window
+            // directly using electron APIs.
+            const chromeOptions = browser.requestedCapabilities['goog:chromeOptions'];
+            if (chromeOptions?.mobileEmulation) {
+                const [width, height] = await browser.execute(() => [window.innerWidth, window.innerHeight]);
+                await browser.execute(async (width, height) => {
+                    await (window as any).electron.remote.getCurrentWindow().setSize(width, height);
+                }, width, height);
+            }
+
             await browser.waitUntil( // wait until the helper plugin is loaded
                 () => browser.execute(() => !!(window as any).wdioObsidianService),
                 {timeout: 30 * 1000, interval: 100},

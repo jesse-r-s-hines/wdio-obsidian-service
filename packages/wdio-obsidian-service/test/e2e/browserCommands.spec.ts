@@ -42,9 +42,9 @@ describe("Test custom browser commands", () => {
 
 describe("Test windows", () => {
     before(async function() {
-        if (semver.lt(browser.getObsidianInstallerVersion(), "0.12.19")) {
-            // Windows don't work on older installer versions
-            this.skip()
+        const installerVersion = browser.getObsidianInstallerVersion();
+        if (semver.lt(installerVersion, "0.12.19") || (await obsidianPage.getPlatform()).isMobile) {
+            this.skip(); // Windows don't work on older installer versions or mobile
         }
     })
 
