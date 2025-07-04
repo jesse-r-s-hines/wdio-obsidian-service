@@ -99,6 +99,7 @@ export class ObsidianLauncherService implements Services.ServiceInstance {
                 if (semver.lt(appVersion, minSupportedObsidianVersion)) {
                     throw Error(`Minimum supported Obsidian version is ${minSupportedObsidianVersion}`)
                 }
+                const installerInfo = await this.obsidianLauncher.getInstallerInfo(installerVersion);
 
                 let installerPath: string;
                 if (obsidianOptions.binaryPath) {
@@ -152,7 +153,7 @@ export class ObsidianLauncherService implements Services.ServiceInstance {
                 }
 
                 cap.browserName = "chrome";
-                cap.browserVersion = installerVersionInfo.chromeVersion;
+                cap.browserVersion = installerInfo.chrome;
                 cap[OBSIDIAN_CAPABILITY_KEY] = normalizedObsidianOptions;
                 cap['goog:chromeOptions'] = {
                     binary: installerPath,

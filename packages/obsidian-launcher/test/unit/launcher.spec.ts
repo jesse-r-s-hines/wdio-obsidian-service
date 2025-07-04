@@ -109,6 +109,7 @@ describe('ObsdianLauncher resolve versions', () => {
     it('getVersionInfo basic', async () => {
         const versionInfo = await launcher.getVersionInfo("1.7.7");
         expect(versionInfo.chromeVersion).to.eql('128.0.6613.186');
+        expect(versionInfo.installerInfo.appImage!.chrome).to.eql('128.0.6613.186');
     })
 
     it('getVersionInfo missing', async () => {

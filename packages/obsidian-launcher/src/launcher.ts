@@ -203,11 +203,11 @@ export class ObsidianLauncher {
         }
         if (installerVersion == "latest") {
             installerVersionInfo = _.findLast(versions, v =>
-                semver.lte(v.version, appVersionInfo.version) && !!this.getInstallerUrl(v, platform, arch)
+                semver.lte(v.version, appVersionInfo.version) && !!this.getInstallerKey(v, platform, arch)
             );
         } else if (installerVersion == "earliest") {
             installerVersionInfo = versions.find(v =>
-                semver.gte(v.version, appVersionInfo.minInstallerVersion!) && !!this.getInstallerUrl(v, platform, arch)
+                semver.gte(v.version, appVersionInfo.minInstallerVersion!) && !!this.getInstallerKey(v, platform, arch)
             );
         } else {
             installerVersion = semver.valid(installerVersion) ?? installerVersion; // normalize
@@ -262,6 +262,34 @@ export class ObsidianLauncher {
         return versionInfo;
     }
 
+    private getInstallerKey(
+        installerVersionInfo: ObsidianVersionInfo, platform: NodeJS.Platform, arch: NodeJS.Architecture,
+    ): keyof ObsidianVersionInfo['installerInfo']|undefined {
+        const platformName = `${platform}-${arch}`;
+        const key = _.findKey(installerVersionInfo.installerInfo, v => v && v.platforms.includes(platformName));
+        return key as keyof ObsidianVersionInfo['installerInfo']|undefined;
+    }
+
+    /**
+     * Gets details about an the Obsidian installer for the given platform.
+     * @param installerVersion Obsidian installer version
+     * @param platform Platform/os (defaults to host platform)
+     * @param arch Architecture (defaults to host architecture)
+     */
+    async getInstallerInfo(
+        installerVersion: string, platform?: NodeJS.Platform, arch?: NodeJS.Architecture,
+    ): Promise<ObsidianInstallerInfo & {url: string}> {
+        platform = platform ?? process.platform;
+        arch = arch ?? process.arch;
+        const versionInfo = await this.getVersionInfo(installerVersion);
+        const key = this.getInstallerKey(versionInfo, platform, arch);
+        if (key) {
+            return {...versionInfo.installerInfo[key]!, url: versionInfo.downloads[key]!};
+        } else {
+            throw Error(`No Obsidian installer for ${installerVersion} ${platform}-${arch}`);
+        }
+    }
+
     /**
      * Downloads the Obsidian installer for the given version and platform/arch (defaults to host platform/arch).
      * Returns the file path.
@@ -276,13 +304,8 @@ export class ObsidianLauncher {
         arch = arch ?? process.arch;
         const versionInfo = await this.getVersionInfo(installerVersion);
         installerVersion = versionInfo.version;
+        const installerInfo = await this.getInstallerInfo(installerVersion, platform, arch);
         const cacheDir = path.join(this.cacheDir, `obsidian-installer/${platform}-${arch}/Obsidian-${installerVersion}`);
-
-        const installerUrl = this.getInstallerUrl(versionInfo, platform, arch);
-
-        if (!installerUrl) {
-            throw Error(`No Obsidian installer found for v${installerVersion} ${platform} ${arch}`);
-        }
 
         let binaryPath: string;
         let extractor: (installer: string, dest: string) => Promise<void>;
@@ -304,7 +327,7 @@ export class ObsidianLauncher {
             console.log(`Downloading Obsidian installer v${installerVersion}...`)
             await atomicCreate(cacheDir, async (tmpDir) => {
                 const installer = path.join(tmpDir, "installer");
-                await downloadResponse(await fetch(installerUrl), installer);
+                await downloadResponse(await fetch(installerInfo.url), installer);
                 const extracted = path.join(tmpDir, "extracted");
                 await extractor(installer, extracted);
                 return extracted;
@@ -312,17 +335,6 @@ export class ObsidianLauncher {
         }
 
         return binaryPath;
-    }
-
-    /** Gets the installer download url for the current platform, if one exists. */
-    private getInstallerUrl(
-        installerVersionInfo: ObsidianVersionInfo, platform: NodeJS.Platform, arch: NodeJS.Architecture,
-    ): string|undefined {
-        const platformName = `${platform}-${arch}`;
-        const key = _.findKey(installerVersionInfo.installerInfo, v => v && v.platforms.includes(platformName));
-        if (key) {
-            return installerVersionInfo.downloads[key as keyof ObsidianVersionInfo['downloads']];
-        }
     }
 
     /**
