@@ -85,7 +85,7 @@ describe("ObsidianLauncher", function() {
             return serverHandler(request, response, {public: testData});
         });
         await new Promise<void>(resolve => server!.listen({port: 0}, resolve));
-        const port = (server!.address() as AddressInfo).port;
+        const port = (server.address() as AddressInfo).port;
 
         // Create constant version of obsidian-versions.json
         const tmpDir = await createDirectory({

@@ -51,7 +51,7 @@ describe('ObsdianLauncher resolve versions', () => {
         process.chdir(originalCwd);
     })
 
-    let resolveVersionsTests = [
+    const resolveVersionsTests = [
         [["latest", "latest"], ["1.7.7", "1.7.7"]],
         [["latest-beta", "latest"], ["1.8.0", "1.7.7"]],
     ];

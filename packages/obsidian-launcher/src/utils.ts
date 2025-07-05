@@ -164,8 +164,6 @@ export function normalizeObject<T>(canonical: CanonicalForm, obj: T): T {
             }
         } else if (canonical === null) {
             return obj;
-        } else if (_.isPlainObject(canonical)) {
-            
         } else {
             throw Error(`Invalid canonical form ${JSON.stringify(rootCanonical)}`);
         }

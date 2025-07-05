@@ -143,7 +143,7 @@ export function parseObsidianDesktopRelease(fileRelease: any): ParsedDesktopRele
         };
     };
 
-    let result: ParsedDesktopRelease = { current: parse(fileRelease, false) };
+    const result: ParsedDesktopRelease = { current: parse(fileRelease, false) };
     if (fileRelease.beta && fileRelease.beta.latestVersion !== fileRelease.latestVersion) {
         result.beta = parse(fileRelease.beta, true);
     }
@@ -235,7 +235,7 @@ export async function getInstallerInfo(
         // want to get the versions for all platforms and architectures. So we'd either have to set up some kind of
         // GitHub job matrix to run this on all platform/arch combinations or we can just grep the binary.
 
-        let matches: string[] = [];
+        const matches: string[] = [];
         const installerFiles = await fsAsync.readdir(exractedPath, {recursive: true, withFileTypes: true});
         for (const file of installerFiles) {
             if (file.isFile() && !file.name.endsWith(".asar")) {
