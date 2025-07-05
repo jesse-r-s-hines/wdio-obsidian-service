@@ -4,12 +4,6 @@ import { OBSIDIAN_CAPABILITY_KEY } from '../../src/types.js';
 
 
 describe("Basic obsidian launch", () => {
-    before(async () => {
-        // Obsidian should start with no vault open
-        expect(browser.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].vault).toEqual(undefined);
-        await browser.reloadObsidian({vault: "./test/vaults/basic"});
-    })
-    
     it('Obsidian version matches', async () => {
         const expectedAppVersion = browser.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].appVersion;
         expect(browser.getObsidianVersion()).toEqual(expectedAppVersion);

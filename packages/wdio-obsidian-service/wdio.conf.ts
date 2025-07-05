@@ -7,12 +7,6 @@ import semver from "semver";
 import { ObsidianVersionInfo } from "obsidian-launcher"
 import _ from "lodash"
 
-let specs: string[];
-if (process.env.TEST_PRESET == "basic") {
-    specs = ['./test/e2e/basic.spec.ts'];
-} else {
-    specs = ['./test/e2e/**/*.ts'];
-}
 const maxInstances = Number(process.env['WDIO_MAX_INSTANCES'] ?? 4);
 const workspacePath = path.resolve(fileURLToPath(import.meta.url), "../../..")
 const obsidianVersionsJson = path.join(workspacePath, "obsidian-versions.json");
@@ -93,14 +87,13 @@ export const config: WebdriverIO.Config = {
     // How many instances of Obsidian should be launched in parallel during testing.
     maxInstances: maxInstances,
 
-    capabilities: versionsToTest
-        .flatMap(v => [[...v, false], [...v, true]] as const)
-        .map(([appVersion, installerVersion, emulateMobile]) => ({
+    capabilities: versionsToTest.flatMap(([appVersion, installerVersion]) => {
+        const allSpecs = './test/e2e/**/*.ts';
+        const basicSpec = './test/e2e/basic.spec.ts';
+        const cap: WebdriverIO.Capabilities = {
             browserName: "obsidian",
             browserVersion: appVersion,
-            "wdio:specs": specs,
             'wdio:obsidianOptions': {
-                emulateMobile: emulateMobile,
                 installerVersion: installerVersion,
                 plugins: [
                     "./test/plugins/basic-plugin",
@@ -109,10 +102,39 @@ export const config: WebdriverIO.Config = {
                     "./test/themes/basic-theme",
                 ],
             },
-            'goog:chromeOptions': {
-                mobileEmulation: emulateMobile ? {deviceMetrics: {width: 390, height: 844}} : undefined,
+        }
+        const emulateMobileOptions: WebdriverIO.Capabilities = {
+            'wdio:obsidianOptions': {
+                emulateMobile: true,
             },
-        })),
+            'goog:chromeOptions': {
+                mobileEmulation: {
+                    deviceMetrics: {width: 390, height: 844}
+                },
+            },
+        }
+        const caps: WebdriverIO.Capabilities[] = [
+            _.merge({}, cap, { // separate capability for basic tests, test passing vault in the capability
+                'wdio:specs': [basicSpec],
+                'wdio:obsidianOptions': { vault: 'test/vaults/basic' },
+            }),
+            _.merge({}, cap, emulateMobileOptions, {
+                'wdio:specs': [basicSpec],
+                'wdio:obsidianOptions': { vault: 'test/vaults/basic' },
+            }),
+        ]
+        if (process.env.TEST_PRESET != 'basic') {
+            caps.push(
+                _.merge({}, cap, {
+                    'wdio:specs': [allSpecs], 'wdio:exclude': [basicSpec],
+                }),
+                _.merge({}, cap, emulateMobileOptions, {
+                    'wdio:specs': [allSpecs], 'wdio:exclude': [basicSpec],
+                }),
+            )
+        }
+        return caps;
+    }),
 
     services: [["obsidian", obsidianServiceOptions]],
 
