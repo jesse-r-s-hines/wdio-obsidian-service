@@ -120,8 +120,8 @@ export interface NormalizedObsidianCapabilityOptions {
     vault?: string,
     vaultCopy?: string,
     emulateMobile: boolean,
-    binaryPath: string,
-    appPath: string,
+    binaryPath?: string,
+    appPath?: string,
 }
 
 

@@ -26,7 +26,8 @@
         "test:unit": "tsc --noEmit && mocha --config .mocharc.unit.json",
         "test:e2e": "run-s test:e2e:*",
         "test:e2e:wdio": "wdio run ./wdio.conf.ts",
-        "test:e2e:standalone": "mocha --config .mocharc.standalone.json"
+        "test:e2e:standalone": "mocha --config .mocharc.standalone.json",
+        "test:android": "wdio run ./wdio.mobile.conf.ts"
     },
     "repository": {
         "type": "git",

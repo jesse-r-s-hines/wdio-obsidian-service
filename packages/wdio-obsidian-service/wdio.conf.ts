@@ -148,7 +148,7 @@ export const config: WebdriverIO.Config = {
 
     mochaOpts: {
         ui: 'bdd',
-        timeout: 60000
+        timeout: 60 * 1000,
     },
 
     logLevel: "warn",

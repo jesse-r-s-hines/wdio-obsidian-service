@@ -1,6 +1,7 @@
 import fs from "fs"
 import fsAsync from "fs/promises"
 import path from "path"
+import crypto from "crypto";
 import { SevereServiceError } from 'webdriverio'
 import type { Capabilities, Options, Services } from '@wdio/types'
 import logger from '@wdio/logger'
@@ -12,7 +13,7 @@ import { asyncBrowserCommands, syncBrowserCommands } from "./browserCommands.js"
 import {
     ObsidianServiceOptions, NormalizedObsidianCapabilityOptions, OBSIDIAN_CAPABILITY_KEY,
 } from "./types.js"
-import { sleep } from "./utils.js"
+import { sleep, quote } from "./utils.js"
 import semver from "semver"
 import _ from "lodash"
 
@@ -70,6 +71,44 @@ function selectThemes(currentThemes: DownloadedThemeEntry[], selection?: string)
     }
 }
 
+function getAppiumOptions(
+    cap: WebdriverIO.Capabilities,
+): Exclude<WebdriverIO.Capabilities['appium:options'], undefined> {
+    let result: any = _.pickBy(cap, (v, k) => k.startsWith("appium:") && k != 'appium:options');
+    result = _.mapKeys(result, (v, k) => k.slice(7))
+    return {...result, ...cap['appium:options']};
+}
+
+function isAppium(cap: WebdriverIO.Capabilities) {
+    return getAppiumOptions(cap).automationName?.toLocaleLowerCase() === 'uiautomator2';
+}
+
+async function appiumPushFolder(browser: WebdriverIO.Browser, src: string, dest: string) {
+    // We should be able to just use pushFile which uploads a file to the device and automatically creates parent
+    // directories. But its bugged, and doesn't escape spaces when creating the directories so we have to implement this
+    // with shell hacks until its fixed. See https://github.com/appium/appium-android-driver/issues/1004
+    src = path.resolve(src);
+    dest = path.posix.normalize(dest).replace(/\/$/, '');
+    const slug = crypto.randomBytes(8).toString("base64url").replace(/[-_]/g, '0');
+    const tmpFile = `/data/local/tmp/upload-${slug}.tmp`;
+
+    let files = await fsAsync.readdir(src, {recursive: true, withFileTypes: true});
+    files = _.sortBy(files, f => path.join(f.parentPath, f.name)); // sort files before children
+
+    await browser.execute("mobile: shell", {command: "mkdir", args: ["-p", quote(dest)]});
+    for (const file of files) {
+        const srcPath = path.join(file.parentPath, file.name);
+        const relPath = path.relative(src, path.join(file.parentPath, file.name));
+        const destPath = path.posix.join(dest, relPath.replace("\\", "/"));
+        if (file.isDirectory()) {
+            await browser.execute("mobile: shell", {command: "mkdir", args: ["-p", quote(destPath)]});
+        } else if (file.isFile()) {
+            const content = await fsAsync.readFile(srcPath);
+            await browser.pushFile(tmpFile, content.toString('base64'));
+            await browser.execute("mobile: shell", {command: "mv", args: [tmpFile, quote(destPath)]});
+        }
+    }
+}
 
 /**
  * Minimum Obsidian version that wdio-obsidian-service supports.
@@ -145,71 +184,88 @@ export class ObsidianLauncherService implements Services.ServiceInstance {
                         .map(t => resolveEntry(this.rootDir, t) as ThemeEntry),
                 );
 
-                // resolve Obsidian versions
-                const [appVersion, installerVersion] = await this.obsidianLauncher.resolveVersions(
-                    cap.browserVersion ?? cap[OBSIDIAN_CAPABILITY_KEY]?.appVersion ?? "latest",
-                    obsidianOptions.installerVersion ?? "earliest",
-                );
+                let appVersion = cap.browserVersion ?? cap[OBSIDIAN_CAPABILITY_KEY]?.appVersion ?? "latest";
+                appVersion = (await this.obsidianLauncher.getVersionInfo(appVersion)).version;
                 if (semver.lt(appVersion, minSupportedObsidianVersion)) {
                     throw Error(`Minimum supported Obsidian version is ${minSupportedObsidianVersion}`)
                 }
-                const installerInfo = await this.obsidianLauncher.getInstallerInfo(installerVersion);
 
-                // download Obsidian
-                let installerPath: string;
-                if (obsidianOptions.binaryPath) {
-                    installerPath = path.resolve(this.rootDir, obsidianOptions.binaryPath)
+                if (isAppium(cap)) {
+                    let apk = getAppiumOptions(cap).app;
+                    if (!apk) {
+                        apk = await this.obsidianLauncher.downloadAndroid(appVersion);
+                    }
+                    let chromedriverDir = getAppiumOptions(cap).chromedriverExecutableDir;
+                    if (!chromedriverDir) {
+                        chromedriverDir = path.join(this.obsidianLauncher.cacheDir, 'appium-chromedriver');
+                    }
+
+                    const normalizedObsidianOptions: NormalizedObsidianCapabilityOptions = {
+                        ...obsidianOptions,
+                        plugins, themes, vault: vault,
+                        appVersion, installerVersion: appVersion,
+                        emulateMobile: false,
+                    }
+                    cap[OBSIDIAN_CAPABILITY_KEY] = normalizedObsidianOptions;
+                    cap['appium:app'] = apk;
+                    cap['appium:chromedriverExecutableDir'] = chromedriverDir;
+                    cap["wdio:enforceWebDriverClassic"] = true; // BiDi doesn't seem to work on Obsidian mobile
                 } else {
-                    installerPath = await this.obsidianLauncher.downloadInstaller(installerVersion);
-                }
-                let appPath: string;
-                if (obsidianOptions.appPath) {
-                    appPath = path.resolve(this.rootDir, obsidianOptions.appPath)
-                } else {
-                    appPath = await this.obsidianLauncher.downloadApp(appVersion);
-                }
-                let chromedriverPath = cap['wdio:chromedriverOptions']?.binary;
-                // wdio can't download chromedriver for versions less than 115 automatically. Fetching it ourselves is
-                // also a bit faster as it skips the chromedriver version detection step.
-                if (!chromedriverPath) {
-                    chromedriverPath = await this.obsidianLauncher.downloadChromedriver(installerVersion);
-                }
+                    const [, installerVersion] = await this.obsidianLauncher.resolveVersions(
+                        appVersion, obsidianOptions.installerVersion ?? "earliest",
+                    );
+                    const installerInfo = await this.obsidianLauncher.getInstallerInfo(installerVersion);
 
-                // setup capabilities
-                const normalizedObsidianOptions: NormalizedObsidianCapabilityOptions = {
-                    ...obsidianOptions,
-                    plugins: plugins,
-                    themes: themes,
-                    binaryPath: installerPath,
-                    appPath: appPath,
-                    vault: vault,
-                    appVersion: appVersion,
-                    installerVersion: installerVersion,
-                    emulateMobile: obsidianOptions.emulateMobile ?? false,
-                }
+                    let installerPath: string;
+                    if (obsidianOptions.binaryPath) {
+                        installerPath = path.resolve(this.rootDir, obsidianOptions.binaryPath)
+                    } else {
+                        installerPath = await this.obsidianLauncher.downloadInstaller(installerVersion);
+                    }
+                    let appPath: string;
+                    if (obsidianOptions.appPath) {
+                        appPath = path.resolve(this.rootDir, obsidianOptions.appPath)
+                    } else {
+                        appPath = await this.obsidianLauncher.downloadApp(appVersion);
+                    }
+                    let chromedriverPath = cap['wdio:chromedriverOptions']?.binary;
+                    // wdio can't download chromedriver for versions less than 115 automatically. Fetching it ourselves is
+                    // also a bit faster as it skips the chromedriver version detection step.
+                    if (!chromedriverPath) {
+                        chromedriverPath = await this.obsidianLauncher.downloadChromedriver(installerVersion);
+                    }
 
-                cap.browserName = "chrome";
-                cap.browserVersion = installerInfo.chrome;
-                cap[OBSIDIAN_CAPABILITY_KEY] = normalizedObsidianOptions;
-                cap['goog:chromeOptions'] = {
-                    binary: installerPath,
-                    windowTypes: ["app", "webview"],
-                    ...cap['goog:chromeOptions'],
-                    args: [
-                        // Workaround for SUID issue on linux. See https://github.com/electron/electron/issues/42510
-                        ...(process.platform == 'linux' ? ["--no-sandbox"] : []),
-                        ...(cap['goog:chromeOptions']?.args ?? [])
-                    ],
+                    const normalizedObsidianOptions: NormalizedObsidianCapabilityOptions = {
+                        ...obsidianOptions,
+                        plugins, themes, vault,
+                        binaryPath: installerPath, appPath: appPath,
+                        appVersion, installerVersion,
+                        emulateMobile: obsidianOptions.emulateMobile ?? false,
+                    }
+
+                    cap.browserName = "chrome";
+                    cap.browserVersion = installerInfo.chrome;
+                    cap[OBSIDIAN_CAPABILITY_KEY] = normalizedObsidianOptions;
+                    cap['goog:chromeOptions'] = {
+                        binary: installerPath,
+                        windowTypes: ["app", "webview"],
+                        ...cap['goog:chromeOptions'],
+                        args: [
+                            // Workaround for SUID issue on linux. See https://github.com/electron/electron/issues/42510
+                            ...(process.platform == 'linux' ? ["--no-sandbox"] : []),
+                            ...(cap['goog:chromeOptions']?.args ?? [])
+                        ],
+                    }
+                    cap['wdio:chromedriverOptions'] = {
+                        // allowedIps is not included in the types, but gets passed as --allowed-ips to chromedriver.
+                        // It defaults to ["0.0.0.0"] which makes Windows Firewall complain, and we don't need remote
+                        // connections anyways.
+                        allowedIps: [],
+                        ...cap['wdio:chromedriverOptions'],
+                        binary: chromedriverPath,
+                    } as any
+                    cap["wdio:enforceWebDriverClassic"] = true; // electron doesn't support BiDi yet.
                 }
-                cap['wdio:chromedriverOptions'] = {
-                    // allowedIps is not included in the types, but gets passed as --allowed-ips to chromedriver.
-                    // It defaults to ["0.0.0.0"] which makes Windows Firewall complain, and we don't need remote
-                    // connections anyways.
-                    allowedIps: [],
-                    ...cap['wdio:chromedriverOptions'],
-                    binary: chromedriverPath,
-                } as any
-                cap["wdio:enforceWebDriverClassic"] = true; // electron doesn't support BiDi yet.
             }
         } catch (e: any) {
             throw new SevereServiceError(getServiceErrorMessage(e));
@@ -231,6 +287,8 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
     private browser: WebdriverIO.Browser|undefined;
     /** Directories to clean up after the tests */
     private tmpDirs: string[]
+    /** Path on Android devices to store temporary vaults */
+    private androidVaultDir = "/storage/emulated/0/Documents/wdio-obsidian-service-vaults";
 
     constructor (
         public options: ObsidianServiceOptions,
@@ -264,26 +322,29 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
         } else {
             log.info(`Opening Obsidian without a vault`)
         }
-
-        const configDir = await this.obsidianLauncher.setupConfigDir({
-            appVersion: obsidianOptions.appVersion, installerVersion: obsidianOptions.installerVersion,
-            appPath: obsidianOptions.appPath,
-            vault: vault,
-            // `app.emulateMobile` just sets this localStorage variable. Setting it ourselves here instead of calling
-            // the function simplifies the boot/plugin load sequence and makes sure plugins load in mobile mode.
-            localStorage: obsidianOptions.emulateMobile ? {"EmulateMobile": "1"} : {},
-        });
-        this.tmpDirs.push(configDir);
-
         obsidianOptions.vaultCopy = vault; // for use in getVaultPath()
-        if (!cap['goog:chromeOptions']) cap['goog:chromeOptions'] = {};
-        cap['goog:chromeOptions'].args = [
-            `--user-data-dir=${configDir}`,
-            ...(cap['goog:chromeOptions'].args ?? []).filter(arg => {
-                const match = arg.match(/^--user-data-dir=(.*)$/);
-                return !match || !this.tmpDirs.includes(match[1]);
-            })
-        ];
+
+        if (!isAppium(cap)) {
+            const configDir = await this.obsidianLauncher.setupConfigDir({
+                appVersion: obsidianOptions.appVersion, installerVersion: obsidianOptions.installerVersion,
+                appPath: obsidianOptions.appPath,
+                vault: vault,
+                // `app.emulateMobile` just sets this localStorage variable. Setting it ourselves here instead of calling
+                // the function simplifies the boot/plugin load sequence and makes sure plugins load in mobile mode.
+                localStorage: obsidianOptions.emulateMobile ? {"EmulateMobile": "1"} : {},
+            });
+            this.tmpDirs.push(configDir);
+
+            if (!cap['goog:chromeOptions']) cap['goog:chromeOptions'] = {};
+            cap['goog:chromeOptions'].args = [
+                `--user-data-dir=${configDir}`,
+                ...(cap['goog:chromeOptions'].args ?? []).filter(arg => {
+                    const match = arg.match(/^--user-data-dir=(.*)$/);
+                    return !match || !this.tmpDirs.includes(match[1]);
+                })
+            ];
+        }
+        // when in appium, we can't set the user-data-dir before hand and instead open the vault in postBootSetup
     }
 
     /**
@@ -292,21 +353,61 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
     private async postBootSetup() {
         const browser = this.browser!;
         const obsidianOptions: NormalizedObsidianCapabilityOptions = browser.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY];
-        if (obsidianOptions.vault != undefined) {
-            // I don't think this is technically necessary, but when you set the window size via emulateMobile it sets
-            // the window size in the browser view, but not the actual window size which looks weird and makes it hard
-            // to manually debug a paused test.
-            // The normal ways to set window size don't work on Obsidian. Obsidian doesn't respect the `--window-size`
-            // argument, and wdio setViewport and setWindowSize don't work without BiDi. This method resizes the window
-            // directly using electron APIs.
-            const chromeOptions = browser.requestedCapabilities['goog:chromeOptions'];
-            if (chromeOptions?.mobileEmulation) {
+
+        if (isAppium(browser.requestedCapabilities)) {
+            // grant Obsidian the permissions it needs, mainly file access.
+            // appium:autoGrantPermissions is supposed to automatically grant everything it needs, but I can't get it to
+            // work. The "mobile: changePermissions" "all" option also doesn't seem to work here. I have to explicitly
+            // list the permissions and use the "appops" target. See https://github.com/appium/appium/issues/19991
+            // I'm calling "mobile: changePermissions" "all" as well just in case it is actually doing something
+
+            await browser.execute("mobile: changePermissions", {
+                action: "grant",
+                appPackage: "md.obsidian",
+                permissions: "all",
+            });
+
+            await browser.execute("mobile: changePermissions", {
+                action: "allow",
+                appPackage: "md.obsidian",
+                permissions: [ // these are from apk AndroidManifest.xml (extracted with apktool)
+                    "READ_EXTERNAL_STORAGE", "WRITE_EXTERNAL_STORAGE", "MANAGE_EXTERNAL_STORAGE",
+                ],
+                target: "appops", // requires appium --allow-insecure adb_shell
+            });
+
+            await browser.switchContext("WEBVIEW_md.obsidian");
+            if (obsidianOptions.vaultCopy != undefined) {
+                // transfer the vault to the device
+                // vaultCopy already has a mkdtemp hash appended, so should be safe to uniquely upload.
+                const androidVault = `${this.androidVaultDir}/${path.basename(obsidianOptions.vaultCopy)}`;
+                await appiumPushFolder(browser, obsidianOptions.vaultCopy, androidVault);
+
+                // open vault by setting the localStorage keys and relaunching Obsidian
+                await browser.execute(async (androidVault) => {
+                    localStorage.setItem('mobile-external-vaults', JSON.stringify([androidVault]));
+                    localStorage.setItem('mobile-selected-vault', androidVault);
+                    // appId on mobile is just the full vault path
+                    localStorage.setItem(`enable-plugin-${androidVault}`, 'true');
+                    window.location.reload();
+                }, androidVault);
+            }
+        } else { // desktop
+            if (obsidianOptions.vault != undefined && obsidianOptions.emulateMobile) {
+                // I don't think this is technically necessary, but when you set the window size via emulateMobile it
+                // sets the window size in the browser view, but not the actual window size which looks weird and makes
+                // it hard to manually debug a paused test. The normal ways to set window size don't work on Obsidian.
+                // Obsidian doesn't respect the `--window-size` argument, and wdio setViewport and setWindowSize don't
+                // work without BiDi. This resizes the window directly using electron APIs.
                 const [width, height] = await browser.execute(() => [window.innerWidth, window.innerHeight]);
                 await browser.execute(async (width, height) => {
                     await (window as any).electron.remote.getCurrentWindow().setSize(width, height);
                 }, width, height);
             }
+        }
 
+        // wait until app is loaded
+        if (obsidianOptions.vault) {
             await browser.waitUntil( // wait until the helper plugin is loaded
                 () => browser.execute(() => !!(window as any).wdioObsidianService),
                 {timeout: 30 * 1000, interval: 100},
@@ -419,6 +520,17 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
             return sessionId;
         };
         return reloadObsidian;
+    }
+
+    async after(result: number, capabilities: WebdriverIO.Capabilities, specs: string[]) {
+        if (isAppium(capabilities)) {
+            // "mobile: deleteFile" doesn't work on folders
+            // "mobile:shell" requires appium --allow-insecure adb_shell
+            await this.browser!.execute("mobile: shell", {
+                command: "rm",
+                args: ["-rf", this.androidVaultDir],
+            });
+        }
     }
 
     /**
