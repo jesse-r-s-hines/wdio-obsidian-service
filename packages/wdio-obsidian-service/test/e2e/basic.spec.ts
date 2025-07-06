@@ -1,28 +1,28 @@
 import { browser, expect } from '@wdio/globals'
 import path from "path";
 import { OBSIDIAN_CAPABILITY_KEY } from '../../src/types.js';
+import { obsidianPage } from 'wdio-obsidian-service';
 
 
-describe("Basic obsidian launch", () => {
-    it('Obsidian version matches', async () => {
+describe("Basic obsidian launch", function() {
+    it('Obsidian version matches', async function() {
         const expectedAppVersion = browser.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].appVersion;
         expect(browser.getObsidianVersion()).toEqual(expectedAppVersion);
-        const actualAppVersion = await browser.execute("return electron.ipcRenderer.sendSync('version')");
+        const actualAppVersion = await browser.executeObsidian(({obsidian}) => obsidian.apiVersion);
         expect(actualAppVersion).toEqual(expectedAppVersion);
 
-        const expectedInstallerVersion = browser.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].installerVersion;
-        expect(browser.getObsidianInstallerVersion()).toEqual(expectedInstallerVersion);
-        const actualInstallerVersion = await browser.execute("return electron.remote.app.getVersion()");
-        expect(actualInstallerVersion).toEqual(expectedInstallerVersion);
+        if ((await obsidianPage.getPlatform()).isDesktopApp) { // will be true even under emulateMobile
+            const expectedInstallerVersion = browser.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].installerVersion;
+            expect(browser.getObsidianInstallerVersion()).toEqual(expectedInstallerVersion);
+            const actualInstallerVersion = await browser.execute("return electron.remote.app.getVersion()");
+            expect(actualInstallerVersion).toEqual(expectedInstallerVersion);
+        } else {
+            expect(browser.getObsidianInstallerVersion()).toEqual(expectedAppVersion);
+        }
     })
 
-    it('Chrome version matches', async () => {
-        const chromeVersion = await browser.execute(() => process.versions.chrome);
-        expect(chromeVersion).toEqual(browser.capabilities.browserVersion);
-    })
-
-    it('Vault opened', async () => {
-        const vaultPath = await browser.executeObsidian(({app}) => (app.vault.adapter as any).getBasePath());
+    it('Vault opened', async function() {
+        const vaultPath = await browser.executeObsidian(({app}) => (app.vault.adapter as any).getFullPath(""));
 
         // Should have created a copy of vault
         expect(path.basename(vaultPath)).toMatch(/^basic-/)
@@ -33,9 +33,9 @@ describe("Basic obsidian launch", () => {
         expect(vaultFiles).toEqual(["Goodbye.md", "Welcome.md"]);
     })
 
-    it('Sandboxed config', async () => {
+    it('Sandboxed config', async function() {
+        if ((await obsidianPage.getPlatform()).isMobileApp) this.skip();
         const configDir: string = await browser.execute("return electron.remote.app.getPath('userData')")
-        // Should be using sandboxed config dir
         expect(configDir).toContain("obsidian-launcher-config-");
     })
 

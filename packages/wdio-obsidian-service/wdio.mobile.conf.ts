@@ -60,6 +60,7 @@ export const config: WebdriverIO.Config = {
             'appium:avd': "android_obsidian_test",
             'appium:fullReset': true,
             'wdio:obsidianOptions': {
+                vault: 'test/vaults/basic',
                 plugins: [
                     "./test/plugins/basic-plugin",
                 ],
