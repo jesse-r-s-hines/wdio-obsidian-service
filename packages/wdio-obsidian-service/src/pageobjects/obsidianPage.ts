@@ -2,9 +2,10 @@ import * as path from "path"
 import * as fs from "fs"
 import * as fsAsync from "fs/promises"
 import { fileURLToPath } from "url";
+import { TFile } from "obsidian";
 import { OBSIDIAN_CAPABILITY_KEY, NormalizedObsidianCapabilityOptions } from "../types.js";
 import { BasePage } from "./basePage.js";
-import { TFile } from "obsidian";
+import { isAppium } from "../utils.js";
 import _ from "lodash";
 
 /**
@@ -66,36 +67,47 @@ class ObsidianPage extends BasePage {
                 return {
                     isDesktop: p.isDesktop,
                     isMobile: p.isMobile,
+                    isDesktopApp: p.isDesktopApp,
+                    isMobileApp: p.isMobileApp,
+                    isIosApp: p.isIosApp,
+                    isAndroidApp: p.isAndroidApp,
                     isPhone: p.isPhone,
                     isTablet: p.isTablet,
                     isMacOS: p.isMacOS,
                     isWin: p.isWin,
                     isLinux: p.isLinux,
+                    isSafari: p.isSafari,
                 };
             });
         } else {
             // hack to allow calling getPlatform before opening a vault. This is needed so you can use getPlatform to
-            // skip a test before wasting time opening the vault.
-            // we don't use this method normally as you can technically change the size or switch emulation mode during
-            // tests
+            // skip a test before wasting time opening the vault. we don't use this method the rest of the time as you
+            // can technically change the size or switch emulation mode during tests
+            const appium = isAppium(this.browser.requestedCapabilities);
             const emulateMobile = obsidianOptions.emulateMobile;
             const [width, height] = await this.browser.execute(() => [window.innerWidth, window.innerHeight]);
 
             let isTablet = false;
             let isPhone = false;
-            if (emulateMobile) {
+            if (appium || emulateMobile) {
                 // replicate Obsidian's tablet vs phone breakpoint
                 isTablet = (width >= 600 && height >= 600);
                 isPhone = !isTablet;
             }
 
             return {
-                isDesktop: !emulateMobile,
-                isMobile: emulateMobile,
-                isPhone: isPhone, isTablet: isTablet,
-                isMacOS: process.platform == 'darwin',
-                isWin: process.platform == "win32",
-                isLinux: process.platform == "linux",
+                isDesktop: !(appium || emulateMobile),
+                isMobile: appium || emulateMobile,
+                isDesktopApp: !appium,
+                isMobileApp: appium,
+                isIosApp: false, // iOS is not supported
+                isAndroidApp: appium,
+                isPhone: isPhone,
+                isTablet: isTablet,
+                isMacOS: !appium && process.platform == 'darwin',
+                isWin: !appium && process.platform == 'win32',
+                isLinux: !appium && process.platform == 'linux',
+                isSafari: false, // iOS is not supported
             };
         }
     }
@@ -342,6 +354,25 @@ export interface Platform {
      */
     isMobile: boolean;
     /**
+     * We're running the electron-based desktop app.
+     * Note, when running under `emulateMobile` this will still be true and isDesktop will be false.
+     */
+    isDesktopApp: boolean;
+    /**
+     * We're running the capacitor-js mobile app.
+     * Note, when running under `emulateMobile` this will still be false and isMobile will be true.
+     */
+    isMobileApp: boolean;
+    /** 
+     * We're running the iOS app.
+     * Note, wdio-obsidian-service doesn't support iOS yet, so this will always be false.
+     */
+    isIosApp: boolean;
+    /**
+     * We're running the Android app.
+     */
+    isAndroidApp: boolean;
+    /**
      * We're in a mobile app that has very limited screen space.
      */
     isPhone: boolean;
@@ -362,6 +393,11 @@ export interface Platform {
      * We're on a Linux device.
      */
     isLinux: boolean;
+    /**
+     * We're running in Safari.
+     * Note, wdio-obsidian-service doesn't support iOS yet, so this will always be false.
+     */
+    isSafari: boolean;
 };
 
 /**
