@@ -51,16 +51,17 @@ export const config: WebdriverIO.Config = {
     hostname: process.env.APPIUM_HOST || 'localhost',
     port: parseInt(process.env.APPIUM_PORT || "4723"),
 
-    capabilities: versionsToTest
-        .map((appVersion) => ({
+    capabilities: versionsToTest.flatMap((version) => {
+        const allSpecs = './test/e2e/**/*.ts';
+        const basicSpec = './test/e2e/basic.spec.ts';
+        const cap: WebdriverIO.Capabilities = {
             browserName: "obsidian",
-            browserVersion: appVersion,
+            browserVersion: version,
             platformName: 'Android',
             'appium:automationName': 'UiAutomator2',
             'appium:avd': "android_obsidian_test",
             'appium:fullReset': true,
             'wdio:obsidianOptions': {
-                vault: 'test/vaults/basic',
                 plugins: [
                     "./test/plugins/basic-plugin",
                 ],
@@ -68,7 +69,22 @@ export const config: WebdriverIO.Config = {
                     "./test/themes/basic-theme",
                 ],
             },
-        })),
+        }
+        const caps: WebdriverIO.Capabilities[] = [
+            _.merge({}, cap, { // separate capability for basic tests, test passing vault in the capability
+                'wdio:specs': [basicSpec],
+                'wdio:obsidianOptions': { vault: 'test/vaults/basic' },
+            }),
+        ]
+        if (process.env.TEST_PRESET != 'basic') {
+            caps.push(
+                _.merge({}, cap, {
+                    'wdio:specs': [allSpecs], 'wdio:exclude': [basicSpec],
+                }),
+            )
+        }
+        return caps;
+    }),
 
     services: [
         ["obsidian", obsidianServiceOptions],
