@@ -38,23 +38,43 @@ export async function appiumPushFolder(browser: WebdriverIO.Browser, src: string
     // with shell hacks until its fixed. See https://github.com/appium/appium-android-driver/issues/1004
     src = path.resolve(src);
     dest = path.posix.normalize(dest).replace(/\/$/, '');
-    const slug = crypto.randomBytes(8).toString("base64url").replace(/[-_]/g, '0');
-    const tmpFile = `/data/local/tmp/upload-${slug}.tmp`;
 
     let files = await fsAsync.readdir(src, {recursive: true, withFileTypes: true});
     files = _.sortBy(files, f => path.join(f.parentPath, f.name)); // sort files before children
 
+    // uploadFile creates parent directories, but we'll create them here as well so empty dirs are added
     await browser.execute("mobile: shell", {command: "mkdir", args: ["-p", quote(dest)]});
     for (const file of files) {
         const srcPath = path.join(file.parentPath, file.name);
         const relPath = path.relative(src, path.join(file.parentPath, file.name));
-        const destPath = path.posix.join(dest, relPath.replace("\\", "/"));
+        const destPath = path.posix.join(dest, relPath.replace(/\\/g, "/"));
         if (file.isDirectory()) {
             await browser.execute("mobile: shell", {command: "mkdir", args: ["-p", quote(destPath)]});
         } else if (file.isFile()) {
-            const content = await fsAsync.readFile(srcPath);
-            await browser.pushFile(tmpFile, content.toString('base64'));
-            await browser.execute("mobile: shell", {command: "mv", args: [tmpFile, quote(destPath)]});
+            await uploadFile(browser, srcPath, destPath);
         }
     }
+}
+
+
+/**
+ * Uploads a file to the device.
+ * Wrapper around pushFile that preserves mtime. Like pushFile, creates parent directories if needed.
+ * Also works around a bug in pushFile, where it doesn't escape special characters in directory names. See
+ * https://github.com/appium/appium-android-driver/issues/1004
+ */
+export async function uploadFile(browser: WebdriverIO.Browser, src: string, dest: string) {
+    src = path.resolve(src);
+    dest = path.posix.normalize(dest);
+    const parent = path.posix.dirname(dest);
+    const slug = crypto.randomBytes(8).toString("base64url").replace(/[-_]/g, '0');
+    const tmpFile = `/data/local/tmp/upload-${slug}.tmp`;
+
+    const stat = await fsAsync.stat(src);
+    const content = await fsAsync.readFile(src);
+
+    await browser.pushFile(tmpFile, content.toString('base64'));
+    await browser.execute("mobile: shell", {command: "touch", args: ["-d", stat.mtime.toISOString(), tmpFile]});
+    await browser.execute("mobile: shell", {command: "mkdir", args: ["-p", quote(parent)]});
+    await browser.execute("mobile: shell", {command: "mv", args: [tmpFile, quote(dest)]});
 }
