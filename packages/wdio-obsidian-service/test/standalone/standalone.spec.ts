@@ -37,7 +37,7 @@ describe("standalone mode test", function() {
     this.timeout("30s");
 
     it("basic", async function() {
-        const vaultPath = await browser!.executeObsidian(({app}) => (app.vault.adapter as any).getBasePath());
+        const vaultPath = await browser!.executeObsidian(({app}) => (app.vault.adapter as any).getFullPath(""));
         expect(path.basename(vaultPath)).to.match(/^basic-/);
     });
 })
