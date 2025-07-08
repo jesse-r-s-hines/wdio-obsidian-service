@@ -217,7 +217,7 @@ export async function getInstallerInfo(
             await extractObsidianExe(installerPath, "x64", exractedPath);
             const {stdout} = await sevenZ(["l", '-ba', path.relative(tmpDir, installerPath)], {cwd: tmpDir});
             const lines = stdout.trim().split("\n").map(l => l.trim());
-            const files = lines.map(l => l.split(/\s+/).at(-1)!.replace("\\", "/"));
+            const files = lines.map(l => l.split(/\s+/).at(-1)!.replace(/\\/g, "/"));
 
             if (files.includes('$PLUGINSDIR/app-arm64.7z')) platforms.push("win32-arm64");
             if (files.includes('$PLUGINSDIR/app-32.7z')) platforms.push("win32-ia32");
