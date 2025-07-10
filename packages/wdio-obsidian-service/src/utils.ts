@@ -32,7 +32,7 @@ export function isAppium(cap: WebdriverIO.Capabilities) {
 /**
  * Push a folder to the appium device.
  */
-export async function appiumPushFolder(browser: WebdriverIO.Browser, src: string, dest: string) {
+export async function uploadFolder(browser: WebdriverIO.Browser, src: string, dest: string) {
     // We should be able to just use pushFile which uploads a file to the device and automatically creates parent
     // directories. But its bugged, and doesn't escape spaces when creating the directories so we have to implement this
     // with shell hacks until its fixed. See https://github.com/appium/appium-android-driver/issues/1004
@@ -58,7 +58,7 @@ export async function appiumPushFolder(browser: WebdriverIO.Browser, src: string
 
 
 /**
- * Uploads a file to the device.
+ * Uploads a file to the appium device.
  * Wrapper around pushFile that preserves mtime. Like pushFile, creates parent directories if needed.
  * Also works around a bug in pushFile, where it doesn't escape special characters in directory names. See
  * https://github.com/appium/appium-android-driver/issues/1004
@@ -77,4 +77,14 @@ export async function uploadFile(browser: WebdriverIO.Browser, src: string, dest
     await browser.execute("mobile: shell", {command: "touch", args: ["-d", stat.mtime.toISOString(), tmpFile]});
     await browser.execute("mobile: shell", {command: "mkdir", args: ["-p", quote(parent)]});
     await browser.execute("mobile: shell", {command: "mv", args: [tmpFile, quote(dest)]});
+}
+
+/**
+ * Downloads a file from the appium device.
+ */
+export async function downloadFile(browser: WebdriverIO.Browser, src: string, dest: string) {
+    src = path.posix.normalize(src);
+    dest = path.resolve(dest);
+    const content = Buffer.from(await browser.pullFile(src), "base64");
+    await fsAsync.writeFile(dest, content);
 }

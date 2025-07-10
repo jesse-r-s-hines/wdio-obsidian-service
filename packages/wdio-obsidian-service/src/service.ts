@@ -12,7 +12,7 @@ import { asyncBrowserCommands, syncBrowserCommands } from "./browserCommands.js"
 import {
     ObsidianServiceOptions, NormalizedObsidianCapabilityOptions, OBSIDIAN_CAPABILITY_KEY,
 } from "./types.js"
-import { sleep, isAppium, appiumPushFolder, getAppiumOptions } from "./utils.js"
+import { sleep, isAppium, uploadFolder, getAppiumOptions } from "./utils.js"
 import semver from "semver"
 import _ from "lodash"
 
@@ -342,7 +342,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
                 // transfer the vault to the device
                 // vaultCopy already has a mkdtemp hash appended, so should be safe to uniquely upload.
                 const androidVault = `${this.androidVaultDir}/${path.basename(obsidianOptions.vaultCopy)}`;
-                await appiumPushFolder(browser, obsidianOptions.vaultCopy, androidVault);
+                await uploadFolder(browser, obsidianOptions.vaultCopy, androidVault);
 
                 // open vault by setting the localStorage keys and relaunching Obsidian
                 await browser.execute(async (androidVault) => {
