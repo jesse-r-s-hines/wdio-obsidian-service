@@ -270,26 +270,30 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
      */
     private async preBootSetup(cap: WebdriverIO.Capabilities): Promise<void> {
         const obsidianOptions = cap[OBSIDIAN_CAPABILITY_KEY] as NormalizedObsidianCapabilityOptions;
-        let vault = obsidianOptions.vault;
-        if (vault != undefined) {
-            log.info(`Opening vault ${vault}`);
-            vault = await this.obsidianLauncher.setupVault({
-                vault,
+        let vaultCopy: string|undefined;
+        if (obsidianOptions.vault != undefined) {
+            log.info(`Opening vault ${obsidianOptions.vault}`);
+            vaultCopy = await this.obsidianLauncher.setupVault({
+                vault: obsidianOptions.vault,
                 copy: true,
                 plugins: obsidianOptions.plugins,
                 themes: obsidianOptions.themes,
             });
-            this.tmpDirs.push(vault);
+            this.tmpDirs.push(vaultCopy);
         } else {
             log.info(`Opening Obsidian without a vault`)
         }
-        obsidianOptions.vaultCopy = vault; // for use in getVaultPath()
+        obsidianOptions.vaultCopy = vaultCopy; // for use in getVaultPath() and the other service hooks
 
-        if (!isAppium(cap)) {
+        if (isAppium(cap)) {
+            // when in appium, we can't set the user-data-dir before hand and instead open the vault in postBootSetup
+            obsidianOptions.uploadedVault = vaultCopy ? // for use in getVaultPath() and the other service hooks
+                `${this.androidVaultDir}/${path.basename(vaultCopy)}` : undefined;
+        } else {
             const configDir = await this.obsidianLauncher.setupConfigDir({
                 appVersion: obsidianOptions.appVersion, installerVersion: obsidianOptions.installerVersion,
                 appPath: obsidianOptions.appPath,
-                vault: vault,
+                vault: vaultCopy,
                 // `app.emulateMobile` just sets this localStorage variable. Setting it ourselves here instead of calling
                 // the function simplifies the boot/plugin load sequence and makes sure plugins load in mobile mode.
                 localStorage: obsidianOptions.emulateMobile ? {"EmulateMobile": "1"} : {},
@@ -305,7 +309,6 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
                 })
             ];
         }
-        // when in appium, we can't set the user-data-dir before hand and instead open the vault in postBootSetup
     }
 
     /**
@@ -340,8 +343,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
             await browser.switchContext("WEBVIEW_md.obsidian");
             if (obsidianOptions.vaultCopy != undefined) {
                 // transfer the vault to the device
-                // vaultCopy already has a mkdtemp hash appended, so should be safe to uniquely upload.
-                const androidVault = `${this.androidVaultDir}/${path.basename(obsidianOptions.vaultCopy)}`;
+                const androidVault = obsidianOptions.uploadedVault!
                 await uploadFolder(browser, obsidianOptions.vaultCopy, androidVault);
 
                 // open vault by setting the localStorage keys and relaunching Obsidian

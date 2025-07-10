@@ -119,6 +119,8 @@ export interface NormalizedObsidianCapabilityOptions {
     themes: DownloadedThemeEntry[],
     vault?: string,
     vaultCopy?: string,
+    /** Path off the vault on the appium device */
+    uploadedVault?: string,
     emulateMobile: boolean,
     binaryPath?: string,
     appPath?: string,
