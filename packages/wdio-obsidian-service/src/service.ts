@@ -12,7 +12,7 @@ import { asyncBrowserCommands, syncBrowserCommands } from "./browserCommands.js"
 import {
     ObsidianServiceOptions, NormalizedObsidianCapabilityOptions, OBSIDIAN_CAPABILITY_KEY,
 } from "./types.js"
-import { sleep, isAppium, uploadFolder, getAppiumOptions } from "./utils.js"
+import { sleep, isAppium, uploadFolder, downloadFile, uploadFile, getAppiumOptions, fileExists } from "./utils.js";
 import semver from "semver"
 import _ from "lodash"
 
@@ -449,24 +449,54 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
                 newCapabilities[OBSIDIAN_CAPABILITY_KEY] = newObsidianOptions;
                 await service.preBootSetup(newCapabilities);
                 await this.reloadSession(newCapabilities);
-            } else if (oldObsidianOptions.vaultCopy == undefined) {
-                throw Error(`No vault is open, pass a vault path to reloadObsidian`)
-            } else { // preserve vault and config dir
+            } else {
+                // preserve vault and config dir
+                if (oldObsidianOptions.vaultCopy == undefined) {
+                    throw Error(`No vault is open, pass a vault path to reloadObsidian`);
+                }
                 // Obsidian debounces saves to the config dir, and so changes to configuration made in the tests may not
                 // get saved to disk before the reboot. I haven't found a better way to flush everything than just
                 // waiting a bit.
                 await sleep(2000);
-                
-                await this.deleteSession({shutdownDriver: false});
 
-                // while Obsidian is down, modify the vault files to setup plugins and themes
-                service.obsidianLauncher.setupVault({
-                    vault: oldObsidianOptions.vaultCopy,
-                    copy: false,
-                    plugins: selectedPlugins,  themes: selectedThemes,
-                });
+                if (isAppium(this.requestedCapabilities)) {
+                    // reload without resetting app state or triggering appium:fullReset
+                    const packageName = await this.getCurrentPackage();
+                    await this.switchContext("NATIVE_APP");
+                    await this.execute('mobile: terminateApp', { appId: packageName });
 
-                await this.reloadSession(newCapabilities);
+                    // while Obsidian is down, modify the vault files to setup plugins and themes
+                    const local = path.join(oldObsidianOptions.vaultCopy, ".obsidian");
+                    const localCommunityPlugins = path.join(local, "community-plugins.json");
+                    const localAppearance = path.join(local, "appearance.json");
+                    const remote = `${oldObsidianOptions.uploadedVault!}/.obsidian`;
+                    const remoteCommunityPlugins = `${remote}/community-plugins.json`;
+                    const remoteAppearance = `${remote}/appearance.json`;
+
+                    await downloadFile(this, remoteCommunityPlugins, localCommunityPlugins);
+                    await downloadFile(this, remoteAppearance, localAppearance);
+                    service.obsidianLauncher.setupVault({
+                        vault: oldObsidianOptions.vaultCopy, copy: false,
+                        plugins: selectedPlugins, themes: selectedThemes,
+                    });
+                    if (await fileExists(localCommunityPlugins)) {
+                        await uploadFile(this, localCommunityPlugins, remoteCommunityPlugins);
+                    }
+                    if (await fileExists(localAppearance)) {
+                        await uploadFile(this, localAppearance, remoteAppearance);
+                    }
+
+                    await this.execute('mobile: activateApp', { appId: packageName });
+                } else {
+                    // reload preserving current vault and config dir
+                    await this.deleteSession({shutdownDriver: false});
+                    // while Obsidian is down, modify the vault files to setup plugins and themes
+                    service.obsidianLauncher.setupVault({
+                        vault: oldObsidianOptions.vaultCopy, copy: false,
+                        plugins: selectedPlugins, themes: selectedThemes,
+                    });
+                    await this.reloadSession(newCapabilities);
+                }
             }
             await service.postBootSetup();
         };

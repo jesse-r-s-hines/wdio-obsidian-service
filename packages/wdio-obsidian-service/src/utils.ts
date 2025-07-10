@@ -12,6 +12,15 @@ export function quote(input: string) {
     return `'${input.replace(/'/g, "'\\''")}'`;
 }
 
+export async function fileExists(path: string) {
+    try {
+        await fsAsync.access(path);
+        return true;
+    } catch {
+        return false;
+    }
+}
+
 /**
  * Gets the appium options.
  * Handles combining `"appium:foo"` and `"appium:options": {"foo": ...}` style options.
