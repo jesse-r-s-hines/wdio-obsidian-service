@@ -43,7 +43,7 @@ function resolveEntry(rootDir: string, entry: PluginEntry|ThemeEntry): PluginEnt
 }
 
 /** Returns a plugin list with only the selected plugin ids enabled. */
-function selectPlugins(currentPlugins: DownloadedPluginEntry[], selection?: string[]) {
+function selectPlugins(currentPlugins: DownloadedPluginEntry[], selection?: string[]): DownloadedPluginEntry[] {
     if (selection !== undefined) {
         const unknownPlugins = _.difference(selection, currentPlugins.map(p => p.id));
         if (unknownPlugins.length > 0) {
@@ -59,7 +59,7 @@ function selectPlugins(currentPlugins: DownloadedPluginEntry[], selection?: stri
 }
 
 /** Returns a theme list with only the selected theme enabled. */
-function selectThemes(currentThemes: DownloadedThemeEntry[], selection?: string) {
+function selectThemes(currentThemes: DownloadedThemeEntry[], selection?: string): DownloadedThemeEntry[] {
     if (selection !== undefined) {
         if (selection != "default" && currentThemes.every((t: any) => t.name != selection)) {
             throw Error(`Unknown theme: ${selection}`);
@@ -430,6 +430,8 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
             {vault, plugins, theme} = {},
         ) {
             const oldObsidianOptions: NormalizedObsidianCapabilityOptions = this.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY];
+            const selectedPlugins = selectPlugins(oldObsidianOptions.plugins, plugins);
+            const selectedThemes = selectThemes(oldObsidianOptions.themes, theme);
             // if browserName is set, reloadSession tries to restart the driver entirely, so unset those
             const newCapabilities: WebdriverIO.Capabilities = _.cloneDeep(
                 _.omit(this.requestedCapabilities, ['browserName', 'browserVersion'])
@@ -440,45 +442,31 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
                     ...oldObsidianOptions,
                     // Resolve relative to PWD instead of root dir during tests
                     vault: path.resolve(vault),
-                    plugins: selectPlugins(oldObsidianOptions.plugins, plugins),
-                    themes: selectThemes(oldObsidianOptions.themes, theme),
-                }
+                    plugins: selectedPlugins,  themes: selectedThemes,
+                };
                 newCapabilities[OBSIDIAN_CAPABILITY_KEY] = newObsidianOptions;
                 await service.preBootSetup(newCapabilities);
-            } else {
-                // preserve vault and config dir
-                const obsidianPage = this.getObsidianPage();
-                // Since we aren't recreating the vault, we'll need to enable/disable plugins and themes here.
-                if (plugins) {
-                    const enabledPlugins = await this.executeObsidian(({app}) =>
-                        [...(app as any).plugins.enabledPlugins].sort()
-                    )
-                    for (const pluginId of _.difference(enabledPlugins, plugins, ['wdio-obsidian-service-plugin'])) {
-                        await obsidianPage.disablePlugin(pluginId);
-                    }
-                    for (const pluginId of _.difference(plugins, enabledPlugins)) {
-                        await obsidianPage.enablePlugin(pluginId);
-                    }
-                }
-                if (theme) {
-                    await obsidianPage.setTheme(theme);
-                }
-                await this.executeObsidian(async ({app}) => await Promise.all([
-                    (app as any).plugins.saveConfig(),
-                    (app.vault as any).saveConfig(),
-                ]))
+                await this.reloadSession(newCapabilities);
+            } else if (oldObsidianOptions.vaultCopy == undefined) {
+                throw Error(`No vault is open, pass a vault path to reloadObsidian`)
+            } else { // preserve vault and config dir
                 // Obsidian debounces saves to the config dir, and so changes to configuration made in the tests may not
-                // get saved to disk before the reboot. Here I manually trigger save for plugins and themes, but other
-                // configurations might not get saved. I haven't found a better way to flush everything than just
-                // waiting a bit. Wdio has ways to mock the clock which might work, but it's only supported when using
-                // BiDi which I can't get working on Obsidian.
+                // get saved to disk before the reboot. I haven't found a better way to flush everything than just
+                // waiting a bit.
                 await sleep(2000);
+                
+                await this.deleteSession({shutdownDriver: false});
+
+                // while Obsidian is down, modify the vault files to setup plugins and themes
+                service.obsidianLauncher.setupVault({
+                    vault: oldObsidianOptions.vaultCopy,
+                    copy: false,
+                    plugins: selectedPlugins,  themes: selectedThemes,
+                });
+
+                await this.reloadSession(newCapabilities);
             }
-
-            const sessionId = await this.reloadSession(newCapabilities);
             await service.postBootSetup();
-
-            return sessionId;
         };
         return reloadObsidian;
     }

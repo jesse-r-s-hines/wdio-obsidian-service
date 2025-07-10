@@ -136,12 +136,11 @@ export type ObsidianBrowserCommands = AsyncObsidianBrowserCommands & SyncObsidia
      *     disablePlugin commands to change plugins without relaunching Obsidian.
      * @param params.theme Name of the theme to enable. If omitted it will keep the current theme. Pass "default" to
      *     switch back to the default theme. Like with plugins, the theme must be defined in wdio.conf.ts.
-     * @returns Returns the new sessionId (same as browser.reloadSession()).
      */
     reloadObsidian(params?: {
         vault?: string,
         plugins?: string[], theme?: string,
-    }): Promise<string>;
+    }): Promise<void>;
     // This command is implemented in the service hooks.
 };
 
