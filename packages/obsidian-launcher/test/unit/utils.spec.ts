@@ -146,6 +146,12 @@ describe("linkOrCp", () => {
         await linkOrCp(path.join(tmpDir, "a.txt"), path.join(tmpDir, "b.txt"))
         expect(await fsAsync.readFile(path.join(tmpDir, "b.txt"), 'utf-8')).to.eql("A")
     });
+
+    it("already exists basic", async () => {
+        const tmpDir = await createDirectory({"a.txt": "A", "b.txt": "B"});
+        await linkOrCp(path.join(tmpDir, "a.txt"), path.join(tmpDir, "b.txt"))
+        expect(await fsAsync.readFile(path.join(tmpDir, "b.txt"), 'utf-8')).to.eql("A")
+    });
 });
 
 describe("pool", () => {

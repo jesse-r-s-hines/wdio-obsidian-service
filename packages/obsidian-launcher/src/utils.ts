@@ -67,6 +67,7 @@ export async function atomicCreate(
  * Tries to hardlink a file, falls back to copy if it fails
  */
 export async function linkOrCp(src: string, dest: string) {
+    await fsAsync.rm(dest, {recursive: true, force: true});
     try {
         await fsAsync.link(src, dest);
     } catch {
