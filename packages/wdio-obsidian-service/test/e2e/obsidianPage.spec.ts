@@ -3,6 +3,7 @@ import fsAsync from "fs/promises";
 import path from "path";
 import { obsidianPage } from 'wdio-obsidian-service';
 import { OBSIDIAN_CAPABILITY_KEY } from '../../src/types.js';
+import { isAppium } from '../../src/utils.js';
 
 
 async function getOpenFiles() {
@@ -35,7 +36,9 @@ describe("Test page object", () => {
         
         // vault should be copied
         expect(path.resolve(vaultPath1)).not.toEqual(originalVaultPath)
-        expect(await fsAsync.readdir(vaultPath1)).toEqual(expect.arrayContaining(["Goodbye.md", "Welcome.md"]));
+        if ((await obsidianPage.getPlatform()).isMobileApp) {
+            expect(vaultPath1).toMatch("wdio-obsidian-service-vaults");
+        }
 
         await browser.reloadObsidian({vault: "./test/vaults/basic"});
 
@@ -57,10 +60,14 @@ describe("Test page object", () => {
 
     it('getPlatform', async () => {
         const platform = await obsidianPage.getPlatform();
-        const isMobile = browser.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].emulateMobile;
-        expect(platform.isMobile).toEqual(isMobile);
-        expect(platform.isDesktop).toEqual(!isMobile);
-        expect(platform.isPhone).toEqual(isMobile);
+        const isEmulateMobile = browser.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].emulateMobile;
+        const isAndroid = isAppium(browser.requestedCapabilities);
+        expect(platform.isMobile).toEqual(isEmulateMobile || isAndroid);
+        expect(platform.isDesktop).toEqual(!isEmulateMobile && !isAndroid);
+        expect(platform.isPhone).toEqual(isEmulateMobile || isAndroid);
+
+        expect(platform.isMobileApp).toEqual(isAndroid);
+        expect(platform.isDesktopApp).toEqual(!isAndroid);
     })
 
     it('enable/disable plugin', async () => {

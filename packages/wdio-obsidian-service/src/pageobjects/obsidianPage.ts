@@ -39,7 +39,7 @@ class ObsidianPage extends BasePage {
         if (obsidianOptions.vaultCopy === undefined) {
             throw Error("No vault open, set vault in wdio.conf or use reloadObsidian to open a vault dynamically.")
         }
-        return obsidianOptions.vaultCopy;
+        return obsidianOptions.uploadedVault ?? obsidianOptions.vaultCopy;
     }
 
     /**
@@ -167,10 +167,12 @@ class ObsidianPage extends BasePage {
         if (typeof layout == "string") {
             // read from .obsidian/workspaces.json like the built-in workspaces plugin does
             const configDir = await this.getConfigDir();
-            const workspacesPath = path.join(configDir, 'workspaces.json');
+            const workspacesPath = `${path.basename(configDir)}/workspaces.json`;
             const layoutName = layout;
             try {
-                const fileContent = await fsAsync.readFile(workspacesPath, 'utf-8');
+                const fileContent = await this.browser.executeObsidian(async ({app}, workspacesPath) => {
+                    return await app.vault.adapter.read(workspacesPath);
+                }, workspacesPath);
                 layout = JSON.parse(fileContent)?.workspaces?.[layoutName];
             } catch {
                 throw new Error(`Failed to load ${configDir}/workspaces.json`);
