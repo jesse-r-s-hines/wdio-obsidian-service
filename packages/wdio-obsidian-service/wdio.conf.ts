@@ -86,10 +86,12 @@ export const config: WebdriverIO.Config = {
 
     // How many instances of Obsidian should be launched in parallel during testing.
     maxInstances: maxInstances,
+    specs: ['./test/e2e/**/*.ts'],
 
     capabilities: versionsToTest.flatMap(([appVersion, installerVersion]) => {
-        const allSpecs = './test/e2e/**/*.ts';
-        const basicSpec = './test/e2e/basic.spec.ts';
+        const excludeBasic = 'test/e2e/basic.spec.ts';
+        const excludeRest = '!(basic.spec.ts)';
+
         const cap: WebdriverIO.Capabilities = {
             browserName: "obsidian",
             browserVersion: appVersion,
@@ -115,22 +117,18 @@ export const config: WebdriverIO.Config = {
         }
         const caps: WebdriverIO.Capabilities[] = [
             _.merge({}, cap, { // separate capability for basic tests, test passing vault in the capability
-                'wdio:specs': [basicSpec],
+                'wdio:exclude': [excludeRest], // --spec command overrides wdio:specs, so use wdio:exclude instead
                 'wdio:obsidianOptions': { vault: 'test/vaults/basic' },
             }),
             _.merge({}, cap, emulateMobileOptions, {
-                'wdio:specs': [basicSpec],
+                'wdio:exclude': [excludeRest],
                 'wdio:obsidianOptions': { vault: 'test/vaults/basic' },
             }),
         ]
         if (process.env.TEST_PRESET != 'basic') {
             caps.push(
-                _.merge({}, cap, {
-                    'wdio:specs': [allSpecs], 'wdio:exclude': [basicSpec],
-                }),
-                _.merge({}, cap, emulateMobileOptions, {
-                    'wdio:specs': [allSpecs], 'wdio:exclude': [basicSpec],
-                }),
+                _.merge({}, cap, { 'wdio:exclude': [excludeBasic] }),
+                _.merge({}, cap, emulateMobileOptions, { 'wdio:exclude': [excludeBasic] }),
             )
         }
         return caps;
