@@ -8,7 +8,7 @@ import { fileURLToPath } from "url"
 import ObsidianLauncher, {
     PluginEntry, ThemeEntry, DownloadedPluginEntry, DownloadedThemeEntry,
 } from "obsidian-launcher"
-import { asyncBrowserCommands, syncBrowserCommands } from "./browserCommands.js"
+import { browserCommands } from "./browserCommands.js"
 import {
     ObsidianServiceOptions, NormalizedObsidianCapabilityOptions, OBSIDIAN_CAPABILITY_KEY,
 } from "./types.js"
@@ -411,12 +411,15 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
             // some warnings. This will silence them. TODO: Make issue or PR to wdio to fix this.
             browser.setMaxListeners(1000);
 
-            browser.addCommand("reloadObsidian", this.createReloadObsidian());
-            for (const [name, cmd] of Object.entries(asyncBrowserCommands)) {
-                browser.addCommand(name, cmd);
+            // You are supposed to add commands via the addCommand hook, however you can't add synchronous methods that
+            // way. Also, addCommand completely breaks the stack traces of errors from the methods, while tacking on the
+            // methods manually doesn't.
+            const newBrowserCommands = {
+                ...browserCommands,
+                reloadObsidian: this.createReloadObsidian(),
             }
-            for (const [name, cmd] of Object.entries(syncBrowserCommands)) {
-                (browser as any)[name] = cmd; // Hack to allow adding some sync methods to browser
+            for (const [name, cmd] of Object.entries(newBrowserCommands)) {
+                (browser as any)[name] = cmd;
             }
 
             await this.postBootSetup();

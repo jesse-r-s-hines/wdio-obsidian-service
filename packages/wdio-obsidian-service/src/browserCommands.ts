@@ -2,7 +2,7 @@ import type * as obsidian from "obsidian"
 import { ObsidianPage } from "./pageobjects/obsidianPage.js"
 import { NormalizedObsidianCapabilityOptions, OBSIDIAN_CAPABILITY_KEY } from "./types.js";
 
-export const asyncBrowserCommands = {
+export const browserCommands = {
     /**
      * Wrapper around browser.execute that passes the Obsidian API to the function. The first argument to the function
      * is an object containing keys:
@@ -53,9 +53,24 @@ export const asyncBrowserCommands = {
         if (obsidianOptions.vault === undefined) {
             throw Error("No vault open, set vault in wdio.conf or use reloadObsidian to open a vault dynamically.")
         }
+        // Call the function. Just stringify the function (browser.execute stringifies it anyways). Add a workaround for
+        // node fs errors returning useless error messages. If the thrown error has a "code" field that is a string, the
+        // chromedriver throws an error like this with no further info:
+        //  "unknown error: call function result missing int 'status'"
+        // I think this is a bug in ChromeDevtoolsProtocol or chromedriver. See
+        // https://github.com/electron-userland/spectron/issues/1057
         const result = await this.execute<Return, Params>(`
             const require = window.wdioObsidianService().require;
-            return (${func.toString()}).call(null, {...window.wdioObsidianService()}, ...arguments)
+            try {
+                return await (
+                    ${func.toString()}
+                ).call(null, window.wdioObsidianService(), ...arguments);
+            } catch (e) {
+                if ("code" in e && typeof e.code != "number") {
+                    delete e.code;
+                }
+                throw e;
+            }
         `, ...params);
         // TODO Should maybe add in the TransformReturn and TransformElement bit that wdio has recently added to the
         // execute types, though it causes weird affects if `func` returns type any.
@@ -72,16 +87,7 @@ export const asyncBrowserCommands = {
             throw Error(`Obsidian command ${id} not found or failed.`);
         }
     },
-} as const
 
-/** Define this type separately so we can @inline it in typedoc */
-type AsyncObsidianBrowserCommands = typeof asyncBrowserCommands;
-
-/**
- * addCommand always makes the command async, we manually add these methods to the browser instance so they can be
- * sync.
- */
-export const syncBrowserCommands = {
     /**
      * Returns the Obsidian app version this test is running under.
      */
@@ -110,9 +116,6 @@ export const syncBrowserCommands = {
     },
 }
 
-/** Define this type separately so we can @inline it in typedoc */
-type SyncObsidianBrowserCommands = typeof syncBrowserCommands;
-
 /**
  * Extra commands added to the WDIO Browser instance.
  * 
@@ -120,7 +123,7 @@ type SyncObsidianBrowserCommands = typeof syncBrowserCommands;
  * @interface
  * @category Utilities
  */
-export type ObsidianBrowserCommands = AsyncObsidianBrowserCommands & SyncObsidianBrowserCommands & {
+export type ObsidianBrowserCommands = typeof browserCommands & {
     /**
      * Relaunch obsidian. Can be used to switch to a new vault, change the plugin list, or just to reboot Obsidian.
      * 
