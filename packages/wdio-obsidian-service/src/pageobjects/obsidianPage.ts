@@ -1,6 +1,6 @@
 import * as path from "path"
-import * as fs from "fs"
 import * as fsAsync from "fs/promises"
+import * as crypto from "crypto";
 import { fileURLToPath } from "url";
 import { TFile } from "obsidian";
 import { OBSIDIAN_CAPABILITY_KEY, NormalizedObsidianCapabilityOptions } from "../types.js";
@@ -213,131 +213,157 @@ class ObsidianPage extends BasePage {
      * })
      * ```
      */
-    async resetVault(...vaults: (string|Record<string, string>)[]) {
+    async resetVault(...vaults: (string|Record<string, string|ArrayBuffer>)[]) {
         const obsidianOptions = this.getObsidianCapabilities();
         if (!obsidianOptions.vault) {
             // open an empty vault if there's no vault open
             const defaultVaultPath = path.resolve(fileURLToPath(import.meta.url), '../../default-vault');
             await this.browser.reloadObsidian({vault: defaultVaultPath});
         }
-
-        const origVaultPath = obsidianOptions.vault!;
-
-        vaults = vaults.length == 0 ? [origVaultPath] : vaults;
         const configDir = path.basename(await this.getConfigDir());
+        vaults = vaults.length == 0 ? [obsidianOptions.vault!] : vaults;
 
-        async function readVaultFiles(vault: string): Promise<Map<string, fs.Stats>> {
-            const files = await fsAsync.readdir(vault, { recursive: true, withFileTypes: true });
-            const paths = files
-                .filter(f => f.isFile())
-                .map(f => path.relative(vault, path.join(f.parentPath, f.name)).split(path.sep).join("/"))
-                .filter(f => !f.startsWith(configDir + "/"));
-            const promises = paths.map(async (p) => [p, await fsAsync.stat(path.join(vault, p))] as const);
-            return new Map(await Promise.all(promises));
+        // helper functions
+        const isHidden = (file: string) => file.split("/").some(p => p.startsWith("."));
+        const isText = (file: string) =>
+            [".md", ".json", ".txt", ".js"].includes(path.extname(file).toLocaleLowerCase())
+
+        const deleteFile = async (file: string) => {
+            await this.browser.executeObsidian(async ({app}, file, isVaultFile) => {
+                if (isVaultFile) {
+                    await app.vault.delete(app.vault.getAbstractFileByPath(file)!);
+                } else {
+                    await app.vault.adapter.remove(file);
+                }
+            }, file, !isHidden(file) && isText(file));
+        }
+        const deleteFolder = async (file: string) => {
+            await this.browser.executeObsidian(async ({app}, file, isVaultFile) => {
+                if (isVaultFile) {
+                    await app.vault.delete(app.vault.getAbstractFileByPath(file)!, true);
+                } else {
+                    await app.vault.adapter.rmdir(file, true);
+                }
+            }, file, !isHidden(file));
+        }
+        const writeFile = async (file: string, content: string|ArrayBuffer) => {
+            let strContent: string|undefined, binContent: string|undefined;
+            if (typeof content == "string") {
+                strContent = content;
+            } else {
+                binContent = Buffer.from(content).toString("base64");
+            }
+            await this.browser.executeObsidian(async ({app}, file, isVaultFile, strContent, binContent) => {
+                if (isVaultFile) {
+                    const fileObj = app.vault.getAbstractFileByPath(file);
+                    strContent = strContent ?? atob(binContent!);
+                    if (fileObj) {
+                        await app.vault.modify(fileObj as TFile, strContent);
+                    } else {
+                        await app.vault.create(file, strContent);
+                    }
+                } else if (strContent) {
+                    await app.vault.adapter.write(file, strContent);
+                } else {
+                    const buffer = new TextEncoder().encode(atob(binContent!)).buffer;
+                    await app.vault.adapter.writeBinary(file, buffer)
+                }
+            }, file, !isHidden(file) && isText(file), strContent, binContent);
+        }
+        const createFolder = async (file: string) => {
+            await this.browser.executeObsidian(async ({app}, file, isVaultFile) => {
+                if (isVaultFile) {
+                    await app.vault.createFolder(file);
+                } else {
+                    await app.vault.adapter.mkdir(file);
+                }
+            }, file, !isHidden(file));
         }
 
-        function getFolders(files: Iterable<string>): Set<string> {
-            return new Set([...files].map(p => path.dirname(p)).filter(p => p != '.'));
-        }
-
-        // merge the vaults
-        const newFiles: Map<string, {stat?: fs.Stats, sourcePath?: string, sourceContent?: string}> = new Map();
+        // list all files in the new vault
+        type NewFileInfo = {type: "file"| "folder", sourceContent?: string|ArrayBuffer, sourceFile?: string};
+        const newVault: Map<string, NewFileInfo> = new Map();
         for (let vault of vaults) {
             if (typeof vault == "string") {
                 vault = path.resolve(vault);
-                for (const [file, stat] of await readVaultFiles(vault)) {
-                    newFiles.set(file, {stat, sourcePath: path.join(vault, file)});
+                const files = await fsAsync.readdir(vault, { recursive: true, withFileTypes: true });
+                for (const f of files) {
+                    const fullPath = path.join(f.parentPath, f.name);
+                    const vaultPath = path.relative(vault, fullPath).split(path.sep).join("/");
+                    if (!vaultPath.startsWith(configDir + "/")) {
+                        if (f.isDirectory()) {
+                            newVault.set(vaultPath, {type: 'folder'});
+                        } else {
+                            newVault.set(vaultPath, {type: 'file', sourceFile: fullPath});
+                        }
+                    }
                 }
             } else {
-                for (const [file, sourceContent] of Object.entries(vault)) {
-                    newFiles.set(file, {sourceContent});
+                for (const [file, content] of Object.entries(vault)) {
+                    newVault.set(file, {type: "file", sourceContent: content});
+                }
+                const folders = new Set(Object.keys(vault).map(p => path.posix.dirname(p)).filter(p => p !== "."));
+                for (const folder of folders) {
+                    newVault.set(folder, {type: "folder"});
                 }
             }
         }
 
-        // calculate the changes needed to the current vault
-        const newFolders = getFolders(newFiles.keys());
-        const currFiles = await readVaultFiles(this.getVaultPath());
-        const currFolders = getFolders(currFiles.keys());
+        // list all files in the current vault
+        type CurrFileInfo = {type: "file"| "folder", hash?: string};
+        const currVault = new Map(await this.browser.executeObsidian(({app}, configDir) => {
+            async function hash(data: ArrayBuffer) {
+                const hashBuffer = await window.crypto.subtle.digest('SHA-256', data);
+                const hashArray = Array.from(new Uint8Array(hashBuffer));
+                return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            }
 
-        type FileUpdateInstruction = {
-            action: string, path: string,
-            sourcePath?: string, sourceContent?: string,
-        };
-        const instructions: FileUpdateInstruction[] = [];
+            async function listRecursive(path: string): Promise<[string, CurrFileInfo][]> {
+                const result: [string, CurrFileInfo][] = [];
+                const { folders, files } = await app.vault.adapter.list(path);
+                for (const folder of folders) {
+                    result.push([folder, {type: "folder"}]);
+                    result.push(...await listRecursive(folder));
+                }
+                for (const file of files) {
+                    if (!file.startsWith(configDir + "/")) {
+                        const content = await app.vault.adapter.readBinary(file);
+                        result.push([file, { type: "file", hash: await hash(content) }]);
+                    }
+                }
+                return result;
+            }
 
-        // delete files
-        for (const currFile of currFiles.keys()) {
-            if (!newFiles.has(currFile)) {
-                instructions.push({action: "delete-file", path: currFile});
-            }
-        }
-        // delete folders, sort so children are before parents
-        for (const currFolder of [...currFolders].sort().reverse()) {
-            if (!newFolders.has(currFolder)) {
-                instructions.push({action: "delete-folder", path: currFolder});
-            }
-        }
-        // create folders, sort so parents are before children
-        for (const newFolder of [...newFolders].sort()) {
-            if (!currFolders.has(newFolder)) {
-                instructions.push({action: "create-folder", path: newFolder});
-            }
-        }
-        // create/modify files
-        for (const [newFile, newFileInfo] of newFiles.entries()) {
-            const {stat: newStat, sourcePath, sourceContent} = newFileInfo;
-            const args = {path: newFile, sourcePath, sourceContent};
-            const currStat = currFiles.get(newFile);
-            if (!currStat) {
-                instructions.push({action: "create-file", ...args});
-            } else if ( // check if file has changed (setupVault preserves mtimes)
-                !newStat ||
-                currStat.mtime.getTime() != newStat.mtime.getTime() ||
-                currStat.size != newStat.size
-            ) {
-                instructions.push({action: "modify-file", ...args});
-            }
-        }
+            return listRecursive("/");
+        }, configDir));
 
-        await this.browser.executeObsidian(async ({app}, instructions) => {
-            // The plugin require blocks node imports when emulating mobile, so use window.require to bypass that.
-            const fs = window.require('fs');
-    
-            for (const {action, path, sourcePath, sourceContent} of instructions) {
-                const isHidden = path.split("/").some(p => p.startsWith("."));
-                if (action == "delete-file") {
-                    if (isHidden) {
-                        await app.vault.adapter.remove(path);
-                    } else {
-                        await app.vault.delete(app.vault.getAbstractFileByPath(path)!);
-                    }
-                } else if (action == "delete-folder") {
-                    if (isHidden) {
-                        await app.vault.adapter.rmdir(path, true);
-                    } else {
-                        await app.vault.delete(app.vault.getAbstractFileByPath(path)!, true);
-                    }
-                } else if (action == "create-folder") {
-                    if (isHidden) {
-                        await app.vault.adapter.mkdir(path);
-                    } else {
-                        await app.vault.createFolder(path);
-                    }
-                } else if (action == "create-file" || action == "modify-file") {
-                    const content = sourceContent ?? await fs.readFileSync(sourcePath!, 'utf-8');
-                    if (isHidden) {
-                        await app.vault.adapter.write(path, content);
-                    } else if (action == "modify-file") {
-                        await app.vault.modify(app.vault.getAbstractFileByPath(path) as TFile, content);
-                    } else { // action == "create-file"
-                        await app.vault.create(path, content);
-                    }
+        // delete any files that need to be deleted
+        for (const file of [...currVault.keys()].sort().reverse()) {
+            const currFileInfo = currVault.get(file)!
+            if (!newVault.has(file) || newVault.get(file)!.type != currFileInfo.type) {
+                if (currFileInfo.type == "file") {
+                    await deleteFile(file);
                 } else {
-                    throw Error(`Unknown action ${action}`)
+                    await deleteFolder(file);
                 }
             }
-        }, instructions);
+        }
+
+        // create files and folders
+        for (const [file, newFileInfo] of _.sortBy([...newVault.entries()], 0)) {
+            const currFileInfo = currVault.get(file);
+            if (newFileInfo.type == "file") {
+                const content = newFileInfo.sourceContent ?? await fsAsync.readFile(newFileInfo.sourceFile!);
+                const hash = crypto.createHash("SHA256")
+                    .update(typeof content == "string" ? content : new Uint8Array(content))
+                    .digest("hex");
+                if (!currFileInfo || currFileInfo.hash != hash) {
+                    await writeFile(file, content);
+                }
+            } else if (newFileInfo.type == "folder" && !currFileInfo) {
+                await createFolder(file);
+            }
+        }
     }
 }
 

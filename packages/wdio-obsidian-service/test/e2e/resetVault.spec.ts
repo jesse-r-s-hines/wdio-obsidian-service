@@ -1,11 +1,12 @@
 import { browser, expect } from '@wdio/globals'
 import { obsidianPage } from 'wdio-obsidian-service';
 import { TFile } from 'obsidian';
+import os from "os";
 import fsAsync from "fs/promises"
 import path from "path"
 
 
-describe("resetVault", () => {
+describe("resetVault", function() {
     async function getAllFiles(opts: {content?: boolean, mtime?: boolean}) {
         type FileInfo = {content?: string, mtime?: number}
         return await browser.executeObsidian(async ({ app }, opts) => {
@@ -168,5 +169,18 @@ describe("resetVault", () => {
             "B/C.md": {content: "File C\n"},
             "B/D/E.md": {content: "File E\n"},
         });
+    })
+
+    it("Empty folder", async () => {
+        const tmpDir = await fsAsync.mkdtemp(path.join(os.tmpdir(), "mocha-"));
+        after(async () => { await fsAsync.rm(tmpDir, { recursive: true, force: true }); });
+        await fsAsync.mkdir(path.join(tmpDir, 'foo'));
+
+        await browser.reloadObsidian({ vault: "./test/vaults/basic" });
+
+        await obsidianPage.resetVault(tmpDir);
+        const {folders, files} = await browser.executeObsidian(({app}) => app.vault.adapter.list("/"));
+        expect(folders).toEqual(["foo"]);
+        expect(files).toEqual([]);
     })
 })
