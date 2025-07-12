@@ -56,7 +56,7 @@ export async function uploadFolder(browser: WebdriverIO.Browser, src: string, de
     for (const file of files) {
         const srcPath = path.join(file.parentPath, file.name);
         const relPath = path.relative(src, path.join(file.parentPath, file.name));
-        const destPath = path.posix.join(dest, relPath.replace(/\\/g, "/"));
+        const destPath = path.posix.join(dest, relPath.split(path.sep).join("/"));
         if (file.isDirectory()) {
             await browser.execute("mobile: shell", {command: "mkdir", args: ["-p", quote(destPath)]});
         } else if (file.isFile()) {
