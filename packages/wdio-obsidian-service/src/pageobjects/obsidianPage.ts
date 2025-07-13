@@ -8,6 +8,17 @@ import { BasePage } from "./basePage.js";
 import { isAppium } from "../utils.js";
 import _ from "lodash";
 
+
+/** Returns true if a vault file path is hidden (either it or one of it's parent directories starts with ".") */
+function isHidden(file: string) {
+    return file.split("/").some(p => p.startsWith("."))
+}
+
+/** Returns true if this is a simple text file */
+function isText(file: string) {
+    return [".md", ".json", ".txt", ".js"].includes(path.extname(file).toLocaleLowerCase());
+}
+
 /**
  * Class with various helper methods for writing Obsidian tests using the
  * [page object pattern](https://webdriver.io/docs/pageobjects).
@@ -188,6 +199,84 @@ class ObsidianPage extends BasePage {
     }
 
     /**
+     * Deletes a file or folder in the vault.
+     * @param file path of inside vault, e.g. "/books/leviathan-wakes.md"
+     */
+    async delete(file: string) {
+        await this.browser.executeObsidian(async ({app, obsidian}, file, isVaultFile) => {
+            file = obsidian.normalizePath(file);
+            if (isVaultFile) {
+                const fileObj = app.vault.getAbstractFileByPath(file);
+                if (fileObj) {
+                    await app.vault.delete(fileObj, true);
+                };
+            } else {
+                const stat = await app.vault.adapter.stat(file);
+                if (stat && stat.type == "folder") {
+                    await app.vault.adapter.rmdir(file, true);
+                } else if (stat) {
+                    await app.vault.adapter.remove(file);
+                }
+            }
+        }, file, !isHidden(file));
+    }
+
+    /**
+     * Writes to a file in the vault. Creates parent directories if needed.
+     * @param file path of inside vault, e.g. "/books/leviathan-wakes.md"
+     * @param content content to write to the file
+    */
+    async write(file: string, content: string|ArrayBuffer) {
+        let strContent: string|undefined, binContent: string|undefined;
+        if (typeof content == "string") {
+            strContent = content;
+        } else {
+            binContent = Buffer.from(content).toString("base64");
+        }
+        await this.browser.executeObsidian(async ({app, obsidian}, file, isVaultFile, strContent, binContent) => {
+            file = obsidian.normalizePath(file);
+            const parent = file.split("/").slice(0, -1).join("/");
+            if (isVaultFile) {
+                if (parent && !app.vault.getAbstractFileByPath(parent)) {
+                    await app.vault.createFolder(parent);
+                }
+                const fileObj = app.vault.getAbstractFileByPath(file);
+                strContent = strContent ?? atob(binContent!);
+                if (fileObj) {
+                    await app.vault.modify(fileObj as TFile, strContent);
+                } else {
+                    await app.vault.create(file, strContent);
+                }
+            } else {
+                await app.vault.adapter.mkdir(parent);
+                if (strContent) {
+                    await app.vault.adapter.write(file, strContent);
+                } else {
+                    const buffer = Uint8Array.from(atob(binContent!), c => c.charCodeAt(0));
+                    await app.vault.adapter.writeBinary(file, buffer)
+                }
+            }
+        }, file, !isHidden(file) && isText(file), strContent, binContent);
+    }
+
+    /**
+     * Create a folder in the vault. Creates parent directories if needed.
+     * @param file path of inside vault, e.g. "/books"
+     */
+    async mkdir(file: string) {
+        await this.browser.executeObsidian(async ({app, obsidian}, file, isVaultFile) => {
+            file = obsidian.normalizePath(file);
+            if (isVaultFile) {
+                if (parent && !app.vault.getAbstractFileByPath(file)) {
+                    await app.vault.createFolder(file);
+                }
+            } else {
+                await app.vault.adapter.mkdir(file);
+            }
+        }, file, !isHidden(file));
+    }
+
+    /**
      * Updates the vault by modifying files in place without reloading Obsidian. Can be used to reset the vault back to
      * its original state or to "switch" to an entirely different vault without rebooting Obsidian
      * 
@@ -222,63 +311,6 @@ class ObsidianPage extends BasePage {
         }
         const configDir = path.basename(await this.getConfigDir());
         vaults = vaults.length == 0 ? [obsidianOptions.vault!] : vaults;
-
-        // helper functions
-        const isHidden = (file: string) => file.split("/").some(p => p.startsWith("."));
-        const isText = (file: string) =>
-            [".md", ".json", ".txt", ".js"].includes(path.extname(file).toLocaleLowerCase())
-
-        const deleteFile = async (file: string) => {
-            await this.browser.executeObsidian(async ({app}, file, isVaultFile) => {
-                if (isVaultFile) {
-                    await app.vault.delete(app.vault.getAbstractFileByPath(file)!);
-                } else {
-                    await app.vault.adapter.remove(file);
-                }
-            }, file, !isHidden(file) && isText(file));
-        }
-        const deleteFolder = async (file: string) => {
-            await this.browser.executeObsidian(async ({app}, file, isVaultFile) => {
-                if (isVaultFile) {
-                    await app.vault.delete(app.vault.getAbstractFileByPath(file)!, true);
-                } else {
-                    await app.vault.adapter.rmdir(file, true);
-                }
-            }, file, !isHidden(file));
-        }
-        const writeFile = async (file: string, content: string|ArrayBuffer) => {
-            let strContent: string|undefined, binContent: string|undefined;
-            if (typeof content == "string") {
-                strContent = content;
-            } else {
-                binContent = Buffer.from(content).toString("base64");
-            }
-            await this.browser.executeObsidian(async ({app}, file, isVaultFile, strContent, binContent) => {
-                if (isVaultFile) {
-                    const fileObj = app.vault.getAbstractFileByPath(file);
-                    strContent = strContent ?? atob(binContent!);
-                    if (fileObj) {
-                        await app.vault.modify(fileObj as TFile, strContent);
-                    } else {
-                        await app.vault.create(file, strContent);
-                    }
-                } else if (strContent) {
-                    await app.vault.adapter.write(file, strContent);
-                } else {
-                    const buffer = new TextEncoder().encode(atob(binContent!)).buffer;
-                    await app.vault.adapter.writeBinary(file, buffer)
-                }
-            }, file, !isHidden(file) && isText(file), strContent, binContent);
-        }
-        const createFolder = async (file: string) => {
-            await this.browser.executeObsidian(async ({app}, file, isVaultFile) => {
-                if (isVaultFile) {
-                    await app.vault.createFolder(file);
-                } else {
-                    await app.vault.adapter.mkdir(file);
-                }
-            }, file, !isHidden(file));
-        }
 
         // list all files in the new vault
         type NewFileInfo = {type: "file"| "folder", sourceContent?: string|ArrayBuffer, sourceFile?: string};
@@ -341,11 +373,7 @@ class ObsidianPage extends BasePage {
         for (const file of [...currVault.keys()].sort().reverse()) {
             const currFileInfo = currVault.get(file)!
             if (!newVault.has(file) || newVault.get(file)!.type != currFileInfo.type) {
-                if (currFileInfo.type == "file") {
-                    await deleteFile(file);
-                } else {
-                    await deleteFolder(file);
-                }
+                await this.delete(file);
             }
         }
 
@@ -358,10 +386,10 @@ class ObsidianPage extends BasePage {
                     .update(typeof content == "string" ? content : new Uint8Array(content))
                     .digest("hex");
                 if (!currFileInfo || currFileInfo.hash != hash) {
-                    await writeFile(file, content);
+                    await this.write(file, content);
                 }
             } else if (newFileInfo.type == "folder" && !currFileInfo) {
-                await createFolder(file);
+                await this.mkdir(file);
             }
         }
     }
