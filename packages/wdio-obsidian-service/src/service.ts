@@ -265,10 +265,9 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
     }
 
     /**
-     * Called in beforeSession hook. Set up the vault and config dir for a sandboxed Obsidian instance.
-     * Mutates input capabilities.
+     * Creates a copy of the vault with plugins and themes installed
      */
-    private async preBootSetup(cap: WebdriverIO.Capabilities): Promise<void> {
+    private async setupVault(cap: WebdriverIO.Capabilities) {
         const obsidianOptions = cap[OBSIDIAN_CAPABILITY_KEY] as NormalizedObsidianCapabilityOptions;
         let vaultCopy: string|undefined;
         if (obsidianOptions.vault != undefined) {
@@ -284,89 +283,107 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
             log.info(`Opening Obsidian without a vault`)
         }
         obsidianOptions.vaultCopy = vaultCopy; // for use in getVaultPath() and the other service hooks
+    }
 
-        if (isAppium(cap)) {
-            // when in appium, we can't set the user-data-dir before hand and instead open the vault in postBootSetup
-            obsidianOptions.uploadedVault = vaultCopy ? // for use in getVaultPath() and the other service hooks
-                `${this.androidVaultDir}/${path.basename(vaultCopy)}` : undefined;
-        } else {
-            const configDir = await this.obsidianLauncher.setupConfigDir({
-                appVersion: obsidianOptions.appVersion, installerVersion: obsidianOptions.installerVersion,
-                appPath: obsidianOptions.appPath,
-                vault: vaultCopy,
-                // `app.emulateMobile` just sets this localStorage variable. Setting it ourselves here instead of calling
-                // the function simplifies the boot/plugin load sequence and makes sure plugins load in mobile mode.
-                localStorage: obsidianOptions.emulateMobile ? {"EmulateMobile": "1"} : {},
-            });
-            this.tmpDirs.push(configDir);
+    /**
+     * Sets up the --user-data-dir for the electron app. Sets the obsidian.json in the dir to open the vault on boot.
+     */
+    private async electronSetupConfigDir(cap: WebdriverIO.Capabilities) {
+        const obsidianOptions = cap[OBSIDIAN_CAPABILITY_KEY] as NormalizedObsidianCapabilityOptions;
+        const configDir = await this.obsidianLauncher.setupConfigDir({
+            appVersion: obsidianOptions.appVersion, installerVersion: obsidianOptions.installerVersion,
+            appPath: obsidianOptions.appPath,
+            vault: obsidianOptions.vaultCopy,
+            // `app.emulateMobile` just sets this localStorage variable. Setting it ourselves here instead of calling
+            // the function simplifies the boot/plugin load sequence and makes sure plugins load in mobile mode.
+            localStorage: obsidianOptions.emulateMobile ? {"EmulateMobile": "1"} : {},
+        });
+        this.tmpDirs.push(configDir);
 
-            if (!cap['goog:chromeOptions']) cap['goog:chromeOptions'] = {};
-            cap['goog:chromeOptions'].args = [
+        cap['goog:chromeOptions'] = {
+            ...cap['goog:chromeOptions'],
+            args: [
                 `--user-data-dir=${configDir}`,
-                ...(cap['goog:chromeOptions'].args ?? []).filter(arg => {
+                ...(cap['goog:chromeOptions']?.args ?? []).filter(arg => {
                     const match = arg.match(/^--user-data-dir=(.*)$/);
                     return !match || !this.tmpDirs.includes(match[1]);
                 })
-            ];
+            ]
         }
     }
 
     /**
-     * Called in before hook. Wait for Obsidian to fully boot and do some other setup after Obsidian has booted.
+     * Opens the vault in appium.
      */
-    private async postBootSetup() {
+    private async appiumOpenVault() {
+        const browser = this.browser!;
+        const obsidianOptions: NormalizedObsidianCapabilityOptions = browser.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY];
+        const androidVault = `${this.androidVaultDir}/${path.basename(obsidianOptions.vaultCopy!)}`;
+        // TODO: Capabilities is not really the right place to be storing state like vaultCopy and uploadVault
+        obsidianOptions.uploadedVault = androidVault;
+        // transfer the vault to the device
+        await uploadFolder(browser, obsidianOptions.vaultCopy!, androidVault);
+
+        // open vault by setting the localStorage keys and relaunching Obsidian
+        // on appium restarting the app with appium:fullReset is *really* slow. And, unlike electron we can actually
+        // switch vault with just a reload. So for Appium, instead of rebooting we manually wipe localStorage and use
+        // reload to switch the vault.
+        await browser.execute(async (androidVault) => {
+            localStorage.clear();
+            localStorage.setItem('mobile-external-vaults', JSON.stringify([androidVault]));
+            localStorage.setItem('mobile-selected-vault', androidVault);
+            // appId on mobile is just the full vault path
+            localStorage.setItem(`enable-plugin-${androidVault}`, 'true');
+            window.location.reload();
+        }, androidVault);
+    }
+
+    /**
+     * Sets appium app permissions and context
+     */
+    private async appiumSetContext() {
+        const browser = this.browser!;
+        // grant Obsidian the permissions it needs, mainly file access.
+        // appium:autoGrantPermissions is supposed to automatically grant everything it needs, but I can't get it to
+        // work. The "mobile: changePermissions" "all" option also doesn't seem to work here. I have to explicitly list
+        // the permissions and use the "appops" target. See https://github.com/appium/appium/issues/19991
+        // I'm calling "mobile: changePermissions" "all" as well just in case it is actually doing something
+
+        await browser.execute("mobile: changePermissions", {
+            action: "grant",
+            appPackage: "md.obsidian",
+            permissions: "all",
+        });
+
+        await browser.execute("mobile: changePermissions", {
+            action: "allow",
+            appPackage: "md.obsidian",
+            permissions: [ // these are from apk AndroidManifest.xml (extracted with apktool)
+                "READ_EXTERNAL_STORAGE", "WRITE_EXTERNAL_STORAGE", "MANAGE_EXTERNAL_STORAGE",
+            ],
+            target: "appops", // requires appium --allow-insecure adb_shell
+        });
+
+        await browser.switchContext("WEBVIEW_md.obsidian");
+    }
+
+    /**
+     * Waits for Obsidian to be ready, and does some other final setup.
+     */
+    private async prepareApp() {
         const browser = this.browser!;
         const obsidianOptions: NormalizedObsidianCapabilityOptions = browser.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY];
 
-        if (isAppium(browser.requestedCapabilities)) {
-            // grant Obsidian the permissions it needs, mainly file access.
-            // appium:autoGrantPermissions is supposed to automatically grant everything it needs, but I can't get it to
-            // work. The "mobile: changePermissions" "all" option also doesn't seem to work here. I have to explicitly
-            // list the permissions and use the "appops" target. See https://github.com/appium/appium/issues/19991
-            // I'm calling "mobile: changePermissions" "all" as well just in case it is actually doing something
-
-            await browser.execute("mobile: changePermissions", {
-                action: "grant",
-                appPackage: "md.obsidian",
-                permissions: "all",
-            });
-
-            await browser.execute("mobile: changePermissions", {
-                action: "allow",
-                appPackage: "md.obsidian",
-                permissions: [ // these are from apk AndroidManifest.xml (extracted with apktool)
-                    "READ_EXTERNAL_STORAGE", "WRITE_EXTERNAL_STORAGE", "MANAGE_EXTERNAL_STORAGE",
-                ],
-                target: "appops", // requires appium --allow-insecure adb_shell
-            });
-
-            await browser.switchContext("WEBVIEW_md.obsidian");
-            if (obsidianOptions.vaultCopy != undefined) {
-                // transfer the vault to the device
-                const androidVault = obsidianOptions.uploadedVault!
-                await uploadFolder(browser, obsidianOptions.vaultCopy, androidVault);
-
-                // open vault by setting the localStorage keys and relaunching Obsidian
-                await browser.execute(async (androidVault) => {
-                    localStorage.setItem('mobile-external-vaults', JSON.stringify([androidVault]));
-                    localStorage.setItem('mobile-selected-vault', androidVault);
-                    // appId on mobile is just the full vault path
-                    localStorage.setItem(`enable-plugin-${androidVault}`, 'true');
-                    window.location.reload();
-                }, androidVault);
-            }
-        } else { // desktop
-            if (obsidianOptions.vault != undefined && obsidianOptions.emulateMobile) {
-                // I don't think this is technically necessary, but when you set the window size via emulateMobile it
-                // sets the window size in the browser view, but not the actual window size which looks weird and makes
-                // it hard to manually debug a paused test. The normal ways to set window size don't work on Obsidian.
-                // Obsidian doesn't respect the `--window-size` argument, and wdio setViewport and setWindowSize don't
-                // work without BiDi. This resizes the window directly using electron APIs.
-                const [width, height] = await browser.execute(() => [window.innerWidth, window.innerHeight]);
-                await browser.execute(async (width, height) => {
-                    await (window as any).electron.remote.getCurrentWindow().setSize(width, height);
-                }, width, height);
-            }
+        if (obsidianOptions.emulateMobile && obsidianOptions.vault != undefined) {
+            // I don't think this is technically necessary, but when you set the window size via emulateMobile it sets
+            // the window size in the browser view, but not the actual window size which looks weird and makes it hard
+            // to manually debug a paused test. The normal ways to set window size don't work on Obsidian. Obsidian
+            // doesn't respect the `--window-size` argument, and wdio setViewport and setWindowSize don't work without
+            // BiDi. This resizes the window directly using electron APIs.
+            const [width, height] = await browser.execute(() => [window.innerWidth, window.innerHeight]);
+            await browser.execute(async (width, height) => {
+                await (window as any).electron.remote.getCurrentWindow().setSize(width, height);
+            }, width, height);
         }
 
         // wait until app is loaded
@@ -387,13 +404,111 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
         }
     }
 
+    private createReloadObsidian() {
+        const service = this; // eslint-disable-line @typescript-eslint/no-this-alias
+        const reloadObsidian: WebdriverIO.Browser['reloadObsidian'] = async function(
+            this: WebdriverIO.Browser,
+            {vault, plugins, theme} = {},
+        ) {
+            const oldObsidianOptions: NormalizedObsidianCapabilityOptions = this.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY];
+            const selectedPlugins = selectPlugins(oldObsidianOptions.plugins, plugins);
+            const selectedThemes = selectThemes(oldObsidianOptions.themes, theme);
+            if (!vault && oldObsidianOptions.vaultCopy == undefined) {
+                throw Error(`No vault is open, pass a vault path to reloadObsidian`);
+            }
+            const newObsidianOptions: NormalizedObsidianCapabilityOptions = {
+                ...oldObsidianOptions,
+                // Resolve relative to PWD instead of root dir during tests
+                vault: vault ? path.resolve(vault) : oldObsidianOptions.vault,
+                plugins: selectedPlugins, themes: selectedThemes,
+            };
+
+            if (isAppium(this.requestedCapabilities)) {
+                this.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY] = newObsidianOptions;
+                if (vault) {
+                    await service.setupVault(this.requestedCapabilities);
+                    await service.appiumOpenVault();
+                } else {
+                    // reload without resetting app state or triggering appium:fullReset
+
+                    // hack to disable the Obsidian app and make sure it doesn't write to the vault while we modify it
+                    await this.execute(() => {
+                        window.location.replace('http://localhost/_capacitor_file_/not-a-file');
+                    })
+
+                    await sleep(2000)
+
+                    // while Obsidian is down, modify the vault files to setup plugins and themes
+                    const local = path.join(oldObsidianOptions.vaultCopy!, ".obsidian");
+                    const localCommunityPlugins = path.join(local, "community-plugins.json");
+                    const localAppearance = path.join(local, "appearance.json");
+                    const remote = `${oldObsidianOptions.uploadedVault!}/.obsidian`;
+                    const remoteCommunityPlugins = `${remote}/community-plugins.json`;
+                    const remoteAppearance = `${remote}/appearance.json`;
+
+                    await downloadFile(this, remoteCommunityPlugins, localCommunityPlugins);
+                    await downloadFile(this, remoteAppearance, localAppearance);
+                    await service.obsidianLauncher.setupVault({
+                        vault: oldObsidianOptions.vaultCopy!, copy: false,
+                        plugins: selectedPlugins, themes: selectedThemes,
+                    });
+                    if (await fileExists(localCommunityPlugins)) {
+                        await uploadFile(this, localCommunityPlugins, remoteCommunityPlugins);
+                    }
+                    if (await fileExists(localAppearance)) {
+                        await uploadFile(this, localAppearance, remoteAppearance);
+                    }
+                
+                    // switch the app back
+                    await this.execute(() => {
+                        window.location.replace('http://localhost/');
+                    })
+                }
+            } else {
+                // if browserName is set, reloadSession tries to restart the driver entirely, so unset those
+                const newCap: WebdriverIO.Capabilities = _.cloneDeep(
+                    _.omit(this.requestedCapabilities, ['browserName', 'browserVersion'])
+                );
+                newCap[OBSIDIAN_CAPABILITY_KEY] = newObsidianOptions;
+
+                if (vault) {
+                    await service.setupVault(newCap);
+                    await service.electronSetupConfigDir(newCap);
+                    await this.reloadSession(newCap);
+                } else {
+                    // reload preserving current vault and config dir
+
+                    // Obsidian debounces saves to the config dir, and so changes to configuration made in the tests may
+                    // not get saved to disk before the reboot. I haven't found a better way to flush everything than
+                    // just waiting a bit.
+                    await sleep(2000);
+
+                    await this.deleteSession({shutdownDriver: false});
+                    // while Obsidian is down, modify the vault files to setup plugins and themes
+                    await service.obsidianLauncher.setupVault({
+                        vault: oldObsidianOptions.vaultCopy!, copy: false,
+                        plugins: selectedPlugins, themes: selectedThemes,
+                    });
+                    await this.reloadSession(newCap);
+                }
+            }
+            await service.prepareApp();
+        };
+        return reloadObsidian;
+    }
+
     /**
      * Handles vault and sandboxed config directory setup.
      */
-    async beforeSession(config: Options.Testrunner, capabilities: WebdriverIO.Capabilities) {
+    async beforeSession(config: Options.Testrunner, cap: WebdriverIO.Capabilities) {
         try {
-            if (!capabilities[OBSIDIAN_CAPABILITY_KEY]) return;
-            await this.preBootSetup(capabilities);
+            if (!cap[OBSIDIAN_CAPABILITY_KEY]) return;
+            if (cap[OBSIDIAN_CAPABILITY_KEY].vault != undefined) {
+                await this.setupVault(cap);
+            }
+            if (!isAppium(cap)) {
+                await this.electronSetupConfigDir(cap);
+            }
         } catch (e: any) {
             throw new SevereServiceError(getServiceErrorMessage(e));
         }
@@ -402,10 +517,10 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
     /**
      * Setup custom browser commands.
      */
-    async before(capabilities: WebdriverIO.Capabilities, specs: unknown, browser: WebdriverIO.Browser) {
+    async before(cap: WebdriverIO.Capabilities, specs: unknown, browser: WebdriverIO.Browser) {
         this.browser = browser;
         try {
-            if (!capabilities[OBSIDIAN_CAPABILITY_KEY]) return;
+            if (!cap[OBSIDIAN_CAPABILITY_KEY]) return;
 
             // There is a slow event listener link on the browser "command" event when you reloadSession that causes
             // some warnings. This will silence them. TODO: Make issue or PR to wdio to fix this.
@@ -422,92 +537,20 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
                 (browser as any)[name] = cmd;
             }
 
-            await this.postBootSetup();
+            if (isAppium(browser.requestedCapabilities)) {
+                await this.appiumSetContext();
+                if (cap[OBSIDIAN_CAPABILITY_KEY].vault) {
+                    await this.appiumOpenVault();
+                }
+            }
+            await this.prepareApp();
         } catch (e: any) {
             throw new SevereServiceError(getServiceErrorMessage(e));
         }
     }
 
-    private createReloadObsidian() {
-        const service = this; // eslint-disable-line @typescript-eslint/no-this-alias
-        const reloadObsidian: WebdriverIO.Browser['reloadObsidian'] = async function(
-            this: WebdriverIO.Browser,
-            {vault, plugins, theme} = {},
-        ) {
-            const oldObsidianOptions: NormalizedObsidianCapabilityOptions = this.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY];
-            const selectedPlugins = selectPlugins(oldObsidianOptions.plugins, plugins);
-            const selectedThemes = selectThemes(oldObsidianOptions.themes, theme);
-            // if browserName is set, reloadSession tries to restart the driver entirely, so unset those
-            const newCapabilities: WebdriverIO.Capabilities = _.cloneDeep(
-                _.omit(this.requestedCapabilities, ['browserName', 'browserVersion'])
-            );
-
-            if (vault) {
-                const newObsidianOptions: NormalizedObsidianCapabilityOptions = {
-                    ...oldObsidianOptions,
-                    // Resolve relative to PWD instead of root dir during tests
-                    vault: path.resolve(vault),
-                    plugins: selectedPlugins,  themes: selectedThemes,
-                };
-                newCapabilities[OBSIDIAN_CAPABILITY_KEY] = newObsidianOptions;
-                await service.preBootSetup(newCapabilities);
-                await this.reloadSession(newCapabilities);
-            } else {
-                // preserve vault and config dir
-                if (oldObsidianOptions.vaultCopy == undefined) {
-                    throw Error(`No vault is open, pass a vault path to reloadObsidian`);
-                }
-                // Obsidian debounces saves to the config dir, and so changes to configuration made in the tests may not
-                // get saved to disk before the reboot. I haven't found a better way to flush everything than just
-                // waiting a bit.
-                await sleep(2000);
-
-                if (isAppium(this.requestedCapabilities)) {
-                    // reload without resetting app state or triggering appium:fullReset
-                    const packageName = await this.getCurrentPackage();
-                    await this.switchContext("NATIVE_APP");
-                    await this.execute('mobile: terminateApp', { appId: packageName });
-
-                    // while Obsidian is down, modify the vault files to setup plugins and themes
-                    const local = path.join(oldObsidianOptions.vaultCopy, ".obsidian");
-                    const localCommunityPlugins = path.join(local, "community-plugins.json");
-                    const localAppearance = path.join(local, "appearance.json");
-                    const remote = `${oldObsidianOptions.uploadedVault!}/.obsidian`;
-                    const remoteCommunityPlugins = `${remote}/community-plugins.json`;
-                    const remoteAppearance = `${remote}/appearance.json`;
-
-                    await downloadFile(this, remoteCommunityPlugins, localCommunityPlugins);
-                    await downloadFile(this, remoteAppearance, localAppearance);
-                    service.obsidianLauncher.setupVault({
-                        vault: oldObsidianOptions.vaultCopy, copy: false,
-                        plugins: selectedPlugins, themes: selectedThemes,
-                    });
-                    if (await fileExists(localCommunityPlugins)) {
-                        await uploadFile(this, localCommunityPlugins, remoteCommunityPlugins);
-                    }
-                    if (await fileExists(localAppearance)) {
-                        await uploadFile(this, localAppearance, remoteAppearance);
-                    }
-
-                    await this.execute('mobile: activateApp', { appId: packageName });
-                } else {
-                    // reload preserving current vault and config dir
-                    await this.deleteSession({shutdownDriver: false});
-                    // while Obsidian is down, modify the vault files to setup plugins and themes
-                    service.obsidianLauncher.setupVault({
-                        vault: oldObsidianOptions.vaultCopy, copy: false,
-                        plugins: selectedPlugins, themes: selectedThemes,
-                    });
-                    await this.reloadSession(newCapabilities);
-                }
-            }
-            await service.postBootSetup();
-        };
-        return reloadObsidian;
-    }
-
-    async after(result: number, capabilities: WebdriverIO.Capabilities, specs: string[]) {
-        if (isAppium(capabilities)) {
+    async after(result: number, cap: WebdriverIO.Capabilities) {
+        if (isAppium(cap)) {
             // "mobile: deleteFile" doesn't work on folders
             // "mobile:shell" requires appium --allow-insecure adb_shell
             await this.browser!.execute("mobile: shell", {

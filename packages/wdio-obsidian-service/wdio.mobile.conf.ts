@@ -60,7 +60,7 @@ export const config: WebdriverIO.Config = {
             platformName: 'Android',
             'appium:automationName': 'UiAutomator2',
             'appium:avd': "android_obsidian_test",
-            'appium:fullReset': true,
+            'appium:enforceAppInstall': true,
             'wdio:obsidianOptions': {
                 plugins: [
                     "./test/plugins/basic-plugin",
