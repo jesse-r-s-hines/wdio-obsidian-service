@@ -68,23 +68,17 @@ export async function uploadFolder(browser: WebdriverIO.Browser, src: string, de
 
 /**
  * Uploads a file to the appium device.
- * Wrapper around pushFile that preserves mtime. Like pushFile, creates parent directories if needed.
- * Also works around a bug in pushFile, where it doesn't escape special characters in directory names. See
- * https://github.com/appium/appium-android-driver/issues/1004
+ * Wrapper around pushFile that works around a bug in pushFile where it doesn't escape special characters in parent
+ * directory names. See https://github.com/appium/appium-android-driver/issues/1004
  */
 export async function uploadFile(browser: WebdriverIO.Browser, src: string, dest: string) {
     src = path.resolve(src);
     dest = path.posix.normalize(dest);
-    const parent = path.posix.dirname(dest);
     const slug = crypto.randomBytes(8).toString("base64url").replace(/[-_]/g, '0');
     const tmpFile = `/data/local/tmp/upload-${slug}.tmp`;
-
-    const stat = await fsAsync.stat(src);
     const content = await fsAsync.readFile(src);
 
     await browser.pushFile(tmpFile, content.toString('base64'));
-    await browser.execute("mobile: shell", {command: "touch", args: ["-d", stat.mtime.toISOString(), tmpFile]});
-    await browser.execute("mobile: shell", {command: "mkdir", args: ["-p", quote(parent)]});
     await browser.execute("mobile: shell", {command: "mv", args: [tmpFile, quote(dest)]});
 }
 
