@@ -72,9 +72,7 @@ if (process.env.OBSIDIAN_VERSIONS == "all") {
     // Space separated list of appVersion/installerVersion, e.g. "1.7.7/latest latest/earliest"
     versionsToTest = process.env.OBSIDIAN_VERSIONS.split(/[ ,]+/).map(v => {
         let [app, installer = "earliest"] = v.split("/"); // default to earliest installer
-        if (app == "min-supported") {
-            app = minSupportedObsidianVersion;
-        }
+        app = app == "earliest" ? minSupportedObsidianVersion : app;
         return [app, installer];
     })
 } else {

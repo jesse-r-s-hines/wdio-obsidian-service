@@ -19,28 +19,32 @@ function minorVersion(v: string) {
 };
 
 let versionsToTest: string[]
+const minSupportedObsidianAndroidVersion = allVersions
+    .find(v => !!v.downloads.apk && semver.gte(v.version, minSupportedObsidianVersion))!
+    .version;
+
 if (process.env.OBSIDIAN_VERSIONS == "all") {
     versionsToTest = allVersions
-        .filter(v => !!v.downloads.apk && semver.gte(v.version, minSupportedObsidianVersion))
+        .filter(v => !!v.downloads.apk && semver.gte(v.version, minSupportedObsidianAndroidVersion))
         .map(v => v.version);
 } else if (process.env.OBSIDIAN_VERSIONS == "sample") {
-    // Test every minor installer version and every minor appVersion since minSupportedObsidianVersion
+    // Test every minor installer version and every minor appVersion since minSupportedObsidianAndroidVersion
     const versionMap = _(allVersions)
-        .filter(v => !!v.downloads.apk && semver.gte(v.version, minSupportedObsidianVersion))
+        .filter(v => !!v.downloads.apk && semver.gte(v.version, minSupportedObsidianAndroidVersion))
         .map(v => v.version)
         .keyBy(v => minorVersion(v)) // keyBy keeps last
         .value();
-    versionMap[minorVersion(minSupportedObsidianVersion)] = minSupportedObsidianVersion;
+    versionMap[minorVersion(minSupportedObsidianAndroidVersion)] = minSupportedObsidianAndroidVersion;
     versionsToTest = _.values(versionMap);
     if (versionsToTest.length > 5) {
         versionsToTest = [versionsToTest[0], ...versionsToTest.slice(-4)];
     }
 } else if (process.env.OBSIDIAN_VERSIONS) {
     versionsToTest = process.env.OBSIDIAN_VERSIONS.split(/[ ,]+/).map(v => {
-        return v == "min-supported" ? minSupportedObsidianVersion : v;
+        return v == "earliest" ? minSupportedObsidianAndroidVersion : v;
     })
 } else {
-    versionsToTest = [minSupportedObsidianVersion, "latest"];
+    versionsToTest = [minSupportedObsidianAndroidVersion, "latest"];
 }
 
 export const config: WebdriverIO.Config = {

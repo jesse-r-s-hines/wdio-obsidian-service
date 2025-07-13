@@ -18,6 +18,7 @@
         "test": "run-s test:*",
         "test:unit": "npm run --workspaces --if-present test:unit",
         "test:e2e": "npm run --workspaces --if-present test:e2e",
+        "test:android": "npm run --workspaces --if-present test:android",
         "doc": "typedoc",
         "preview-doc": "typedoc && cd generated-docs && serve"
     },
