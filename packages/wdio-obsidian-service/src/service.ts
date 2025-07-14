@@ -550,12 +550,14 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
     }
 
     async after(result: number, cap: WebdriverIO.Capabilities) {
+        const browser = this.browser!;
         if (isAppium(cap)) {
+            const packageName = await browser.getCurrentPackage();
+            await browser.execute('mobile: terminateApp', { appId: packageName });
             // "mobile: deleteFile" doesn't work on folders
             // "mobile:shell" requires appium --allow-insecure adb_shell
-            await this.browser!.execute("mobile: shell", {
-                command: "rm",
-                args: ["-rf", this.androidVaultDir],
+            await browser.execute("mobile: shell", {
+                command: "rm", args: ["-rf", this.androidVaultDir],
             });
         }
     }
