@@ -236,25 +236,41 @@ class ObsidianPage extends BasePage {
         await this.browser.executeObsidian(async ({app, obsidian}, file, isVaultFile, strContent, binContent) => {
             file = obsidian.normalizePath(file);
             const parent = file.split("/").slice(0, -1).join("/");
-            if (isVaultFile) {
-                if (parent && !app.vault.getAbstractFileByPath(parent)) {
-                    await app.vault.createFolder(parent);
-                }
-                const fileObj = app.vault.getAbstractFileByPath(file);
-                strContent = strContent ?? atob(binContent!);
-                if (fileObj) {
-                    await app.vault.modify(fileObj as TFile, strContent);
+            // there's a bug in Obsidian Android where occasionally creating a file silently fails, leaving just an
+            // empty file. So retry if that happens. See https://forum.obsidian.md/t/102935
+            let success = false;
+            let retries = 0;
+            while (!success && retries < 8) {
+                if (isVaultFile) {
+                    if (parent && !app.vault.getAbstractFileByPath(parent)) {
+                        await app.vault.createFolder(parent);
+                    }
+                    const fileObj = app.vault.getAbstractFileByPath(file);
+                    strContent = strContent ?? atob(binContent!);
+                    if (fileObj) {
+                        await app.vault.modify(fileObj as TFile, strContent);
+                    } else {
+                        await app.vault.create(file, strContent);
+                    }
                 } else {
-                    await app.vault.create(file, strContent);
+                    await app.vault.adapter.mkdir(parent);
+                    if (strContent) {
+                        await app.vault.adapter.write(file, strContent);
+                    } else {
+                        const buffer = Uint8Array.from(atob(binContent!), c => c.charCodeAt(0));
+                        await app.vault.adapter.writeBinary(file, buffer)
+                    }
                 }
-            } else {
-                await app.vault.adapter.mkdir(parent);
-                if (strContent) {
-                    await app.vault.adapter.write(file, strContent);
-                } else {
-                    const buffer = Uint8Array.from(atob(binContent!), c => c.charCodeAt(0));
-                    await app.vault.adapter.writeBinary(file, buffer)
-                }
+
+                success = (
+                    !obsidian.Platform.isAndroidApp ||
+                    (strContent?.length ?? binContent!.length) === 0 ||
+                    (await app.vault.adapter.stat(file))!.size > 0
+                );
+                retries++;
+            }
+            if (!success) {
+                throw new Error(`Failed to write file ${file}`);
             }
         }, file, !isHidden(file) && isText(file), strContent, binContent);
     }
