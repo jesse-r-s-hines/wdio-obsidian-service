@@ -77,7 +77,7 @@ Arguments:
 - `vault`: Vault to open
 
 Options:
-- `-c, --cache <cache>`: Directory to use as the download cache
+- `-c, --cache <cache>`: Directory to use as the download cache (default: OBSIDIAN_CACHE env var or ".obsidian-cache")
 - `-v, --version <version>`: Obsidian app version to run (default: "latest")
 - `-i, --installer <version>`: Obsidian installer version to run (default: "latest")
 - `-p, --plugin <plugin>`: Plugin(s) to install
@@ -93,7 +93,7 @@ Arguments:
 - `vault`: Vault to open
 
 Options:
-- `-c, --cache <cache>`: Directory to use as the download cache
+- `-c, --cache <cache>`: Directory to use as the download cache (default: OBSIDIAN_CACHE env var or ".obsidian-cache")
 - `-v, --version <version>`: Obsidian app version to run (default: "latest")
 - `-i, --installer <version>`: Obsidian installer version to run (default: "latest")
 - `-p, --plugin <plugin>`: Plugin(s) to install
@@ -104,7 +104,7 @@ Options:
 Download Obsidian to the cache without launching.
 
 Options:
-- `-c, --cache <cache>`: Directory to use as the download cache
+- `-c, --cache <cache>`: Directory to use as the download cache (default: OBSIDIAN_CACHE env var or ".obsidian-cache")
 - `-v, --version <version>`: Obsidian app version to download (default: "latest")
 - `-i, --installer <version>`: Obsidian installer version to download (default: "latest")
 
@@ -115,6 +115,6 @@ Arguments:
 - `vault`: Vault to install into
 
 Options:
-- `-c, --cache <cache>`: Directory to use as the download cache
+- `-c, --cache <cache>`: Directory to use as the download cache (default: OBSIDIAN_CACHE env var or ".obsidian-cache")
 - `-p, --plugin <plugin>`: Plugin(s) to install
 - `-t, --theme <plugin>`: Theme(s) to install.

@@ -498,8 +498,8 @@ export class ObsidianLauncher {
     }
 
     /**
-     * Downloads a list of plugins to the cache and returns a list of `DownloadedPluginEntry` with the downloaded paths.
-     * Also adds the `id` property to the plugins based on the manifest.
+     * Downloads a list of plugins to the cache and returns a list of {@link DownloadedPluginEntry} with the downloaded
+     * paths. Also adds the `id` property to the plugins based on the manifest.
      * 
      * You can download plugins from GitHub using `{repo: "org/repo"}` and community plugins using `{id: 'plugin-id'}`.
      * Local plugins will just be passed through.
@@ -614,8 +614,8 @@ export class ObsidianLauncher {
     }
 
     /**
-     * Downloads a list of themes to the cache and returns a list of `DownloadedThemeEntry` with the downloaded paths.
-     * Also adds the `name` property to the plugins based on the manifest.
+     * Downloads a list of themes to the cache and returns a list of {@link DownloadedThemeEntry} with the downloaded
+     * paths. Also adds the `name` property to the plugins based on the manifest.
      * 
      * You can download themes from GitHub using `{repo: "org/repo"}` and community themes using `{name: 'theme-name'}`.
      * Local themes will just be passed through.
@@ -880,8 +880,6 @@ export class ObsidianLauncher {
      * Downloads and launches Obsidian with a sandboxed config dir and a specifc vault open. Optionally install plugins
      * and themes first.
      * 
-     * This is just a shortcut for calling `downloadApp`, `downloadInstaller`, `setupVault` and `setupConfDir`.
-     *
      * @param params.appVersion Obsidian app version. Default "latest"
      * @param params.installerVersion Obsidian installer version. Default "latest"
      * @param params.vault Path to the vault to open in Obsidian
@@ -939,7 +937,7 @@ export class ObsidianLauncher {
     /** 
      * Updates the info in obsidian-versions.json. The obsidian-versions.json file is used in other launcher commands
      * and in wdio-obsidian-service to get metadata about Obsidian versions in one place such as minInstallerVersion and
-     * the internal electron version.
+     * the internal Electron version.
      */
     async updateObsidianVersionList(
         original?: ObsidianVersionInfos, { maxInstances = 1 } = {},

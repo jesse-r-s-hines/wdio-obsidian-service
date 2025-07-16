@@ -42,8 +42,8 @@ export interface ObsidianCapabilityOptions {
      * Version of the Obsidian installer to download and run.
      * 
      * Obsidian is distributed in two parts, the app which contains the JS, and the installer which is the binary with
-     * electron. Obsidian's auto update only updates the app, so users on the same Obsidian version can be running
-     * different Electron versions. You can use this to test your plugin against different installer/electron versions.
+     * Electron. Obsidian's auto update only updates the app, so users on the same Obsidian version can be running
+     * different Electron versions. You can use this to test your plugin against different installer/Electron versions.
      * 
      * See also: [Obsidian App vs Installer Versions](../README.md#obsidian-app-vs-installer-versions)
      *
@@ -59,10 +59,11 @@ export interface ObsidianCapabilityOptions {
      * List of plugins to install.
      * 
      * Each entry is a path to the local plugin to install, e.g. ["."] or ["dist"] depending on your build setup. Paths
-     * are relative to your `wdio.conf.ts`.You can also pass objects. If you pass an object it should contain one of
+     * are relative to your `wdio.conf.ts`. You can also pass objects. If you pass an object it should contain one of
      * `path` (to install a local plugin), `repo` (to install a plugin from GitHub), or `id` (to install a community
      * plugin). You can set `enabled: false` to install the plugin but start it disabled. You can enable the plugin
-     * later using `browser.reloadObsidian` or the `obsidianPage.enablePlugin`.
+     * later using {@link ObsidianBrowserCommands.reloadObsidian|browser.reloadObsidian} or
+     * {@link ObsidianPage.enablePlugin}.
      */
     plugins?: PluginEntry[],
 
@@ -81,8 +82,8 @@ export interface ObsidianCapabilityOptions {
      * The path to the vault to open.
      * 
      * The vault will be copied, so any changes made in your tests won't affect the original. If omitted, no vault will
-     * be opened and you'll need to call `browser.reloadObsidian` to open a vault during your tests. Path is relative
-     * to your `wdio.conf.ts`.
+     * be opened and you'll need to call {@link ObsidianBrowserCommands.reloadObsidian|browser.reloadObsidian} to open a
+     * vault during your tests. Path is relative to your `wdio.conf.ts`.
      */
     vault?: string,
 
@@ -128,7 +129,7 @@ export interface NormalizedObsidianCapabilityOptions {
 
 
 /**
- * Options based to the obsidian service in wdio.conf.ts. E.g.
+ * Options passed to wdio-obsidian-service service in wdio.conf.ts. E.g.
  * ```js
  * // ...
  * services: [["obsidian", {versionsUrl: "file:///path/to/obsidian-versions.json"}]]
@@ -152,7 +153,7 @@ export interface ObsidianServiceOptions {
     communityPluginsUrl?: string,
     /**
      * Override the `community-css-themes.json` used by the service. Can be a file URL.
-     * Defaults tohttps://github.com/obsidianmd/obsidian-releases/blob/HEAD/community-css-themes.json
+     * Defaults to https://github.com/obsidianmd/obsidian-releases/blob/HEAD/community-css-themes.json
      */
     communityThemesUrl?: string,
 }

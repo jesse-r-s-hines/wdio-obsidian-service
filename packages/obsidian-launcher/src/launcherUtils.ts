@@ -192,7 +192,7 @@ export function parseObsidianGithubRelease(gitHubRelease: any): DeepPartial<Obsi
 }
 
 /**
- * Extract electron and chrome versions for an Obsidian version.
+ * Extract Electron and Chrome versions for an Obsidian version.
  * Takes path to the installer (the whole folder, not just the entrypoint executable).
  */
 export async function getInstallerInfo(

@@ -127,9 +127,9 @@ export type ObsidianBrowserCommands = typeof browserCommands & {
     /**
      * Relaunch obsidian. Can be used to switch to a new vault, change the plugin list, or just to reboot Obsidian.
      * 
-     * As this does a full reboot of Obsidian, this is rather slow. In many cases you can use {@link ObsidianPage.resetVault}
-     * instead, which modifies vault files in place without rebooting Obsidian. If all your tests use the same vault,
-     * you can also just set the vault in the `wdio.conf.(m)ts` capabilities section.
+     * As this does a full reboot of Obsidian, this is rather slow. In many cases you can use
+     * {@link ObsidianPage.resetVault} instead, which modifies vault files in place without rebooting Obsidian. If all
+     * your tests use the same vault, you can also just set the vault in the `wdio.conf.(m)ts` capabilities section.
      * 
      * @param params.vault Path to the vault to open. The vault will be copied, so any changes made in your tests won't
      *     be persited to the original. If omitted, it will reboot Obsidian with the current vault without creating a
@@ -181,7 +181,7 @@ export interface ExecuteObsidianArg {
 
     /**
      * The customized require function Obsidian makes available to plugins. This is also available globally, so you can
-     * just use `require` directly instead of from `ExecuteObsidianArg` if you prefer.
+     * just use `require` directly instead of from {@link ExecuteObsidianArg} if you prefer.
      */
     require: NodeJS.Require,
 }

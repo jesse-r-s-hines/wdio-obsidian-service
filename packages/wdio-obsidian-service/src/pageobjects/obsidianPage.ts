@@ -61,8 +61,8 @@ class ObsidianPage extends BasePage {
     }
 
     /**
-     * Returns the Obsidian Platform object. Useful for skipping tests based on whether we running in desktop or
-     * (emulated) mobile, or based on OS.
+     * Returns the Obsidian Platform object. Useful for skipping tests based on whether you are running in desktop or
+     * mobile, or based on OS.
      */
     async getPlatform(): Promise<Platform> {
         const obsidianOptions = this.getObsidianCapabilities();
@@ -419,12 +419,12 @@ export interface Platform {
      */
     isMobile: boolean;
     /**
-     * We're running the electron-based desktop app.
+     * We're running the Electron-based desktop app.
      * Note, when running under `emulateMobile` this will still be true and isDesktop will be false.
      */
     isDesktopApp: boolean;
     /**
-     * We're running the capacitor-js mobile app.
+     * We're running the Capacitor-js mobile app.
      * Note, when running under `emulateMobile` this will still be false and isMobile will be true.
      */
     isMobileApp: boolean;

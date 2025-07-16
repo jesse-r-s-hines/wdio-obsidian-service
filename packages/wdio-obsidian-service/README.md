@@ -3,7 +3,7 @@
 `wdio-obsidian-service` lets you test [Obsidian](https://obsidian.md) plugins end-to-end using [WebdriverIO](https://webdriver.io). The service can:
 - Download and install Obsidian
 - Test your plugin on multiple Obsidian app versions and installer/Electron versions
-- Download Chromedriver matching the Obsidian electron version
+- Download Chromedriver matching the Obsidian Electron version
 - Sandbox Obsidian so tests don't interfere with your system Obsidian installation or each other
 - Run tests in parallel
 - Open and switch between vaults during your tests
@@ -85,6 +85,7 @@ export const config: WebdriverIO.Config = {
         // You can set mocha settings like "retry" and "bail"
     },
 
+    // wdio-obsidian-service will download Obsidian versions into this directory
     cacheDir: path.resolve(".obsidian-cache"),
 
     logLevel: "warn",

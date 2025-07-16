@@ -50,16 +50,16 @@ const installerOptionArgs = [
 ] as const
 const cacheOptionArgs = [
     '-c, --cache <cache>',
-    'Directory to use as the download cache',
+    'Directory to use as the download cache. (default: OBSIDIAN_CACHE env var or ".obsidian-cache")',
 ] as const
 const pluginOptionArgs = [
     '-p, --plugin <plugin>',
-    `Plugin to install. Format: "<path>" or "repo:<github-repo>" or "id:<community-id>". Can be repeated.`,
+    'Plugin to install. Format: "<path>" or "repo:<github-repo>" or "id:<community-id>". Can be repeated.',
     collectOpt,
 ] as const
 const themeOptionArgs = [
     '-t, --theme <plugin>',
-    `Theme to install. Format: "<path>" or "repo:<github-repo>" or "name:<community-name>". Can be repeated but only last will be enabled.`,
+    'Theme to install. Format: "<path>" or "repo:<github-repo>" or "name:<community-name>". Can be repeated but only last will be enabled.',
     collectOpt,
 ] as const
 

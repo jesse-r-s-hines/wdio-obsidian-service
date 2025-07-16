@@ -4,8 +4,8 @@ Test your [Obsidian](https://obsidian.md) plugins end-to-end using [WebdriverIO]
 
 `wdio-obsidian-service` can:
 - Download and install Obsidian
-- Test your plugin on multiple Obsidian app versions and installer/electron versions
-- Download Chromedriver matching the Obsidian electron version
+- Test your plugin on multiple Obsidian app versions and installer/Electron versions
+- Download Chromedriver matching the Obsidian Electron version
 - Sandbox Obsidian so tests don't interfere with your system Obsidian installation or each other
 - Run tests in parallel
 - Open and switch between vaults during your tests

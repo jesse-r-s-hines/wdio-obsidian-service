@@ -286,7 +286,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
     }
 
     /**
-     * Sets up the --user-data-dir for the electron app. Sets the obsidian.json in the dir to open the vault on boot.
+     * Sets up the --user-data-dir for the Electron app. Sets the obsidian.json in the dir to open the vault on boot.
      */
     private async electronSetupConfigDir(cap: WebdriverIO.Capabilities) {
         const obsidianOptions = cap[OBSIDIAN_CAPABILITY_KEY] as NormalizedObsidianCapabilityOptions;
