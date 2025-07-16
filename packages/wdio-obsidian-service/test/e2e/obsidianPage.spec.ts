@@ -54,8 +54,7 @@ describe("Test page object", () => {
 
     it('getConfigDir', async () => {
         const configDir = await obsidianPage.getConfigDir();
-        const vaultPath = obsidianPage.getVaultPath();
-        expect(configDir).toEqual(path.join(vaultPath, ".obsidian"));
+        expect(configDir).toEqual(".obsidian");
     })
 
     it('getPlatform', async () => {

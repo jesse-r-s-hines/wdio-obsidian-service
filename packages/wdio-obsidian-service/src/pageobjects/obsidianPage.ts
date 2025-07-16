@@ -54,16 +54,10 @@ class ObsidianPage extends BasePage {
     }
 
     /**
-     * Return the full path to the Obsidian config dir ("path/to/vault/.obsidian" unless you changed the config dir
-     * name).
+     * Return the the Obsidian config dir (just ".obsidian" unless you changed the config dir name in settings).
      */
     async getConfigDir(): Promise<string> {
-        // You can theoretically change the config dir name
-        const dirName = await this.browser.executeObsidian(({app}) => {
-            return app.vault.configDir;
-        })
-        const vaultPath = this.getVaultPath();
-        return path.join(vaultPath, dirName);
+        return await this.browser.executeObsidian(({app}) => app.vault.configDir)
     }
 
     /**
@@ -177,8 +171,7 @@ class ObsidianPage extends BasePage {
     async loadWorkspaceLayout(layout: any): Promise<void> {
         if (typeof layout == "string") {
             // read from .obsidian/workspaces.json like the built-in workspaces plugin does
-            const configDir = await this.getConfigDir();
-            const workspacesPath = `${path.basename(configDir)}/workspaces.json`;
+            const workspacesPath = `${await this.getConfigDir()}/workspaces.json`;
             const layoutName = layout;
             try {
                 const fileContent = await this.browser.executeObsidian(async ({app}, workspacesPath) => {
@@ -186,10 +179,10 @@ class ObsidianPage extends BasePage {
                 }, workspacesPath);
                 layout = JSON.parse(fileContent)?.workspaces?.[layoutName];
             } catch {
-                throw new Error(`Failed to load ${configDir}/workspaces.json`);
+                throw new Error(`Failed to load ${workspacesPath}:${layoutName}`);
             }
             if (!layout) {
-                throw new Error(`No workspace ${layoutName} found in ${configDir}/workspaces.json`);
+                throw new Error(`No workspace ${layoutName} found in ${workspacesPath}`);
             }
         }
 
@@ -325,7 +318,7 @@ class ObsidianPage extends BasePage {
             const defaultVaultPath = path.resolve(fileURLToPath(import.meta.url), '../../default-vault');
             await this.browser.reloadObsidian({vault: defaultVaultPath});
         }
-        const configDir = path.basename(await this.getConfigDir());
+        const configDir = await this.getConfigDir();
         vaults = vaults.length == 0 ? [obsidianOptions.vault!] : vaults;
 
         // list all files in the new vault
