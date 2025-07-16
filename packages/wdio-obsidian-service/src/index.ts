@@ -4,7 +4,7 @@
  * @categoryDescription Options
  * Capability and service options.
  * @categoryDescription WDIO Helpers
- * Helpers for use in wdio.conf, or for launching WDIO in standalone mode.
+ * Helpers for use in wdio.conf.mts, or for launching WDIO in standalone mode.
  * @categoryDescription Utilities
  * Browser commands and helper functions for writing tests.
  */
@@ -24,7 +24,7 @@ export type { PluginEntry, ThemeEntry } from "obsidian-launcher";
 export { minSupportedObsidianVersion } from "./service.js";
 export { startWdioSession } from "./standalone.js";
 
-// Some convenience helpers for use in wdio.conf.(m)ts
+// Some convenience helpers for use in wdio.conf.mts
 
 /**
  * Returns true if there is a current Obsidian beta and we have the credentials to download it, or its already in cache.

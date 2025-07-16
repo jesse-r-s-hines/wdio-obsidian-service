@@ -80,7 +80,7 @@ export const minSupportedObsidianVersion: string = "1.0.3"
 
 /**
  * wdio launcher service.
- * Use in wdio.conf.ts like so:
+ * Use in wdio.conf.mts like so:
  * ```ts
  * services: ['obsidian'],
  * ```
@@ -237,7 +237,7 @@ export class ObsidianLauncherService implements Services.ServiceInstance {
 
 /**
  * wdio worker service.
- * Use in wdio.conf.ts like so:
+ * Use in wdio.conf.mts like so:
  * ```ts
  * services: ['obsidian'],
  * ```

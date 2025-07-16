@@ -43,7 +43,7 @@ Add this to `tsconfig.json`:
 }
 ```
 
-Set up your `wdio.conf.ts` like so:
+Set up your `wdio.conf.mts` like so:
 ```ts
 import * as path from "path"
 
@@ -100,7 +100,7 @@ describe('Test my plugin', function() {
     before(async function() {
         // You can create test vaults and open them with reloadObsidian
         // Alternatively if all your tests use the same vault, you can
-        // set the default vault in the wdio.conf.ts.
+        // set the default vault in the wdio.conf.mts.
         await browser.reloadObsidian({vault: "./test/vaults/simple"});
     })
     it('test command open-sample-modal-simple', async () => {
@@ -114,7 +114,7 @@ describe('Test my plugin', function() {
 })
 ```
 
-`wdio-obsidian-service` has a few helper functions that can be useful in your wdio conf, such as `obsidianBetaAvailable` which checks if there's a current Obsidian beta and you have the credentials to download it. E.g. to test on your plugin on Obsidian `latest`, `latest-beta`, and your `minAppVersion` use:
+`wdio-obsidian-service` has a few helper functions that can be useful in your wdio.conf.mts, such as `obsidianBetaAvailable` which checks if there's a current Obsidian beta and you have the credentials to download it. E.g. to test on your plugin on Obsidian `latest`, `latest-beta`, and your `minAppVersion` use:
 ```ts
 import { obsidianBetaAvailable } from "wdio-obsidian-service";
 const cacheDir = path.resolve(".obsidian-cache");
@@ -144,7 +144,7 @@ export const config: WebdriverIO.Config = {
 ```
 Note, to use top-level await you'll need to rename `wdio.conf.ts` to `wdio.conf.mts` so it's loaded as an ESM module.
 
-You can see the [sample plugin](https://github.com/jesse-r-s-hines/wdio-obsidian-service-sample-plugin) for more examples of how to write your wdio.conf and e2e tests.
+You can see the [sample plugin](https://github.com/jesse-r-s-hines/wdio-obsidian-service-sample-plugin) for more examples of how to write your wdio.conf.mts and e2e tests.
 
 ## Platform Support
 
@@ -229,7 +229,7 @@ it("test the thing", async function() {
 API docs, including all configuration options and helper functions, are available [here](https://jesse-r-s-hines.github.io/wdio-obsidian-service/wdio-obsidian-service/README.html).
 
 Some key bits:
-- See [ObsidianCapabilityOptions](https://jesse-r-s-hines.github.io/wdio-obsidian-service/wdio-obsidian-service/ObsidianCapabilityOptions.html) for all the options you can pass to `wdio:obsidianOptions` in your wdio.conf
+- See [ObsidianCapabilityOptions](https://jesse-r-s-hines.github.io/wdio-obsidian-service/wdio-obsidian-service/ObsidianCapabilityOptions.html) for all the options you can pass to `wdio:obsidianOptions` in your wdio.conf.mts
 - See [ObsidianBrowserCommands](https://jesse-r-s-hines.github.io/wdio-obsidian-service/wdio-obsidian-service/ObsidianBrowserCommands.html) and [ObsidianPage](https://jesse-r-s-hines.github.io/wdio-obsidian-service/wdio-obsidian-service/ObsidianPage.html) for various useful helper functions
 
 And of course, see also [WDIO's documentation](https://webdriver.io/docs/gettingstarted) and the [many browser commands it provides](https://webdriver.io/docs/api/browser).

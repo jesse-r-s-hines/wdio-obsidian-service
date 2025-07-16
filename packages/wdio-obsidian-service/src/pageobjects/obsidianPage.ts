@@ -48,7 +48,7 @@ class ObsidianPage extends BasePage {
     getVaultPath(): string {
         const obsidianOptions = this.getObsidianCapabilities();
         if (obsidianOptions.vaultCopy === undefined) {
-            throw Error("No vault open, set vault in wdio.conf or use reloadObsidian to open a vault dynamically.")
+            throw Error("No vault open, set vault in wdio.conf.mts or use reloadObsidian to open a vault dynamically.")
         }
         return obsidianOptions.uploadedVault ?? obsidianOptions.vaultCopy;
     }

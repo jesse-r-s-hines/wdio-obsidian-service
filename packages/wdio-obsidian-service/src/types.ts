@@ -4,7 +4,7 @@ import type { PluginEntry, ThemeEntry, DownloadedPluginEntry, DownloadedThemeEnt
 export const OBSIDIAN_CAPABILITY_KEY = "wdio:obsidianOptions";
 
 /**
- * Options passed to an "wdio:obsidianOptions" capability in wdio.conf.ts. E.g.
+ * Options passed to an "wdio:obsidianOptions" capability in wdio.conf.mts. E.g.
  * ```ts
  * // ...
  * capabilities: [{
@@ -59,7 +59,7 @@ export interface ObsidianCapabilityOptions {
      * List of plugins to install.
      * 
      * Each entry is a path to the local plugin to install, e.g. ["."] or ["dist"] depending on your build setup. Paths
-     * are relative to your `wdio.conf.ts`. You can also pass objects. If you pass an object it should contain one of
+     * are relative to your `wdio.conf.mts`. You can also pass objects. If you pass an object it should contain one of
      * `path` (to install a local plugin), `repo` (to install a plugin from GitHub), or `id` (to install a community
      * plugin). You can set `enabled: false` to install the plugin but start it disabled. You can enable the plugin
      * later using {@link ObsidianBrowserCommands.reloadObsidian|browser.reloadObsidian} or
@@ -70,7 +70,7 @@ export interface ObsidianCapabilityOptions {
     /**
      * List of themes to install.
      * 
-     * Each entry is a path to the local theme to install. Paths are relative to your `wdio.conf.ts`. You can also pass
+     * Each entry is a path to the local theme to install. Paths are relative to your `wdio.conf.mts`. You can also pass
      * an object. If you pass an object it should contain one of `path` (to install a local theme), `repo` (to install a
      * theme from GitHub), or `name` (to install a community theme). You can set `enabled: false` to install the theme,
      * but start it disabled. You can only have one enabled theme, so if you pass multiple you'll have to disable all
@@ -83,7 +83,7 @@ export interface ObsidianCapabilityOptions {
      * 
      * The vault will be copied, so any changes made in your tests won't affect the original. If omitted, no vault will
      * be opened and you'll need to call {@link ObsidianBrowserCommands.reloadObsidian|browser.reloadObsidian} to open a
-     * vault during your tests. Path is relative to your `wdio.conf.ts`.
+     * vault during your tests. Path is relative to your `wdio.conf.mts`.
      */
     vault?: string,
 
@@ -129,7 +129,7 @@ export interface NormalizedObsidianCapabilityOptions {
 
 
 /**
- * Options passed to wdio-obsidian-service service in wdio.conf.ts. E.g.
+ * Options passed to wdio-obsidian-service service in wdio.conf.mts. E.g.
  * ```js
  * // ...
  * services: [["obsidian", {versionsUrl: "file:///path/to/obsidian-versions.json"}]]
