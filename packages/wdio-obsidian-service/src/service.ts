@@ -395,12 +395,6 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
             await browser.executeObsidian(async ({app}) => {
                 await new Promise<void>((resolve) => app.workspace.onLayoutReady(resolve));
             });
-        } else {
-            await browser.execute(async () => {
-                if (document.readyState === "loading") {
-                    return new Promise<void>(resolve => document.addEventListener("DOMContentLoaded", () => resolve()));
-                }
-            });
         }
     }
 
