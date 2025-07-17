@@ -6,7 +6,7 @@ export const obsidianVersionsSchemaVersion = '2.0.0';
  */
 export type ObsidianVersionList = {
     metadata: {
-        schemaVersion: typeof obsidianVersionsSchemaVersion,
+        schemaVersion: string,
         commitDate: string,
         commitSha: string,
         timestamp: string,
@@ -14,6 +14,10 @@ export type ObsidianVersionList = {
     versions: ObsidianVersionInfo[],
 }
 
+/**
+ * Metadata about a specific Obsidian desktop installer.
+ * @category Types
+ */
 export type ObsidianInstallerInfo = {
     digest?: string,
     /** Electron version */
@@ -26,7 +30,7 @@ export type ObsidianInstallerInfo = {
 
 /**
  * Metadata about a specific Obsidian version, including the min/max compatible installer versions, download urls, and
- * the internal electron version.
+ * the internal Electron version.
  * @category Types
  */
 export type ObsidianVersionInfo = {
