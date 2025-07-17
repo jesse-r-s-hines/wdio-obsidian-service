@@ -8,7 +8,7 @@ import semver from "semver"
 import { fileURLToPath } from "url";
 import { fileExists, makeTmpDir, atomicCreate, linkOrCp, maybe, pool } from "./utils.js";
 import {
-    ObsidianVersionInfo, ObsidianCommunityPlugin, ObsidianCommunityTheme, ObsidianVersionInfos, ObsidianInstallerInfo,
+    ObsidianVersionInfo, ObsidianCommunityPlugin, ObsidianCommunityTheme, ObsidianVersionList, ObsidianInstallerInfo,
     PluginEntry, DownloadedPluginEntry, ThemeEntry, DownloadedThemeEntry, obsidianVersionsSchemaVersion,
 } from "./types.js";
 import { fetchObsidianAPI, fetchGitHubAPIPaginated, downloadResponse } from "./apis.js";
@@ -154,7 +154,7 @@ export class ObsidianLauncher {
      * Get information about all available Obsidian versions.
      */
     async getVersions(): Promise<ObsidianVersionInfo[]> {
-        const isValid = (d: ObsidianVersionInfos) =>
+        const isValid = (d: ObsidianVersionList) =>
             semver.satisfies(d.metadata.schemaVersion ?? '1.0.0', `~${obsidianVersionsSchemaVersion}`);
         const versions = await this.cachedFetch(this.versionsUrl, "obsidian-versions.json", isValid);
         if (!isValid(versions)) {
@@ -940,8 +940,8 @@ export class ObsidianLauncher {
      * the internal Electron version.
      */
     async updateObsidianVersionList(
-        original?: ObsidianVersionInfos, { maxInstances = 1 } = {},
-    ): Promise<ObsidianVersionInfos> {
+        original?: ObsidianVersionList, { maxInstances = 1 } = {},
+    ): Promise<ObsidianVersionList> {
         const repo = 'obsidianmd/obsidian-releases';
         const originalVersions = _.keyBy(original?.versions ?? [], v => v.version);
         const versions: _.Dictionary<DeepPartial<ObsidianVersionInfo>> = _.cloneDeep(originalVersions);
@@ -1010,7 +1010,7 @@ export class ObsidianLauncher {
             versions[version] = _.merge({ minInstallerVersion, maxInstallerVersion }, versions[version]);
         }
     
-        const result: ObsidianVersionInfos = {
+        const result: ObsidianVersionList = {
             metadata: {
                 schemaVersion: obsidianVersionsSchemaVersion,
                 commitDate: commitHistory.at(-1)?.commit.committer.date ?? original?.metadata.commitDate,

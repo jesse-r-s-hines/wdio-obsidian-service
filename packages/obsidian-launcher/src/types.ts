@@ -4,7 +4,7 @@ export const obsidianVersionsSchemaVersion = '2.0.0';
  * Type of the obsidian-versions.json file.
  * @category Types
  */
-export type ObsidianVersionInfos = {
+export type ObsidianVersionList = {
     metadata: {
         schemaVersion: typeof obsidianVersionsSchemaVersion,
         commitDate: string,

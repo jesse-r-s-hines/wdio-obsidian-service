@@ -229,7 +229,7 @@ program
     })
 
 program
-    .command("update-versions-list")
+    .command("update-version-list")
     .summary("Collect Obsidian version information into a single file")
     .description(
         "Collect Obsidian version information into a single file.\n" +
