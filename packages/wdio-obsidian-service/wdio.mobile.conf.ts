@@ -63,7 +63,7 @@ export const config: WebdriverIO.Config = {
             browserVersion: version,
             platformName: 'Android',
             'appium:automationName': 'UiAutomator2',
-            'appium:avd': "android_obsidian_test",
+            'appium:avd': "obsidian_test",
             'appium:enforceAppInstall': true,
             'wdio:obsidianOptions': {
                 plugins: [
