@@ -50,8 +50,8 @@ async function testLaunch(proc: child_process.ChildProcess) {
     await client.close();
     proc.kill("SIGTERM");
     await procExit;
-     // Need to wait a bit or sometimes the rm fails because something else is writing to it
-    await sleep(1000);
+    // Need to wait a bit or sometimes the rm fails because something else is writing to it
+    await sleep(2000);
 }
 
 describe("ObsidianLauncher", function() {
