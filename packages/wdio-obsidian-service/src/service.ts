@@ -77,6 +77,10 @@ function selectThemes(currentThemes: DownloadedThemeEntry[], selection?: string)
  */
 export const minSupportedObsidianVersion: string = "1.0.3"
 
+const foo = (cap: WebdriverIO.Capabilities) => {
+    const o = cap[OBSIDIAN_CAPABILITY_KEY]!;
+    return [`${o.appVersion}/${o.installerVersion}/${o.emulateMobile ? 'mobile' : 'desktop'}`, JSON.stringify(o)]
+}
 
 /**
  * wdio launcher service.
@@ -371,10 +375,12 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
      * Waits for Obsidian to be ready, and does some other final setup.
      */
     private async prepareApp() {
+        console.log("Prepare APP", foo(this.capabilities))
         const browser = this.browser!;
         const obsidianOptions: NormalizedObsidianCapabilityOptions = browser.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY];
 
         if (obsidianOptions.emulateMobile && obsidianOptions.vault != undefined) {
+            console.log("Prepare APP emulateMobile setup", foo(this.capabilities))
             // I don't think this is technically necessary, but when you set the window size via emulateMobile it sets
             // the window size in the browser view, but not the actual window size which looks weird and makes it hard
             // to manually debug a paused test. The normal ways to set window size don't work on Obsidian. Obsidian
@@ -384,6 +390,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
             await browser.execute(async (width, height) => {
                 await (window as any).electron.remote.getCurrentWindow().setSize(width, height);
             }, width, height);
+            console.log("Prepare APP emulateMobile setup done", foo(this.capabilities))
         }
 
         // wait until app is loaded
@@ -396,6 +403,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
                 await new Promise<void>((resolve) => app.workspace.onLayoutReady(resolve));
             });
         }
+        console.log("Prepare APP done", foo(this.capabilities))
     }
 
     private createReloadObsidian() {
@@ -466,24 +474,34 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
                 newCap[OBSIDIAN_CAPABILITY_KEY] = newObsidianOptions;
 
                 if (vault) {
+                    console.log("reloadObsidian new vault", foo(this.capabilities))
                     await service.setupVault(newCap);
+                    console.log("reloadObsidian vault setup", foo(this.capabilities))
                     await service.electronSetupConfigDir(newCap);
+                    console.log("reloadObsidian config setup", foo(this.capabilities))
                     await this.reloadSession(newCap);
+                    console.log("reloadObsidian session reloaded", foo(this.capabilities))
                 } else {
                     // reload preserving current vault and config dir
+                    console.log("reloadObsidian same vault", foo(this.capabilities))
 
                     // Obsidian debounces saves to the config dir, and so changes to configuration made in the tests may
                     // not get saved to disk before the reboot. I haven't found a better way to flush everything than
                     // just waiting a bit.
                     await sleep(2000);
 
+                    console.log("reloadObsidian delete session", foo(this.capabilities))
                     await this.deleteSession({shutdownDriver: false});
+                    console.log("reloadObsidian session deleted", foo(this.capabilities))
                     // while Obsidian is down, modify the vault files to setup plugins and themes
                     await service.obsidianLauncher.setupVault({
                         vault: oldObsidianOptions.vaultCopy!, copy: false,
                         plugins: selectedPlugins, themes: selectedThemes,
                     });
+                    console.log("reloadObsidian vault setup", foo(this.capabilities))
+
                     await this.reloadSession(newCap);
+                    console.log("reloadObsidian session reloaded", foo(this.capabilities))
                 }
             }
             await service.prepareApp();
