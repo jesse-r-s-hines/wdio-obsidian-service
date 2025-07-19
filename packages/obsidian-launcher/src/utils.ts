@@ -1,4 +1,5 @@
 import fsAsync from "fs/promises"
+import fs from "fs";
 import path from "path"
 import os from "os"
 import { PromisePool } from '@supercharge/promise-pool'
@@ -25,20 +26,25 @@ export async function makeTmpDir(prefix?: string) {
 }
 
 /**
- * Handles creating a file "atomically" by creating a tmpDir, then downloading or otherwise creating the file under it,
- * then renaming it to the final location when done.
- * @param dest Path the file should end up at.
+ * Handles creating a file or folder "atomically" by creating a tmpDir, then downloading or otherwise creating the file
+ * under it, then renaming it to the final location when done.
+ * @param dest Path the file or folder should end up at.
  * @param func Function takes path to a temporary directory it can use as scratch space. The path it returns will be
  *     moved to `dest`. If no path is returned, it will move the whole tmpDir to dest.
+ * @param options.preserveTmpDir Don't delete tmpDir on failure. Default false.
  */
-export async function withTmpDir(dest: string, func: (tmpDir: string) => Promise<string|void>): Promise<void> {
+export async function atomicCreate(
+    dest: string, func: (tmpDir: string) => Promise<string|void>,
+    options: {preserveTmpDir?: boolean} = {},
+): Promise<void> {
     dest = path.resolve(dest);
+    // mkdir returns first parent created, or undefined if none were created
+    const createdParentDir = await fsAsync.mkdir(path.dirname(dest), { recursive: true });
     const tmpDir = await fsAsync.mkdtemp(path.join(path.dirname(dest), `.${path.basename(dest)}.tmp.`));
     try {
         let result = await func(tmpDir) ?? tmpDir;
-        if (!path.isAbsolute(result)) {
-            result = path.join(tmpDir, result);
-        } else if (!path.resolve(result).startsWith(tmpDir)) {
+        result = path.resolve(tmpDir, result);
+        if (!result.startsWith(tmpDir)) {
             throw new Error(`Returned path ${result} not under tmpDir`)
         }
         // rename will overwrite files but not directories
@@ -48,8 +54,12 @@ export async function withTmpDir(dest: string, func: (tmpDir: string) => Promise
         
         await fsAsync.rename(result, dest);
         await fsAsync.rm(tmpDir + ".old", { recursive: true, force: true });
-    } finally {
         await fsAsync.rm(tmpDir, { recursive: true, force: true });
+    } catch (e) {
+        if (!options.preserveTmpDir) {
+            await fsAsync.rm(createdParentDir ?? tmpDir, { recursive: true, force: true });
+        }
+        throw e;
     }
 }
 
@@ -57,6 +67,7 @@ export async function withTmpDir(dest: string, func: (tmpDir: string) => Promise
  * Tries to hardlink a file, falls back to copy if it fails
  */
 export async function linkOrCp(src: string, dest: string) {
+    await fsAsync.rm(dest, {recursive: true, force: true});
     try {
         await fsAsync.link(src, dest);
     } catch {
@@ -111,14 +122,52 @@ export async function maybe<T>(promise: Promise<T>): Promise<Maybe<T>> {
 
 
 /**
- * Lodash _.merge but overwrites values with undefined if present, instead of ignoring undefined.
+ * Watch a list of files and call func whenever they change.
  */
-export function mergeKeepUndefined(object: any, ...sources: any[]) {
-    return _.mergeWith(object, ...sources,
-        (objValue: any, srcValue: any, key: any, obj: any) => {
-            if (_.isPlainObject(obj) && objValue !== srcValue && srcValue === undefined) {
-                obj[key] = srcValue
-            }
+export function watchFiles(
+    files: string[],
+    func: (curr: fs.Stats, prev: fs.Stats) => void,
+    options: { interval: number, persistent: boolean, debounce: number },
+) {
+    const debouncedFunc = _.debounce((curr: fs.Stats, prev: fs.Stats) => {
+        if (curr.mtimeMs > prev.mtimeMs || (curr.mtimeMs == 0 && prev.mtimeMs != 0)) {
+            func(curr, prev)
         }
-    );
+    }, options.debounce);
+    for (const file of files) {
+        fs.watchFile(file, {interval: options.interval, persistent: options.persistent}, debouncedFunc);
+    }
+}
+
+
+export type CanonicalForm = {
+    [key: string]: CanonicalForm|null,
+};
+
+/**
+ * Normalize object key order and remove any undefined values.
+ * CanonicalForm is an object with keys in the order you want.
+ * - If a value is "null" the value under that key won't be changed
+ * - if its an object, the value will also be normalized to match that object's key order
+ */
+export function normalizeObject<T>(canonical: CanonicalForm, obj: T): T {
+    // might be better to just use zod or something for this
+    const rootCanonical = canonical, rootObj = obj;
+    function helper(canonical: any, obj: any) {
+        if (_.isPlainObject(canonical)) {
+            if (_.isPlainObject(obj)) {
+                obj = _.pick(obj, Object.keys(canonical))
+                obj = _.mapValues(obj, (v, k) => helper(canonical[k], v));
+                obj = _.omitBy(obj, v => v === undefined);
+                return obj;
+            } else {
+                return obj;
+            }
+        } else if (canonical === null) {
+            return obj;
+        } else {
+            throw Error(`Invalid canonical form ${JSON.stringify(rootCanonical)}`);
+        }
+    }
+    return helper(rootCanonical, rootObj);
 }

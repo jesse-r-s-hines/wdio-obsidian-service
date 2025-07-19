@@ -4,10 +4,11 @@ import path from "path"
 import fsAsync from "fs/promises"
 import { pathToFileURL } from "url";
 import semver from "semver";
-import { createDirectory } from "./helpers.js"
-import { ObsidianLauncher } from "../src/launcher.js";
-import { fileExists } from "../src/utils.js";
-import { ObsidianVersionInfo } from "../src/types.js";
+import { createDirectory } from "../helpers.js"
+import { ObsidianLauncher } from "../../src/launcher.js";
+import { fileExists } from "../../src/utils.js";
+import { ObsidianVersionInfo } from "../../src/types.js";
+import ChromeLocalStorage from "../../src/chromeLocalStorage.js";
 
 
 const obsidianLauncherOpts = {
@@ -29,9 +30,10 @@ describe('ObsdianLauncher resolve versions', () => {
         // Create constant version of obsidian-versions.json
         const tmpDir = await createDirectory({
             "obsidian-versions.json": JSON.stringify({
-                latest: {
-                    "date": "2025-01-07T00:00:00Z",
-                    "sha": "0000000"
+                metadata: {
+                    schemaVersion: '2.0.0',
+                    commitDate: "2025-01-07T00:00:00Z",
+                    commitSha: "0000000"
                 },
                 versions: versions,
             }),
@@ -51,11 +53,25 @@ describe('ObsdianLauncher resolve versions', () => {
 
     const resolveVersionsTests = [
         [["latest", "latest"], ["1.7.7", "1.7.7"]],
-        [["latest", "earliest"], ["1.7.7", "1.1.9"]],
         [["latest-beta", "latest"], ["1.8.0", "1.7.7"]],
-        [["0.14.5", "earliest"], ["0.14.5", "0.11.0"]],
-        [["0.14.5", "latest"], ["0.14.5", "0.14.5"]],
-    ]
+    ];
+    if (process.platform == "win32" && process.arch == "arm64") {
+        // windows arm support was only added in 1.6.5
+        resolveVersionsTests.push(
+            [["latest", "earliest"], ["1.7.7", "1.6.5"]],
+        )
+    } else {
+        resolveVersionsTests.push(
+            [["latest", "earliest"], ["1.7.7", "1.1.9"]],
+            [["0.14.5", "latest"], ["0.14.5", "0.14.5"]],
+        )
+        if (process.platform == "linux" && process.arch == "arm64") {
+            // Linux arm support was added in 0.12.15
+            resolveVersionsTests.push([["0.14.5", "earliest"], ["0.14.5",  "0.12.15"]])
+        } else {
+            resolveVersionsTests.push([["0.14.5", "earliest"], ["0.14.5",  "0.11.0"]])
+        }
+    }
 
     resolveVersionsTests.forEach(([[appVersion, installerVersion], expected]) => {
         it(`resolveVersions("${appVersion}", "${installerVersion}") == ${expected}`, async () => {
@@ -93,6 +109,7 @@ describe('ObsdianLauncher resolve versions', () => {
     it('getVersionInfo basic', async () => {
         const versionInfo = await launcher.getVersionInfo("1.7.7");
         expect(versionInfo.chromeVersion).to.eql('128.0.6613.186');
+        expect(versionInfo.installerInfo.appImage!.chrome).to.eql('128.0.6613.186');
     })
 
     it('getVersionInfo missing', async () => {
@@ -321,7 +338,7 @@ describe("ObsidianLauncher download, install and setup", () => {
             appPath: `${tmpDir}/obsidian-1.7.7.asar`,
             vault: vault,
         })
-        after(() => { fsAsync.rm(configDir, { recursive: true, force: true}) });
+        after(() => fsAsync.rm(configDir, { recursive: true, force: true}) );
 
         expect(await fileExists(`${configDir}/obsidian-1.7.7.asar`)).to.eql(true);
         const obsidianJson = JSON.parse(await fsAsync.readFile(`${configDir}/obsidian.json`, 'utf-8'));
@@ -337,11 +354,35 @@ describe("ObsidianLauncher download, install and setup", () => {
             appVersion: "1.7.7", installerVersion: "1.7.7",
             appPath: `${tmpDir}/obsidian-1.7.7.asar`,
         })
-        after(() => { fsAsync.rm(configDir, { recursive: true, force: true}) });
+        after(() => fsAsync.rm(configDir, { recursive: true, force: true}) );
 
         expect(await fileExists(`${configDir}/obsidian-1.7.7.asar`)).to.eql(true);
         const obsidianJson = JSON.parse(await fsAsync.readFile(`${configDir}/obsidian.json`, 'utf-8'));
         expect(obsidianJson).to.not.have.key("vaults");
+    })
+
+    it(`setupConfigDir localStorage`, async () => {
+        const tmpDir = await createDirectory({
+            "obsidian-1.7.7.asar": "stuff",
+            "my-vault/A.md": "This is a file",
+        });
+        const vault = path.join(tmpDir, "my-vault");
+
+        const configDir = await launcher.setupConfigDir({
+            appVersion: "1.7.7", installerVersion: "1.7.7",
+            appPath: `${tmpDir}/obsidian-1.7.7.asar`,
+            vault: vault,
+            localStorage: {"$vaultId-foo": "bar"},
+        })
+        after(() => fsAsync.rm(configDir, { recursive: true, force: true}) );
+
+        const obsidianJson = JSON.parse(await fsAsync.readFile(`${configDir}/obsidian.json`, 'utf-8'));
+        const vaultId = Object.keys(obsidianJson.vaults)[0];
+
+        const localStorage = new ChromeLocalStorage(configDir);
+        const value = await localStorage.getItem("app://obsidian.md", `${vaultId}-foo`);
+        await localStorage.close();
+        expect(value).to.equal('bar');
     })
 
     it(`setupVault basic`, async () => {
@@ -357,7 +398,7 @@ describe("ObsidianLauncher download, install and setup", () => {
             copy: true,
             plugins: [{path: `${tmpDir}/my-plugin`, enabled: true}],
         })
-        after(() => { fsAsync.rm(vaultCopy, { recursive: true, force: true}) });
+        after(() => fsAsync.rm(vaultCopy, { recursive: true, force: true}) );
 
         expect(vaultCopy).to.not.eql(vault);
         expect((await fsAsync.readdir(vaultCopy)).sort()).to.eql(['.obsidian', 'A.md']);
