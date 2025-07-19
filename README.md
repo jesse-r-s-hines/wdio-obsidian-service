@@ -2,17 +2,15 @@
 
 Test your [Obsidian](https://obsidian.md) plugins end-to-end using [WebdriverIO](https://webdriver.io)!
 
-`wdio-obsidian-service` can:
-- Download and install Obsidian
-- Test your plugin on multiple Obsidian app versions and installer/Electron versions
-- Download Chromedriver matching the Obsidian Electron version
-- Sandbox Obsidian so tests don't interfere with your system Obsidian installation or each other
-- Run tests in parallel
-- Open and switch between vaults during your tests
-- Provide helper functions for common testing tasks
-- Run tests in GitHub CI
+WDIO Obsidian Service can:
+- 📥 Download and test multiple versions of Obsidian
+- 💻📱 Run tests on Windows, macOS, Linux, and Android
+- 📦 Sandbox Obsidian so tests don't interfere with your system or each other
+- 📂 Open and switch between vaults
+- 🛠️ Provide helper functions for common testing tasks
+- 🤖 Run tests in GitHub CI
 
-For instructions on how to set up end-to-end tests using WDIO Obsidian Service see the [service docs](https://jesse-r-s-hines.github.io/wdio-obsidian-service/wdio-obsidian-service/README.html), or get started quickly by using the [sample plugin](https://github.com/jesse-r-s-hines/wdio-obsidian-service-sample-plugin) as a template.
+For instructions on how to set up end-to-end tests using WDIO Obsidian Service see the [service api docs](https://jesse-r-s-hines.github.io/wdio-obsidian-service/wdio-obsidian-service/README.html), or get started quickly by using the [sample plugin](https://github.com/jesse-r-s-hines/wdio-obsidian-service-sample-plugin) as a template.
 
 This project is split into several NPM packages:
 - [wdio-obsidian-service](./packages/wdio-obsidian-service/README.md): A WebdriverIO service to test Obsidian plugins
