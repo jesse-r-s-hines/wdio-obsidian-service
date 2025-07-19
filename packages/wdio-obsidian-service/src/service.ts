@@ -522,10 +522,6 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
         try {
             if (!cap[OBSIDIAN_CAPABILITY_KEY]) return;
 
-            // There is a slow event listener link on the browser "command" event when you reloadSession that causes
-            // some warnings. This will silence them. TODO: Make issue or PR to wdio to fix this.
-            browser.setMaxListeners(1000);
-
             // You are supposed to add commands via the addCommand hook, however you can't add synchronous methods that
             // way. Also, addCommand completely breaks the stack traces of errors from the methods, while tacking on the
             // methods manually doesn't.
