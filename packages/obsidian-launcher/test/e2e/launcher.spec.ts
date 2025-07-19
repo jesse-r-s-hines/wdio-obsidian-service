@@ -1,6 +1,7 @@
 import { describe, it } from "mocha";
 import { expect } from "chai";
 import _ from "lodash";
+import os from "os";
 import fsAsync from "fs/promises";
 import path from "path";
 import { pathToFileURL } from "url";
@@ -11,7 +12,7 @@ import child_process from "child_process";
 import { createDirectory } from "../helpers.js";
 import { ObsidianLauncher } from "../../src/launcher.js";
 import { downloadResponse } from "../../src/apis.js";
-import { fileExists, atomicCreate, sleep } from "../../src/utils.js";
+import { fileExists, atomicCreate, sleep, maybe } from "../../src/utils.js";
 import { AddressInfo } from "net";
 
 const obsidianLauncherOpts = {
@@ -50,8 +51,8 @@ async function testLaunch(proc: child_process.ChildProcess) {
     await client.close();
     proc.kill("SIGTERM");
     await procExit;
-     // Need to wait a bit or sometimes the rm fails because something else is writing to it
-    await sleep(1000);
+    // Need to wait a bit or sometimes the rm fails because something else is writing to it
+    await sleep(2000);
 }
 
 describe("ObsidianLauncher", function() {
@@ -103,7 +104,7 @@ describe("ObsidianLauncher", function() {
                 })),
             }),
         });
-        const cacheDir = await createDirectory();
+        const cacheDir = await fsAsync.mkdtemp(path.join(os.tmpdir(), "mocha-"));
 
         launcher = new ObsidianLauncher({
             ...obsidianLauncherOpts,
@@ -115,6 +116,12 @@ describe("ObsidianLauncher", function() {
     after(async function() {
         server?.closeAllConnections();
         server?.close();
+        // on Windows something is holding on to files in the installer that causes the rm to be unreliable
+        let success = false, retries = 0;
+        while (!success && retries < 8) {
+            success = (await maybe(fsAsync.rm(launcher.cacheDir, {force: true, recursive: true}))).success;
+            retries++;
+        }
     })
 
     it("test downloadApp", async function() {
