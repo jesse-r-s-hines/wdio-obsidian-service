@@ -1,14 +1,14 @@
 # WDIO Obsidian Service [![NPM](https://img.shields.io/npm/v/wdio-obsidian-service)](https://www.npmjs.com/package/wdio-obsidian-service)
 
-`wdio-obsidian-service` lets you test [Obsidian](https://obsidian.md) plugins end-to-end using [WebdriverIO](https://webdriver.io). The service can:
-- Download and install Obsidian
-- Test your plugin on multiple Obsidian app versions and installer/Electron versions
-- Download Chromedriver matching the Obsidian Electron version
-- Sandbox Obsidian so tests don't interfere with your system Obsidian installation or each other
-- Run tests in parallel
-- Open and switch between vaults during your tests
-- Provide helper functions for common testing tasks
-- Run tests in GitHub CI
+Test your [Obsidian](https://obsidian.md) plugins end-to-end using [WebdriverIO](https://webdriver.io)!
+
+WDIO Obsidian Service can:
+- 📥 Download and test multiple versions of Obsidian
+- 💻📱 Run tests on Windows, macOS, Linux, and Android
+- 📦 Sandbox Obsidian so tests don't interfere with your system or each other
+- 📂 Open and switch between vaults
+- 🛠️ Provide helper functions for common testing tasks
+- 🤖 Run tests in GitHub CI
 
 ## Installation and Setup
 
@@ -16,13 +16,13 @@ If you want to get going quickly, you can use the [wdio-obsidian-service sample 
 
 See also: [WebdriverIO | Getting Started](https://webdriver.io/docs/gettingstarted).
 
-To set up wdio-obsidian-service run the WebdriverIO Starter Toolkit:
+To set up `wdio-obsidian-service` run the WebdriverIO Starter Toolkit:
 ```bash
 npm init wdio@latest .
 ```
 Leave all options as default (including `E2E Testing - of Web or Mobile Applications`).
 
-Delete the generated `pageobjects` dir for now, or replace it with a stub for later.
+Delete the generated `test/pageobjects` dir for now, or replace it with a stub for later.
 
 Then install `wdio-obsidian-service` and other deps:
 ```bash
@@ -43,16 +43,14 @@ Add this to `tsconfig.json`:
 }
 ```
 
-Set up your `wdio.conf.mts` like so:
+Rename `wdio.conf.ts` to `wdio.conf.mts` and set it up like so:
 ```ts
 import * as path from "path"
 
 export const config: WebdriverIO.Config = {
     runner: 'local',
 
-    specs: [
-        './test/specs/**/*.e2e.ts'
-    ],
+    specs: ['./test/specs/**/*.e2e.ts'],
 
     // How many instances of Obsidian should be launched in parallel
     maxInstances: 4,
@@ -92,7 +90,7 @@ export const config: WebdriverIO.Config = {
 }
 ```
 
-And create a test file `test/specs/test.e2e.ts` with something like:
+And create a test file `test/specs/test.e2e.ts`:
 ```ts
 import { browser } from '@wdio/globals'
 
@@ -114,7 +112,14 @@ describe('Test my plugin', function() {
 })
 ```
 
-`wdio-obsidian-service` has a few helper functions that can be useful in your wdio.conf.mts, such as `obsidianBetaAvailable` which checks if there's a current Obsidian beta and you have the credentials to download it. E.g. to test on your plugin on Obsidian `latest`, `latest-beta`, and your `minAppVersion` use:
+Now you can run your tests with
+```bash
+wdio run ./wdio.conf.mts
+```
+
+Add that command to your `package.json` scripts and you are good to go!
+
+`wdio-obsidian-service` has a few helper functions that can be useful in your `wdio.conf.mts`, such as `obsidianBetaAvailable` which checks if there's a current Obsidian beta and you have the credentials to download it. E.g. to test on your plugin on Obsidian `latest`, `latest-beta`, and your `minAppVersion` use:
 ```ts
 import { obsidianBetaAvailable } from "wdio-obsidian-service";
 const cacheDir = path.resolve(".obsidian-cache");
@@ -144,47 +149,13 @@ export const config: WebdriverIO.Config = {
 ```
 Note, to use top-level await you'll need to rename `wdio.conf.ts` to `wdio.conf.mts` so it's loaded as an ESM module.
 
-You can see the [sample plugin](https://github.com/jesse-r-s-hines/wdio-obsidian-service-sample-plugin) for more examples of how to write your wdio.conf.mts and e2e tests.
-
-## Platform Support
-
-`wdio-obsidian-service` works for Obsidian desktop on Windows, Linux, and MacOS.
-
-Windows firewall will sometimes complain about NodeJS, you can just cancel the popup it makes.
-
-### Mobile Emulation
-
-Currently, `wdio-obsidian-service` only works for Obsidian Desktop. However, it does support emulating Obsidian Mobile. It uses Obsidian `app.emulateMobile()` to switch Obsidian to the mobile UI, and you can use Chrome's mobileEmulation to set the screen size. You can compare tablet vs phone UIs by setting the screen size or the emulated device, Obsidian tablet UI triggers at width/height >= 600.
-
-Note that Obsidian Mobile runs on Capacitor instead of Electron so there are various platform differences that can't be emulated. But it's good enough for most cases as long as you aren't interacting directly with the operating system or Electron APIs.
-
-Example `wdio.conf`:
-```js
-// ...
-capabilities: [{
-    browserName: "obsidian",
-    browserVersion: "latest",
-    'wdio:obsidianOptions': {
-        emulateMobile: true,
-    },
-    'goog:chromeOptions': {
-        mobileEmulation: {
-            // can also set deviceName: "iPad" etc. instead of hard-coding size
-            deviceMetrics: { width: 390, height: 844 },
-        },
-    },
-}],
-```
-
-## Test Frameworks
-
-WebdriverIO can run tests using [Mocha](https://mochajs.org), [Jasmine](https://jasmine.github.io), and [Cucumber](https://cucumber.io/). Mocha is the easiest to set up and is used in all the wdio-obsidian-service examples. Mocha can also run your unit tests, typically with the addition of an assertion library like [Chai](https://www.chaijs.com). You can't run WebdriverIO using [Jest](https://jestjs.io), but if you already have Jest unit tests (or just prefer Jest) you can easily continue using Jest for your unit tests and Mocha just for your e2e tests. The built-in WebdriverIO [expect](https://webdriver.io/docs/api/expect-webdriverio) is very similar to Jest matchers, so should be familiar to use.
+See the [sample plugin](https://github.com/jesse-r-s-hines/wdio-obsidian-service-sample-plugin) for more examples of how to write your `wdio.conf.mts` and e2e tests.
 
 ## Usage
 
 ### Obsidian App vs Installer Versions
 
-Obsidian is distributed in two parts, the "installer" which is the executable containing Electron, and the "app" which is a bundle of JavaScript containing the Obsidian code. Obsidian's self-update system only updates the app JS bundle, and not the base installer/Electron version. This makes Obsidian's auto-update fast as it only needs to download a few MiB of JS instead of all of Electron. But, it means different users with the same Obsidian app version may be running on different versions of Electron, which can cause subtle differences in plugin behavior. You can specify both `appVersion` and `installerVersion` in your `wdio.conf.mts` capabilities section.
+The Obsidian desktop app is distributed in two parts, the "installer" which is the executable containing Electron, and the "app" which is a bundle of JavaScript containing the Obsidian code. Obsidian's self-update system only updates the app JS bundle, and not the base installer/Electron version. This makes Obsidian's auto-update fast as it only needs to download a few MiB of JS instead of all of Electron. But, it means different users with the same Obsidian app version may be running on different versions of Electron, which can cause subtle differences in plugin behavior. You can specify both `appVersion` and `installerVersion` in your `wdio.conf.mts` capabilities section.
 
 To set the app version use `browserVersion` or `'wdio:obsidianOptions'.appVersion`. It can be set to one of:
 - a specific version string like "1.7.7"
@@ -224,6 +195,103 @@ it("test the thing", async function() {
 })
 ```
 
+## Platform Support
+
+`wdio-obsidian-service` can test Obsidian desktop on Windows, MacOS, and Linux.
+
+There are two approaches to testing Obsidian mobile. You can emulate the mobile UI in desktop app, which is easy to set up but an imperfect emulation of mobile. Or you can run tests on the real mobile app using an Android Virtual Device (avd). `wdio-obsidian-service` supports both options.
+
+Testing on iOS is currently not supported.
+
+### Mobile Emulation
+
+Testing your plugin with "mobile emulation" is very easy to set up. Just add a capability like this in your `wdio.conf.mts`:
+```js
+// ...
+capabilities: [{
+    browserName: "obsidian",
+    browserVersion: "latest",
+    'wdio:obsidianOptions': {
+        emulateMobile: true,
+    },
+    'goog:chromeOptions': {
+        mobileEmulation: {
+            // can also set deviceName: "iPad" etc. instead of hard-coding size
+            deviceMetrics: { width: 390, height: 844 },
+        },
+    },
+}],
+```
+
+This will use Obsidian's [app.emulateMobile](https://docs.obsidian.md/Plugins/Getting+started/Mobile+development#Emulate+mobile+device+on+desktop) to test the mobile UI on the Electron desktop app. Note that the real Obsidian mobile app runs on [Capacitor.js ](https://capacitorjs.com) instead of Electron, so there are various platform differences that can't be properly emulated this way. E.g. Capacitor doesn't have access to node and Electron APIs, and has more limited access to the operating system. But if your plugin isn't directly interacting with the operating system or any advanced Electron APIs using mobile emulation will likely be sufficient.
+
+
+### Android
+
+You can also test on the real mobile app using [Appium](https://appium.io) and [Android Studio](https://developer.android.com/studio). This is a bit more work to set up, but is a more accurate test.
+
+To set this up, install Appium and the Appium Android driver:
+```bash
+npm install --save-dev appium appium-uiautomator2-driver
+```
+
+Then follow these instructions: [Appium - Set up Android automation requirements](https://appium.io/docs/en/2.19/quickstart/uiauto2-driver/#set-up-android-automation-requirements)
+
+You can skip the `appium driver install ...` bit as you already installed the driver via npm above.
+
+Then use the Android Studio "Virtual Device Manager" to create a Android Virtual Device and name it `obsidian_test`.
+
+Then set up a new `wdio.mobile.conf.mts` file like so:
+```ts
+import * as path from "path"
+
+export const config: WebdriverIO.Config = {
+    runner: 'local',
+
+    specs: ['./test/specs/**/*.e2e.ts'],
+
+    maxInstances: 1, // can't do android tests in parallel :(
+
+    capabilities: [{
+        browserName: "obsidian",
+        browserVersion: "latest",
+        platformName: 'Android',
+        'appium:automationName': 'UiAutomator2',
+        'appium:avd': "obsidian_test",
+        'appium:enforceAppInstall': true,
+        'wdio:obsidianOptions': {
+            plugins: ["."],
+            vault: "test/vaults/simple",
+        },
+    }],
+
+    framework: 'mocha',
+    services: ["obsidian"],
+    reporters: ['obsidian'],
+
+    mochaOpts: {
+        ui: 'bdd',
+        timeout: 60000,
+    },
+
+    cacheDir: path.resolve(".obsidian-cache"),
+
+    logLevel: "warn",
+}
+```
+and run
+```bash
+wdio run ./wdio.mobile.conf.mts
+```
+
+This will spin up the Android Virtual Device, install Obsidian in it, and run your tests on it.
+
+See also: [WDIO Appium](https://webdriver.io/docs/appium/), [Appium Capability Options](https://appium.github.io/appium.io/docs/en/writing-running-appium/caps), [Appium Android Driver Capability Options](https://github.com/appium/appium-uiautomator2-driver?tab=readme-ov-file#capabilities)
+
+## Test Frameworks
+
+WebdriverIO can run tests using [Mocha](https://mochajs.org), [Jasmine](https://jasmine.github.io), and [Cucumber](https://cucumber.io/). Mocha is the easiest to set up and is used in all the `wdio-obsidian-service` examples. Mocha can also run your unit tests, typically with the addition of an assertion library like [Chai](https://www.chaijs.com). You can't run WebdriverIO using [Jest](https://jestjs.io), but if you already have Jest unit tests (or just prefer Jest) you can easily continue using Jest for your unit tests and Mocha just for your e2e tests. The built-in WebdriverIO [expect](https://webdriver.io/docs/api/expect-webdriverio) is very similar to Jest matchers, so should be familiar to use.
+
 ### API Docs
 
 API docs, including all configuration options and helper functions, are available [here](https://jesse-r-s-hines.github.io/wdio-obsidian-service/wdio-obsidian-service/README.html).
@@ -238,4 +306,4 @@ And of course, see also [WDIO's documentation](https://webdriver.io/docs/getting
 The sample plugin has workflows set up to release and test your plugin, which you can see [here](https://github.com/jesse-r-s-hines/wdio-obsidian-service-sample-plugin#github-workflows).
 
 ### obsidian-launcher CLI
-`wdio-obsidian-service` depends on [`obsidian-launcher`](../../packages/obsidian-launcher/README.md) so the `obsidian-launcher` CLI is also available, with some commands for launching different Obsidian versions. CLI docs available [here](https://jesse-r-s-hines.github.io/wdio-obsidian-service/obsidian-launcher/README.html#cli).
+`wdio-obsidian-service` depends on [obsidian-launcher](../../packages/obsidian-launcher/README.md) so the `obsidian-launcher` CLI is also available, with some commands for launching different Obsidian versions. CLI docs available [here](https://jesse-r-s-hines.github.io/wdio-obsidian-service/obsidian-launcher/README.html#cli).
