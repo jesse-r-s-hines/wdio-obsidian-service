@@ -140,11 +140,12 @@ export const config: WebdriverIO.Config = {
     
     reporters: ["obsidian"],
 
-    bail: 4,
+    bail: 3,
 
     mochaOpts: {
         ui: 'bdd',
         timeout: 60 * 1000,
+        bail: 3,
     },
 
     logLevel: "warn",

@@ -153,6 +153,8 @@ jobs:
           target: google_apis
           profile: ${{ env.ANDROID_PROFILE }}
           script: npm run test:android
+          disk-size: 6000M
+          heap-size: 600M
         env:
           OBSIDIAN_USERNAME: ${{ secrets.OBSIDIAN_USERNAME }}
           OBSIDIAN_PASSWORD: ${{ secrets.OBSIDIAN_PASSWORD }}
