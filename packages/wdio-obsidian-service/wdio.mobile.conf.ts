@@ -65,6 +65,7 @@ export const config: WebdriverIO.Config = {
             'appium:automationName': 'UiAutomator2',
             'appium:avd': "obsidian_test",
             'appium:enforceAppInstall': true,
+            'appium:adbExecTimeout': 60 * 1000,
             'wdio:obsidianOptions': {
                 plugins: [
                     "./test/plugins/basic-plugin",
