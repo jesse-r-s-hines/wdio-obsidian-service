@@ -52,7 +52,7 @@ jobs:
             test-preset: "all"
             obsidian-versions: "latest/latest"
     runs-on: ${{ matrix.os }}
-    name: test-desktop-${{ matrix.os }}-node-${{ matrix.node-version }}
+    name: test (${{ matrix.os }}, node ${{ matrix.node-version }})
     steps:
       - uses: actions/checkout@v4
       - name: Use Node.js ${{ matrix.node-version }}
@@ -105,25 +105,31 @@ jobs:
           OBSIDIAN_PASSWORD: ${{ secrets.OBSIDIAN_PASSWORD }}
 
   test-android:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - obsidian-version: "latest"
+            android-api-level: 36
+            android-profile: pixel
+          - obsidian-version: "earliest"
+            android-api-level: 36
+            android-profile: pixel
     runs-on: ubuntu-latest
-    name: test-android
-    env:
-      OBSIDIAN_VERSIONS: "latest earliest"
-      ANDROID_API_LEVEL: 36
-      ANDROID_PROFILE: pixel
+    name: test (android, api ${{ matrix.android-api-level }}, profile ${{ matrix.android-profile }}, obsidian ${{ matrix.obsidian-version }})
     steps:
       - uses: actions/checkout@v4
-      - name: Use Node.js 18.x
+      - name: Use Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18.x
+          node-version: 22.x
           cache: 'npm'
 
       - name: Cache .obsidian-cache
         uses: actions/cache@v4
         with:
           path: .obsidian-cache
-          key: obsidian-cache-android-${{ env.OBSIDIAN_VERSIONS }}-${{ hashFiles('./obsidian-versions.json') }}
+          key: obsidian-cache-android-${{ matrix.obsidian-version }}-${{ hashFiles('./obsidian-versions.json') }}
 
       - run: npm ci
       - name: Build
@@ -135,7 +141,7 @@ jobs:
           path: |
             ~/.android/avd/*
             ~/.android/adb*
-          key: avd-${{ env.ANDROID_API_LEVEL }}-${{ env.ANDROID_PROFILE }}
+          key: avd-${{ matrix.android-api-level }}-${{ matrix.android-profile }}
 
       - name: Enable KVM
         run: |
@@ -148,14 +154,15 @@ jobs:
         with:
           avd-name: obsidian_test
           emulator-options: -no-metrics -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
-          api-level: ${{ env.ANDROID_API_LEVEL }}
+          api-level: ${{ matrix.android-api-level }}
           arch: "x86_64"
           target: google_apis
-          profile: ${{ env.ANDROID_PROFILE }}
+          profile: ${{ matrix.android-profile }}
           script: npm run test:android
           disk-size: 6000M
           heap-size: 600M
         env:
+          OBSIDIAN_VERSIONS: ${{ matrix.obsidian-version }}
           OBSIDIAN_USERNAME: ${{ secrets.OBSIDIAN_USERNAME }}
           OBSIDIAN_PASSWORD: ${{ secrets.OBSIDIAN_PASSWORD }}
 

@@ -110,10 +110,6 @@ export const config: WebdriverIO.Config = {
         bail: 3,
     },
 
-    specFileRetries: 1,
-    specFileRetriesDelay: 10,
-    specFileRetriesDeferred: false,
-
     logLevel: "warn",
 
     injectGlobals: false,
