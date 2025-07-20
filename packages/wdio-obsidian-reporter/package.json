@@ -32,18 +32,17 @@
     },
     "homepage": "https://jesse-r-s-hines.github.io/wdio-obsidian-service/wdio-obsidian-reporter/README.html",
     "devDependencies": {
-        "@types/node": "^18.11.9",
+        "@types/node": "^18.19.120",
         "@wdio/types": "^9.5.0",
         "ts-node": "^10.9.2",
-        "tsup": "^8.3.5",
-        "tsx": "^4.19.2",
+        "tsup": "^8.5.0",
+        "tsx": "^4.20.3",
         "typescript": "^5.8.2"
     },
     "dependencies": {
         "@wdio/reporter": "^9.5.0",
-        "@wdio/spec-reporter": "^9.5.0"
+        "@wdio/spec-reporter": "^9.18.0"
     },
-    "peerDependencies": {},
     "engines": {
         "node": ">=18"
     }

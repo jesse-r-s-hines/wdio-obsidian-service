@@ -1,28 +1,24 @@
 import fsAsync from "fs/promises"
-import fs from "fs"
-import zlib from "zlib"
 import path from "path"
 import crypto from "crypto";
 import extractZip from "extract-zip"
-import { pipeline } from "stream/promises";
 import { downloadArtifact } from '@electron/get';
 import child_process from "child_process"
 import semver from "semver"
 import { fileURLToPath } from "url";
-import { fileExists, makeTmpDir, withTmpDir, linkOrCp, maybe, pool, mergeKeepUndefined } from "./utils.js";
+import { fileExists, makeTmpDir, atomicCreate, linkOrCp, maybe, pool } from "./utils.js";
 import {
-    ObsidianVersionInfo, ObsidianCommunityPlugin, ObsidianCommunityTheme,
-    PluginEntry, DownloadedPluginEntry, ThemeEntry, DownloadedThemeEntry,
-    ObsidianVersionInfos,
+    ObsidianVersionInfo, ObsidianCommunityPlugin, ObsidianCommunityTheme, ObsidianVersionList, ObsidianInstallerInfo,
+    PluginEntry, DownloadedPluginEntry, ThemeEntry, DownloadedThemeEntry, obsidianVersionsSchemaVersion,
 } from "./types.js";
 import { fetchObsidianAPI, fetchGitHubAPIPaginated, downloadResponse } from "./apis.js";
 import ChromeLocalStorage from "./chromeLocalStorage.js";
 import {
-    normalizeGitHubRepo, extractObsidianAppImage, extractObsidianExe, extractObsidianDmg,
-    parseObsidianDesktopRelease, parseObsidianGithubRelease, correctObsidianVersionInfo,
-    getElectronVersionInfo, normalizeObsidianVersionInfo,
+    normalizeGitHubRepo, extractGz, extractObsidianAppImage, extractObsidianExe, extractObsidianDmg,
+    parseObsidianDesktopRelease, parseObsidianGithubRelease, getInstallerInfo, normalizeObsidianVersionInfo,
 } from "./launcherUtils.js";
 import _ from "lodash"
+import { DeepPartial } from "ts-essentials";
 
 
 /**
@@ -77,39 +73,59 @@ export class ObsidianLauncher {
      * Returns file content fetched from url as JSON. Caches content to dest and uses that cache if its more recent than
      * cacheDuration ms or if there are network errors.
      */
-    private async cachedFetch(url: string, dest: string): Promise<any> {
+    private async cachedFetch(url: string, dest: string, cacheValid?: (data: any) => boolean): Promise<any> {
+        cacheValid = cacheValid ?? (() => true);
         dest = path.join(this.cacheDir, dest);
+
         if (!(dest in this.metadataCache)) {
-            let fileContent: string;
+            let data: any;
+            let error: any;
+            const cacheMtime = (await fsAsync.stat(dest).catch(() => undefined))?.mtime;
 
+            // read file urls directly
             if (url.startsWith("file:")) {
-                fileContent = await fsAsync.readFile(fileURLToPath(url), 'utf-8');
-            } else {
-                const mtime = await fileExists(dest) ? (await fsAsync.stat(dest)).mtime : undefined;
-
-                // read from cache if its recent
-                if (mtime && new Date().getTime() - mtime.getTime() < this.cacheDuration) {
-                    fileContent = await fsAsync.readFile(dest, 'utf-8');
-                } else { // otherwise try to fetch the url
-                    const request = await maybe(fetch(url).then(r => r.text()));
-                    if (request.success) {
-                        await fsAsync.mkdir(path.dirname(dest), { recursive: true });
-                        await withTmpDir(dest, async (tmpDir) => {
-                            await fsAsync.writeFile(path.join(tmpDir, 'download.json'), request.result);
-                            return path.join(tmpDir, 'download.json');
-                        })
-                        fileContent = request.result;
-                    } else if (await fileExists(dest)) { // use cache on network error
-                        console.warn(request.error)
-                        console.warn(`Unable to download ${dest}, using cached file.`);
-                        fileContent = await fsAsync.readFile(dest, 'utf-8');
-                    } else {
-                        throw request.error;
-                    }
+                data = JSON.parse(await fsAsync.readFile(fileURLToPath(url), 'utf-8'));
+            }
+            // read from cache if its recent and valid
+            if (!data && cacheMtime && new Date().getTime() - cacheMtime.getTime() < this.cacheDuration) {
+                const parsed = JSON.parse(await fsAsync.readFile(dest, 'utf-8'));
+                if (cacheValid(parsed)) {
+                    data = parsed;
                 }
             }
+            // otherwise try to fetch the url
+            if (!data) {
+                const response = await maybe(fetch(url).then(async (r) => {
+                    if (!r.ok) throw Error(`Fetch ${url} failed with status ${r.status}`);
+                    const d = await r.text();
+                    // throw if invalid JSON, but keep original formatting
+                    if (_.isError(_.attempt(JSON.parse, d))) throw Error(`Failed to parse response from ${url}`);
+                    return d;
+                }));
+                if (response.success) {
+                    await atomicCreate(dest, async (tmpDir) => {
+                        await fsAsync.writeFile(path.join(tmpDir, 'download.json'), response.result);
+                        return path.join(tmpDir, 'download.json');
+                    });
+                    data = JSON.parse(response.result);
+                } else {
+                    error = response.error;
+                }
+            }
+            // use cache on network error, even if old
+            if (!data && (await fileExists(dest))) {
+                const parsed = JSON.parse(await fsAsync.readFile(dest, 'utf-8'));
+                if (cacheValid(parsed)) {
+                    console.warn(error)
+                    console.warn(`Unable to download ${url}, using cached file.`);
+                    data = parsed;
+                }
+            }
+            if (!data) {
+                throw error;
+            }
 
-            this.metadataCache[dest] = JSON.parse(fileContent);
+            this.metadataCache[dest] = data;
         }
         return this.metadataCache[dest];
     }
@@ -138,7 +154,13 @@ export class ObsidianLauncher {
      * Get information about all available Obsidian versions.
      */
     async getVersions(): Promise<ObsidianVersionInfo[]> {
-        return (await this.cachedFetch(this.versionsUrl, "obsidian-versions.json")).versions;
+        const isValid = (d: ObsidianVersionList) =>
+            semver.satisfies(d.metadata.schemaVersion ?? '1.0.0', `~${obsidianVersionsSchemaVersion}`);
+        const versions = await this.cachedFetch(this.versionsUrl, "obsidian-versions.json", isValid);
+        if (!isValid(versions)) {
+            throw new Error(`${this.versionsUrl} format has changed, please update obsidian-launcher and wdio-obsidian-service`)
+        }
+        return versions.versions;
     }
 
     /**
@@ -172,21 +194,33 @@ export class ObsidianLauncher {
     async resolveVersions(appVersion: string, installerVersion = "latest"): Promise<[string, string]> {
         const versions = await this.getVersions();
         const appVersionInfo = await this.getVersionInfo(appVersion);
+        appVersion = appVersionInfo.version;
+        let installerVersionInfo: ObsidianVersionInfo|undefined;
+        const { platform, arch } = process;
 
         if (!appVersionInfo.minInstallerVersion || !appVersionInfo.maxInstallerVersion) {
-            throw Error(`No compatible installers available for app version ${appVersion}`);
+            throw Error(`No installers available for Obsidian ${appVersion}`);
         }
         if (installerVersion == "latest") {
-            installerVersion = appVersionInfo.maxInstallerVersion;
+            installerVersionInfo = _.findLast(versions, v =>
+                semver.lte(v.version, appVersionInfo.version) && !!this.getInstallerKey(v, platform, arch)
+            );
         } else if (installerVersion == "earliest") {
-            installerVersion = appVersionInfo.minInstallerVersion;
+            installerVersionInfo = versions.find(v =>
+                semver.gte(v.version, appVersionInfo.minInstallerVersion!) && !!this.getInstallerKey(v, platform, arch)
+            );
         } else {
-            installerVersion = semver.valid(installerVersion) ?? installerVersion;
+            installerVersion = semver.valid(installerVersion) ?? installerVersion; // normalize
+            installerVersionInfo = versions.find(v => v.version == installerVersion);
         }
-        const installerVersionInfo = versions.find(v => v.version == installerVersion);
-        if (!installerVersionInfo || !installerVersionInfo.chromeVersion) {
-            throw Error(`No Obsidian installer for version ${installerVersion} found`);
+        if (!installerVersionInfo) {
+            if (["earliest", "latest"].includes(installerVersion)) {
+                throw Error(`No compatible installers available for Obsidian ${appVersion}`);
+            } else {
+                throw Error(`No Obsidian installer ${installerVersion} found`);
+            }
         }
+
         if (
             semver.lt(installerVersionInfo.version, appVersionInfo.minInstallerVersion) ||
             semver.gt(installerVersionInfo.version, appVersionInfo.maxInstallerVersion)
@@ -222,96 +256,85 @@ export class ObsidianLauncher {
         }
         const versionInfo = versions.find(v => v.version == appVersion);
         if (!versionInfo) {
-            throw Error(`No Obsidian app version ${appVersion} found`);
+            throw Error(`No Obsidian app version "${appVersion}" found`);
         }
 
         return versionInfo;
     }
 
-    /**
-     * Downloads the Obsidian installer for the given version and current platform. Returns the file path.
-     * @param installerVersion Obsidian installer version to download
-     */
-    async downloadInstaller(installerVersion: string): Promise<string> {
-        const installerVersionInfo = await this.getVersionInfo(installerVersion);
-        return await this.downloadInstallerFromVersionInfo(installerVersionInfo);
+    private getInstallerKey(
+        installerVersionInfo: ObsidianVersionInfo, platform: NodeJS.Platform, arch: NodeJS.Architecture,
+    ): keyof ObsidianVersionInfo['installerInfo']|undefined {
+        const platformName = `${platform}-${arch}`;
+        const key = _.findKey(installerVersionInfo.installerInfo, v => v && v.platforms.includes(platformName));
+        return key as keyof ObsidianVersionInfo['installerInfo']|undefined;
     }
 
     /**
-     * Helper for downloadInstaller that doesn't require the obsidian-versions.json file so it can be used in
-     * updateObsidianVersionInfos
+     * Gets details about the Obsidian installer for the given platform.
+     * @param installerVersion Obsidian installer version
+     * @param platform Platform/os (defaults to host platform)
+     * @param arch Architecture (defaults to host architecture)
      */
-    private async downloadInstallerFromVersionInfo(versionInfo: ObsidianVersionInfo): Promise<string> {
-        const installerVersion = versionInfo.version;
-        const {platform, arch} = process;
-        const cacheDir = path.join(this.cacheDir, `obsidian-installer/${platform}-${arch}/Obsidian-${installerVersion}`);
-        
-        let installerPath: string
-        let downloader: ((tmpDir: string) => Promise<string>)|undefined
-        
-        if (platform == "linux") {
-            installerPath = path.join(cacheDir, "obsidian");
-            let installerUrl: string|undefined
-            if (arch.startsWith("arm")) {
-                installerUrl = versionInfo.downloads.appImageArm;
-            } else {
-                installerUrl = versionInfo.downloads.appImage;
-            }
-            if (installerUrl) {
-                downloader = async (tmpDir) => {
-                    const appImage = path.join(tmpDir, "Obsidian.AppImage");
-                    await downloadResponse(await fetch(installerUrl), appImage);
-                    const obsidianFolder = path.join(tmpDir, "Obsidian");
-                    await extractObsidianAppImage(appImage, obsidianFolder);
-                    return obsidianFolder;
-                };
-            }
-        } else if (platform == "win32") {
-            installerPath = path.join(cacheDir, "Obsidian.exe")
-            const installerUrl = versionInfo.downloads.exe;
-            let appArch: string|undefined
-            if (arch == "x64") {
-                appArch = "app-64"
-            } else if (arch == "ia32") {
-                appArch = "app-32"
-            } else if (arch.startsWith("arm")) {
-                appArch = "app-arm64"
-            }
-            if (installerUrl && appArch) {
-                downloader = async (tmpDir) => {
-                    const installerExecutable = path.join(tmpDir, "Obsidian.exe");
-                    await downloadResponse(await fetch(installerUrl), installerExecutable);
-                    const obsidianFolder = path.join(tmpDir, "Obsidian");
-                    await extractObsidianExe(installerExecutable, appArch, obsidianFolder);
-                    return obsidianFolder;
-                };
-            }
-        } else if (platform == "darwin") {
-            installerPath = path.join(cacheDir, "Contents/MacOS/Obsidian");
-            const installerUrl = versionInfo.downloads.dmg;
-            if (installerUrl) {
-                downloader = async (tmpDir) => {
-                    const dmg = path.join(tmpDir, "Obsidian.dmg");
-                    await downloadResponse(await fetch(installerUrl), dmg);
-                    const obsidianFolder = path.join(tmpDir, "Obsidian");
-                    await extractObsidianDmg(dmg, obsidianFolder);
-                    return obsidianFolder;
-                };
-            }
+    async getInstallerInfo(
+        installerVersion: string, platform?: NodeJS.Platform, arch?: NodeJS.Architecture,
+    ): Promise<ObsidianInstallerInfo & {url: string}> {
+        platform = platform ?? process.platform;
+        arch = arch ?? process.arch;
+        const versionInfo = await this.getVersionInfo(installerVersion);
+        const key = this.getInstallerKey(versionInfo, platform, arch);
+        if (key) {
+            return {...versionInfo.installerInfo[key]!, url: versionInfo.downloads[key]!};
         } else {
-            throw Error(`Unsupported platform ${platform}`);
+            throw Error(`No Obsidian installer for ${installerVersion} ${platform}-${arch}`);
         }
-        if (!downloader) {
-            throw Error(`No Obsidian installer download available for v${installerVersion} ${platform} ${arch}`);
+    }
+
+    /**
+     * Downloads the Obsidian installer for the given version and platform/arch (defaults to host platform/arch).
+     * Returns the file path.
+     * @param installerVersion Obsidian installer version to download
+     * @param platform Platform/os of the installer to download (defaults to host platform)
+     * @param arch Architecture of the installer to download (defaults to host architecture)
+     */
+    async downloadInstaller(
+        installerVersion: string, platform?: NodeJS.Platform, arch?: NodeJS.Architecture,
+    ): Promise<string> {
+        platform = platform ?? process.platform;
+        arch = arch ?? process.arch;
+        const versionInfo = await this.getVersionInfo(installerVersion);
+        installerVersion = versionInfo.version;
+        const installerInfo = await this.getInstallerInfo(installerVersion, platform, arch);
+        const cacheDir = path.join(this.cacheDir, `obsidian-installer/${platform}-${arch}/Obsidian-${installerVersion}`);
+
+        let binaryPath: string;
+        let extractor: (installer: string, dest: string) => Promise<void>;
+
+        if (platform == "linux") {
+            binaryPath = path.join(cacheDir, "obsidian");
+            extractor = (installer, dest) => extractObsidianAppImage(installer, dest);
+        } else if (platform == "win32") {
+            binaryPath = path.join(cacheDir, "Obsidian.exe")
+            extractor = (installer, dest) => extractObsidianExe(installer, arch, dest);
+        } else if (platform == "darwin") {
+            binaryPath = path.join(cacheDir, "Contents/MacOS/Obsidian");
+            extractor = (installer, dest) => extractObsidianDmg(installer, dest);
+        } else {
+            throw Error(`Unsupported platform ${platform}`); // shouldn't happen
         }
 
-        if (!(await fileExists(installerPath))) {
+        if (!(await fileExists(binaryPath))) {
             console.log(`Downloading Obsidian installer v${installerVersion}...`)
-            await fsAsync.mkdir(path.dirname(cacheDir), { recursive: true });
-            await withTmpDir(cacheDir, downloader);
+            await atomicCreate(cacheDir, async (tmpDir) => {
+                const installer = path.join(tmpDir, "installer");
+                await downloadResponse(await fetch(installerInfo.url), installer);
+                const extracted = path.join(tmpDir, "extracted");
+                await extractor(installer, extracted);
+                return extracted;
+            });
         }
 
-        return installerPath;
+        return binaryPath;
     }
 
     /**
@@ -323,24 +346,22 @@ export class ObsidianLauncher {
      * @param appVersion Obsidian version to download
      */
     async downloadApp(appVersion: string): Promise<string> {
-        const appVersionInfo = await this.getVersionInfo(appVersion);
-        const appUrl = appVersionInfo.downloads.asar;
+        const versionInfo = await this.getVersionInfo(appVersion);
+        const appUrl = versionInfo.downloads.asar;
         if (!appUrl) {
             throw Error(`No asar found for Obsidian version ${appVersion}`);
         }
-        const appPath = path.join(this.cacheDir, 'obsidian-app', `obsidian-${appVersionInfo.version}.asar`);
+        const appPath = path.join(this.cacheDir, 'obsidian-app', `obsidian-${versionInfo.version}.asar`);
 
         if (!(await fileExists(appPath))) {
-            console.log(`Downloading Obsidian app v${appVersion} ...`)
-            await fsAsync.mkdir(path.dirname(appPath), { recursive: true });
-
-            await withTmpDir(appPath, async (tmpDir) => {
+            console.log(`Downloading Obsidian app v${versionInfo.version} ...`)
+            await atomicCreate(appPath, async (tmpDir) => {
                 const isInsidersBuild = new URL(appUrl).hostname.endsWith('.obsidian.md');
                 const response = isInsidersBuild ? await fetchObsidianAPI(appUrl) : await fetch(appUrl);
                 const archive = path.join(tmpDir, 'app.asar.gz');
                 const asar = path.join(tmpDir, 'app.asar')
                 await downloadResponse(response, archive);
-                await pipeline(fs.createReadStream(archive), zlib.createGunzip(), fs.createWriteStream(asar));
+                await extractGz(archive, asar);
                 return asar;
             })
         }
@@ -366,29 +387,52 @@ export class ObsidianLauncher {
             throw Error(`${installerVersion} is not an Obsidian installer version.`)
         }
 
-        const chromedriverZipPath = await downloadArtifact({
-            version: electronVersion,
-            artifactName: 'chromedriver',
-            cacheRoot: path.join(this.cacheDir, "chromedriver-legacy"),
-            unsafelyDisableChecksums: true, // the checksums are slow and run even on cache hit.
-        });
-
-        let chromedriverPath: string
+        const {platform, arch} = process;
+        const cacheDir = path.join(this.cacheDir, `electron-chromedriver/${platform}-${arch}/${electronVersion}`);
+        let chromedriverPath: string;
         if (process.platform == "win32") {
-            chromedriverPath = path.join(path.dirname(chromedriverZipPath), "chromedriver.exe");
+            chromedriverPath = path.join(cacheDir, `chromedriver.exe`);
         } else {
-            chromedriverPath = path.join(path.dirname(chromedriverZipPath), "chromedriver");
+            chromedriverPath = path.join(cacheDir, `chromedriver`);
         }
 
         if (!(await fileExists(chromedriverPath))) {
-            console.log(`Downloading legacy chromedriver for electron ${electronVersion} ...`)
-            await withTmpDir(chromedriverPath, async (tmpDir) => {
-                await extractZip(chromedriverZipPath, { dir: tmpDir });
-                return path.join(tmpDir, path.basename(chromedriverPath));
+            console.log(`Downloading chromedriver for electron ${electronVersion} ...`);
+            await atomicCreate(cacheDir, async (tmpDir) => {
+                const chromedriverZipPath = await downloadArtifact({
+                    version: electronVersion,
+                    artifactName: 'chromedriver',
+                    cacheRoot: path.join(tmpDir, 'download'),
+                });
+                const extracted = path.join(tmpDir, "extracted");
+                await extractZip(chromedriverZipPath, { dir: extracted });
+                return extracted;
+            })
+        }
+        return chromedriverPath;
+    }
+
+    /**
+     * Downloads the Obsidian apk.
+     */
+    async downloadAndroid(version: string): Promise<string> {
+        const versionInfo = await this.getVersionInfo(version);
+        const apkUrl = versionInfo.downloads.apk;
+        if (!apkUrl) {
+            throw Error(`No apk found for Obsidian version ${version}`);
+        }
+        const apkPath = path.join(this.cacheDir, 'obsidian-apk', `obsidian-${versionInfo.version}.apk`);
+
+        if (!(await fileExists(apkPath))) {
+            console.log(`Downloading Obsidian apk v${versionInfo.version} ...`)
+            await atomicCreate(apkPath, async (tmpDir) => {
+                const dest = path.join(tmpDir, 'obsidian.apk')
+                await downloadResponse(await fetch(apkUrl), dest);
+                return dest;
             })
         }
 
-        return chromedriverPath;
+        return apkPath;
     }
 
     /** Gets the latest version of a plugin. */
@@ -418,8 +462,7 @@ export class ObsidianLauncher {
 
         const pluginDir = path.join(this.cacheDir, "obsidian-plugins", repo, version);
         if (!(await fileExists(pluginDir))) {
-            await fsAsync.mkdir(path.dirname(pluginDir), { recursive: true });
-            await withTmpDir(pluginDir, async (tmpDir) => {
+            await atomicCreate(pluginDir, async (tmpDir) => {
                 const assetsToDownload = {'manifest.json': true, 'main.js': true, 'styles.css': false};
                 await Promise.all(
                     Object.entries(assetsToDownload).map(async ([file, required]) => {
@@ -455,8 +498,8 @@ export class ObsidianLauncher {
     }
 
     /**
-     * Downloads a list of plugins to the cache and returns a list of `DownloadedPluginEntry` with the downloaded paths.
-     * Also adds the `id` property to the plugins based on the manifest.
+     * Downloads a list of plugins to the cache and returns a list of {@link DownloadedPluginEntry} with the downloaded
+     * paths. Also adds the `id` property to the plugins based on the manifest.
      * 
      * You can download plugins from GitHub using `{repo: "org/repo"}` and community plugins using `{id: 'plugin-id'}`.
      * Local plugins will just be passed through.
@@ -536,8 +579,7 @@ export class ObsidianLauncher {
         const themeDir = path.join(this.cacheDir, "obsidian-themes", repo, version);
 
         if (!(await fileExists(themeDir))) {
-            await fsAsync.mkdir(path.dirname(themeDir), { recursive: true });
-            await withTmpDir(themeDir, async (tmpDir) => {
+            await atomicCreate(themeDir, async (tmpDir) => {
                 const assetsToDownload = ['manifest.json', 'theme.css'];
                 await Promise.all(
                     assetsToDownload.map(async (file) => {
@@ -572,8 +614,8 @@ export class ObsidianLauncher {
     }
 
     /**
-     * Downloads a list of themes to the cache and returns a list of `DownloadedThemeEntry` with the downloaded paths.
-     * Also adds the `name` property to the plugins based on the manifest.
+     * Downloads a list of themes to the cache and returns a list of {@link DownloadedThemeEntry} with the downloaded
+     * paths. Also adds the `name` property to the plugins based on the manifest.
      * 
      * You can download themes from GitHub using `{repo: "org/repo"}` and community themes using `{name: 'theme-name'}`.
      * Local themes will just be passed through.
@@ -748,34 +790,40 @@ export class ObsidianLauncher {
      * @param params.appVersion Obsidian app version
      * @param params.installerVersion Obsidian version string.
      * @param params.appPath Path to the asar file to install. Will download if omitted.
-     * @param params.vault Path to the vault to open in Obsidian.
-     * @param params.dest Destination path for the config dir. If omitted it will create a temporary directory.
+     * @param params.vault Path to the vault to open in Obsidian
+     * @param params.localStorage items to add to localStorage. `$vaultId` in the keys will be replaced with the vaultId
+     * @param params.chromePreferences Chrome preferences to add to the Preferences file
      */
     async setupConfigDir(params: {
         appVersion: string, installerVersion: string,
         appPath?: string,
         vault?: string,
-        dest?: string,
+        localStorage?: Record<string, string>,
+        chromePreferences?: Record<string, any>,
     }): Promise<string> {
         const [appVersion, installerVersion] = await this.resolveVersions(params.appVersion, params.installerVersion);
-        // configDir will be passed to --user-data-dir, so Obsidian is somewhat sandboxed. We set up "obsidian.json" so
-        // that Obsidian opens the vault by default and doesn't check for updates.
-        const configDir = params.dest ?? await makeTmpDir('obs-launcher-config-');
+        const configDir = await makeTmpDir('obsidian-launcher-config-');
+        const vaultId = crypto.randomBytes(8).toString("hex");
     
-        let obsidianJson: any = {
-            updateDisabled: true, // Prevents Obsidian trying to auto-update on boot.
-        }
-        let localStorageData: Record<string, string> = {
+        const localStorageData: Record<string, string> = {
             "most-recently-installed-version": appVersion, // prevents the changelog page on boot
+            [`enable-plugin-${vaultId}`]: "true", // Disable "safe mode" and enable plugins
+            ..._.mapKeys(params.localStorage ?? {}, (v, k) => k.replace('$vaultId', vaultId ?? '')),
+        }
+        const chromePreferences = _.merge(
+            // disables the "allow pasting" bit in the dev tools console
+            {"electron": {"devtools": {"preferences": {"disable-self-xss-warning": "true"}}}},
+            params.chromePreferences ?? {},
+        )
+        const obsidianJson: any = {
+            updateDisabled: true, // prevents Obsidian trying to auto-update on boot.
         }
 
         if (params.vault !== undefined) {
             if (!await fileExists(params.vault)) {
                 throw Error(`Vault path ${params.vault} doesn't exist.`)
             }
-            const vaultId = crypto.randomBytes(8).toString("hex");
-            obsidianJson = {
-                ...obsidianJson,
+            Object.assign(obsidianJson, {
                 vaults: {
                     [vaultId]: {
                         path: path.resolve(params.vault),
@@ -783,14 +831,11 @@ export class ObsidianLauncher {
                         open: true,
                     },
                 },
-            };
-            localStorageData = {
-                ...localStorageData,
-                [`enable-plugin-${vaultId}`]: "true", // Disable "safe mode" and enable plugins
-            }
+            });
         }
 
         await fsAsync.writeFile(path.join(configDir, 'obsidian.json'), JSON.stringify(obsidianJson));
+        await fsAsync.writeFile(path.join(configDir, 'Preferences'), JSON.stringify(chromePreferences));
 
         let appPath = params.appPath;
         if (!appPath) {
@@ -835,8 +880,6 @@ export class ObsidianLauncher {
      * Downloads and launches Obsidian with a sandboxed config dir and a specifc vault open. Optionally install plugins
      * and themes first.
      * 
-     * This is just a shortcut for calling `downloadApp`, `downloadInstaller`, `setupVault` and `setupConfDir`.
-     *
      * @param params.appVersion Obsidian app version. Default "latest"
      * @param params.installerVersion Obsidian installer version. Default "latest"
      * @param params.vault Path to the vault to open in Obsidian
@@ -844,6 +887,7 @@ export class ObsidianLauncher {
      * @param params.plugins List of plugins to install in the vault
      * @param params.themes List of themes to install in the vault
      * @param params.args CLI args to pass to Obsidian
+     * @param params.localStorage items to add to localStorage. `$vaultId` in the keys will be replaced with the vaultId
      * @param params.spawnOptions Options to pass to `spawn`
      * @returns The launched child process and the created tmpdirs
      */
@@ -853,6 +897,7 @@ export class ObsidianLauncher {
         vault?: string,
         plugins?: PluginEntry[], themes?: ThemeEntry[],
         args?: string[],
+        localStorage?: Record<string, string>,
         spawnOptions?: child_process.SpawnOptions,
     }): Promise<{proc: child_process.ChildProcess, configDir: string, vault?: string}> {
         const [appVersion, installerVersion] = await this.resolveVersions(
@@ -871,12 +916,15 @@ export class ObsidianLauncher {
             })
         }
 
-        const configDir = await this.setupConfigDir({ appVersion, installerVersion, appPath, vault });
+        const configDir = await this.setupConfigDir({
+            appVersion, installerVersion, appPath, vault,
+            localStorage: params.localStorage,
+        });
 
         // Spawn child.
         const proc = child_process.spawn(installerPath, [
             `--user-data-dir=${configDir}`,
-            // Workaround for SUID issue on AppImages. See https://github.com/electron/electron/issues/42510
+            // Workaround for SUID issue on linux. See https://github.com/electron/electron/issues/42510
             ...(process.platform == 'linux' ? ["--no-sandbox"] : []),
             ...(params.args ?? []),
         ], {
@@ -887,92 +935,89 @@ export class ObsidianLauncher {
     }
 
     /** 
-     * Updates the info obsidian-versions.json. The obsidian-versions.json file is used in other launcher commands
+     * Updates the info in obsidian-versions.json. The obsidian-versions.json file is used in other launcher commands
      * and in wdio-obsidian-service to get metadata about Obsidian versions in one place such as minInstallerVersion and
-     * the internal electron version.
+     * the internal Electron version.
      */
-    async updateObsidianVersionInfos(
-        original?: ObsidianVersionInfos, { maxInstances = 1 } = {},
-    ): Promise<ObsidianVersionInfos> {
+    async updateObsidianVersionList(
+        original?: ObsidianVersionList, { maxInstances = 1 } = {},
+    ): Promise<ObsidianVersionList> {
         const repo = 'obsidianmd/obsidian-releases';
+        const originalVersions = _.keyBy(original?.versions ?? [], v => v.version);
+        const versions: _.Dictionary<DeepPartial<ObsidianVersionInfo>> = _.cloneDeep(originalVersions);
 
+        // Extract info from desktop-releases.json
         let commitHistory = await fetchGitHubAPIPaginated(`repos/${repo}/commits`, {
             path: "desktop-releases.json",
-            since: original?.metadata.commitDate,
+            since: original?.metadata?.commitDate,
         });
         commitHistory.reverse();
-        if (original) {
+        if (original?.metadata?.commitSha) {
             commitHistory = _.takeRightWhile(commitHistory, c => c.sha != original.metadata.commitSha);
         }
-    
-        const fileHistory: any[] = await pool(8, commitHistory, commit =>
+        const fileHistory: any[] = await pool(maxInstances, commitHistory, commit =>
             fetch(`https://raw.githubusercontent.com/${repo}/${commit.sha}/desktop-releases.json`).then(r => r.json())
         );
     
-        const githubReleases = await fetchGitHubAPIPaginated(`repos/${repo}/releases`);
-    
-        const versionMap: _.Dictionary<Partial<ObsidianVersionInfo>> = _.keyBy(
-            original?.versions ?? [],
-            v => v.version,
-        );
-    
-        for (const {beta, ...current} of fileHistory) {
-            if (beta && (!versionMap[beta.latestVersion] || versionMap[beta.latestVersion].isBeta)) {
-                versionMap[beta.latestVersion] = _.merge({}, versionMap[beta.latestVersion],
-                    parseObsidianDesktopRelease(beta, true),
-                );
+        for (const fileVersion of fileHistory) {
+            const {current, beta} = parseObsidianDesktopRelease(fileVersion);
+            if (beta) {
+                versions[beta.version!] = _.merge(versions[beta.version!] ?? {}, beta);
             }
-            versionMap[current.latestVersion] = _.merge({}, versionMap[current.latestVersion],
-                parseObsidianDesktopRelease(current, false),
-            )
+            versions[current.version!] = _.merge(versions[current.version!] ?? {}, current);
         }
-    
+
+        // Extract info from github releases
+        const githubReleases = (await fetchGitHubAPIPaginated(`repos/${repo}/releases`)).reverse();
         for (const release of githubReleases) {
-            if (versionMap.hasOwnProperty(release.name)) {
-                versionMap[release.name] = _.merge({}, versionMap[release.name], parseObsidianGithubRelease(release));
+            if (semver.valid(release.name)) { // Skip some special "preleases"
+                const parsed = parseObsidianGithubRelease(release);
+                versions[parsed.version!] = _.merge(versions[parsed.version!] ?? {}, parsed);
             }
         }
-    
-        const dependencyVersions = await pool(maxInstances,
-            Object.values(versionMap).filter(v => v.downloads?.appImage && !v.chromeVersion),
-            async (v) => {
-                const binaryPath = await this.downloadInstallerFromVersionInfo(v as ObsidianVersionInfo);
-                const electronVersionInfo = await getElectronVersionInfo(v.version!, binaryPath);
-                return {...v, ...electronVersionInfo};
-            },
-        )
-        for (const deps of dependencyVersions) {
-            versionMap[deps.version!] = _.merge({}, versionMap[deps.version!], deps);
+
+        // Extract info from installers
+        const installerKeys = ["appImage", "appImageArm", "tar", "tarArm", "dmg", "exe"] as const;
+        const newInstallers = Object.values(versions)
+            .flatMap(v => installerKeys.map(k => [v, k] as const))
+        const installerInfos = await pool(maxInstances, newInstallers, async ([v, key]) => {
+            let installerInfo: Partial<ObsidianInstallerInfo>|undefined;
+            const hasAsset = !!v.downloads?.[key];
+            const alreadyExtracted = !!v.installerInfo?.[key]?.chrome;
+            // Digest can be null if assets were uploaded before GitHub added the digest feature in June 2025
+            const changed = v.installerInfo?.[key]?.digest != originalVersions[v.version!]?.installerInfo[key]?.digest;
+            if (hasAsset && (!alreadyExtracted || changed)) {
+                installerInfo = await getInstallerInfo(key, v.downloads![key]!);
+            }
+            return {version: v.version, installerInfo: {[key]: installerInfo}} as DeepPartial<ObsidianVersionInfo>;
+        });
+        for (const installerInfo of installerInfos) {
+            versions[installerInfo.version!] = _.merge(versions[installerInfo.version!] ?? {}, installerInfo);
         }
-    
-        // populate minInstallerVersion and maxInstallerVersion and add corrections
+
+        // populate minInstallerVersion and maxInstallerVersion
         let minInstallerVersion: string|undefined = undefined;
         let maxInstallerVersion: string|undefined = undefined;
-        for (const version of Object.keys(versionMap).sort(semver.compare)) {
-            // older versions have 0.0.0 as there min version, which doesn't exist anywhere we can download.
+        for (const version of Object.keys(versions).sort(semver.compare)) {
+            // older versions have 0.0.0 as their min version, which doesn't exist anywhere we can download.
             // we'll set those to the first available installer version.
-            if (!minInstallerVersion && versionMap[version].chromeVersion) {
+            if (!minInstallerVersion && versions[version].downloads!.appImage) {
                 minInstallerVersion = version;
             }
-            if (versionMap[version].downloads!.appImage) {
+            if (versions[version].downloads!.appImage) {
                 maxInstallerVersion = version;
             }
-            versionMap[version] = mergeKeepUndefined({}, versionMap[version],
-                {
-                    minInstallerVersion: versionMap[version].minInstallerVersion ?? minInstallerVersion,
-                    maxInstallerVersion: maxInstallerVersion,
-                },
-                correctObsidianVersionInfo(versionMap[version]),
-            );
+            versions[version] = _.merge({ minInstallerVersion, maxInstallerVersion }, versions[version]);
         }
     
-        const result: ObsidianVersionInfos = {
+        const result: ObsidianVersionList = {
             metadata: {
+                schemaVersion: obsidianVersionsSchemaVersion,
                 commitDate: commitHistory.at(-1)?.commit.committer.date ?? original?.metadata.commitDate,
                 commitSha: commitHistory.at(-1)?.sha ?? original?.metadata.commitSha,
                 timestamp: original?.metadata.timestamp ?? "", // set down below
             },
-            versions: Object.values(versionMap)
+            versions: Object.values(versions)
                 .map(normalizeObsidianVersionInfo)
                 .sort((a, b) => semver.compare(a.version, b.version)),
         }

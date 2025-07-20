@@ -1,6 +1,12 @@
 /**
  * @module
  * @document ../README.md
+ * @categoryDescription Options
+ * Capability and service options.
+ * @categoryDescription WDIO Helpers
+ * Helpers for use in wdio.conf.mts, or for launching WDIO in standalone mode.
+ * @categoryDescription Utilities
+ * Browser commands and helper functions for writing tests.
  */
 import ObsidianLauncher from "obsidian-launcher";
 import { ObsidianLauncherService, ObsidianWorkerService } from "./service.js";
@@ -12,15 +18,17 @@ export const launcher = ObsidianLauncherService;
 export type { ObsidianCapabilityOptions, ObsidianServiceOptions } from "./types.js";
 export type { ObsidianBrowserCommands, ExecuteObsidianArg, InstalledPlugins } from "./browserCommands.js";
 export { default as obsidianPage } from "./pageobjects/obsidianPage.js";
-export type { ObsidianPage } from "./pageobjects/obsidianPage.js";
-export type { PluginEntry, DownloadedPluginEntry, ThemeEntry, DownloadedThemeEntry } from "obsidian-launcher";
+export type { ObsidianPage, Platform } from "./pageobjects/obsidianPage.js";
+export type { PluginEntry, ThemeEntry } from "obsidian-launcher";
 
 export { minSupportedObsidianVersion } from "./service.js";
+export { startWdioSession } from "./standalone.js";
 
-// Some convenience helpers for use in wdio.conf.(m)ts
+// Some convenience helpers for use in wdio.conf.mts
 
 /**
  * Returns true if there is a current Obsidian beta and we have the credentials to download it, or its already in cache.
+ * @category WDIO Helpers
  * @param cacheDir Obsidian cache dir, defaults to `.obsidian-cache`.
  */
 export async function obsidianBetaAvailable(cacheDir?: string) {
@@ -31,6 +39,7 @@ export async function obsidianBetaAvailable(cacheDir?: string) {
 
 /**
  * Resolves Obsidian app and installer version strings to absolute versions.
+ * @category WDIO Helpers
  * @param appVersion Obsidian version string or one of 
  *   - "latest": Get the current latest non-beta Obsidian version
  *   - "latest-beta": Get the current latest beta Obsidian version (or latest is there is no current beta)
