@@ -363,8 +363,10 @@ class ObsidianPage extends BasePage {
                 const result: [string, CurrFileInfo][] = [];
                 const { folders, files } = await app.vault.adapter.list(path);
                 for (const folder of folders) {
-                    result.push([folder, {type: "folder"}]);
-                    result.push(...await listRecursive(folder));
+                    if (!folder.startsWith(configDir + "/")) {
+                        result.push([folder, {type: "folder"}]);
+                        result.push(...await listRecursive(folder));
+                    }
                 }
                 for (const file of files) {
                     if (!file.startsWith(configDir + "/")) {

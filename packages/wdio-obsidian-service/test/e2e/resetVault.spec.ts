@@ -7,7 +7,7 @@ import path from "path"
 
 
 describe("resetVault", function() {
-    async function getAllFiles(opts: {content?: boolean, mtime?: boolean}) {
+    async function getAllFiles(opts: {content?: boolean, mtime?: boolean, config?: boolean}) {
         type FileInfo = {content?: string, mtime?: number}
         return await browser.executeObsidian(async ({ app }, opts) => {
             async function listRecursive(path: string): Promise<Record<string, FileInfo>> {
@@ -17,7 +17,7 @@ describe("resetVault", function() {
                     Object.assign(result, await listRecursive(folder));
                 }
                 for (const file of files) {
-                    if (!file.startsWith(".obsidian/")) {
+                    if (opts.config || !file.startsWith(".obsidian/")) {
                         const fileInfo: FileInfo = {};
                         if (opts.content) {
                             fileInfo.content = (await app.vault.adapter.read(file)).replace(/\r\n/g, '\n');
@@ -41,11 +41,16 @@ describe("resetVault", function() {
 
     it("no change", async () => {
         await browser.reloadObsidian({ vault: "./test/vaults/basic" });
-        const filesBefore = await getAllFiles({content: true, mtime: true});
-        expect(Object.keys(filesBefore).sort()).toEqual(["Goodbye.md", "Welcome.md"]);
+        await browser.pause(2000); // make sure Obsidian has written out it's config files
+        const allFilesBefore = await getAllFiles({content: true, config: true});
+        const vaultFilesBefore = await getAllFiles({content: true, mtime: true});
+        expect(Object.keys(vaultFilesBefore).sort()).toEqual(["Goodbye.md", "Welcome.md"]);
         await obsidianPage.resetVault();
-        const filesAfter = await getAllFiles({content: true, mtime: true});
-        expect(filesBefore).toEqual(filesAfter); // should not change files that don't need to be changed
+        const allFilesAfter = await getAllFiles({content: true, config: true});
+        const vaultFilesAfter = await getAllFiles({content: true, mtime: true});
+        expect(vaultFilesAfter).toEqual(vaultFilesBefore); // should not update files that don't need to be changed
+        // should not mess with the config
+        expect(allFilesAfter).toEqual(allFilesBefore);
     })
 
     it("update file", async () => {
