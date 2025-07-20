@@ -370,8 +370,11 @@ class ObsidianPage extends BasePage {
                 }
                 for (const file of files) {
                     if (!file.startsWith(configDir + "/")) {
-                        const content = await app.vault.adapter.readBinary(file);
-                        result.push([file, { type: "file", hash: await hash(content) }]);
+                        let fileHash = (app.metadataCache as any).getFileInfo(file)?.hash;
+                        if (!fileHash) { // hidden files etc. aren't in Obsidian's metadata cache
+                            fileHash = await hash(await app.vault.adapter.readBinary(file));
+                        }
+                        result.push([file, { type: "file", hash: fileHash }]);
                     }
                 }
                 return result;
