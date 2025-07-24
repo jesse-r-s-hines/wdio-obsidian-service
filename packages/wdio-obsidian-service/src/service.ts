@@ -276,10 +276,6 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
      * Setup custom browser commands.
      */
     async before(capabilities: WebdriverIO.Capabilities, specs: never, browser: WebdriverIO.Browser) {
-        // There's a slow event listener link on the browser "command" event when you reloadSession that causes some
-        // warnings. This will silence them. TODO: Make issue or PR to wdio to fix this.
-        browser.setMaxListeners(1000);
-
         if (!capabilities[OBSIDIAN_CAPABILITY_KEY]) return;
 
         const service = this; // eslint-disable-line @typescript-eslint/no-this-alias
