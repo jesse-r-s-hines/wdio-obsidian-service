@@ -232,7 +232,7 @@ You can also test on the real mobile app using [Appium](https://appium.io) and [
 
 To set this up, install Appium and the Appium Android driver:
 ```bash
-npm install --save-dev appium appium-uiautomator2-driver
+npm install --save-dev appium appium-uiautomator2-driver @wdio/appium-service
 ```
 
 Then follow these instructions: [Appium - Set up Android automation requirements](https://appium.io/docs/en/2.19/quickstart/uiauto2-driver/#set-up-android-automation-requirements)
@@ -286,7 +286,7 @@ wdio run ./wdio.mobile.conf.mts
 
 This will spin up the Android Virtual Device, install Obsidian in it, and run your tests on it.
 
-See also: [WDIO Appium](https://webdriver.io/docs/appium/), [Appium Capability Options](https://appium.github.io/appium.io/docs/en/writing-running-appium/caps), [Appium Android Driver Capability Options](https://github.com/appium/appium-uiautomator2-driver?tab=readme-ov-file#capabilities)
+See also: The [sample plugin](https://github.com/jesse-r-s-hines/wdio-obsidian-service-sample-plugin) for an example `wdio.mobile.conf.mts` file, [Appium](https://appium.github.io/appium.io/docs/en/writing-running-appium/caps) and [Appium UiAutomator2](https://github.com/appium/appium-uiautomator2-driver?tab=readme-ov-file#capabilities) for more capability options you can use
 
 ## Test Frameworks
 
