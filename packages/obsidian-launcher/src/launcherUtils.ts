@@ -152,9 +152,9 @@ export function parseObsidianDesktopRelease(fileRelease: any): ParsedDesktopRele
 
 export function parseObsidianGithubRelease(gitHubRelease: any): DeepPartial<ObsidianVersionInfo> {
     const version = gitHubRelease.name;
-    let assets: {url: string, digest?: string}[] = gitHubRelease.assets.map((a: any) => ({
+    let assets: {url: string, digest: string}[] = gitHubRelease.assets.map((a: any) => ({
         url: a.browser_download_url,
-        digest: a.digest ?? undefined,
+        digest: a.digest ?? `id:${a.id}`,
     }));
     assets = assets.filter(a => !BROKEN_ASSETS.includes(a.url));
 
@@ -181,12 +181,12 @@ export function parseObsidianGithubRelease(gitHubRelease: any): DeepPartial<Obsi
             apk: apk?.url,
         },
         installerInfo: {
-            appImage: appImage?.digest ? {digest: appImage.digest} : undefined,
-            appImageArm: appImageArm?.digest ? {digest: appImageArm.digest} : undefined,
-            tar: tar?.digest ? {digest: tar.digest} : undefined,
-            tarArm: tarArm?.digest ? {digest: tarArm.digest} : undefined,
-            dmg: dmg?.digest ? {digest: dmg.digest} : undefined,
-            exe: exe?.digest ? {digest: exe.digest} : undefined,
+            appImage: appImage ? {digest: appImage.digest} : undefined,
+            appImageArm: appImageArm ? {digest: appImageArm.digest} : undefined,
+            tar: tar ? {digest: tar.digest} : undefined,
+            tarArm: tarArm ? {digest: tarArm.digest} : undefined,
+            dmg: dmg ? {digest: dmg.digest} : undefined,
+            exe: exe ? {digest: exe.digest} : undefined,
         },
     }
 }

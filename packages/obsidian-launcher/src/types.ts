@@ -19,7 +19,12 @@ export type ObsidianVersionList = {
  * @category Types
  */
 export type ObsidianInstallerInfo = {
-    digest?: string,
+    /**
+     * Hash of the file content.
+     * For releases from before GitHub started storing digests, this will be set to file "id" which also changes if the
+     * file is updated.
+     */
+    digest: string,
     /** Electron version */
     electron: string,
     /** Chrome version */

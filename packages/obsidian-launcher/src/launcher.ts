@@ -984,7 +984,6 @@ export class ObsidianLauncher {
             let installerInfo: Partial<ObsidianInstallerInfo>|undefined;
             const hasAsset = !!v.downloads?.[key];
             const alreadyExtracted = !!v.installerInfo?.[key]?.chrome;
-            // Digest can be null if assets were uploaded before GitHub added the digest feature in June 2025
             const changed = v.installerInfo?.[key]?.digest != originalVersions[v.version!]?.installerInfo[key]?.digest;
             if (hasAsset && (!alreadyExtracted || changed)) {
                 installerInfo = await getInstallerInfo(key, v.downloads![key]!);

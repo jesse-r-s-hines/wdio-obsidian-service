@@ -3,7 +3,7 @@
         "schemaVersion": "2.0.0",
         "commitDate": "2025-07-18T20:51:26Z",
         "commitSha": "c25f251d7bcc0430a96761b4819e1bfb2a4467d5",
-        "timestamp": "2025-07-19T14:31:24.258Z"
+        "timestamp": "2025-07-27T16:23:49.008Z"
     },
     "versions": [
         {
@@ -92,6 +92,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:21091143",
                     "electron": "8.2.5",
                     "chrome": "80.0.3987.165",
                     "platforms": [
@@ -99,6 +100,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:21091154",
                     "electron": "8.2.5",
                     "chrome": "80.0.3987.165",
                     "platforms": [
@@ -107,6 +109,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:21091127",
                     "electron": "8.2.5",
                     "chrome": "80.0.3987.165",
                     "platforms": [
@@ -131,6 +134,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:21233542",
                     "electron": "8.2.5",
                     "chrome": "80.0.3987.165",
                     "platforms": [
@@ -138,6 +142,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:21233571",
                     "electron": "8.2.5",
                     "chrome": "80.0.3987.165",
                     "platforms": [
@@ -146,6 +151,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:21233508",
                     "electron": "8.2.5",
                     "chrome": "80.0.3987.165",
                     "platforms": [
@@ -181,6 +187,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:21379266",
                     "electron": "8.2.5",
                     "chrome": "80.0.3987.165",
                     "platforms": [
@@ -188,6 +195,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:21379302",
                     "electron": "8.2.5",
                     "chrome": "80.0.3987.165",
                     "platforms": [
@@ -196,6 +204,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:21379227",
                     "electron": "8.2.5",
                     "chrome": "80.0.3987.165",
                     "platforms": [
@@ -253,6 +262,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:21744262",
                     "electron": "8.2.5",
                     "chrome": "80.0.3987.165",
                     "platforms": [
@@ -260,6 +270,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:21744265",
                     "electron": "8.2.5",
                     "chrome": "80.0.3987.165",
                     "platforms": [
@@ -268,6 +279,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:21744217",
                     "electron": "8.2.5",
                     "chrome": "80.0.3987.165",
                     "platforms": [
@@ -292,6 +304,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:22385520",
                     "electron": "8.2.5",
                     "chrome": "80.0.3987.165",
                     "platforms": [
@@ -299,6 +312,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:22385549",
                     "electron": "8.2.5",
                     "chrome": "80.0.3987.165",
                     "platforms": [
@@ -307,6 +321,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:22385579",
                     "electron": "8.2.5",
                     "chrome": "80.0.3987.165",
                     "platforms": [
@@ -342,6 +357,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:22664166",
                     "electron": "8.2.5",
                     "chrome": "80.0.3987.165",
                     "platforms": [
@@ -349,6 +365,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:22664207",
                     "electron": "8.2.5",
                     "chrome": "80.0.3987.165",
                     "platforms": [
@@ -357,6 +374,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:22664189",
                     "electron": "8.2.5",
                     "chrome": "80.0.3987.165",
                     "platforms": [
@@ -381,6 +399,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:23048879",
                     "electron": "8.2.5",
                     "chrome": "80.0.3987.165",
                     "platforms": [
@@ -388,6 +407,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:23048893",
                     "electron": "8.2.5",
                     "chrome": "80.0.3987.165",
                     "platforms": [
@@ -396,6 +416,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:23048907",
                     "electron": "8.2.5",
                     "chrome": "80.0.3987.165",
                     "platforms": [
@@ -420,6 +441,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:23423302",
                     "electron": "8.2.5",
                     "chrome": "80.0.3987.165",
                     "platforms": [
@@ -427,6 +449,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:23424024",
                     "electron": "8.2.5",
                     "chrome": "80.0.3987.165",
                     "platforms": [
@@ -435,6 +458,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:23423394",
                     "electron": "8.2.5",
                     "chrome": "80.0.3987.165",
                     "platforms": [
@@ -459,6 +483,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:23772562",
                     "electron": "8.2.5",
                     "chrome": "80.0.3987.165",
                     "platforms": [
@@ -466,6 +491,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:23772661",
                     "electron": "8.2.5",
                     "chrome": "80.0.3987.165",
                     "platforms": [
@@ -474,6 +500,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:23772487",
                     "electron": "8.2.5",
                     "chrome": "80.0.3987.165",
                     "platforms": [
@@ -509,6 +536,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:24090019",
                     "electron": "8.2.5",
                     "chrome": "80.0.3987.165",
                     "platforms": [
@@ -516,6 +544,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:24091433",
                     "electron": "8.2.5",
                     "chrome": "80.0.3987.165",
                     "platforms": [
@@ -524,6 +553,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:24089956",
                     "electron": "8.2.5",
                     "chrome": "80.0.3987.165",
                     "platforms": [
@@ -592,6 +622,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:24575946",
                     "electron": "8.2.5",
                     "chrome": "80.0.3987.165",
                     "platforms": [
@@ -599,6 +630,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:24575992",
                     "electron": "8.2.5",
                     "chrome": "80.0.3987.165",
                     "platforms": [
@@ -607,6 +639,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:24576046",
                     "electron": "8.2.5",
                     "chrome": "80.0.3987.165",
                     "platforms": [
@@ -653,6 +686,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:25112073",
                     "electron": "10.1.1",
                     "chrome": "85.0.4183.93",
                     "platforms": [
@@ -660,6 +694,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:25112113",
                     "electron": "10.1.1",
                     "chrome": "85.0.4183.93",
                     "platforms": [
@@ -668,6 +703,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:25112145",
                     "electron": "10.1.1",
                     "chrome": "85.0.4183.93",
                     "platforms": [
@@ -703,6 +739,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:25625457",
                     "electron": "10.1.1",
                     "chrome": "85.0.4183.93",
                     "platforms": [
@@ -710,6 +747,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:25625506",
                     "electron": "10.1.1",
                     "chrome": "85.0.4183.93",
                     "platforms": [
@@ -718,6 +756,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:25625355",
                     "electron": "10.1.1",
                     "chrome": "85.0.4183.93",
                     "platforms": [
@@ -742,6 +781,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:25989919",
                     "electron": "10.1.1",
                     "chrome": "85.0.4183.93",
                     "platforms": [
@@ -749,6 +789,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:25990169",
                     "electron": "10.1.1",
                     "chrome": "85.0.4183.93",
                     "platforms": [
@@ -757,6 +798,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:25989878",
                     "electron": "10.1.1",
                     "chrome": "85.0.4183.93",
                     "platforms": [
@@ -793,6 +835,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:26297133",
                     "electron": "10.1.1",
                     "chrome": "85.0.4183.93",
                     "platforms": [
@@ -800,6 +843,7 @@
                     ]
                 },
                 "tar": {
+                    "digest": "id:26297168",
                     "electron": "10.1.1",
                     "chrome": "85.0.4183.93",
                     "platforms": [
@@ -807,6 +851,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:26297148",
                     "electron": "10.1.1",
                     "chrome": "85.0.4183.93",
                     "platforms": [
@@ -815,6 +860,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:26297183",
                     "electron": "10.1.1",
                     "chrome": "85.0.4183.93",
                     "platforms": [
@@ -840,6 +886,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:26576905",
                     "electron": "10.1.1",
                     "chrome": "85.0.4183.93",
                     "platforms": [
@@ -847,6 +894,7 @@
                     ]
                 },
                 "tar": {
+                    "digest": "id:26576928",
                     "electron": "10.1.1",
                     "chrome": "85.0.4183.93",
                     "platforms": [
@@ -854,6 +902,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:26577011",
                     "electron": "10.1.1",
                     "chrome": "85.0.4183.93",
                     "platforms": [
@@ -862,6 +911,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:26576841",
                     "electron": "10.1.1",
                     "chrome": "85.0.4183.93",
                     "platforms": [
@@ -887,6 +937,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:26849740",
                     "electron": "10.1.1",
                     "chrome": "85.0.4183.93",
                     "platforms": [
@@ -894,6 +945,7 @@
                     ]
                 },
                 "tar": {
+                    "digest": "id:26849774",
                     "electron": "10.1.1",
                     "chrome": "85.0.4183.93",
                     "platforms": [
@@ -901,6 +953,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:26849759",
                     "electron": "10.1.1",
                     "chrome": "85.0.4183.93",
                     "platforms": [
@@ -909,6 +962,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:26849713",
                     "electron": "10.1.1",
                     "chrome": "85.0.4183.93",
                     "platforms": [
@@ -934,6 +988,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:27178561",
                     "electron": "10.1.1",
                     "chrome": "85.0.4183.93",
                     "platforms": [
@@ -941,6 +996,7 @@
                     ]
                 },
                 "tar": {
+                    "digest": "id:27178648",
                     "electron": "10.1.1",
                     "chrome": "85.0.4183.93",
                     "platforms": [
@@ -948,6 +1004,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:27178607",
                     "electron": "10.1.1",
                     "chrome": "85.0.4183.93",
                     "platforms": [
@@ -956,6 +1013,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:27178699",
                     "electron": "10.1.1",
                     "chrome": "85.0.4183.93",
                     "platforms": [
@@ -992,6 +1050,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:27552501",
                     "electron": "10.1.1",
                     "chrome": "85.0.4183.93",
                     "platforms": [
@@ -999,6 +1058,7 @@
                     ]
                 },
                 "tar": {
+                    "digest": "id:27552616",
                     "electron": "10.1.1",
                     "chrome": "85.0.4183.93",
                     "platforms": [
@@ -1006,6 +1066,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:27552558",
                     "electron": "10.1.1",
                     "chrome": "85.0.4183.93",
                     "platforms": [
@@ -1014,6 +1075,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:27552641",
                     "electron": "10.1.1",
                     "chrome": "85.0.4183.93",
                     "platforms": [
@@ -1072,6 +1134,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:27906347",
                     "electron": "10.1.5",
                     "chrome": "85.0.4183.121",
                     "platforms": [
@@ -1079,6 +1142,7 @@
                     ]
                 },
                 "tar": {
+                    "digest": "id:27906467",
                     "electron": "10.1.5",
                     "chrome": "85.0.4183.121",
                     "platforms": [
@@ -1086,6 +1150,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:27906398",
                     "electron": "10.1.5",
                     "chrome": "85.0.4183.121",
                     "platforms": [
@@ -1094,6 +1159,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:27906514",
                     "electron": "10.1.5",
                     "chrome": "85.0.4183.121",
                     "platforms": [
@@ -1119,6 +1185,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:28159654",
                     "electron": "10.1.5",
                     "chrome": "85.0.4183.121",
                     "platforms": [
@@ -1126,6 +1193,7 @@
                     ]
                 },
                 "tar": {
+                    "digest": "id:28159699",
                     "electron": "10.1.5",
                     "chrome": "85.0.4183.121",
                     "platforms": [
@@ -1133,6 +1201,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:28159765",
                     "electron": "10.1.5",
                     "chrome": "85.0.4183.121",
                     "platforms": [
@@ -1141,6 +1210,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:28159726",
                     "electron": "10.1.5",
                     "chrome": "85.0.4183.121",
                     "platforms": [
@@ -1199,6 +1269,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:28477210",
                     "electron": "10.1.5",
                     "chrome": "85.0.4183.121",
                     "platforms": [
@@ -1206,6 +1277,7 @@
                     ]
                 },
                 "tar": {
+                    "digest": "id:28477341",
                     "electron": "10.1.5",
                     "chrome": "85.0.4183.121",
                     "platforms": [
@@ -1213,6 +1285,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:28477896",
                     "electron": "10.1.5",
                     "chrome": "85.0.4183.121",
                     "platforms": [
@@ -1221,6 +1294,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:28477160",
                     "electron": "10.1.5",
                     "chrome": "85.0.4183.121",
                     "platforms": [
@@ -1259,6 +1333,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:28787824",
                     "electron": "11.0.3",
                     "chrome": "87.0.4280.67",
                     "platforms": [
@@ -1266,6 +1341,7 @@
                     ]
                 },
                 "appImageArm": {
+                    "digest": "id:28792057",
                     "electron": "11.0.3",
                     "chrome": "87.0.4280.67",
                     "platforms": [
@@ -1273,6 +1349,7 @@
                     ]
                 },
                 "tar": {
+                    "digest": "id:28787856",
                     "electron": "11.0.3",
                     "chrome": "87.0.4280.67",
                     "platforms": [
@@ -1280,6 +1357,7 @@
                     ]
                 },
                 "tarArm": {
+                    "digest": "id:28792052",
                     "electron": "11.0.3",
                     "chrome": "87.0.4280.67",
                     "platforms": [
@@ -1287,6 +1365,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:28787625",
                     "electron": "11.0.3",
                     "chrome": "87.0.4280.67",
                     "platforms": [
@@ -1295,6 +1374,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:28790207",
                     "electron": "11.0.3",
                     "chrome": "87.0.4280.67",
                     "platforms": [
@@ -1342,6 +1422,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:29271273",
                     "electron": "11.0.3",
                     "chrome": "87.0.4280.67",
                     "platforms": [
@@ -1349,6 +1430,7 @@
                     ]
                 },
                 "tar": {
+                    "digest": "id:29271308",
                     "electron": "11.0.3",
                     "chrome": "87.0.4280.67",
                     "platforms": [
@@ -1356,6 +1438,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:29271511",
                     "electron": "11.0.3",
                     "chrome": "87.0.4280.67",
                     "platforms": [
@@ -1364,6 +1447,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:29271174",
                     "electron": "11.0.3",
                     "chrome": "87.0.4280.67",
                     "platforms": [
@@ -1400,6 +1484,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:29515852",
                     "electron": "11.1.0",
                     "chrome": "87.0.4280.88",
                     "platforms": [
@@ -1407,6 +1492,7 @@
                     ]
                 },
                 "tar": {
+                    "digest": "id:29515880",
                     "electron": "11.1.0",
                     "chrome": "87.0.4280.88",
                     "platforms": [
@@ -1414,6 +1500,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:29515869",
                     "electron": "11.1.0",
                     "chrome": "87.0.4280.88",
                     "platforms": [
@@ -1422,6 +1509,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:29515901",
                     "electron": "11.1.0",
                     "chrome": "87.0.4280.88",
                     "platforms": [
@@ -1458,6 +1546,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:29841290",
                     "electron": "11.1.0",
                     "chrome": "87.0.4280.88",
                     "platforms": [
@@ -1465,6 +1554,7 @@
                     ]
                 },
                 "tar": {
+                    "digest": "id:29841162",
                     "electron": "11.1.0",
                     "chrome": "87.0.4280.88",
                     "platforms": [
@@ -1472,6 +1562,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:29841139",
                     "electron": "11.1.0",
                     "chrome": "87.0.4280.88",
                     "platforms": [
@@ -1480,6 +1571,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:29841238",
                     "electron": "11.1.0",
                     "chrome": "87.0.4280.88",
                     "platforms": [
@@ -1549,6 +1641,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:30269016",
                     "electron": "11.1.0",
                     "chrome": "87.0.4280.88",
                     "platforms": [
@@ -1556,6 +1649,7 @@
                     ]
                 },
                 "tar": {
+                    "digest": "id:30269033",
                     "electron": "11.1.0",
                     "chrome": "87.0.4280.88",
                     "platforms": [
@@ -1563,6 +1657,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:30269175",
                     "electron": "11.1.0",
                     "chrome": "87.0.4280.88",
                     "platforms": [
@@ -1571,6 +1666,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:30268951",
                     "electron": "11.1.0",
                     "chrome": "87.0.4280.88",
                     "platforms": [
@@ -1596,6 +1692,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:30562793",
                     "electron": "11.1.0",
                     "chrome": "87.0.4280.88",
                     "platforms": [
@@ -1603,6 +1700,7 @@
                     ]
                 },
                 "tar": {
+                    "digest": "id:30562834",
                     "electron": "11.1.0",
                     "chrome": "87.0.4280.88",
                     "platforms": [
@@ -1610,6 +1708,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:30563000",
                     "electron": "11.1.0",
                     "chrome": "87.0.4280.88",
                     "platforms": [
@@ -1618,6 +1717,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:30562877",
                     "electron": "11.1.0",
                     "chrome": "87.0.4280.88",
                     "platforms": [
@@ -1643,6 +1743,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:30912394",
                     "electron": "11.1.0",
                     "chrome": "87.0.4280.88",
                     "platforms": [
@@ -1650,6 +1751,7 @@
                     ]
                 },
                 "tar": {
+                    "digest": "id:30912187",
                     "electron": "11.1.0",
                     "chrome": "87.0.4280.88",
                     "platforms": [
@@ -1657,6 +1759,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:30912119",
                     "electron": "11.1.0",
                     "chrome": "87.0.4280.88",
                     "platforms": [
@@ -1665,6 +1768,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:30912103",
                     "electron": "11.1.0",
                     "chrome": "87.0.4280.88",
                     "platforms": [
@@ -1690,6 +1794,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:31147987",
                     "electron": "11.1.0",
                     "chrome": "87.0.4280.88",
                     "platforms": [
@@ -1697,6 +1802,7 @@
                     ]
                 },
                 "tar": {
+                    "digest": "id:31148024",
                     "electron": "11.1.0",
                     "chrome": "87.0.4280.88",
                     "platforms": [
@@ -1704,6 +1810,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:31148076",
                     "electron": "11.1.0",
                     "chrome": "87.0.4280.88",
                     "platforms": [
@@ -1712,6 +1819,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:31147588",
                     "electron": "11.1.0",
                     "chrome": "87.0.4280.88",
                     "platforms": [
@@ -1748,6 +1856,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:31317383",
                     "electron": "11.2.1",
                     "chrome": "87.0.4280.141",
                     "platforms": [
@@ -1755,6 +1864,7 @@
                     ]
                 },
                 "tar": {
+                    "digest": "id:31317423",
                     "electron": "11.2.1",
                     "chrome": "87.0.4280.141",
                     "platforms": [
@@ -1762,6 +1872,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:31317672",
                     "electron": "11.2.1",
                     "chrome": "87.0.4280.141",
                     "platforms": [
@@ -1770,6 +1881,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:31317485",
                     "electron": "11.2.1",
                     "chrome": "87.0.4280.141",
                     "platforms": [
@@ -1806,6 +1918,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:31765677",
                     "electron": "11.2.1",
                     "chrome": "87.0.4280.141",
                     "platforms": [
@@ -1813,6 +1926,7 @@
                     ]
                 },
                 "tar": {
+                    "digest": "id:31765850",
                     "electron": "11.2.1",
                     "chrome": "87.0.4280.141",
                     "platforms": [
@@ -1820,6 +1934,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:31766044",
                     "electron": "11.2.1",
                     "chrome": "87.0.4280.141",
                     "platforms": [
@@ -1828,6 +1943,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:31765628",
                     "electron": "11.2.1",
                     "chrome": "87.0.4280.141",
                     "platforms": [
@@ -1853,6 +1969,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:32161889",
                     "electron": "11.2.3",
                     "chrome": "87.0.4280.141",
                     "platforms": [
@@ -1860,6 +1977,7 @@
                     ]
                 },
                 "tar": {
+                    "digest": "id:32162056",
                     "electron": "11.2.3",
                     "chrome": "87.0.4280.141",
                     "platforms": [
@@ -1867,6 +1985,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:32162283",
                     "electron": "11.2.3",
                     "chrome": "87.0.4280.141",
                     "platforms": [
@@ -1875,6 +1994,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:32162112",
                     "electron": "11.2.3",
                     "chrome": "87.0.4280.141",
                     "platforms": [
@@ -1922,6 +2042,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:32851343",
                     "electron": "11.3.0",
                     "chrome": "87.0.4280.141",
                     "platforms": [
@@ -1929,6 +2050,7 @@
                     ]
                 },
                 "tar": {
+                    "digest": "id:32851388",
                     "electron": "11.3.0",
                     "chrome": "87.0.4280.141",
                     "platforms": [
@@ -1936,6 +2058,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:32851418",
                     "electron": "11.3.0",
                     "chrome": "87.0.4280.141",
                     "platforms": [
@@ -1944,6 +2067,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:32851247",
                     "electron": "11.3.0",
                     "chrome": "87.0.4280.141",
                     "platforms": [
@@ -1980,6 +2104,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:33291030",
                     "electron": "11.3.0",
                     "chrome": "87.0.4280.141",
                     "platforms": [
@@ -1987,6 +2112,7 @@
                     ]
                 },
                 "tar": {
+                    "digest": "id:33291095",
                     "electron": "11.3.0",
                     "chrome": "87.0.4280.141",
                     "platforms": [
@@ -1994,6 +2120,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:33291226",
                     "electron": "11.3.0",
                     "chrome": "87.0.4280.141",
                     "platforms": [
@@ -2002,6 +2129,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:33290798",
                     "electron": "11.3.0",
                     "chrome": "87.0.4280.141",
                     "platforms": [
@@ -2060,6 +2188,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:34014989",
                     "electron": "11.3.0",
                     "chrome": "87.0.4280.141",
                     "platforms": [
@@ -2067,6 +2196,7 @@
                     ]
                 },
                 "tar": {
+                    "digest": "id:34015016",
                     "electron": "11.3.0",
                     "chrome": "87.0.4280.141",
                     "platforms": [
@@ -2074,6 +2204,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:34015030",
                     "electron": "11.3.0",
                     "chrome": "87.0.4280.141",
                     "platforms": [
@@ -2082,6 +2213,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:34014958",
                     "electron": "11.3.0",
                     "chrome": "87.0.4280.141",
                     "platforms": [
@@ -2140,6 +2272,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:34553717",
                     "electron": "11.3.0",
                     "chrome": "87.0.4280.141",
                     "platforms": [
@@ -2147,6 +2280,7 @@
                     ]
                 },
                 "tar": {
+                    "digest": "id:34553767",
                     "electron": "11.3.0",
                     "chrome": "87.0.4280.141",
                     "platforms": [
@@ -2154,6 +2288,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:34553875",
                     "electron": "11.3.0",
                     "chrome": "87.0.4280.141",
                     "platforms": [
@@ -2162,6 +2297,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:34553816",
                     "electron": "11.3.0",
                     "chrome": "87.0.4280.141",
                     "platforms": [
@@ -2220,6 +2356,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:36755526",
                     "electron": "12.0.6",
                     "chrome": "89.0.4389.128",
                     "platforms": [
@@ -2227,6 +2364,7 @@
                     ]
                 },
                 "tar": {
+                    "digest": "id:36755629",
                     "electron": "12.0.6",
                     "chrome": "89.0.4389.128",
                     "platforms": [
@@ -2234,6 +2372,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:36755682",
                     "electron": "12.0.6",
                     "chrome": "89.0.4389.128",
                     "platforms": [
@@ -2242,6 +2381,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:36755455",
                     "electron": "12.0.6",
                     "chrome": "89.0.4389.128",
                     "platforms": [
@@ -2267,6 +2407,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:38220464",
                     "electron": "12.0.6",
                     "chrome": "89.0.4389.128",
                     "platforms": [
@@ -2274,6 +2415,7 @@
                     ]
                 },
                 "tar": {
+                    "digest": "id:38220494",
                     "electron": "12.0.6",
                     "chrome": "89.0.4389.128",
                     "platforms": [
@@ -2281,6 +2423,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:38220542",
                     "electron": "12.0.6",
                     "chrome": "89.0.4389.128",
                     "platforms": [
@@ -2289,6 +2432,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:38220253",
                     "electron": "12.0.6",
                     "chrome": "89.0.4389.128",
                     "platforms": [
@@ -2314,6 +2458,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:38950068",
                     "electron": "12.0.11",
                     "chrome": "89.0.4389.128",
                     "platforms": [
@@ -2321,6 +2466,7 @@
                     ]
                 },
                 "tar": {
+                    "digest": "id:38950232",
                     "electron": "12.0.11",
                     "chrome": "89.0.4389.128",
                     "platforms": [
@@ -2328,6 +2474,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:38950343",
                     "electron": "12.0.11",
                     "chrome": "89.0.4389.128",
                     "platforms": [
@@ -2336,6 +2483,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:38949802",
                     "electron": "12.0.11",
                     "chrome": "89.0.4389.128",
                     "platforms": [
@@ -2405,6 +2553,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:40102305",
                     "electron": "12.0.14",
                     "chrome": "89.0.4389.128",
                     "platforms": [
@@ -2412,6 +2561,7 @@
                     ]
                 },
                 "tar": {
+                    "digest": "id:40102327",
                     "electron": "12.0.14",
                     "chrome": "89.0.4389.128",
                     "platforms": [
@@ -2419,6 +2569,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:40102360",
                     "electron": "12.0.14",
                     "chrome": "89.0.4389.128",
                     "platforms": [
@@ -2427,6 +2578,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:40102261",
                     "electron": "12.0.14",
                     "chrome": "89.0.4389.128",
                     "platforms": [
@@ -2463,6 +2615,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:41667653",
                     "electron": "12.0.14",
                     "chrome": "89.0.4389.128",
                     "platforms": [
@@ -2470,6 +2623,7 @@
                     ]
                 },
                 "tar": {
+                    "digest": "id:41667834",
                     "electron": "12.0.14",
                     "chrome": "89.0.4389.128",
                     "platforms": [
@@ -2477,6 +2631,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:41674185",
                     "electron": "12.0.14",
                     "chrome": "89.0.4389.128",
                     "platforms": [
@@ -2485,6 +2640,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:41667940",
                     "electron": "12.0.14",
                     "chrome": "89.0.4389.128",
                     "platforms": [
@@ -2534,6 +2690,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:43899264",
                     "electron": "12.0.18",
                     "chrome": "89.0.4389.128",
                     "platforms": [
@@ -2541,6 +2698,7 @@
                     ]
                 },
                 "appImageArm": {
+                    "digest": "id:43899095",
                     "electron": "12.0.18",
                     "chrome": "89.0.4389.128",
                     "platforms": [
@@ -2548,6 +2706,7 @@
                     ]
                 },
                 "tar": {
+                    "digest": "id:43899079",
                     "electron": "12.0.18",
                     "chrome": "89.0.4389.128",
                     "platforms": [
@@ -2555,6 +2714,7 @@
                     ]
                 },
                 "tarArm": {
+                    "digest": "id:43899115",
                     "electron": "12.0.18",
                     "chrome": "89.0.4389.128",
                     "platforms": [
@@ -2562,6 +2722,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:43899136",
                     "electron": "12.0.18",
                     "chrome": "89.0.4389.128",
                     "platforms": [
@@ -2570,6 +2731,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:43899177",
                     "electron": "12.0.18",
                     "chrome": "89.0.4389.128",
                     "platforms": [
@@ -2626,6 +2788,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:47285302",
                     "electron": "13.5.2",
                     "chrome": "91.0.4472.164",
                     "platforms": [
@@ -2633,6 +2796,7 @@
                     ]
                 },
                 "tar": {
+                    "digest": "id:47285329",
                     "electron": "13.5.2",
                     "chrome": "91.0.4472.164",
                     "platforms": [
@@ -2640,6 +2804,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:47285438",
                     "electron": "13.5.2",
                     "chrome": "91.0.4472.164",
                     "platforms": [
@@ -2648,6 +2813,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:47285037",
                     "electron": "13.5.2",
                     "chrome": "91.0.4472.164",
                     "platforms": [
@@ -2813,6 +2979,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:52262208",
                     "electron": "13.6.2",
                     "chrome": "91.0.4472.164",
                     "platforms": [
@@ -2820,6 +2987,7 @@
                     ]
                 },
                 "tar": {
+                    "digest": "id:52262163",
                     "electron": "13.6.2",
                     "chrome": "91.0.4472.164",
                     "platforms": [
@@ -2827,6 +2995,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:52262173",
                     "electron": "13.6.2",
                     "chrome": "91.0.4472.164",
                     "platforms": [
@@ -2835,6 +3004,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:52262104",
                     "electron": "13.6.2",
                     "chrome": "91.0.4472.164",
                     "platforms": [
@@ -2900,6 +3070,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:53284368",
                     "electron": "13.6.2",
                     "chrome": "91.0.4472.164",
                     "platforms": [
@@ -2907,6 +3078,7 @@
                     ]
                 },
                 "tar": {
+                    "digest": "id:53284389",
                     "electron": "13.6.2",
                     "chrome": "91.0.4472.164",
                     "platforms": [
@@ -2914,6 +3086,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:53284279",
                     "electron": "13.6.2",
                     "chrome": "91.0.4472.164",
                     "platforms": [
@@ -2922,6 +3095,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:53284169",
                     "electron": "13.6.2",
                     "chrome": "91.0.4472.164",
                     "platforms": [
@@ -2977,6 +3151,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:55141533",
                     "electron": "13.6.2",
                     "chrome": "91.0.4472.164",
                     "platforms": [
@@ -2984,6 +3159,7 @@
                     ]
                 },
                 "tar": {
+                    "digest": "id:55141588",
                     "electron": "13.6.2",
                     "chrome": "91.0.4472.164",
                     "platforms": [
@@ -2991,6 +3167,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:55141811",
                     "electron": "13.6.2",
                     "chrome": "91.0.4472.164",
                     "platforms": [
@@ -2999,6 +3176,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:55141631",
                     "electron": "13.6.2",
                     "chrome": "91.0.4472.164",
                     "platforms": [
@@ -3024,6 +3202,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:55785050",
                     "electron": "16.0.8",
                     "chrome": "96.0.4664.110",
                     "platforms": [
@@ -3031,6 +3210,7 @@
                     ]
                 },
                 "tar": {
+                    "digest": "id:55785102",
                     "electron": "16.0.8",
                     "chrome": "96.0.4664.110",
                     "platforms": [
@@ -3038,6 +3218,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:55787590",
                     "electron": "16.0.8",
                     "chrome": "96.0.4664.110",
                     "platforms": [
@@ -3046,6 +3227,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:55785192",
                     "electron": "16.0.8",
                     "chrome": "96.0.4664.110",
                     "platforms": [
@@ -3123,6 +3305,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:58756042",
                     "electron": "16.0.10",
                     "chrome": "96.0.4664.174",
                     "platforms": [
@@ -3130,6 +3313,7 @@
                     ]
                 },
                 "appImageArm": {
+                    "digest": "id:58756076",
                     "electron": "16.0.10",
                     "chrome": "96.0.4664.174",
                     "platforms": [
@@ -3137,6 +3321,7 @@
                     ]
                 },
                 "tar": {
+                    "digest": "id:58756066",
                     "electron": "16.0.10",
                     "chrome": "96.0.4664.174",
                     "platforms": [
@@ -3144,6 +3329,7 @@
                     ]
                 },
                 "tarArm": {
+                    "digest": "id:58756096",
                     "electron": "16.0.10",
                     "chrome": "96.0.4664.174",
                     "platforms": [
@@ -3151,6 +3337,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:58756154",
                     "electron": "16.0.10",
                     "chrome": "96.0.4664.174",
                     "platforms": [
@@ -3159,6 +3346,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:58755991",
                     "electron": "16.0.10",
                     "chrome": "96.0.4664.174",
                     "platforms": [
@@ -3186,6 +3374,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:58950702",
                     "electron": "17.1.1",
                     "chrome": "98.0.4758.109",
                     "platforms": [
@@ -3193,6 +3382,7 @@
                     ]
                 },
                 "appImageArm": {
+                    "digest": "id:58950698",
                     "electron": "17.1.1",
                     "chrome": "98.0.4758.109",
                     "platforms": [
@@ -3200,6 +3390,7 @@
                     ]
                 },
                 "tar": {
+                    "digest": "id:58944541",
                     "electron": "17.1.1",
                     "chrome": "98.0.4758.109",
                     "platforms": [
@@ -3207,6 +3398,7 @@
                     ]
                 },
                 "tarArm": {
+                    "digest": "id:58944619",
                     "electron": "17.1.1",
                     "chrome": "98.0.4758.109",
                     "platforms": [
@@ -3214,6 +3406,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:58944648",
                     "electron": "17.1.1",
                     "chrome": "98.0.4758.109",
                     "platforms": [
@@ -3222,6 +3415,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:58944283",
                     "electron": "17.1.1",
                     "chrome": "98.0.4758.109",
                     "platforms": [
@@ -3288,6 +3482,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:60838504",
                     "electron": "17.1.1",
                     "chrome": "98.0.4758.109",
                     "platforms": [
@@ -3295,6 +3490,7 @@
                     ]
                 },
                 "tar": {
+                    "digest": "id:60838536",
                     "electron": "17.1.1",
                     "chrome": "98.0.4758.109",
                     "platforms": [
@@ -3302,6 +3498,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:60838659",
                     "electron": "17.1.1",
                     "chrome": "98.0.4758.109",
                     "platforms": [
@@ -3310,6 +3507,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:60838457",
                     "electron": "17.1.1",
                     "chrome": "98.0.4758.109",
                     "platforms": [
@@ -3356,6 +3554,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:62177791",
                     "electron": "18.0.3",
                     "chrome": "100.0.4896.75",
                     "platforms": [
@@ -3363,6 +3562,7 @@
                     ]
                 },
                 "appImageArm": {
+                    "digest": "id:62177830",
                     "electron": "18.0.3",
                     "chrome": "100.0.4896.75",
                     "platforms": [
@@ -3370,6 +3570,7 @@
                     ]
                 },
                 "tar": {
+                    "digest": "id:62177800",
                     "electron": "18.0.3",
                     "chrome": "100.0.4896.75",
                     "platforms": [
@@ -3377,6 +3578,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:62177859",
                     "electron": "18.0.3",
                     "chrome": "100.0.4896.75",
                     "platforms": [
@@ -3385,6 +3587,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:62174924",
                     "electron": "18.0.3",
                     "chrome": "100.0.4896.75",
                     "platforms": [
@@ -3411,6 +3614,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:62925094",
                     "electron": "18.0.4",
                     "chrome": "100.0.4896.75",
                     "platforms": [
@@ -3418,6 +3622,7 @@
                     ]
                 },
                 "appImageArm": {
+                    "digest": "id:62925119",
                     "electron": "18.0.4",
                     "chrome": "100.0.4896.75",
                     "platforms": [
@@ -3425,6 +3630,7 @@
                     ]
                 },
                 "tar": {
+                    "digest": "id:62925116",
                     "electron": "18.0.4",
                     "chrome": "100.0.4896.75",
                     "platforms": [
@@ -3432,6 +3638,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:63035665",
                     "electron": "18.0.4",
                     "chrome": "100.0.4896.75",
                     "platforms": [
@@ -3440,6 +3647,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:62925147",
                     "electron": "18.0.4",
                     "chrome": "100.0.4896.75",
                     "platforms": [
@@ -3546,6 +3754,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:67692123",
                     "electron": "18.3.0",
                     "chrome": "100.0.4896.160",
                     "platforms": [
@@ -3553,6 +3762,7 @@
                     ]
                 },
                 "appImageArm": {
+                    "digest": "id:67692161",
                     "electron": "18.3.0",
                     "chrome": "100.0.4896.160",
                     "platforms": [
@@ -3560,6 +3770,7 @@
                     ]
                 },
                 "tar": {
+                    "digest": "id:67692136",
                     "electron": "18.3.0",
                     "chrome": "100.0.4896.160",
                     "platforms": [
@@ -3567,6 +3778,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:67692293",
                     "electron": "18.3.0",
                     "chrome": "100.0.4896.160",
                     "platforms": [
@@ -3575,6 +3787,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:67692189",
                     "electron": "18.3.0",
                     "chrome": "100.0.4896.160",
                     "platforms": [
@@ -3661,6 +3874,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:71363425",
                     "electron": "18.3.5",
                     "chrome": "100.0.4896.160",
                     "platforms": [
@@ -3668,6 +3882,7 @@
                     ]
                 },
                 "appImageArm": {
+                    "digest": "id:71363515",
                     "electron": "18.3.5",
                     "chrome": "100.0.4896.160",
                     "platforms": [
@@ -3675,6 +3890,7 @@
                     ]
                 },
                 "tar": {
+                    "digest": "id:71363469",
                     "electron": "18.3.5",
                     "chrome": "100.0.4896.160",
                     "platforms": [
@@ -3682,6 +3898,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:71363577",
                     "electron": "18.3.5",
                     "chrome": "100.0.4896.160",
                     "platforms": [
@@ -3690,6 +3907,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:71363648",
                     "electron": "18.3.5",
                     "chrome": "100.0.4896.160",
                     "platforms": [
@@ -3726,6 +3944,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:72395217",
                     "electron": "18.3.5",
                     "chrome": "100.0.4896.160",
                     "platforms": [
@@ -3733,6 +3952,7 @@
                     ]
                 },
                 "appImageArm": {
+                    "digest": "id:72395306",
                     "electron": "18.3.5",
                     "chrome": "100.0.4896.160",
                     "platforms": [
@@ -3740,6 +3960,7 @@
                     ]
                 },
                 "tar": {
+                    "digest": "id:72395284",
                     "electron": "18.3.5",
                     "chrome": "100.0.4896.160",
                     "platforms": [
@@ -3747,6 +3968,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:72395348",
                     "electron": "18.3.5",
                     "chrome": "100.0.4896.160",
                     "platforms": [
@@ -3755,6 +3977,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:72395397",
                     "electron": "18.3.5",
                     "chrome": "100.0.4896.160",
                     "platforms": [
@@ -3782,6 +4005,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:72757655",
                     "electron": "18.3.5",
                     "chrome": "100.0.4896.160",
                     "platforms": [
@@ -3789,6 +4013,7 @@
                     ]
                 },
                 "appImageArm": {
+                    "digest": "id:72757728",
                     "electron": "18.3.5",
                     "chrome": "100.0.4896.160",
                     "platforms": [
@@ -3796,6 +4021,7 @@
                     ]
                 },
                 "tar": {
+                    "digest": "id:72757680",
                     "electron": "18.3.5",
                     "chrome": "100.0.4896.160",
                     "platforms": [
@@ -3803,6 +4029,7 @@
                     ]
                 },
                 "tarArm": {
+                    "digest": "id:75516634",
                     "electron": "18.3.5",
                     "chrome": "100.0.4896.160",
                     "platforms": [
@@ -3810,6 +4037,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:72757758",
                     "electron": "18.3.5",
                     "chrome": "100.0.4896.160",
                     "platforms": [
@@ -3818,6 +4046,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:72757548",
                     "electron": "18.3.5",
                     "chrome": "100.0.4896.160",
                     "platforms": [
@@ -3905,6 +4134,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:80795382",
                     "electron": "18.3.5",
                     "chrome": "100.0.4896.160",
                     "platforms": [
@@ -3912,6 +4142,7 @@
                     ]
                 },
                 "appImageArm": {
+                    "digest": "id:80795480",
                     "electron": "18.3.5",
                     "chrome": "100.0.4896.160",
                     "platforms": [
@@ -3919,6 +4150,7 @@
                     ]
                 },
                 "tar": {
+                    "digest": "id:80795447",
                     "electron": "18.3.5",
                     "chrome": "100.0.4896.160",
                     "platforms": [
@@ -3926,6 +4158,7 @@
                     ]
                 },
                 "tarArm": {
+                    "digest": "id:80795523",
                     "electron": "18.3.5",
                     "chrome": "100.0.4896.160",
                     "platforms": [
@@ -3933,6 +4166,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:80795563",
                     "electron": "18.3.5",
                     "chrome": "100.0.4896.160",
                     "platforms": [
@@ -3941,6 +4175,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:80795650",
                     "electron": "18.3.5",
                     "chrome": "100.0.4896.160",
                     "platforms": [
@@ -3988,6 +4223,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:82340813",
                     "electron": "18.3.5",
                     "chrome": "100.0.4896.160",
                     "platforms": [
@@ -3995,6 +4231,7 @@
                     ]
                 },
                 "appImageArm": {
+                    "digest": "id:82340857",
                     "electron": "18.3.5",
                     "chrome": "100.0.4896.160",
                     "platforms": [
@@ -4002,6 +4239,7 @@
                     ]
                 },
                 "tar": {
+                    "digest": "id:82340839",
                     "electron": "18.3.5",
                     "chrome": "100.0.4896.160",
                     "platforms": [
@@ -4009,6 +4247,7 @@
                     ]
                 },
                 "tarArm": {
+                    "digest": "id:82340914",
                     "electron": "18.3.5",
                     "chrome": "100.0.4896.160",
                     "platforms": [
@@ -4016,6 +4255,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:82349331",
                     "electron": "18.3.5",
                     "chrome": "100.0.4896.160",
                     "platforms": [
@@ -4024,6 +4264,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:82350041",
                     "electron": "18.3.5",
                     "chrome": "100.0.4896.160",
                     "platforms": [
@@ -4131,6 +4372,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:88842645",
                     "electron": "18.3.15",
                     "chrome": "100.0.4896.160",
                     "platforms": [
@@ -4138,6 +4380,7 @@
                     ]
                 },
                 "appImageArm": {
+                    "digest": "id:88842517",
                     "electron": "18.3.15",
                     "chrome": "100.0.4896.160",
                     "platforms": [
@@ -4145,6 +4388,7 @@
                     ]
                 },
                 "tar": {
+                    "digest": "id:88842485",
                     "electron": "18.3.15",
                     "chrome": "100.0.4896.160",
                     "platforms": [
@@ -4152,6 +4396,7 @@
                     ]
                 },
                 "tarArm": {
+                    "digest": "id:88842544",
                     "electron": "18.3.15",
                     "chrome": "100.0.4896.160",
                     "platforms": [
@@ -4159,6 +4404,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:88842567",
                     "electron": "18.3.15",
                     "chrome": "100.0.4896.160",
                     "platforms": [
@@ -4167,6 +4413,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:88842245",
                     "electron": "18.3.15",
                     "chrome": "100.0.4896.160",
                     "platforms": [
@@ -4194,6 +4441,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:89291452",
                     "electron": "21.3.3",
                     "chrome": "106.0.5249.199",
                     "platforms": [
@@ -4201,6 +4449,7 @@
                     ]
                 },
                 "appImageArm": {
+                    "digest": "id:89291506",
                     "electron": "21.3.3",
                     "chrome": "106.0.5249.199",
                     "platforms": [
@@ -4208,6 +4457,7 @@
                     ]
                 },
                 "tar": {
+                    "digest": "id:89291474",
                     "electron": "21.3.3",
                     "chrome": "106.0.5249.199",
                     "platforms": [
@@ -4215,6 +4465,7 @@
                     ]
                 },
                 "tarArm": {
+                    "digest": "id:89291548",
                     "electron": "21.3.3",
                     "chrome": "106.0.5249.199",
                     "platforms": [
@@ -4222,6 +4473,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:89291579",
                     "electron": "21.3.3",
                     "chrome": "106.0.5249.199",
                     "platforms": [
@@ -4230,6 +4482,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:89291279",
                     "electron": "21.3.3",
                     "chrome": "106.0.5249.199",
                     "platforms": [
@@ -4307,6 +4560,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:96565241",
                     "electron": "21.4.1",
                     "chrome": "106.0.5249.199",
                     "platforms": [
@@ -4314,6 +4568,7 @@
                     ]
                 },
                 "appImageArm": {
+                    "digest": "id:96564849",
                     "electron": "21.4.1",
                     "chrome": "106.0.5249.199",
                     "platforms": [
@@ -4321,6 +4576,7 @@
                     ]
                 },
                 "tar": {
+                    "digest": "id:96564820",
                     "electron": "21.4.1",
                     "chrome": "106.0.5249.199",
                     "platforms": [
@@ -4328,6 +4584,7 @@
                     ]
                 },
                 "tarArm": {
+                    "digest": "id:96564915",
                     "electron": "21.4.1",
                     "chrome": "106.0.5249.199",
                     "platforms": [
@@ -4335,6 +4592,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:96564948",
                     "electron": "21.4.1",
                     "chrome": "106.0.5249.199",
                     "platforms": [
@@ -4343,6 +4601,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:96565022",
                     "electron": "21.4.1",
                     "chrome": "106.0.5249.199",
                     "platforms": [
@@ -4370,6 +4629,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:97704716",
                     "electron": "21.4.1",
                     "chrome": "106.0.5249.199",
                     "platforms": [
@@ -4377,6 +4637,7 @@
                     ]
                 },
                 "appImageArm": {
+                    "digest": "id:97704758",
                     "electron": "21.4.1",
                     "chrome": "106.0.5249.199",
                     "platforms": [
@@ -4384,6 +4645,7 @@
                     ]
                 },
                 "tar": {
+                    "digest": "id:97704736",
                     "electron": "21.4.1",
                     "chrome": "106.0.5249.199",
                     "platforms": [
@@ -4391,6 +4653,7 @@
                     ]
                 },
                 "tarArm": {
+                    "digest": "id:97704824",
                     "electron": "21.4.1",
                     "chrome": "106.0.5249.199",
                     "platforms": [
@@ -4398,6 +4661,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:97704895",
                     "electron": "21.4.1",
                     "chrome": "106.0.5249.199",
                     "platforms": [
@@ -4406,6 +4670,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:97704969",
                     "electron": "21.4.1",
                     "chrome": "106.0.5249.199",
                     "platforms": [
@@ -4503,6 +4768,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:106222208",
                     "electron": "24.1.2",
                     "chrome": "112.0.5615.87",
                     "platforms": [
@@ -4510,6 +4776,7 @@
                     ]
                 },
                 "appImageArm": {
+                    "digest": "id:106222417",
                     "electron": "24.1.2",
                     "chrome": "112.0.5615.87",
                     "platforms": [
@@ -4517,6 +4784,7 @@
                     ]
                 },
                 "tar": {
+                    "digest": "id:106222298",
                     "electron": "24.1.2",
                     "chrome": "112.0.5615.87",
                     "platforms": [
@@ -4524,6 +4792,7 @@
                     ]
                 },
                 "tarArm": {
+                    "digest": "id:106222556",
                     "electron": "24.1.2",
                     "chrome": "112.0.5615.87",
                     "platforms": [
@@ -4531,6 +4800,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:106222586",
                     "electron": "24.1.2",
                     "chrome": "112.0.5615.87",
                     "platforms": [
@@ -4539,6 +4809,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:106221831",
                     "electron": "24.1.2",
                     "chrome": "112.0.5615.87",
                     "platforms": [
@@ -4566,6 +4837,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:107393637",
                     "electron": "24.1.2",
                     "chrome": "112.0.5615.87",
                     "platforms": [
@@ -4573,6 +4845,7 @@
                     ]
                 },
                 "appImageArm": {
+                    "digest": "id:107393812",
                     "electron": "24.1.2",
                     "chrome": "112.0.5615.87",
                     "platforms": [
@@ -4580,6 +4853,7 @@
                     ]
                 },
                 "tar": {
+                    "digest": "id:107393713",
                     "electron": "24.1.2",
                     "chrome": "112.0.5615.87",
                     "platforms": [
@@ -4587,6 +4861,7 @@
                     ]
                 },
                 "tarArm": {
+                    "digest": "id:107393864",
                     "electron": "24.1.2",
                     "chrome": "112.0.5615.87",
                     "platforms": [
@@ -4594,6 +4869,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:107393932",
                     "electron": "24.1.2",
                     "chrome": "112.0.5615.87",
                     "platforms": [
@@ -4602,6 +4878,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:107393990",
                     "electron": "24.1.2",
                     "chrome": "112.0.5615.87",
                     "platforms": [
@@ -4659,6 +4936,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:109456149",
                     "electron": "24.3.1",
                     "chrome": "112.0.5615.183",
                     "platforms": [
@@ -4666,6 +4944,7 @@
                     ]
                 },
                 "appImageArm": {
+                    "digest": "id:109456316",
                     "electron": "24.3.1",
                     "chrome": "112.0.5615.183",
                     "platforms": [
@@ -4673,6 +4952,7 @@
                     ]
                 },
                 "tar": {
+                    "digest": "id:109456221",
                     "electron": "24.3.1",
                     "chrome": "112.0.5615.183",
                     "platforms": [
@@ -4680,6 +4960,7 @@
                     ]
                 },
                 "tarArm": {
+                    "digest": "id:109456384",
                     "electron": "24.3.1",
                     "chrome": "112.0.5615.183",
                     "platforms": [
@@ -4687,6 +4968,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:109455948",
                     "electron": "24.3.1",
                     "chrome": "112.0.5615.183",
                     "platforms": [
@@ -4695,6 +4977,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:109455756",
                     "electron": "24.3.1",
                     "chrome": "112.0.5615.183",
                     "platforms": [
@@ -4722,6 +5005,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:109625437",
                     "electron": "24.3.1",
                     "chrome": "112.0.5615.183",
                     "platforms": [
@@ -4729,6 +5013,7 @@
                     ]
                 },
                 "appImageArm": {
+                    "digest": "id:109624958",
                     "electron": "24.3.1",
                     "chrome": "112.0.5615.183",
                     "platforms": [
@@ -4736,6 +5021,7 @@
                     ]
                 },
                 "tar": {
+                    "digest": "id:109624856",
                     "electron": "24.3.1",
                     "chrome": "112.0.5615.183",
                     "platforms": [
@@ -4743,6 +5029,7 @@
                     ]
                 },
                 "tarArm": {
+                    "digest": "id:109625111",
                     "electron": "24.3.1",
                     "chrome": "112.0.5615.183",
                     "platforms": [
@@ -4750,6 +5037,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:109625196",
                     "electron": "24.3.1",
                     "chrome": "112.0.5615.183",
                     "platforms": [
@@ -4758,6 +5046,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:109623951",
                     "electron": "24.3.1",
                     "chrome": "112.0.5615.183",
                     "platforms": [
@@ -4785,6 +5074,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:110740231",
                     "electron": "24.3.1",
                     "chrome": "112.0.5615.183",
                     "platforms": [
@@ -4792,6 +5082,7 @@
                     ]
                 },
                 "appImageArm": {
+                    "digest": "id:110740316",
                     "electron": "24.3.1",
                     "chrome": "112.0.5615.183",
                     "platforms": [
@@ -4799,6 +5090,7 @@
                     ]
                 },
                 "tar": {
+                    "digest": "id:110740262",
                     "electron": "24.3.1",
                     "chrome": "112.0.5615.183",
                     "platforms": [
@@ -4806,6 +5098,7 @@
                     ]
                 },
                 "tarArm": {
+                    "digest": "id:110740376",
                     "electron": "24.3.1",
                     "chrome": "112.0.5615.183",
                     "platforms": [
@@ -4813,6 +5106,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:110740399",
                     "electron": "24.3.1",
                     "chrome": "112.0.5615.183",
                     "platforms": [
@@ -4821,6 +5115,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:110835332",
                     "electron": "24.3.1",
                     "chrome": "112.0.5615.183",
                     "platforms": [
@@ -4858,6 +5153,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:119452654",
                     "electron": "24.3.1",
                     "chrome": "112.0.5615.183",
                     "platforms": [
@@ -4865,6 +5161,7 @@
                     ]
                 },
                 "appImageArm": {
+                    "digest": "id:119452444",
                     "electron": "24.3.1",
                     "chrome": "112.0.5615.183",
                     "platforms": [
@@ -4872,6 +5169,7 @@
                     ]
                 },
                 "tar": {
+                    "digest": "id:119452732",
                     "electron": "24.3.1",
                     "chrome": "112.0.5615.183",
                     "platforms": [
@@ -4879,6 +5177,7 @@
                     ]
                 },
                 "tarArm": {
+                    "digest": "id:119452501",
                     "electron": "24.3.1",
                     "chrome": "112.0.5615.183",
                     "platforms": [
@@ -4886,6 +5185,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:119452206",
                     "electron": "24.3.1",
                     "chrome": "112.0.5615.183",
                     "platforms": [
@@ -4894,6 +5194,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:119452023",
                     "electron": "24.3.1",
                     "chrome": "112.0.5615.183",
                     "platforms": [
@@ -4971,6 +5272,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:123834683",
                     "electron": "25.8.0",
                     "chrome": "114.0.5735.289",
                     "platforms": [
@@ -4978,6 +5280,7 @@
                     ]
                 },
                 "appImageArm": {
+                    "digest": "id:123834802",
                     "electron": "25.8.0",
                     "chrome": "114.0.5735.289",
                     "platforms": [
@@ -4985,6 +5288,7 @@
                     ]
                 },
                 "tar": {
+                    "digest": "id:123834765",
                     "electron": "25.8.0",
                     "chrome": "114.0.5735.289",
                     "platforms": [
@@ -4992,6 +5296,7 @@
                     ]
                 },
                 "tarArm": {
+                    "digest": "id:123834830",
                     "electron": "25.8.0",
                     "chrome": "114.0.5735.289",
                     "platforms": [
@@ -4999,6 +5304,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:123834859",
                     "electron": "25.8.0",
                     "chrome": "114.0.5735.289",
                     "platforms": [
@@ -5007,6 +5313,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:123834939",
                     "electron": "25.8.0",
                     "chrome": "114.0.5735.289",
                     "platforms": [
@@ -5074,6 +5381,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:125572700",
                     "electron": "25.8.0",
                     "chrome": "114.0.5735.289",
                     "platforms": [
@@ -5081,6 +5389,7 @@
                     ]
                 },
                 "appImageArm": {
+                    "digest": "id:125572783",
                     "electron": "25.8.0",
                     "chrome": "114.0.5735.289",
                     "platforms": [
@@ -5088,6 +5397,7 @@
                     ]
                 },
                 "tar": {
+                    "digest": "id:125572742",
                     "electron": "25.8.0",
                     "chrome": "114.0.5735.289",
                     "platforms": [
@@ -5095,6 +5405,7 @@
                     ]
                 },
                 "tarArm": {
+                    "digest": "id:125572816",
                     "electron": "25.8.0",
                     "chrome": "114.0.5735.289",
                     "platforms": [
@@ -5102,6 +5413,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:125572445",
                     "electron": "25.8.0",
                     "chrome": "114.0.5735.289",
                     "platforms": [
@@ -5110,6 +5422,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:125572112",
                     "electron": "25.8.0",
                     "chrome": "114.0.5735.289",
                     "platforms": [
@@ -5137,6 +5450,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:125582659",
                     "electron": "25.8.0",
                     "chrome": "114.0.5735.289",
                     "platforms": [
@@ -5144,6 +5458,7 @@
                     ]
                 },
                 "appImageArm": {
+                    "digest": "id:125582747",
                     "electron": "25.8.0",
                     "chrome": "114.0.5735.289",
                     "platforms": [
@@ -5151,6 +5466,7 @@
                     ]
                 },
                 "tar": {
+                    "digest": "id:125582717",
                     "electron": "25.8.0",
                     "chrome": "114.0.5735.289",
                     "platforms": [
@@ -5158,6 +5474,7 @@
                     ]
                 },
                 "tarArm": {
+                    "digest": "id:125582876",
                     "electron": "25.8.0",
                     "chrome": "114.0.5735.289",
                     "platforms": [
@@ -5165,6 +5482,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:125582504",
                     "electron": "25.8.0",
                     "chrome": "114.0.5735.289",
                     "platforms": [
@@ -5173,6 +5491,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:125582389",
                     "electron": "25.8.0",
                     "chrome": "114.0.5735.289",
                     "platforms": [
@@ -5200,6 +5519,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:125718289",
                     "electron": "25.8.0",
                     "chrome": "114.0.5735.289",
                     "platforms": [
@@ -5207,6 +5527,7 @@
                     ]
                 },
                 "appImageArm": {
+                    "digest": "id:125718437",
                     "electron": "25.8.0",
                     "chrome": "114.0.5735.289",
                     "platforms": [
@@ -5214,6 +5535,7 @@
                     ]
                 },
                 "tar": {
+                    "digest": "id:125718340",
                     "electron": "25.8.0",
                     "chrome": "114.0.5735.289",
                     "platforms": [
@@ -5221,6 +5543,7 @@
                     ]
                 },
                 "tarArm": {
+                    "digest": "id:125718509",
                     "electron": "25.8.0",
                     "chrome": "114.0.5735.289",
                     "platforms": [
@@ -5228,6 +5551,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:125718576",
                     "electron": "25.8.0",
                     "chrome": "114.0.5735.289",
                     "platforms": [
@@ -5236,6 +5560,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:125718179",
                     "electron": "25.8.0",
                     "chrome": "114.0.5735.289",
                     "platforms": [
@@ -5263,6 +5588,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:126122872",
                     "electron": "25.8.1",
                     "chrome": "114.0.5735.289",
                     "platforms": [
@@ -5270,6 +5596,7 @@
                     ]
                 },
                 "appImageArm": {
+                    "digest": "id:126122993",
                     "electron": "25.8.1",
                     "chrome": "114.0.5735.289",
                     "platforms": [
@@ -5277,6 +5604,7 @@
                     ]
                 },
                 "tar": {
+                    "digest": "id:126122927",
                     "electron": "25.8.1",
                     "chrome": "114.0.5735.289",
                     "platforms": [
@@ -5284,6 +5612,7 @@
                     ]
                 },
                 "tarArm": {
+                    "digest": "id:126123066",
                     "electron": "25.8.1",
                     "chrome": "114.0.5735.289",
                     "platforms": [
@@ -5291,6 +5620,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:126123108",
                     "electron": "25.8.1",
                     "chrome": "114.0.5735.289",
                     "platforms": [
@@ -5299,6 +5629,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:126123179",
                     "electron": "25.8.1",
                     "chrome": "114.0.5735.289",
                     "platforms": [
@@ -5326,6 +5657,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:127928165",
                     "electron": "25.8.1",
                     "chrome": "114.0.5735.289",
                     "platforms": [
@@ -5333,6 +5665,7 @@
                     ]
                 },
                 "appImageArm": {
+                    "digest": "id:127927994",
                     "electron": "25.8.1",
                     "chrome": "114.0.5735.289",
                     "platforms": [
@@ -5340,6 +5673,7 @@
                     ]
                 },
                 "tar": {
+                    "digest": "id:127927948",
                     "electron": "25.8.1",
                     "chrome": "114.0.5735.289",
                     "platforms": [
@@ -5347,6 +5681,7 @@
                     ]
                 },
                 "tarArm": {
+                    "digest": "id:127928061",
                     "electron": "25.8.1",
                     "chrome": "114.0.5735.289",
                     "platforms": [
@@ -5354,6 +5689,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:127927622",
                     "electron": "25.8.1",
                     "chrome": "114.0.5735.289",
                     "platforms": [
@@ -5362,6 +5698,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:127927799",
                     "electron": "25.8.1",
                     "chrome": "114.0.5735.289",
                     "platforms": [
@@ -5399,6 +5736,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:130466515",
                     "electron": "25.8.1",
                     "chrome": "114.0.5735.289",
                     "platforms": [
@@ -5406,6 +5744,7 @@
                     ]
                 },
                 "appImageArm": {
+                    "digest": "id:130466026",
                     "electron": "25.8.1",
                     "chrome": "114.0.5735.289",
                     "platforms": [
@@ -5413,6 +5752,7 @@
                     ]
                 },
                 "tar": {
+                    "digest": "id:130465967",
                     "electron": "25.8.1",
                     "chrome": "114.0.5735.289",
                     "platforms": [
@@ -5420,6 +5760,7 @@
                     ]
                 },
                 "tarArm": {
+                    "digest": "id:130466093",
                     "electron": "25.8.1",
                     "chrome": "114.0.5735.289",
                     "platforms": [
@@ -5427,6 +5768,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:130466134",
                     "electron": "25.8.1",
                     "chrome": "114.0.5735.289",
                     "platforms": [
@@ -5435,6 +5777,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:130466988",
                     "electron": "25.8.1",
                     "chrome": "114.0.5735.289",
                     "platforms": [
@@ -5492,6 +5835,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:142431947",
                     "electron": "25.8.1",
                     "chrome": "114.0.5735.289",
                     "platforms": [
@@ -5499,6 +5843,7 @@
                     ]
                 },
                 "appImageArm": {
+                    "digest": "id:142431862",
                     "electron": "25.8.1",
                     "chrome": "114.0.5735.289",
                     "platforms": [
@@ -5506,6 +5851,7 @@
                     ]
                 },
                 "tar": {
+                    "digest": "id:142431843",
                     "electron": "25.8.1",
                     "chrome": "114.0.5735.289",
                     "platforms": [
@@ -5513,6 +5859,7 @@
                     ]
                 },
                 "tarArm": {
+                    "digest": "id:142431874",
                     "electron": "25.8.1",
                     "chrome": "114.0.5735.289",
                     "platforms": [
@@ -5520,6 +5867,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:142432375",
                     "electron": "25.8.1",
                     "chrome": "114.0.5735.289",
                     "platforms": [
@@ -5528,6 +5876,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:142431119",
                     "electron": "25.8.1",
                     "chrome": "114.0.5735.289",
                     "platforms": [
@@ -5596,6 +5945,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:152840082",
                     "electron": "28.2.3",
                     "chrome": "120.0.6099.283",
                     "platforms": [
@@ -5603,6 +5953,7 @@
                     ]
                 },
                 "appImageArm": {
+                    "digest": "id:152839842",
                     "electron": "28.2.3",
                     "chrome": "120.0.6099.283",
                     "platforms": [
@@ -5610,6 +5961,7 @@
                     ]
                 },
                 "tar": {
+                    "digest": "id:152839771",
                     "electron": "28.2.3",
                     "chrome": "120.0.6099.283",
                     "platforms": [
@@ -5617,6 +5969,7 @@
                     ]
                 },
                 "tarArm": {
+                    "digest": "id:152839948",
                     "electron": "28.2.3",
                     "chrome": "120.0.6099.283",
                     "platforms": [
@@ -5624,6 +5977,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:152837729",
                     "electron": "28.2.3",
                     "chrome": "120.0.6099.283",
                     "platforms": [
@@ -5632,6 +5986,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:152838880",
                     "electron": "28.2.3",
                     "chrome": "120.0.6099.283",
                     "platforms": [
@@ -5680,6 +6035,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:157496014",
                     "electron": "28.2.3",
                     "chrome": "120.0.6099.283",
                     "platforms": [
@@ -5687,6 +6043,7 @@
                     ]
                 },
                 "appImageArm": {
+                    "digest": "id:157496092",
                     "electron": "28.2.3",
                     "chrome": "120.0.6099.283",
                     "platforms": [
@@ -5694,6 +6051,7 @@
                     ]
                 },
                 "tar": {
+                    "digest": "id:157496049",
                     "electron": "28.2.3",
                     "chrome": "120.0.6099.283",
                     "platforms": [
@@ -5701,6 +6059,7 @@
                     ]
                 },
                 "tarArm": {
+                    "digest": "id:157496148",
                     "electron": "28.2.3",
                     "chrome": "120.0.6099.283",
                     "platforms": [
@@ -5708,6 +6067,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:157496202",
                     "electron": "28.2.3",
                     "chrome": "120.0.6099.283",
                     "platforms": [
@@ -5716,6 +6076,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:157496275",
                     "electron": "28.2.3",
                     "chrome": "120.0.6099.283",
                     "platforms": [
@@ -5744,6 +6105,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:159446586",
                     "electron": "28.2.3",
                     "chrome": "120.0.6099.283",
                     "platforms": [
@@ -5751,6 +6113,7 @@
                     ]
                 },
                 "appImageArm": {
+                    "digest": "id:159446654",
                     "electron": "28.2.3",
                     "chrome": "120.0.6099.283",
                     "platforms": [
@@ -5758,6 +6121,7 @@
                     ]
                 },
                 "tar": {
+                    "digest": "id:159446622",
                     "electron": "28.2.3",
                     "chrome": "120.0.6099.283",
                     "platforms": [
@@ -5765,6 +6129,7 @@
                     ]
                 },
                 "tarArm": {
+                    "digest": "id:159446676",
                     "electron": "28.2.3",
                     "chrome": "120.0.6099.283",
                     "platforms": [
@@ -5772,6 +6137,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:159446466",
                     "electron": "28.2.3",
                     "chrome": "120.0.6099.283",
                     "platforms": [
@@ -5780,6 +6146,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:159446327",
                     "electron": "28.2.3",
                     "chrome": "120.0.6099.283",
                     "platforms": [
@@ -5828,6 +6195,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:172328461",
                     "electron": "28.3.3",
                     "chrome": "120.0.6099.291",
                     "platforms": [
@@ -5835,6 +6203,7 @@
                     ]
                 },
                 "appImageArm": {
+                    "digest": "id:172328514",
                     "electron": "28.3.3",
                     "chrome": "120.0.6099.291",
                     "platforms": [
@@ -5842,6 +6211,7 @@
                     ]
                 },
                 "tar": {
+                    "digest": "id:172328467",
                     "electron": "28.3.3",
                     "chrome": "120.0.6099.291",
                     "platforms": [
@@ -5849,6 +6219,7 @@
                     ]
                 },
                 "tarArm": {
+                    "digest": "id:172328483",
                     "electron": "28.3.3",
                     "chrome": "120.0.6099.291",
                     "platforms": [
@@ -5856,6 +6227,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:172323736",
                     "electron": "28.3.3",
                     "chrome": "120.0.6099.291",
                     "platforms": [
@@ -5864,6 +6236,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:172323741",
                     "electron": "28.3.3",
                     "chrome": "120.0.6099.291",
                     "platforms": [
@@ -5892,6 +6265,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:172877016",
                     "electron": "28.3.3",
                     "chrome": "120.0.6099.291",
                     "platforms": [
@@ -5899,6 +6273,7 @@
                     ]
                 },
                 "appImageArm": {
+                    "digest": "id:172877020",
                     "electron": "28.3.3",
                     "chrome": "120.0.6099.291",
                     "platforms": [
@@ -5906,6 +6281,7 @@
                     ]
                 },
                 "tar": {
+                    "digest": "id:172877018",
                     "electron": "28.3.3",
                     "chrome": "120.0.6099.291",
                     "platforms": [
@@ -5913,6 +6289,7 @@
                     ]
                 },
                 "tarArm": {
+                    "digest": "id:172877026",
                     "electron": "28.3.3",
                     "chrome": "120.0.6099.291",
                     "platforms": [
@@ -5920,6 +6297,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:172670755",
                     "electron": "28.3.3",
                     "chrome": "120.0.6099.291",
                     "platforms": [
@@ -5928,6 +6306,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:172669819",
                     "electron": "28.3.3",
                     "chrome": "120.0.6099.291",
                     "platforms": [
@@ -5966,6 +6345,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:175738613",
                     "electron": "30.1.2",
                     "chrome": "124.0.6367.243",
                     "platforms": [
@@ -5973,6 +6353,7 @@
                     ]
                 },
                 "appImageArm": {
+                    "digest": "id:175738603",
                     "electron": "30.1.2",
                     "chrome": "124.0.6367.243",
                     "platforms": [
@@ -5980,6 +6361,7 @@
                     ]
                 },
                 "tar": {
+                    "digest": "id:175738623",
                     "electron": "30.1.2",
                     "chrome": "124.0.6367.243",
                     "platforms": [
@@ -5987,6 +6369,7 @@
                     ]
                 },
                 "tarArm": {
+                    "digest": "id:175738608",
                     "electron": "30.1.2",
                     "chrome": "124.0.6367.243",
                     "platforms": [
@@ -5994,6 +6377,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:175736134",
                     "electron": "30.1.2",
                     "chrome": "124.0.6367.243",
                     "platforms": [
@@ -6002,6 +6386,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:175735396",
                     "electron": "30.1.2",
                     "chrome": "124.0.6367.243",
                     "platforms": [
@@ -6042,6 +6427,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:180379845",
                     "electron": "30.1.2",
                     "chrome": "124.0.6367.243",
                     "platforms": [
@@ -6049,6 +6435,7 @@
                     ]
                 },
                 "appImageArm": {
+                    "digest": "id:180379833",
                     "electron": "30.1.2",
                     "chrome": "124.0.6367.243",
                     "platforms": [
@@ -6056,6 +6443,7 @@
                     ]
                 },
                 "tar": {
+                    "digest": "id:180379850",
                     "electron": "30.1.2",
                     "chrome": "124.0.6367.243",
                     "platforms": [
@@ -6063,6 +6451,7 @@
                     ]
                 },
                 "tarArm": {
+                    "digest": "id:180379840",
                     "electron": "30.1.2",
                     "chrome": "124.0.6367.243",
                     "platforms": [
@@ -6070,6 +6459,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:180379031",
                     "electron": "30.1.2",
                     "chrome": "124.0.6367.243",
                     "platforms": [
@@ -6078,6 +6468,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:180379027",
                     "electron": "30.1.2",
                     "chrome": "124.0.6367.243",
                     "platforms": [
@@ -6148,6 +6539,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:199564010",
                     "electron": "31.6.0",
                     "chrome": "126.0.6478.234",
                     "platforms": [
@@ -6155,6 +6547,7 @@
                     ]
                 },
                 "appImageArm": {
+                    "digest": "id:199564043",
                     "electron": "31.6.0",
                     "chrome": "126.0.6478.234",
                     "platforms": [
@@ -6162,6 +6555,7 @@
                     ]
                 },
                 "tar": {
+                    "digest": "id:199564035",
                     "electron": "31.6.0",
                     "chrome": "126.0.6478.234",
                     "platforms": [
@@ -6169,6 +6563,7 @@
                     ]
                 },
                 "tarArm": {
+                    "digest": "id:199564053",
                     "electron": "31.6.0",
                     "chrome": "126.0.6478.234",
                     "platforms": [
@@ -6176,6 +6571,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:199290928",
                     "electron": "31.6.0",
                     "chrome": "126.0.6478.234",
                     "platforms": [
@@ -6184,6 +6580,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:199290912",
                     "electron": "31.6.0",
                     "chrome": "126.0.6478.234",
                     "platforms": [
@@ -6214,6 +6611,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:204099954",
                     "electron": "32.2.2",
                     "chrome": "128.0.6613.186",
                     "platforms": [
@@ -6221,6 +6619,7 @@
                     ]
                 },
                 "appImageArm": {
+                    "digest": "id:204099911",
                     "electron": "32.2.2",
                     "chrome": "128.0.6613.186",
                     "platforms": [
@@ -6228,6 +6627,7 @@
                     ]
                 },
                 "tar": {
+                    "digest": "id:204099900",
                     "electron": "32.2.2",
                     "chrome": "128.0.6613.186",
                     "platforms": [
@@ -6235,6 +6635,7 @@
                     ]
                 },
                 "tarArm": {
+                    "digest": "id:204099917",
                     "electron": "32.2.2",
                     "chrome": "128.0.6613.186",
                     "platforms": [
@@ -6242,6 +6643,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:204099972",
                     "electron": "32.2.2",
                     "chrome": "128.0.6613.186",
                     "platforms": [
@@ -6250,6 +6652,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:204099986",
                     "electron": "32.2.2",
                     "chrome": "128.0.6613.186",
                     "platforms": [
@@ -6280,6 +6683,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:205491727",
                     "electron": "32.2.3",
                     "chrome": "128.0.6613.186",
                     "platforms": [
@@ -6287,6 +6691,7 @@
                     ]
                 },
                 "appImageArm": {
+                    "digest": "id:205491714",
                     "electron": "32.2.3",
                     "chrome": "128.0.6613.186",
                     "platforms": [
@@ -6294,6 +6699,7 @@
                     ]
                 },
                 "tar": {
+                    "digest": "id:205491742",
                     "electron": "32.2.3",
                     "chrome": "128.0.6613.186",
                     "platforms": [
@@ -6301,6 +6707,7 @@
                     ]
                 },
                 "tarArm": {
+                    "digest": "id:205491720",
                     "electron": "32.2.3",
                     "chrome": "128.0.6613.186",
                     "platforms": [
@@ -6308,6 +6715,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:205491734",
                     "electron": "32.2.3",
                     "chrome": "128.0.6613.186",
                     "platforms": [
@@ -6316,6 +6724,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:205491738",
                     "electron": "32.2.3",
                     "chrome": "128.0.6613.186",
                     "platforms": [
@@ -6346,6 +6755,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:207047101",
                     "electron": "32.2.5",
                     "chrome": "128.0.6613.186",
                     "platforms": [
@@ -6353,6 +6763,7 @@
                     ]
                 },
                 "appImageArm": {
+                    "digest": "id:207047072",
                     "electron": "32.2.5",
                     "chrome": "128.0.6613.186",
                     "platforms": [
@@ -6360,6 +6771,7 @@
                     ]
                 },
                 "tar": {
+                    "digest": "id:207047050",
                     "electron": "32.2.5",
                     "chrome": "128.0.6613.186",
                     "platforms": [
@@ -6367,6 +6779,7 @@
                     ]
                 },
                 "tarArm": {
+                    "digest": "id:207047083",
                     "electron": "32.2.5",
                     "chrome": "128.0.6613.186",
                     "platforms": [
@@ -6374,6 +6787,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:207047119",
                     "electron": "32.2.5",
                     "chrome": "128.0.6613.186",
                     "platforms": [
@@ -6382,6 +6796,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:207047134",
                     "electron": "32.2.5",
                     "chrome": "128.0.6613.186",
                     "platforms": [
@@ -6442,6 +6857,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:224667343",
                     "electron": "33.3.2",
                     "chrome": "130.0.6723.191",
                     "platforms": [
@@ -6449,6 +6865,7 @@
                     ]
                 },
                 "appImageArm": {
+                    "digest": "id:224667301",
                     "electron": "33.3.2",
                     "chrome": "130.0.6723.191",
                     "platforms": [
@@ -6456,6 +6873,7 @@
                     ]
                 },
                 "tar": {
+                    "digest": "id:224667295",
                     "electron": "33.3.2",
                     "chrome": "130.0.6723.191",
                     "platforms": [
@@ -6463,6 +6881,7 @@
                     ]
                 },
                 "tarArm": {
+                    "digest": "id:224667324",
                     "electron": "33.3.2",
                     "chrome": "130.0.6723.191",
                     "platforms": [
@@ -6470,6 +6889,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:224667351",
                     "electron": "33.3.2",
                     "chrome": "130.0.6723.191",
                     "platforms": [
@@ -6478,6 +6898,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:224667361",
                     "electron": "33.3.2",
                     "chrome": "130.0.6723.191",
                     "platforms": [
@@ -6508,6 +6929,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:225008542",
                     "electron": "33.3.2",
                     "chrome": "130.0.6723.191",
                     "platforms": [
@@ -6515,6 +6937,7 @@
                     ]
                 },
                 "appImageArm": {
+                    "digest": "id:225008505",
                     "electron": "33.3.2",
                     "chrome": "130.0.6723.191",
                     "platforms": [
@@ -6522,6 +6945,7 @@
                     ]
                 },
                 "tar": {
+                    "digest": "id:225008446",
                     "electron": "33.3.2",
                     "chrome": "130.0.6723.191",
                     "platforms": [
@@ -6529,6 +6953,7 @@
                     ]
                 },
                 "tarArm": {
+                    "digest": "id:225008520",
                     "electron": "33.3.2",
                     "chrome": "130.0.6723.191",
                     "platforms": [
@@ -6536,6 +6961,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:225008427",
                     "electron": "33.3.2",
                     "chrome": "130.0.6723.191",
                     "platforms": [
@@ -6544,6 +6970,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:225008436",
                     "electron": "33.3.2",
                     "chrome": "130.0.6723.191",
                     "platforms": [
@@ -6594,6 +7021,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:229042038",
                     "electron": "33.3.2",
                     "chrome": "130.0.6723.191",
                     "platforms": [
@@ -6601,6 +7029,7 @@
                     ]
                 },
                 "appImageArm": {
+                    "digest": "id:229042025",
                     "electron": "33.3.2",
                     "chrome": "130.0.6723.191",
                     "platforms": [
@@ -6608,6 +7037,7 @@
                     ]
                 },
                 "tar": {
+                    "digest": "id:229042022",
                     "electron": "33.3.2",
                     "chrome": "130.0.6723.191",
                     "platforms": [
@@ -6615,6 +7045,7 @@
                     ]
                 },
                 "tarArm": {
+                    "digest": "id:229042029",
                     "electron": "33.3.2",
                     "chrome": "130.0.6723.191",
                     "platforms": [
@@ -6622,6 +7053,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:229042016",
                     "electron": "33.3.2",
                     "chrome": "130.0.6723.191",
                     "platforms": [
@@ -6630,6 +7062,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:230274398",
                     "electron": "33.3.2",
                     "chrome": "130.0.6723.191",
                     "platforms": [
@@ -6670,6 +7103,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:234217923",
                     "electron": "34.3.0",
                     "chrome": "132.0.6834.210",
                     "platforms": [
@@ -6677,6 +7111,7 @@
                     ]
                 },
                 "appImageArm": {
+                    "digest": "id:234217895",
                     "electron": "34.3.0",
                     "chrome": "132.0.6834.210",
                     "platforms": [
@@ -6684,6 +7119,7 @@
                     ]
                 },
                 "tar": {
+                    "digest": "id:234217888",
                     "electron": "34.3.0",
                     "chrome": "132.0.6834.210",
                     "platforms": [
@@ -6691,6 +7127,7 @@
                     ]
                 },
                 "tarArm": {
+                    "digest": "id:234217902",
                     "electron": "34.3.0",
                     "chrome": "132.0.6834.210",
                     "platforms": [
@@ -6698,6 +7135,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:234217853",
                     "electron": "34.3.0",
                     "chrome": "132.0.6834.210",
                     "platforms": [
@@ -6706,6 +7144,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:234217871",
                     "electron": "34.3.0",
                     "chrome": "132.0.6834.210",
                     "platforms": [
@@ -6736,6 +7175,7 @@
             },
             "installerInfo": {
                 "appImage": {
+                    "digest": "id:248186283",
                     "electron": "34.2.0",
                     "chrome": "132.0.6834.196",
                     "platforms": [
@@ -6743,6 +7183,7 @@
                     ]
                 },
                 "appImageArm": {
+                    "digest": "id:248478760",
                     "electron": "34.5.2",
                     "chrome": "132.0.6834.210",
                     "platforms": [
@@ -6750,6 +7191,7 @@
                     ]
                 },
                 "tar": {
+                    "digest": "id:248186337",
                     "electron": "34.2.0",
                     "chrome": "132.0.6834.196",
                     "platforms": [
@@ -6757,6 +7199,7 @@
                     ]
                 },
                 "tarArm": {
+                    "digest": "id:248478747",
                     "electron": "34.5.2",
                     "chrome": "132.0.6834.210",
                     "platforms": [
@@ -6764,6 +7207,7 @@
                     ]
                 },
                 "dmg": {
+                    "digest": "id:248186960",
                     "electron": "34.2.0",
                     "chrome": "132.0.6834.196",
                     "platforms": [
@@ -6772,6 +7216,7 @@
                     ]
                 },
                 "exe": {
+                    "digest": "id:248186297",
                     "electron": "34.2.0",
                     "chrome": "132.0.6834.196",
                     "platforms": [
