@@ -49,9 +49,8 @@ import * as path from "path"
 
 export const config: WebdriverIO.Config = {
     runner: 'local',
-
+    framework: 'mocha',
     specs: ['./test/specs/**/*.e2e.ts'],
-
     // How many instances of Obsidian should be launched in parallel
     maxInstances: 4,
 
@@ -70,22 +69,19 @@ export const config: WebdriverIO.Config = {
         },
     }],
 
-    framework: 'mocha',
     services: ["obsidian"],
     // You can use any wdio reporter, but they show the Chromium version
     // instead of the Obsidian version. obsidian reporter just wraps
     // spec reporter to show the Obsidian version.
     reporters: ['obsidian'],
 
+    // wdio-obsidian-service will download Obsidian versions into this directory
+    cacheDir: path.resolve(".obsidian-cache"),
     mochaOpts: {
         ui: 'bdd',
         timeout: 60000,
         // You can set mocha settings like "retry" and "bail"
     },
-
-    // wdio-obsidian-service will download Obsidian versions into this directory
-    cacheDir: path.resolve(".obsidian-cache"),
-
     logLevel: "warn",
 }
 ```
@@ -247,7 +243,7 @@ import * as path from "path"
 
 export const config: WebdriverIO.Config = {
     runner: 'local',
-
+    framework: 'mocha',
     specs: ['./test/specs/**/*.e2e.ts'],
 
     maxInstances: 1, // can't do android tests in parallel :(
@@ -265,17 +261,14 @@ export const config: WebdriverIO.Config = {
         },
     }],
 
-    framework: 'mocha',
     services: ["obsidian"],
     reporters: ['obsidian'],
 
+    cacheDir: path.resolve(".obsidian-cache"),
     mochaOpts: {
         ui: 'bdd',
         timeout: 60000,
     },
-
-    cacheDir: path.resolve(".obsidian-cache"),
-
     logLevel: "warn",
 }
 ```
