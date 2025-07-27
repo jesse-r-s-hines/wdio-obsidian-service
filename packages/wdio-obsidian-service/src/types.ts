@@ -88,9 +88,10 @@ export interface ObsidianCapabilityOptions {
     vault?: string,
 
     /**
-     * Set true to simulate mobile on Electron desktop app. This uses Obsidian `app.emulateMobile()` to switch Obsidian
-     * to the mobile UI, and you can use Chrome's mobileEmulation to set the screen size. You can compare tablet vs
-     * phone UIs by setting the screen size or emulated device, Obsidian tablet UI triggers at width/height >= 600.
+     * Set to true to simulate mobile on the Electron desktop app. This uses Obsidian `app.emulateMobile()` to switch
+     * Obsidian to the mobile UI, and you can use Chrome's mobileEmulation to set the screen size. You can compare
+     * tablet vs phone UIs by setting the screen size or emulated device. Obsidian tablet UI triggers at
+     * width/height >= 600.
      *
      * Note that Obsidian Mobile runs on Capacitor instead of Electron so there are various platform differences that
      * can't be emulated. But it's good enough for most cases as long as you aren't interacting directly with the
@@ -143,18 +144,18 @@ export interface NormalizedObsidianCapabilityOptions {
 export interface ObsidianServiceOptions {
     /**
      * Override the `obsidian-versions.json` used by the service. Can be a file URL.
-     * Defaults to https://github.com/jesse-r-s-hines/wdio-obsidian-service/blob/HEAD/obsidian-versions.json which is
-     * auto-updated to contain information on available Obsidian versions.
+     * Defaults to https://raw.githubusercontent.com/jesse-r-s-hines/wdio-obsidian-service/HEAD/obsidian-versions.json
+     * which is auto-updated to contain information on available Obsidian versions.
      */
     versionsUrl?: string,
     /**
      * Override the `community-plugins.json` used by the service. Can be a file URL.
-     * Defaults to https://github.com/obsidianmd/obsidian-releases/blob/HEAD/community-plugins.json
+     * Defaults to https://raw.githubusercontent.com/obsidianmd/obsidian-releases/HEAD/community-plugins.json
      */
     communityPluginsUrl?: string,
     /**
      * Override the `community-css-themes.json` used by the service. Can be a file URL.
-     * Defaults to https://github.com/obsidianmd/obsidian-releases/blob/HEAD/community-css-themes.json
+     * Defaults to https://raw.githubusercontent.com/obsidianmd/obsidian-releases/HEAD/community-css-themes.json
      */
     communityThemesUrl?: string,
 }

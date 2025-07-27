@@ -42,16 +42,12 @@ export function isAppium(cap: WebdriverIO.Capabilities) {
  * Push a folder to the appium device.
  */
 export async function uploadFolder(browser: WebdriverIO.Browser, src: string, dest: string) {
-    // We should be able to just use pushFile which uploads a file to the device and automatically creates parent
-    // directories. But its bugged, and doesn't escape spaces when creating the directories so we have to implement this
-    // with shell hacks until its fixed. See https://github.com/appium/appium-android-driver/issues/1004
     src = path.resolve(src);
     dest = path.posix.normalize(dest).replace(/\/$/, '');
 
     let files = await fsAsync.readdir(src, {recursive: true, withFileTypes: true});
     files = _.sortBy(files, f => path.join(f.parentPath, f.name)); // sort files before children
 
-    // uploadFile creates parent directories, but we'll create them here as well so empty dirs are added
     await browser.execute("mobile: shell", {command: "mkdir", args: ["-p", quote(dest)]});
     for (const file of files) {
         const srcPath = path.join(file.parentPath, file.name);
