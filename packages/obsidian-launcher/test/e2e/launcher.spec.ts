@@ -77,10 +77,10 @@ describe("ObsidianLauncher", function() {
         const {platform, arch} = process;
 
         await downloadIfNotExists(earliestAppVersionInfo.downloads.asar!, testData);
-        await downloadIfNotExists((await launcher.getInstallerInfo(earliestInstaller, platform, arch)).url, testData);
+        await downloadIfNotExists((await launcher.getInstallerInfo(earliestInstaller, {platform, arch})).url, testData);
 
         await downloadIfNotExists(latestVersionInfo.downloads.asar!, testData);
-        await downloadIfNotExists((await launcher.getInstallerInfo(latest, platform, arch)).url, testData);
+        await downloadIfNotExists((await launcher.getInstallerInfo(latest, {platform, arch})).url, testData);
 
         server = http.createServer((request, response) => {
             return serverHandler(request, response, {public: testData});

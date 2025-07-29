@@ -20,6 +20,10 @@ import {
 import _ from "lodash"
 import { DeepPartial } from "ts-essentials";
 
+const currentPlatform = {
+    platform: process.platform,
+    arch: process.arch,
+}
 
 /**
  * The `ObsidianLauncher` class.
@@ -203,11 +207,11 @@ export class ObsidianLauncher {
         }
         if (installerVersion == "latest") {
             installerVersionInfo = _.findLast(versions, v =>
-                semver.lte(v.version, appVersionInfo.version) && !!this.getInstallerKey(v, platform, arch)
+                semver.lte(v.version, appVersionInfo.version) && !!this.getInstallerKey(v, {platform, arch})
             );
         } else if (installerVersion == "earliest") {
             installerVersionInfo = versions.find(v =>
-                semver.gte(v.version, appVersionInfo.minInstallerVersion!) && !!this.getInstallerKey(v, platform, arch)
+                semver.gte(v.version, appVersionInfo.minInstallerVersion!) && !!this.getInstallerKey(v, {platform, arch})
             );
         } else {
             installerVersion = semver.valid(installerVersion) ?? installerVersion; // normalize
@@ -263,8 +267,10 @@ export class ObsidianLauncher {
     }
 
     private getInstallerKey(
-        installerVersionInfo: ObsidianVersionInfo, platform: NodeJS.Platform, arch: NodeJS.Architecture,
+        installerVersionInfo: ObsidianVersionInfo,
+        opts: {platform?: NodeJS.Platform, arch?: NodeJS.Architecture} = {},
     ): keyof ObsidianVersionInfo['installerInfo']|undefined {
+        const {platform, arch} = _.merge({}, opts, currentPlatform);
         const platformName = `${platform}-${arch}`;
         const key = _.findKey(installerVersionInfo.installerInfo, v => v && v.platforms.includes(platformName));
         return key as keyof ObsidianVersionInfo['installerInfo']|undefined;
@@ -277,12 +283,12 @@ export class ObsidianLauncher {
      * @param arch Architecture (defaults to host architecture)
      */
     async getInstallerInfo(
-        installerVersion: string, platform?: NodeJS.Platform, arch?: NodeJS.Architecture,
+        installerVersion: string,
+        opts: {platform?: NodeJS.Platform, arch?: NodeJS.Architecture} = {},
     ): Promise<ObsidianInstallerInfo & {url: string}> {
-        platform = platform ?? process.platform;
-        arch = arch ?? process.arch;
+        const {platform, arch} = _.merge({}, opts, currentPlatform);
         const versionInfo = await this.getVersionInfo(installerVersion);
-        const key = this.getInstallerKey(versionInfo, platform, arch);
+        const key = this.getInstallerKey(versionInfo, {platform, arch});
         if (key) {
             return {...versionInfo.installerInfo[key]!, url: versionInfo.downloads[key]!};
         } else {
@@ -298,13 +304,13 @@ export class ObsidianLauncher {
      * @param arch Architecture of the installer to download (defaults to host architecture)
      */
     async downloadInstaller(
-        installerVersion: string, platform?: NodeJS.Platform, arch?: NodeJS.Architecture,
+        installerVersion: string,
+        opts: {platform?: NodeJS.Platform, arch?: NodeJS.Architecture} = {},
     ): Promise<string> {
-        platform = platform ?? process.platform;
-        arch = arch ?? process.arch;
+        const {platform, arch} = _.merge({}, opts, currentPlatform);
         const versionInfo = await this.getVersionInfo(installerVersion);
         installerVersion = versionInfo.version;
-        const installerInfo = await this.getInstallerInfo(installerVersion, platform, arch);
+        const installerInfo = await this.getInstallerInfo(installerVersion, {platform, arch});
         const cacheDir = path.join(this.cacheDir, `obsidian-installer/${platform}-${arch}/Obsidian-${installerVersion}`);
 
         let binaryPath: string;
@@ -380,15 +386,13 @@ export class ObsidianLauncher {
      * 
      * @param installerVersion Obsidian installer version
      */
-    async downloadChromedriver(installerVersion: string): Promise<string> {
-        const versionInfo = await this.getVersionInfo(installerVersion);
-        const electronVersion = versionInfo.electronVersion;
-        if (!electronVersion) {
-            throw Error(`${installerVersion} is not an Obsidian installer version.`)
-        }
-
-        const {platform, arch} = process;
-        const cacheDir = path.join(this.cacheDir, `electron-chromedriver/${platform}-${arch}/${electronVersion}`);
+    async downloadChromedriver(
+        installerVersion: string,
+        opts: {platform?: NodeJS.Platform, arch?: NodeJS.Architecture} = {},
+    ): Promise<string> {
+        const {platform, arch} = _.merge({}, opts, currentPlatform);
+        const installerInfo = await this.getInstallerInfo(installerVersion, {platform, arch});
+        const cacheDir = path.join(this.cacheDir, `electron-chromedriver/${platform}-${arch}/${installerInfo.electron}`);
         let chromedriverPath: string;
         if (process.platform == "win32") {
             chromedriverPath = path.join(cacheDir, `chromedriver.exe`);
@@ -397,10 +401,10 @@ export class ObsidianLauncher {
         }
 
         if (!(await fileExists(chromedriverPath))) {
-            console.log(`Downloading chromedriver for electron ${electronVersion} ...`);
+            console.log(`Downloading chromedriver for electron ${installerInfo.electron} ...`);
             await atomicCreate(cacheDir, async (tmpDir) => {
                 const chromedriverZipPath = await downloadArtifact({
-                    version: electronVersion,
+                    version: installerInfo.electron,
                     artifactName: 'chromedriver',
                     cacheRoot: path.join(tmpDir, 'download'),
                 });
@@ -940,8 +944,9 @@ export class ObsidianLauncher {
      * the internal Electron version.
      */
     async updateVersionList(
-        original?: ObsidianVersionList, { maxInstances = 1 } = {},
+        original?: ObsidianVersionList, opts: { maxInstances?: number } = {},
     ): Promise<ObsidianVersionList> {
+        const { maxInstances = 1 } = opts;
         const repo = 'obsidianmd/obsidian-releases';
         const originalVersions = _.keyBy(original?.versions ?? [], v => v.version);
         const versions: _.Dictionary<DeepPartial<ObsidianVersionInfo>> = _.cloneDeep(originalVersions);
