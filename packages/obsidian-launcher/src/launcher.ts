@@ -191,7 +191,7 @@ export class ObsidianLauncher {
      *
      * @returns [appVersion, installerVersion] with any "latest" etc. resolved to specific versions.
      */
-    async resolveVersions(appVersion: string, installerVersion = "latest"): Promise<[string, string]> {
+    async resolveVersion(appVersion: string, installerVersion = "latest"): Promise<[string, string]> {
         const versions = await this.getVersions();
         const appVersionInfo = await this.getVersionInfo(appVersion);
         appVersion = appVersionInfo.version;
@@ -801,7 +801,7 @@ export class ObsidianLauncher {
         localStorage?: Record<string, string>,
         chromePreferences?: Record<string, any>,
     }): Promise<string> {
-        const [appVersion, installerVersion] = await this.resolveVersions(params.appVersion, params.installerVersion);
+        const [appVersion, installerVersion] = await this.resolveVersion(params.appVersion, params.installerVersion);
         const configDir = await makeTmpDir('obsidian-launcher-config-');
         const vaultId = crypto.randomBytes(8).toString("hex");
     
@@ -900,7 +900,7 @@ export class ObsidianLauncher {
         localStorage?: Record<string, string>,
         spawnOptions?: child_process.SpawnOptions,
     }): Promise<{proc: child_process.ChildProcess, configDir: string, vault?: string}> {
-        const [appVersion, installerVersion] = await this.resolveVersions(
+        const [appVersion, installerVersion] = await this.resolveVersion(
             params.appVersion ?? "latest",
             params.installerVersion ?? "latest",
         );

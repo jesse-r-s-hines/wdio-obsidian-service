@@ -57,5 +57,5 @@ export async function resolveObsidianVersions(
     appVersion: string, installerVersion: string, cacheDir?: string,
 ): Promise<[string, string]> {
     const launcher = new ObsidianLauncher({cacheDir: cacheDir});
-    return await launcher.resolveVersions(appVersion, installerVersion);
+    return await launcher.resolveVersion(appVersion, installerVersion);
 }

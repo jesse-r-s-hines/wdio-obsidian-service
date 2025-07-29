@@ -73,7 +73,7 @@ program
     .option(...installerOptionArgs)
     .action(async (opts) => {
         const launcher = new ObsidianLauncher({cacheDir: opts.cache});
-        const [appVersion, installerVersion] = await launcher.resolveVersions(opts.version, opts.installerVersion);
+        const [appVersion, installerVersion] = await launcher.resolveVersion(opts.version, opts.installerVersion);
         const installerPath = await launcher.downloadInstaller(installerVersion);
         console.log(`Downloaded Obsidian installer to ${installerPath}`)
         const appPath = await launcher.downloadApp(appVersion);

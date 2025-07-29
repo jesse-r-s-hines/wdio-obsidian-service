@@ -70,7 +70,7 @@ describe("ObsidianLauncher", function() {
         await fsAsync.mkdir(testData, {recursive: true});
 
         const earliestAppVersionInfo = await launcher.getVersionInfo(earliestApp);
-        earliestInstaller = (await launcher.resolveVersions(earliestApp, "earliest"))[1];
+        earliestInstaller = (await launcher.resolveVersion(earliestApp, "earliest"))[1];
         const earliestInstallerVersionInfo = await launcher.getVersionInfo(earliestInstaller);
         const latestVersionInfo = await launcher.getVersionInfo("latest");
         latest = latestVersionInfo.version;

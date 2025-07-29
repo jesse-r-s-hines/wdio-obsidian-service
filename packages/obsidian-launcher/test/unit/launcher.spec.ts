@@ -51,58 +51,58 @@ describe('ObsdianLauncher resolve versions', () => {
         process.chdir(originalCwd);
     })
 
-    const resolveVersionsTests = [
+    const resolveVersionTests = [
         [["latest", "latest"], ["1.7.7", "1.7.7"]],
         [["latest-beta", "latest"], ["1.8.0", "1.7.7"]],
     ];
     if (process.platform == "win32" && process.arch == "arm64") {
         // windows arm support was only added in 1.6.5
-        resolveVersionsTests.push(
+        resolveVersionTests.push(
             [["latest", "earliest"], ["1.7.7", "1.6.5"]],
         )
     } else {
-        resolveVersionsTests.push(
+        resolveVersionTests.push(
             [["latest", "earliest"], ["1.7.7", "1.1.9"]],
             [["0.14.5", "latest"], ["0.14.5", "0.14.5"]],
         )
         if (process.platform == "linux" && process.arch == "arm64") {
             // Linux arm support was added in 0.12.15
-            resolveVersionsTests.push([["0.14.5", "earliest"], ["0.14.5",  "0.12.15"]])
+            resolveVersionTests.push([["0.14.5", "earliest"], ["0.14.5",  "0.12.15"]])
         } else {
-            resolveVersionsTests.push([["0.14.5", "earliest"], ["0.14.5",  "0.11.0"]])
+            resolveVersionTests.push([["0.14.5", "earliest"], ["0.14.5",  "0.11.0"]])
         }
     }
 
-    resolveVersionsTests.forEach(([[appVersion, installerVersion], expected]) => {
-        it(`resolveVersions("${appVersion}", "${installerVersion}") == ${expected}`, async () => {
+    resolveVersionTests.forEach(([[appVersion, installerVersion], expected]) => {
+        it(`resolveVersion("${appVersion}", "${installerVersion}") == ${expected}`, async () => {
             const [resolvedAppVersion, resolvedInstallerVersion] =
-                await launcher.resolveVersions(appVersion, installerVersion);
+                await launcher.resolveVersion(appVersion, installerVersion);
             expect([resolvedAppVersion, resolvedInstallerVersion]).to.eql(expected);
         })
     })
 
-    it('resolveVersions earliest error', async () => {
-        const result = await launcher.resolveVersions("earliest").catch(e => e);
+    it('resolveVersion earliest error', async () => {
+        const result = await launcher.resolveVersion("earliest").catch(e => e);
         expect(result).to.be.instanceOf(Error);
         expect(result.toString()).includes("minAppVersion");
     })
 
-    it('resolveVersions earliest', async () => {
+    it('resolveVersion earliest', async () => {
         const tmpDir = await createDirectory({
             "manifest.json": '{"minAppVersion": "1.7.4"}',
         });
         process.chdir(tmpDir);
-        const [appVersion, installerVersion] = await launcher.resolveVersions("earliest", "latest");
+        const [appVersion, installerVersion] = await launcher.resolveVersion("earliest", "latest");
         expect([appVersion, installerVersion]).to.eql(["1.7.4", "1.7.4"]);
     })
 
-    it('resolveVersions nested', async () => {
+    it('resolveVersion nested', async () => {
         const tmpDir = await createDirectory({
             "foo/a.md": "Hello",
             "manifest.json": '{"minAppVersion": "1.7.4"}',
         });
         process.chdir(path.join(tmpDir, 'foo'));
-        const [appVersion, installerVersion] = await launcher.resolveVersions("earliest", "latest");
+        const [appVersion, installerVersion] = await launcher.resolveVersion("earliest", "latest");
         expect([appVersion, installerVersion]).to.eql(["1.7.4", "1.7.4"]);
     })
 

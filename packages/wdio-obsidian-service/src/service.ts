@@ -172,7 +172,7 @@ export class ObsidianLauncherService implements Services.ServiceInstance {
                     cap['appium:chromedriverExecutableDir'] = chromedriverDir;
                     cap["wdio:enforceWebDriverClassic"] = true; // BiDi doesn't seem to work on Obsidian mobile
                 } else {
-                    const [, installerVersion] = await this.obsidianLauncher.resolveVersions(
+                    const [, installerVersion] = await this.obsidianLauncher.resolveVersion(
                         appVersion, obsidianOptions.installerVersion ?? "earliest",
                     );
                     const installerInfo = await this.obsidianLauncher.getInstallerInfo(installerVersion);
