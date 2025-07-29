@@ -939,7 +939,7 @@ export class ObsidianLauncher {
      * and in wdio-obsidian-service to get metadata about Obsidian versions in one place such as minInstallerVersion and
      * the internal Electron version.
      */
-    async updateObsidianVersionList(
+    async updateVersionList(
         original?: ObsidianVersionList, { maxInstances = 1 } = {},
     ): Promise<ObsidianVersionList> {
         const repo = 'obsidianmd/obsidian-releases';

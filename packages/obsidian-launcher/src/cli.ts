@@ -256,7 +256,7 @@ program
         }
 
         const launcher = new ObsidianLauncher({cacheDir: opts.cache});
-        versionInfos = await launcher.updateObsidianVersionList(versionInfos, { maxInstances });
+        versionInfos = await launcher.updateVersionList(versionInfos, { maxInstances });
         await fsAsync.writeFile(dest, JSON.stringify(versionInfos, undefined, 4) + "\n");
         console.log(`Wrote updated version information to ${dest}`)
     })
