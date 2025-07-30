@@ -25,7 +25,7 @@ jobs:
             node-version: "18.x"
             test-preset: "all"
             obsidian-versions: "latest/latest earliest/earliest"
-            max-instances: 1
+            max-instances: 2
           - os: ubuntu-24.04-arm
             node-version: "22.x"
             test-preset: "basic"
