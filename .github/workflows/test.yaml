@@ -52,6 +52,7 @@ jobs:
             test-preset: "all"
             obsidian-versions: "latest/latest"
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
     name: test (${{ matrix.os }}, node ${{ matrix.node-version }})
     steps:
       - uses: actions/checkout@v4
