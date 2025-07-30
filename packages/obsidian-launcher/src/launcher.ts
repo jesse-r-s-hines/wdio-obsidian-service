@@ -266,6 +266,31 @@ export class ObsidianLauncher {
         return versionInfo;
     }
 
+    /**
+     * Parses a string of Obsidian versions into [appVersion, installerVersion] tuples.
+     * 
+     * `versions` should be a space separated list of Obsidian app versions. You can optionally specify the installer
+     * version by using "appVersion/installerVersion" e.g. `"1.7.7/1.8.10"`.
+     * 
+     * Example: 
+     * ```js
+     * parseObsidianVersions("1.7.7 1.7.7/1.8.10 1.8.10/earliest latest-beta/latest")
+     * ```
+     * 
+     * See also: [Obsidian App vs Installer Versions](../README.md#obsidian-app-vs-installer-versions)
+     * 
+     * @param versions string to parse
+     * @returns [appVersion, installerVersion][]
+     */
+    async parseVersions(versions: string): Promise<[string, string][]> {
+        let parsedVersions = versions.split(/[ ,]/).filter(v => v).map((v) => {
+            const [appVersion, installerVersion = 'earliest'] = v.split("/");
+            return [appVersion, installerVersion] as [string, string];
+        });
+        parsedVersions = await Promise.all(parsedVersions.map(v => this.resolveVersion(...v)));
+        return _.uniqBy(parsedVersions, v => v.join('/'));
+    }
+
     private getInstallerKey(
         installerVersionInfo: ObsidianVersionInfo,
         opts: {platform?: NodeJS.Platform, arch?: NodeJS.Architecture} = {},

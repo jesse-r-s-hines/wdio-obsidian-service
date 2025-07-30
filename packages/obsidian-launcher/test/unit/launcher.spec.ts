@@ -67,14 +67,14 @@ describe('ObsdianLauncher resolve versions', () => {
         )
         if (process.platform == "linux" && process.arch == "arm64") {
             // Linux arm support was added in 0.12.15
-            resolveVersionTests.push([["0.14.5", "earliest"], ["0.14.5",  "0.12.15"]])
+            resolveVersionTests.push([["0.14.5", "earliest"], ["0.14.5", "0.12.15"]])
         } else {
-            resolveVersionTests.push([["0.14.5", "earliest"], ["0.14.5",  "0.11.0"]])
+            resolveVersionTests.push([["0.14.5", "earliest"], ["0.14.5", "0.11.0"]])
         }
     }
 
     resolveVersionTests.forEach(([[appVersion, installerVersion], expected]) => {
-        it(`resolveVersion("${appVersion}", "${installerVersion}") == ${expected}`, async () => {
+        it(`resolveVersion("${appVersion}", "${installerVersion}") == ${JSON.stringify(expected)}`, async () => {
             const [resolvedAppVersion, resolvedInstallerVersion] =
                 await launcher.resolveVersion(appVersion, installerVersion);
             expect([resolvedAppVersion, resolvedInstallerVersion]).to.eql(expected);
@@ -116,7 +116,24 @@ describe('ObsdianLauncher resolve versions', () => {
         const result = await launcher.getVersionInfo("foo").catch(e => e);
         expect(result).to.be.instanceOf(Error);
         expect(result.toString()).includes("No Obsidian app version");
-    })
+    });
+
+    const parseVersionsTests: [any, [string, string][]][] = [
+        ["", []],
+        ["latest/latest", [["1.7.7", "1.7.7"]]],
+        ["latest-beta/latest", [["1.8.0", "1.7.7"]]],
+        [" latest-beta/latest  latest-beta/latest ", [["1.8.0", "1.7.7"]]],
+        [" latest-beta/latest  latest-beta/1.7.0 ", [["1.8.0", "1.7.7"], ["1.8.0", "1.7.0"]]],
+        [",latest-beta/latest,latest-beta/1.7.0,", [["1.8.0", "1.7.7"], ["1.8.0", "1.7.0"]]],
+        ["latest", [["1.7.7", (process.platform == "win32" && process.arch == "arm64") ? "1.6.5" : "1.1.9"]]],
+        ["1.8.0/1.7.7", [["1.8.0", "1.7.7"]]],
+    ];
+    parseVersionsTests.forEach(([input, expected]) => {
+        it(`parseVersions(${JSON.stringify(input)}) == ${JSON.stringify(expected)}`, async function() {
+            const actual = await launcher.parseVersions(input);
+            expect(actual).to.eql(expected);
+        })
+    });
 })
 
 describe("ObsidianLauncher download, install and setup", () => {
