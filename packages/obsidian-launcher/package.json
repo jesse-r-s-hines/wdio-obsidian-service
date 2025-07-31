@@ -47,7 +47,7 @@
         "@types/cross-spawn": "^6.0.6",
         "@types/lodash": "^4.17.20",
         "@types/mocha": "^10.0.10",
-        "@types/node": "^18.19.120",
+        "@types/node": "^18.19.121",
         "@types/semver": "^7.7.0",
         "@types/serve-handler": "^6.1.4",
         "chai": "^5.2.1",
