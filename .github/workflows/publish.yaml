@@ -65,7 +65,7 @@ jobs:
 
       - name: Release
         run: |
-          gh release create "$VERSION" --title "$VERSION"
+          gh release create "$VERSION" --title "$VERSION" --draft
         env:
           VERSION: "${{ needs.check.outputs.version }}"
           GH_TOKEN: "${{ github.token }}"
