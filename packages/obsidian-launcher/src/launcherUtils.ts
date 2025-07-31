@@ -2,11 +2,11 @@ import fsAsync from "fs/promises"
 import fs from "fs"
 import path from "path"
 import child_process from "child_process"
-import spawn from "cross-spawn"
 import semver from "semver"
 import _ from "lodash"
 import { pipeline } from "stream/promises";
 import zlib from "zlib"
+import { fileURLToPath } from "url"
 import { DeepPartial } from "ts-essentials";
 import { atomicCreate, makeTmpDir, normalizeObject } from "./utils.js";
 import { downloadResponse } from "./apis.js"
@@ -21,28 +21,30 @@ export async function extractGz(archive: string, dest: string) {
     await pipeline(fs.createReadStream(archive), zlib.createGunzip(), fs.createWriteStream(dest));
 }
 
-export async function crossExecFile(command: string, args: string[] = [], options?: child_process.SpawnOptions) {
-    const proc = spawn(command, args, {stdio: "pipe", ...options});
-    let stdout = "", stderr = "";
-    proc.stdout!.on('data', data => stdout += data);
-    proc.stderr!.on('data', data => stderr += data);
-    const procExit = new Promise<number>((resolve) => proc.on('close', (code) => resolve(code ?? -1)));
-    const exitCode = await procExit;
-    const result = {stdout, stderr}
-    if (exitCode != 0) {
-        throw Error(`"${command} ${args.join(' ')}" failed with ${exitCode}: ${JSON.stringify(result, undefined, 4)}`)
-    }
-    return result;
-}
-
 /**
  * Run 7zip.
  * Note there's some weirdness around absolute paths because of the way wasm's filesystem works. The root is mounted
  * under /nodefs, so either use relative paths or prefix paths with /nodefs.
  */
 export async function sevenZ(args: string[], options?: child_process.SpawnOptions) {
-    // package binaries are added to the path automatically
-    return await crossExecFile("7z-wasm", args, options);
+    // run 7z.js script as sub_process (so it doesn't block the main thread)
+    const sevenZipScript = path.resolve(fileURLToPath(import.meta.url), '../7z.js');
+    const proc = child_process.spawn(process.execPath, [sevenZipScript, ...args], {
+        stdio: "pipe",
+        ...options,
+    });
+
+    let stdout = "", stderr = "";
+    proc.stdout!.on('data', data => stdout += data);
+    proc.stderr!.on('data', data => stderr += data);
+    const procExit = new Promise<number>((resolve) => proc.on('close', (code) => resolve(code ?? -1)));
+    const exitCode = await procExit;
+
+    const result = {stdout, stderr}
+    if (exitCode != 0) {
+        throw Error(`"7z ${args.join(' ')}" failed with ${exitCode}:\n${stdout}\n${stderr}`)
+    }
+    return result;
 }
 
 /**
