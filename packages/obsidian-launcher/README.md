@@ -1,8 +1,8 @@
 # Obsidian Launcher [![NPM](https://img.shields.io/npm/v/obsidian-launcher)](https://www.npmjs.com/package/obsidian-launcher)
 
-`obsidian-launcher` is a package for downloading and launching different versions of [Obsidian](https://obsidian.md) for testing and development of Obsidian plugins. It can download Obsidian, install plugins and themes into Obsidian vaults, and launch sandboxed Obsidian instances with isolated user configuration directories. You can use it either as a JavaScript package or as a command line interface.
+`obsidian-launcher` is a package for downloading and launching different versions of [Obsidian](https://obsidian.md) for testing Obsidian plugins. It can download and launch different versions of Obsidian, install plugins and themes into Obsidian vaults, and launch sandboxed Obsidian instances with isolated user configuration directories. You can use it either as a JavaScript package or as a command line interface.
 
-The primary use case for this package is to allow [wdio-obsidian-service](../wdio-obsidian-service/README.md) to download Obsidian when testing Obsidian plugins with WebdriverIO. However, it can also be used as a stand-alone package, for instance if you want to test plugins with a different testing framework, or want to use the CLI during development.
+The primary use case for this package is to allow [wdio-obsidian-service](../wdio-obsidian-service/README.md) to automatically download Obsidian when testing plugins with WebdriverIO. However, it can also be used as a stand-alone package if you want to use the CLI to compare Obsidian versions during plugin development.
 
 ## Example Usage
 The default export of the package is the `ObsidianLauncher` class, which can be used like so:
