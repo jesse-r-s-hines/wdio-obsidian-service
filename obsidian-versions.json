@@ -13,7 +13,7 @@
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.5.0/obsidian-0.5.0.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.5.1",
@@ -22,7 +22,7 @@
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.5.1/obsidian-0.5.1.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.5.2",
@@ -31,7 +31,7 @@
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.5.2/obsidian-0.5.2.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.5.3",
@@ -40,7 +40,7 @@
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.5.3/obsidian-0.5.3.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.6.0",
@@ -49,7 +49,7 @@
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.6.0/obsidian-0.6.0.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.6.1",
@@ -58,7 +58,7 @@
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.6.1/obsidian-0.6.1.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.6.2",
@@ -67,7 +67,7 @@
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.6.2/obsidian-0.6.2.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.6.3",
@@ -76,7 +76,7 @@
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.6.3/obsidian-0.6.3.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.6.4",
@@ -90,7 +90,7 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.6.4/Obsidian-0.6.4.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.6.4/Obsidian.0.6.4.exe"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:21091143",
                     "electron": "8.2.5",
@@ -132,7 +132,7 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.6.5/Obsidian-0.6.5.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.6.5/Obsidian.0.6.5.exe"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:21233542",
                     "electron": "8.2.5",
@@ -171,7 +171,7 @@
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.6.6/obsidian-0.6.6.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.6.7",
@@ -185,7 +185,7 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.6.7/Obsidian-0.6.7.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.6.7/Obsidian.0.6.7.exe"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:21379266",
                     "electron": "8.2.5",
@@ -224,7 +224,7 @@
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.7.0/obsidian-0.7.0.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.7.1",
@@ -235,7 +235,7 @@
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.7.1/obsidian-0.7.1.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.7.2",
@@ -246,7 +246,7 @@
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.7.2/obsidian-0.7.2.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.7.3",
@@ -260,7 +260,7 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.7.3/Obsidian-0.7.3.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.7.3/Obsidian.0.7.3.exe"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:21744262",
                     "electron": "8.2.5",
@@ -302,7 +302,7 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.7.4/Obsidian-0.7.4.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.7.4/Obsidian.0.7.4.exe"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:22385520",
                     "electron": "8.2.5",
@@ -341,7 +341,7 @@
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.7.5/obsidian-0.7.5.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.7.6",
@@ -355,7 +355,7 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.7.6/Obsidian-0.7.6.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.7.6/Obsidian.0.7.6.exe"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:22664166",
                     "electron": "8.2.5",
@@ -397,7 +397,7 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.0/Obsidian-0.8.0.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.0/Obsidian.0.8.0.exe"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:23048879",
                     "electron": "8.2.5",
@@ -439,7 +439,7 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.1/Obsidian-0.8.1.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.1/Obsidian.0.8.1.exe"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:23423302",
                     "electron": "8.2.5",
@@ -481,7 +481,7 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.2/Obsidian-0.8.2.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.2/Obsidian.0.8.2.exe"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:23772562",
                     "electron": "8.2.5",
@@ -520,7 +520,7 @@
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.3/obsidian-0.8.3.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.8.4",
@@ -534,7 +534,7 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.4/Obsidian-0.8.4.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.4/Obsidian.0.8.4.exe"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:24090019",
                     "electron": "8.2.5",
@@ -573,7 +573,7 @@
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.5/obsidian-0.8.5.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.8.6",
@@ -584,7 +584,7 @@
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.6/obsidian-0.8.6.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.8.7",
@@ -595,7 +595,7 @@
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.7/obsidian-0.8.7.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.8.8",
@@ -606,7 +606,7 @@
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.8/obsidian-0.8.8.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.8.9",
@@ -620,7 +620,7 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.9/Obsidian-0.8.9.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.9/Obsidian.0.8.9.exe"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:24575946",
                     "electron": "8.2.5",
@@ -659,7 +659,7 @@
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.10/obsidian-0.8.10.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.8.11",
@@ -670,7 +670,7 @@
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.11/obsidian-0.8.11.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.8.12",
@@ -684,7 +684,7 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.12/Obsidian-0.8.12.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.12/Obsidian.0.8.12.exe"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:25112073",
                     "electron": "10.1.1",
@@ -723,7 +723,7 @@
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.13/obsidian-0.8.13.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.8.14",
@@ -737,7 +737,7 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.14/Obsidian-0.8.14.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.14/Obsidian.0.8.14.exe"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:25625457",
                     "electron": "10.1.1",
@@ -779,7 +779,7 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.15/Obsidian-0.8.15.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.15/Obsidian.0.8.15.exe"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:25989919",
                     "electron": "10.1.1",
@@ -818,7 +818,7 @@
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.0/obsidian-0.9.0.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.9.1",
@@ -833,7 +833,7 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.1/Obsidian-0.9.1.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.1/Obsidian.0.9.1.exe"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:26297133",
                     "electron": "10.1.1",
@@ -884,7 +884,7 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.2/Obsidian-0.9.2.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.2/Obsidian.0.9.2.exe"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:26576905",
                     "electron": "10.1.1",
@@ -935,7 +935,7 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.3/Obsidian-0.9.3.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.3/Obsidian.0.9.3.exe"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:26849740",
                     "electron": "10.1.1",
@@ -986,7 +986,7 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.4/Obsidian-0.9.4.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.4/Obsidian.0.9.4.exe"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:27178561",
                     "electron": "10.1.1",
@@ -1033,7 +1033,7 @@
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.5/obsidian-0.9.5.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.9.6",
@@ -1048,7 +1048,7 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.6/Obsidian-0.9.6.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.6/Obsidian.0.9.6.exe"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:27552501",
                     "electron": "10.1.1",
@@ -1095,7 +1095,7 @@
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.7/obsidian-0.9.7.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.9.8",
@@ -1106,7 +1106,7 @@
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.8/obsidian-0.9.8.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.9.9",
@@ -1117,7 +1117,7 @@
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.9/obsidian-0.9.9.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.9.10",
@@ -1132,7 +1132,7 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.10/Obsidian-0.9.10.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.10/Obsidian.0.9.10.exe"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:27906347",
                     "electron": "10.1.5",
@@ -1183,7 +1183,7 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.11/Obsidian-0.9.11.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.11/Obsidian.0.9.11.exe"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:28159654",
                     "electron": "10.1.5",
@@ -1230,7 +1230,7 @@
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.12/obsidian-0.9.12.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.9.13",
@@ -1241,7 +1241,7 @@
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.13/obsidian-0.9.13.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.9.14",
@@ -1252,7 +1252,7 @@
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.14/obsidian-0.9.14.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.9.15",
@@ -1267,7 +1267,7 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.15/Obsidian-0.9.15.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.15/Obsidian.0.9.15.exe"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:28477210",
                     "electron": "10.1.5",
@@ -1314,7 +1314,7 @@
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.16/obsidian-0.9.16.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.9.17",
@@ -1331,7 +1331,7 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.17/Obsidian-0.9.17.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.17/Obsidian.0.9.17.exe"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:28787824",
                     "electron": "11.0.3",
@@ -1394,7 +1394,7 @@
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.18/obsidian-0.9.18.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.9.19",
@@ -1405,7 +1405,7 @@
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.19/obsidian-0.9.19.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.9.20",
@@ -1420,7 +1420,7 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.20/Obsidian-0.9.20.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.20/Obsidian.0.9.20.exe"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:29271273",
                     "electron": "11.0.3",
@@ -1467,7 +1467,7 @@
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.21/obsidian-0.9.21.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.9.22",
@@ -1482,7 +1482,7 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.22/Obsidian-0.9.22.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.22/Obsidian.0.9.22.exe"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:29515852",
                     "electron": "11.1.0",
@@ -1529,7 +1529,7 @@
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.0/obsidian-0.10.0.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.10.1",
@@ -1544,7 +1544,7 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.1/Obsidian-0.10.1.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.1/Obsidian.0.10.1.exe"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:29841290",
                     "electron": "11.1.0",
@@ -1591,7 +1591,7 @@
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.2/obsidian-0.10.2.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.10.3",
@@ -1602,7 +1602,7 @@
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.3/obsidian-0.10.3.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.10.4",
@@ -1613,7 +1613,7 @@
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.4/obsidian-0.10.4.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.10.5",
@@ -1624,7 +1624,7 @@
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.5/obsidian-0.10.5.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.10.6",
@@ -1639,7 +1639,7 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.6/Obsidian-0.10.6.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.6/Obsidian.0.10.6.exe"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:30269016",
                     "electron": "11.1.0",
@@ -1690,7 +1690,7 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.7/Obsidian-0.10.7.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.7/Obsidian.0.10.7.exe"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:30562793",
                     "electron": "11.1.0",
@@ -1741,7 +1741,7 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.8/Obsidian-0.10.8.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.8/Obsidian.0.10.8.exe"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:30912394",
                     "electron": "11.1.0",
@@ -1792,7 +1792,7 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.9/Obsidian-0.10.9-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.9/Obsidian.0.10.9.exe"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:31147987",
                     "electron": "11.1.0",
@@ -1839,7 +1839,7 @@
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.10/obsidian-0.10.10.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.10.11",
@@ -1854,7 +1854,7 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.11/Obsidian-0.10.11-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.11/Obsidian.0.10.11.exe"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:31317383",
                     "electron": "11.2.1",
@@ -1901,7 +1901,7 @@
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.12/obsidian-0.10.12.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.10.13",
@@ -1916,7 +1916,7 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.13/Obsidian-0.10.13-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.13/Obsidian.0.10.13.exe"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:31765677",
                     "electron": "11.2.1",
@@ -1967,7 +1967,7 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.0/Obsidian-0.11.0-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.0/Obsidian.0.11.0.exe"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:32161889",
                     "electron": "11.2.3",
@@ -2014,7 +2014,7 @@
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.1/obsidian-0.11.1.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.11.2",
@@ -2025,7 +2025,7 @@
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.2/obsidian-0.11.2.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.11.3",
@@ -2040,7 +2040,7 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.3/Obsidian-0.11.3-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.3/Obsidian.0.11.3.exe"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:32851343",
                     "electron": "11.3.0",
@@ -2087,7 +2087,7 @@
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.4/obsidian-0.11.4.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.11.5",
@@ -2102,7 +2102,7 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.5/Obsidian-0.11.5-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.5/Obsidian.0.11.5.exe"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:33291030",
                     "electron": "11.3.0",
@@ -2149,7 +2149,7 @@
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.6/obsidian-0.11.6.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.11.7",
@@ -2160,7 +2160,7 @@
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.7/obsidian-0.11.7.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.11.8",
@@ -2171,7 +2171,7 @@
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.8/obsidian-0.11.8.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.11.9",
@@ -2186,7 +2186,7 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.9/Obsidian-0.11.9-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.9/Obsidian.0.11.9.exe"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:34014989",
                     "electron": "11.3.0",
@@ -2233,7 +2233,7 @@
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.10/obsidian-0.11.10.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.11.11",
@@ -2244,7 +2244,7 @@
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.11/obsidian-0.11.11.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.11.12",
@@ -2255,7 +2255,7 @@
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.12/obsidian-0.11.12.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.11.13",
@@ -2270,7 +2270,7 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.13/Obsidian-0.11.13-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.13/Obsidian.0.11.13.exe"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:34553717",
                     "electron": "11.3.0",
@@ -2317,7 +2317,7 @@
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.0/obsidian-0.12.0.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.12.1",
@@ -2328,7 +2328,7 @@
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.1/obsidian-0.12.1.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.12.2",
@@ -2339,7 +2339,7 @@
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.2/obsidian-0.12.2.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.12.3",
@@ -2354,7 +2354,7 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.3/Obsidian-0.12.3-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.3/Obsidian.0.12.3.exe"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:36755526",
                     "electron": "12.0.6",
@@ -2405,7 +2405,7 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.4/Obsidian-0.12.4-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.4/Obsidian.0.12.4.exe"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:38220464",
                     "electron": "12.0.6",
@@ -2456,7 +2456,7 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.5/Obsidian-0.12.5-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.5/Obsidian.0.12.5.exe"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:38950068",
                     "electron": "12.0.11",
@@ -2503,7 +2503,7 @@
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.6/obsidian-0.12.6.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.12.7",
@@ -2514,7 +2514,7 @@
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.7/obsidian-0.12.7.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.12.8",
@@ -2525,7 +2525,7 @@
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.8/obsidian-0.12.8.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.12.9",
@@ -2536,7 +2536,7 @@
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.9/obsidian-0.12.9.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.12.10",
@@ -2551,7 +2551,7 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.10/Obsidian-0.12.10-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.10/Obsidian.0.12.10.exe"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:40102305",
                     "electron": "12.0.14",
@@ -2598,7 +2598,7 @@
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.11/obsidian-0.12.11.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.12.12",
@@ -2613,7 +2613,7 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.12/Obsidian-0.12.12-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.12/Obsidian.0.12.12.exe"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:41667653",
                     "electron": "12.0.14",
@@ -2660,7 +2660,7 @@
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.13/obsidian-0.12.13.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.12.14",
@@ -2671,7 +2671,7 @@
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.14/obsidian-0.12.14.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.12.15",
@@ -2688,7 +2688,7 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.15/Obsidian-0.12.15-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.15/Obsidian.0.12.15.exe"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:43899264",
                     "electron": "12.0.18",
@@ -2749,7 +2749,7 @@
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.12.16",
             "downloads": {},
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.12.17",
@@ -2760,7 +2760,7 @@
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.17/obsidian-0.12.17.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.12.18",
@@ -2771,7 +2771,7 @@
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.18/obsidian-0.12.18.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.12.19",
@@ -2786,7 +2786,7 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.19/Obsidian-0.12.19-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.19/Obsidian.0.12.19.exe"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:47285302",
                     "electron": "13.5.2",
@@ -2832,7 +2832,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.13.0.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.13.1",
@@ -2842,7 +2842,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.13.1.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.13.2",
@@ -2852,7 +2852,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.13.2.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.13.3",
@@ -2862,7 +2862,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.13.3.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.13.4",
@@ -2872,7 +2872,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.13.4.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.13.5",
@@ -2882,7 +2882,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.13.5.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.13.6",
@@ -2892,7 +2892,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.13.6.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.13.7",
@@ -2902,7 +2902,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.13.7.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.13.8",
@@ -2912,7 +2912,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.13.8.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.13.9",
@@ -2922,7 +2922,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.13.9.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.13.10",
@@ -2932,7 +2932,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.13.10.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.13.11",
@@ -2942,7 +2942,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.13.11.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.13.12",
@@ -2952,7 +2952,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.13.12.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.13.13",
@@ -2962,7 +2962,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.13.13.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.13.14",
@@ -2977,7 +2977,7 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.13.14/Obsidian-0.13.14-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.13.14/Obsidian.0.13.14.exe"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:52262208",
                     "electron": "13.6.2",
@@ -3023,7 +3023,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.13.15.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.13.16",
@@ -3033,7 +3033,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.13.16.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.13.17",
@@ -3043,7 +3043,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.13.17.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.13.18",
@@ -3053,7 +3053,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.13.18.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.13.19",
@@ -3068,7 +3068,7 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.13.19/Obsidian-0.13.19-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.13.19/Obsidian.0.13.19.exe"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:53284368",
                     "electron": "13.6.2",
@@ -3114,7 +3114,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.13.20.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.13.21",
@@ -3124,7 +3124,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.13.21.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.13.22",
@@ -3134,7 +3134,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.13.22.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.13.23",
@@ -3149,7 +3149,7 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.13.23/Obsidian-0.13.23-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.13.23/Obsidian.0.13.23.exe"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:55141533",
                     "electron": "13.6.2",
@@ -3200,7 +3200,7 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.13.24/Obsidian-0.13.24-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.13.24/Obsidian.0.13.24.exe"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:55785050",
                     "electron": "16.0.8",
@@ -3246,7 +3246,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.13.25.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.13.26",
@@ -3256,7 +3256,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.13.26.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.13.27",
@@ -3266,7 +3266,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.13.27.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.13.28",
@@ -3276,7 +3276,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.13.28.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.13.29",
@@ -3286,7 +3286,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.13.29.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.13.30",
@@ -3303,7 +3303,7 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.13.30/Obsidian-0.13.30-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.13.30/Obsidian.0.13.30.exe"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:58756042",
                     "electron": "16.0.10",
@@ -3372,7 +3372,7 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.13.31/Obsidian-0.13.31-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.13.31/Obsidian.0.13.31.exe"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:58950702",
                     "electron": "17.1.1",
@@ -3434,7 +3434,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.13.32.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.13.33",
@@ -3445,7 +3445,7 @@
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.13.33/obsidian-0.13.33.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.14.0",
@@ -3455,7 +3455,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.14.0.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.14.1",
@@ -3465,7 +3465,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.14.1.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.14.2",
@@ -3480,7 +3480,7 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.14.2/Obsidian-0.14.2-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.14.2/Obsidian.0.14.2.exe"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:60838504",
                     "electron": "17.1.1",
@@ -3526,7 +3526,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.14.3.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.14.4",
@@ -3536,7 +3536,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.14.4.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.14.5",
@@ -3552,7 +3552,7 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.14.5/Obsidian-0.14.5-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.14.5/Obsidian.0.14.5.exe"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:62177791",
                     "electron": "18.0.3",
@@ -3612,7 +3612,7 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.14.6/Obsidian-0.14.6-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.14.6/Obsidian.0.14.6.exe"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:62925094",
                     "electron": "18.0.4",
@@ -3666,7 +3666,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.14.7.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.14.8",
@@ -3676,7 +3676,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.14.8.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.14.9",
@@ -3686,7 +3686,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.14.9.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.14.10",
@@ -3696,7 +3696,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.14.10.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.14.11",
@@ -3706,7 +3706,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.14.11.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.14.12",
@@ -3716,7 +3716,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.14.12.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.14.13",
@@ -3726,7 +3726,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.14.13.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.14.14",
@@ -3736,7 +3736,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.14.14.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.14.15",
@@ -3752,7 +3752,7 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.14.15/Obsidian-0.14.15-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.14.15/Obsidian.0.14.15.exe"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:67692123",
                     "electron": "18.3.0",
@@ -3806,7 +3806,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.15.0.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.15.1",
@@ -3816,7 +3816,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.15.1.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.15.2",
@@ -3826,7 +3826,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.15.2.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.15.3",
@@ -3836,7 +3836,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.15.3.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.15.4",
@@ -3846,7 +3846,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.15.4.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.15.5",
@@ -3856,7 +3856,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.15.5.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.15.6",
@@ -3872,7 +3872,7 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.15.6/Obsidian-0.15.6-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.15.6/Obsidian.0.15.6.exe"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:71363425",
                     "electron": "18.3.5",
@@ -3926,7 +3926,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.15.7.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.15.8",
@@ -3942,7 +3942,7 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.15.8/Obsidian-0.15.8-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.15.8/Obsidian.0.15.8.exe"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:72395217",
                     "electron": "18.3.5",
@@ -4003,7 +4003,7 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.15.9/Obsidian-0.15.9-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.15.9/Obsidian.0.15.9.exe"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:72757655",
                     "electron": "18.3.5",
@@ -4065,7 +4065,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.16.0.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.16.1",
@@ -4075,7 +4075,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.16.1.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.16.2",
@@ -4085,7 +4085,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.16.2.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.16.3",
@@ -4095,7 +4095,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.16.3.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.16.4",
@@ -4105,7 +4105,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.16.4.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "0.16.5",
@@ -4115,7 +4115,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.16.5.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "1.0.0",
@@ -4132,7 +4132,7 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.0.0/Obsidian-1.0.0-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.0.0/Obsidian.1.0.0.exe"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:80795382",
                     "electron": "18.3.5",
@@ -4194,7 +4194,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.0.1.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "1.0.2",
@@ -4204,7 +4204,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.0.2.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "1.0.3",
@@ -4221,7 +4221,7 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.0.3/Obsidian-1.0.3-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.0.3/Obsidian.1.0.3.exe"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:82340813",
                     "electron": "18.3.5",
@@ -4283,7 +4283,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.1.0.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "1.1.1",
@@ -4293,7 +4293,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.1.1.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "1.1.2",
@@ -4303,7 +4303,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.1.2.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "1.1.3",
@@ -4313,7 +4313,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.1.3.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "1.1.4",
@@ -4323,7 +4323,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.1.4.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "1.1.5",
@@ -4333,7 +4333,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.1.5.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "1.1.6",
@@ -4343,7 +4343,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.1.6.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "1.1.7",
@@ -4353,7 +4353,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.1.7.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "1.1.8",
@@ -4370,7 +4370,7 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.1.8/Obsidian-1.1.8-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.1.8/Obsidian.1.1.8.exe"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:88842645",
                     "electron": "18.3.15",
@@ -4439,7 +4439,7 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.1.9/Obsidian-1.1.9-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.1.9/Obsidian.1.1.9.exe"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:89291452",
                     "electron": "21.3.3",
@@ -4501,7 +4501,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.1.10.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "1.1.11",
@@ -4511,7 +4511,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.1.11.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "1.1.12",
@@ -4521,7 +4521,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.1.12.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "1.1.13",
@@ -4531,7 +4531,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.1.13.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "1.1.14",
@@ -4541,7 +4541,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.1.14.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "1.1.15",
@@ -4558,7 +4558,7 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.1.15/Obsidian-1.1.15-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.1.15/Obsidian.1.1.15.exe"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:96565241",
                     "electron": "21.4.1",
@@ -4627,7 +4627,7 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.1.16/Obsidian-1.1.16-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.1.16/Obsidian.1.1.16.exe"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:97704716",
                     "electron": "21.4.1",
@@ -4689,7 +4689,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.2.0.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "1.2.1",
@@ -4699,7 +4699,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.2.1.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "1.2.2",
@@ -4709,7 +4709,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.2.2.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "1.2.3",
@@ -4719,7 +4719,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.2.3.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "1.2.4",
@@ -4729,7 +4729,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.2.4.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "1.2.5",
@@ -4739,7 +4739,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.2.5.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "1.2.6",
@@ -4749,7 +4749,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.2.6.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "1.2.7",
@@ -4766,7 +4766,7 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.2.7/Obsidian-1.2.7-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.2.7/Obsidian.1.2.7.exe"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:106222208",
                     "electron": "24.1.2",
@@ -4835,7 +4835,7 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.2.8/Obsidian-1.2.8-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.2.8/Obsidian.1.2.8.exe"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:107393637",
                     "electron": "24.1.2",
@@ -4897,7 +4897,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.3.0.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "1.3.1",
@@ -4907,7 +4907,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.3.1.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "1.3.2",
@@ -4917,7 +4917,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.3.2.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "1.3.3",
@@ -4934,7 +4934,7 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.3.3/Obsidian-1.3.3-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.3.3/Obsidian.1.3.3.exe"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:109456149",
                     "electron": "24.3.1",
@@ -5003,7 +5003,7 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.3.4/Obsidian-1.3.4-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.3.4/Obsidian.1.3.4.exe"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:109625437",
                     "electron": "24.3.1",
@@ -5072,7 +5072,7 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.3.5/Obsidian-1.3.5-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.3.5/Obsidian.1.3.5.exe"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:110740231",
                     "electron": "24.3.1",
@@ -5134,7 +5134,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.3.6.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "1.3.7",
@@ -5151,7 +5151,7 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.3.7/Obsidian-1.3.7-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.3.7/Obsidian.1.3.7.exe"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:119452654",
                     "electron": "24.3.1",
@@ -5213,7 +5213,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.4.0.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "1.4.1",
@@ -5223,7 +5223,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.4.1.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "1.4.2",
@@ -5233,7 +5233,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.4.2.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "1.4.3",
@@ -5243,7 +5243,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.4.3.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "1.4.4",
@@ -5253,7 +5253,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.4.4.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "1.4.5",
@@ -5270,7 +5270,7 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.4.5/Obsidian-1.4.5-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.4.5/Obsidian.1.4.5.exe"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:123834683",
                     "electron": "25.8.0",
@@ -5332,7 +5332,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.4.6.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "1.4.7",
@@ -5342,7 +5342,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.4.7.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "1.4.8",
@@ -5352,7 +5352,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.4.8.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "1.4.9",
@@ -5362,7 +5362,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.4.9.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "1.4.10",
@@ -5379,7 +5379,7 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.4.10/Obsidian-1.4.10-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.4.10/Obsidian.1.4.10.exe"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:125572700",
                     "electron": "25.8.0",
@@ -5448,7 +5448,7 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.4.11/Obsidian-1.4.11-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.4.11/Obsidian.1.4.11.exe"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:125582659",
                     "electron": "25.8.0",
@@ -5517,7 +5517,7 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.4.12/Obsidian-1.4.12-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.4.12/Obsidian.1.4.12.exe"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:125718289",
                     "electron": "25.8.0",
@@ -5586,7 +5586,7 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.4.13/Obsidian-1.4.13-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.4.13/Obsidian.1.4.13.exe"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:126122872",
                     "electron": "25.8.1",
@@ -5655,7 +5655,7 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.4.14/Obsidian-1.4.14-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.4.14/Obsidian.1.4.14.exe"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:127928165",
                     "electron": "25.8.1",
@@ -5717,7 +5717,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.4.15.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "1.4.16",
@@ -5734,7 +5734,7 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.4.16/Obsidian-1.4.16-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.4.16/Obsidian.1.4.16.exe"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:130466515",
                     "electron": "25.8.1",
@@ -5796,7 +5796,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.5.0.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "1.5.1",
@@ -5806,7 +5806,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.5.1.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "1.5.2",
@@ -5816,7 +5816,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.5.2.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "1.5.3",
@@ -5833,7 +5833,7 @@
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.5.3/Obsidian-1.5.3-universal.dmg",
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.5.3/Obsidian.1.5.3.exe"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:142431947",
                     "electron": "25.8.1",
@@ -5895,7 +5895,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.5.4.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "1.5.5",
@@ -5905,7 +5905,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.5.5.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "1.5.6",
@@ -5915,7 +5915,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.5.6.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "1.5.7",
@@ -5925,7 +5925,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.5.7.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "1.5.8",
@@ -5943,7 +5943,7 @@
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.5.8/Obsidian.1.5.8.exe",
                 "apk": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.5.8/Obsidian-1.5.8.apk"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:152840082",
                     "electron": "28.2.3",
@@ -6005,7 +6005,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.5.9.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "1.5.10",
@@ -6015,7 +6015,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.5.10.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "1.5.11",
@@ -6033,7 +6033,7 @@
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.5.11/Obsidian.1.5.11.exe",
                 "apk": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.5.11/Obsidian-1.5.11.apk"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:157496014",
                     "electron": "28.2.3",
@@ -6103,7 +6103,7 @@
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.5.12/Obsidian.1.5.12.exe",
                 "apk": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.5.12/Obsidian-1.5.12.apk"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:159446586",
                     "electron": "28.2.3",
@@ -6165,7 +6165,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.6.0.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "1.6.1",
@@ -6175,7 +6175,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.6.1.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "1.6.2",
@@ -6193,7 +6193,7 @@
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.6.2/Obsidian.1.6.2.exe",
                 "apk": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.6.2/Obsidian-1.6.2.apk"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:172328461",
                     "electron": "28.3.3",
@@ -6263,7 +6263,7 @@
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.6.3/Obsidian.1.6.3.exe",
                 "apk": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.6.3/Obsidian-1.6.3.apk"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:172877016",
                     "electron": "28.3.3",
@@ -6325,7 +6325,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.6.4.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "1.6.5",
@@ -6343,7 +6343,7 @@
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.6.5/Obsidian-1.6.5.exe",
                 "apk": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.6.5/Obsidian-1.6.5.apk"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:175738613",
                     "electron": "30.1.2",
@@ -6407,7 +6407,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.6.6.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "1.6.7",
@@ -6425,7 +6425,7 @@
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.6.7/Obsidian-1.6.7.exe",
                 "apk": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.6.7/Obsidian-1.6.7.apk"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:180379845",
                     "electron": "30.1.2",
@@ -6489,7 +6489,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.7.0.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "1.7.1",
@@ -6499,7 +6499,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.7.1.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "1.7.2",
@@ -6509,7 +6509,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.7.2.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "1.7.3",
@@ -6519,7 +6519,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.7.3.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "1.7.4",
@@ -6537,7 +6537,7 @@
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.7.4/Obsidian-1.7.4.exe",
                 "apk": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.7.4/Obsidian-1.7.4.apk"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:199564010",
                     "electron": "31.6.0",
@@ -6609,7 +6609,7 @@
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.7.5/Obsidian-1.7.5.exe",
                 "apk": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.7.5/Obsidian-1.7.5.apk"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:204099954",
                     "electron": "32.2.2",
@@ -6681,7 +6681,7 @@
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.7.6/Obsidian-1.7.6.exe",
                 "apk": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.7.6/Obsidian-1.7.6.apk"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:205491727",
                     "electron": "32.2.3",
@@ -6753,7 +6753,7 @@
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.7.7/Obsidian-1.7.7.exe",
                 "apk": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.7.7/Obsidian-1.7.7.apk"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:207047101",
                     "electron": "32.2.5",
@@ -6817,7 +6817,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.8.0.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "1.8.1",
@@ -6827,7 +6827,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.8.1.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "1.8.2",
@@ -6837,7 +6837,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.8.2.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "1.8.3",
@@ -6855,7 +6855,7 @@
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.8.3/Obsidian-1.8.3.exe",
                 "apk": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.8.3/Obsidian-1.8.3.apk"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:224667343",
                     "electron": "33.3.2",
@@ -6927,7 +6927,7 @@
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.8.4/Obsidian-1.8.4.exe",
                 "apk": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.8.4/Obsidian-1.8.4.apk"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:225008542",
                     "electron": "33.3.2",
@@ -6991,7 +6991,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.8.5.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "1.8.6",
@@ -7001,7 +7001,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.8.6.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "1.8.7",
@@ -7019,7 +7019,7 @@
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.8.7/Obsidian-1.8.7.exe",
                 "apk": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.8.7/Obsidian-1.8.7.apk"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:229042038",
                     "electron": "33.3.2",
@@ -7083,7 +7083,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.8.8.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "1.8.9",
@@ -7101,7 +7101,7 @@
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.8.9/Obsidian-1.8.9.exe",
                 "apk": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.8.9/Obsidian-1.8.9.apk"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:234217923",
                     "electron": "34.3.0",
@@ -7173,7 +7173,7 @@
                 "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.8.10/Obsidian-1.8.10.exe",
                 "apk": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.8.10/Obsidian-1.8.10.apk"
             },
-            "installerInfo": {
+            "installers": {
                 "appImage": {
                     "digest": "id:248186283",
                     "electron": "34.2.0",
@@ -7237,7 +7237,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.9.0.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "1.9.1",
@@ -7247,7 +7247,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.9.1.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "1.9.2",
@@ -7257,7 +7257,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.9.2.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "1.9.3",
@@ -7267,7 +7267,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.9.3.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "1.9.4",
@@ -7277,7 +7277,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.9.4.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "1.9.5",
@@ -7287,7 +7287,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.9.5.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         },
         {
             "version": "1.9.6",
@@ -7297,7 +7297,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.9.6.asar.gz"
             },
-            "installerInfo": {}
+            "installers": {}
         }
     ]
 }

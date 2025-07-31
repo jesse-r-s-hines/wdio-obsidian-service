@@ -294,11 +294,11 @@ export class ObsidianLauncher {
     private getInstallerKey(
         installerVersionInfo: ObsidianVersionInfo,
         opts: {platform?: NodeJS.Platform, arch?: NodeJS.Architecture} = {},
-    ): keyof ObsidianVersionInfo['installerInfo']|undefined {
+    ): keyof ObsidianVersionInfo['installers']|undefined {
         const {platform, arch} = _.merge({}, opts, currentPlatform);
         const platformName = `${platform}-${arch}`;
-        const key = _.findKey(installerVersionInfo.installerInfo, v => v && v.platforms.includes(platformName));
-        return key as keyof ObsidianVersionInfo['installerInfo']|undefined;
+        const key = _.findKey(installerVersionInfo.installers, v => v && v.platforms.includes(platformName));
+        return key as keyof ObsidianVersionInfo['installers']|undefined;
     }
 
     /**
@@ -315,7 +315,7 @@ export class ObsidianLauncher {
         const versionInfo = await this.getVersionInfo(installerVersion);
         const key = this.getInstallerKey(versionInfo, {platform, arch});
         if (key) {
-            return {...versionInfo.installerInfo[key]!, url: versionInfo.downloads[key]!};
+            return {...versionInfo.installers[key]!, url: versionInfo.downloads[key]!};
         } else {
             throw Error(`No Obsidian installer for ${installerVersion} ${platform}-${arch}`);
         }
@@ -1013,8 +1013,8 @@ export class ObsidianLauncher {
         const installerInfos = await pool(maxInstances, newInstallers, async ([v, key]) => {
             let installerInfo: Partial<ObsidianInstallerInfo>|undefined;
             const hasAsset = !!v.downloads?.[key];
-            const alreadyExtracted = !!v.installerInfo?.[key]?.chrome;
-            const changed = v.installerInfo?.[key]?.digest != originalVersions[v.version!]?.installerInfo[key]?.digest;
+            const alreadyExtracted = !!v.installers?.[key]?.chrome;
+            const changed = v.installers?.[key]?.digest != originalVersions[v.version!]?.installers[key]?.digest;
             if (hasAsset && (!alreadyExtracted || changed)) {
                 installerInfo = await getInstallerInfo(key, v.downloads![key]!);
             }

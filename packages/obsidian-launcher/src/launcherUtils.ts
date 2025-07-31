@@ -182,7 +182,7 @@ export function parseObsidianGithubRelease(gitHubRelease: any): DeepPartial<Obsi
             exe: exe?.url,
             apk: apk?.url,
         },
-        installerInfo: {
+        installers: {
             appImage: appImage ? {digest: appImage.digest} : undefined,
             appImageArm: appImageArm ? {digest: appImageArm.digest} : undefined,
             tar: tar ? {digest: tar.digest} : undefined,
@@ -198,7 +198,7 @@ export function parseObsidianGithubRelease(gitHubRelease: any): DeepPartial<Obsi
  * Takes path to the installer (the whole folder, not just the entrypoint executable).
  */
 export async function getInstallerInfo(
-    installerKey: keyof ObsidianVersionInfo['installerInfo'], url: string,
+    installerKey: keyof ObsidianVersionInfo['installers'], url: string,
 ): Promise<Partial<ObsidianInstallerInfo>> {
     const installerName = url.split("/").at(-1)!;
     console.log(`Extrating installer info for ${installerName}...`)
@@ -283,8 +283,8 @@ export function normalizeObsidianVersionInfo(versionInfo: DeepPartial<ObsidianVe
     versionInfo = {
         ...versionInfo,
         // kept for backwards compatibility
-        electronVersion: versionInfo.installerInfo?.appImage?.electron,
-        chromeVersion: versionInfo.installerInfo?.appImage?.chrome,
+        electronVersion: versionInfo.installers?.appImage?.electron,
+        chromeVersion: versionInfo.installers?.appImage?.chrome,
     };
     const canonicalForm = {
         version: null,
@@ -302,7 +302,7 @@ export function normalizeObsidianVersionInfo(versionInfo: DeepPartial<ObsidianVe
             exe: null,
             apk: null,
         },
-        installerInfo: {
+        installers: {
             appImage: {digest: null, electron: null, chrome: null, platforms: null},
             appImageArm: {digest: null, electron: null, chrome: null, platforms: null},
             tar: {digest: null, electron: null, chrome: null, platforms: null},

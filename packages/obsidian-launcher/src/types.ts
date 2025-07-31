@@ -54,7 +54,7 @@ export type ObsidianVersionInfo = {
         exe?: string,
         apk?: string,
     },
-    installerInfo: {
+    installers: {
         appImage?: ObsidianInstallerInfo,
         appImageArm?: ObsidianInstallerInfo,
         tar?: ObsidianInstallerInfo,
@@ -62,9 +62,9 @@ export type ObsidianVersionInfo = {
         dmg?: ObsidianInstallerInfo,
         exe?: ObsidianInstallerInfo,
     },
-    /** @deprecated Use installerInfo instead */
+    /** @deprecated Use installers instead */
     electronVersion?: string,
-    /** @deprecated Use installerInfo instead */
+    /** @deprecated Use installers instead */
     chromeVersion?: string,
 }
 

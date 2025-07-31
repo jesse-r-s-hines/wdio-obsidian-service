@@ -51,7 +51,7 @@ if (process.env.OBSIDIAN_VERSIONS == "all") {
 } else if (process.env.OBSIDIAN_VERSIONS == "sample") {
     // Test every minor installer version and every minor appVersion since minSupportedObsidianVersion
     const versionMap = _(allVersions)
-        .filter(v => !!v.installerInfo.appImage && !v.isBeta && semver.gte(v.version, minInstallerVersion))
+        .filter(v => !!v.installers.appImage && !v.isBeta && semver.gte(v.version, minInstallerVersion))
         .map(v => v.version)
         .keyBy(v => minorVersion(v)) // keyBy keeps last
         .value();
