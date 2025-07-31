@@ -304,8 +304,8 @@ export class ObsidianLauncher {
     /**
      * Gets details about the Obsidian installer for the given platform.
      * @param installerVersion Obsidian installer version
-     * @param platform Platform/os (defaults to host platform)
-     * @param arch Architecture (defaults to host architecture)
+     * @param opts.platform Platform/os (defaults to host platform)
+     * @param opts.arch Architecture (defaults to host architecture)
      */
     async getInstallerInfo(
         installerVersion: string,
@@ -325,8 +325,8 @@ export class ObsidianLauncher {
      * Downloads the Obsidian installer for the given version and platform/arch (defaults to host platform/arch).
      * Returns the file path.
      * @param installerVersion Obsidian installer version to download
-     * @param platform Platform/os of the installer to download (defaults to host platform)
-     * @param arch Architecture of the installer to download (defaults to host architecture)
+     * @param opts.platform Platform/os of the installer to download (defaults to host platform)
+     * @param opts.arch Architecture of the installer to download (defaults to host architecture)
      */
     async downloadInstaller(
         installerVersion: string,
