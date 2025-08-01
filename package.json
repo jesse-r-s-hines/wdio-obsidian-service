@@ -20,7 +20,7 @@
         "test:e2e": "npm run --workspaces --if-present test:e2e",
         "test:android": "npm run --workspaces --if-present test:android",
         "doc": "typedoc",
-        "preview-doc": "typedoc && cd generated-docs && serve"
+        "preview-doc": "npm run build && typedoc && cd generated-docs && serve"
     },
     "devDependencies": {
         "@eslint/js": "^9.22.0",
