@@ -290,9 +290,17 @@ class ObsidianPage extends BasePage {
      * its original state or to "switch" to an entirely different vault without rebooting Obsidian
      * 
      * This will only update regular vault files, it won't touch anything under `.obsidian`, and it won't reset any
-     * config and app state you've set in Obsidian. But if all you need is to reset the vault files, this can be used as
-     * a faster alternative to reloadObsidian.
+     * Obsidian config or plugin settings. But if all you need is to reset the vault files, this can be used as a faster
+     * alternative to {@link ObsidianBrowserCommands.reloadObsidian | reloadObsidian}.
      * 
+     * You'll often want to combine resetVault with something like this to reset your plugin's configuration as well:
+     * ```ts
+     * await browser.executeObsidian(async ({plugins}, settings) => {
+     *     Object.assign(plugins.myPlugin.settings, settings);
+     *     await plugins.myPlugin.saveSettings();
+     * }, {...});
+     * ```
+     *
      * If no vault is passed, it resets the vault back to the oringal vault opened by the tests. You can also pass a
      * path to a different vault, and it will replace the current files with the files of that vault (similar to an
      * "rsync"). Or, instead of passing a vault path you can pass an object mapping vault file paths to file content.

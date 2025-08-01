@@ -174,6 +174,13 @@ describe("resetVault", function() {
             "B/C.md": {content: "File C\n"},
             "B/D/E.md": {content: "File E\n"},
         });
+
+        // You can modify .obsidian files explicitly, though it isn't recommended
+        await obsidianPage.resetVault("./test/vaults/nested", {
+            ".obsidian/foo.json": "{}",
+        });
+        const files = await getAllFiles({content: true, config: true});
+        expect(files['.obsidian/foo.json'].content).toEqual("{}");
     })
 
     it("Empty folder", async () => {
