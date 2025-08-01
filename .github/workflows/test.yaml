@@ -164,9 +164,9 @@ jobs:
           arch: "x86_64"
           target: google_apis
           profile: ${{ matrix.android-profile }}
-          disk-size: 4096M
-          heap-size: 512M
-          disable-animations: false
+          # disk-size: 4096M
+          # heap-size: 512M
+          # disable-animations: false
           script: echo "Generated AVD snapshot for caching"
 
       - name: run android tests
@@ -179,9 +179,9 @@ jobs:
           arch: "x86_64"
           target: google_apis
           profile: ${{ matrix.android-profile }}
-          disk-size: 4096M
-          heap-size: 512M
-          disable-animations: true
+          # disk-size: 4096M
+          # heap-size: 512M
+          # disable-animations: true
           script: echo "RUN TESTS"
         env:
           OBSIDIAN_VERSIONS: ${{ matrix.obsidian-version }}
