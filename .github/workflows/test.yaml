@@ -68,7 +68,7 @@ jobs:
   #         path: .obsidian-cache
   #         key: obsidian-cache-${{ matrix.os }}-${{ matrix.obsidian-versions }}-${{ hashFiles('./obsidian-versions.json') }}
 
-  #     - run: npm ci
+  #     - run: npm ci 
   #     - name: Build
   #       run: npm run build
       
