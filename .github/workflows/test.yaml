@@ -100,7 +100,7 @@ jobs:
   #       env:
   #         TEST_PRESET: ${{ matrix.test-preset }}
   #         OBSIDIAN_VERSIONS: ${{matrix.obsidian-versions}}
-  #         WDIO_MAX_INSTANCES: ${{matrix.max-instances || '4'}}
+  #         WDIO_MAX_INSTANCES: ${{matrix.max-instances || '4'}} 
   #         # Secrets won't be available when run on a PR
   #         OBSIDIAN_USERNAME: ${{ secrets.OBSIDIAN_USERNAME }}
   #         OBSIDIAN_PASSWORD: ${{ secrets.OBSIDIAN_PASSWORD }}
