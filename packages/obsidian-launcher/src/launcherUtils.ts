@@ -1,54 +1,96 @@
 import fsAsync from "fs/promises"
+import fs from "fs"
 import path from "path"
-import { promisify } from "util";
 import child_process from "child_process"
-import which from "which"
 import semver from "semver"
 import _ from "lodash"
-import CDP from 'chrome-remote-interface'
-import { makeTmpDir, withTmpDir, maybe, withTimeout, sleep } from "./utils.js";
-import { ObsidianVersionInfo } from "./types.js";
-const execFile = promisify(child_process.execFile);
+import { pipeline } from "stream/promises";
+import zlib from "zlib"
+import { fileURLToPath } from "url"
+import { DeepPartial } from "ts-essentials";
+import { atomicCreate, makeTmpDir, normalizeObject } from "./utils.js";
+import { downloadResponse } from "./apis.js"
+import { ObsidianInstallerInfo, ObsidianVersionInfo } from "./types.js";
 
 
 export function normalizeGitHubRepo(repo: string) {
-    return repo.replace(/^(https?:\/\/)?(github.com\/)/, '')
+    return repo.match(/^(https?:\/\/)?(github.com\/)?(.*?)\/?$/)?.[3] ?? repo;
+}
+
+export async function extractGz(archive: string, dest: string) {
+    await pipeline(fs.createReadStream(archive), zlib.createGunzip(), fs.createWriteStream(dest));
+}
+
+/**
+ * Run 7zip.
+ * Note there's some weirdness around absolute paths because of the way wasm's filesystem works. The root is mounted
+ * under /nodefs, so either use relative paths or prefix paths with /nodefs.
+ */
+export async function sevenZ(args: string[], options?: child_process.SpawnOptions) {
+    // run 7z.js script as sub_process (so it doesn't block the main thread)
+    const sevenZipScript = path.resolve(fileURLToPath(import.meta.url), '../7z.js');
+    const proc = child_process.spawn(process.execPath, [sevenZipScript, ...args], {
+        stdio: "pipe",
+        ...options,
+    });
+
+    let stdout = "", stderr = "";
+    proc.stdout!.on('data', data => stdout += data);
+    proc.stderr!.on('data', data => stderr += data);
+    const procExit = new Promise<number>((resolve) => proc.on('close', (code) => resolve(code ?? -1)));
+    const exitCode = await procExit;
+
+    const result = {stdout, stderr}
+    if (exitCode != 0) {
+        throw Error(`"7z ${args.join(' ')}" failed with ${exitCode}:\n${stdout}\n${stderr}`)
+    }
+    return result;
 }
 
 /**
  * Running AppImage requires libfuse2, extracting the AppImage first avoids that.
  */
 export async function extractObsidianAppImage(appImage: string, dest: string) {
-    await withTmpDir(dest, async (tmpDir) => {
-        await fsAsync.chmod(appImage, 0o755);
-        await execFile(appImage, ["--appimage-extract"], {cwd: tmpDir});
-        return path.join(tmpDir, 'squashfs-root');
+    // Could also use `--appimage-extract` instead.
+    await atomicCreate(dest, async (tmpDir) => {
+        await sevenZ(["x", "-o.", path.relative(tmpDir, appImage)], {cwd: tmpDir});
+        return tmpDir;
     })
 }
+
+
+/**
+ * Extract the obsidian.tar.gz
+ */
+export async function extractObsidianTar(tar: string, dest: string) {
+    await atomicCreate(dest, async (tmpDir) => {
+        await extractGz(tar, path.join(tmpDir, "inflated.tar"));
+        await sevenZ(["x", "-o.", "inflated.tar"], {cwd: tmpDir});
+        return (await fsAsync.readdir(tmpDir)).find(p => p.match("obsidian-"))!;
+    })
+}
+
 
 /**
  * Obsidian appears to use NSIS to bundle their Window's installers. We want to extract the executable
  * files directly without running the installer. 7zip can extract the raw files from the exe.
  */
-export async function extractObsidianExe(exe: string, appArch: string, dest: string) {
-    const path7z = await which("7z", { nothrow: true });
-    if (!path7z) {
-        throw new Error(
-            "Downloading Obsidian for Windows requires 7zip to be installed and available on the PATH. " +
-            "You install it from https://www.7-zip.org and then add the install location to the PATH."
-        );
+export async function extractObsidianExe(exe: string, arch: NodeJS.Architecture, dest: string) {
+    // The installer contains several `.7z` files with files for different architectures
+    let subArchive: string
+    if (arch == "x64") {
+        subArchive = `$PLUGINSDIR/app-64.7z`;
+    } else if (arch == "ia32") {
+        subArchive = `$PLUGINSDIR/app-32.7z`;
+    } else if (arch == "arm64") {
+        subArchive = `$PLUGINSDIR/app-arm64.7z`;
+    } else {
+        throw Error(`No Obsidian installer found for ${process.platform} ${process.arch}`);
     }
-    exe = path.resolve(exe);
-    // The installer contains several `.7z` files with files for different architectures 
-    const subArchive = path.join('$PLUGINSDIR', appArch + ".7z");
-    dest = path.resolve(dest);
-
-    await withTmpDir(dest, async (tmpDir) => {
-        const extractedInstaller = path.join(tmpDir, "installer");
-        await execFile(path7z, ["x", "-o" + extractedInstaller, exe, subArchive]);
-        const extractedObsidian = path.join(tmpDir, "obsidian");
-        await execFile(path7z, ["x", "-o" + extractedObsidian, path.join(extractedInstaller, subArchive)]);
-        return extractedObsidian;
+    await atomicCreate(dest, async (tmpDir) => {
+        await sevenZ(["x", "-oinstaller", path.relative(tmpDir, exe), subArchive], {cwd: tmpDir});
+        await sevenZ(["x", "-oobsidian", path.join("installer", subArchive)], {cwd: tmpDir});
+        return "obsidian";
     })
 }
 
@@ -58,165 +100,218 @@ export async function extractObsidianExe(exe: string, appArch: string, dest: str
 export async function extractObsidianDmg(dmg: string, dest: string) {
     dest = path.resolve(dest);
 
-    await withTmpDir(dest, async (tmpDir) => {
-        const proc = await execFile('hdiutil', ['attach', '-nobrowse', '-readonly', dmg]);
-        const volume = proc.stdout.match(/\/Volumes\/.*$/m)![0];
-        const obsidianApp = path.join(volume, "Obsidian.app");
-        try {
-            await fsAsync.cp(obsidianApp, tmpDir, {recursive: true, verbatimSymlinks: true});
-        } finally {
-            await execFile('hdiutil', ['detach', volume]);
+    await atomicCreate(dest, async (tmpDir) => {
+        // Current mac dmg files just have `Obsidian.app`, but on older '-universal' ones it's nested another level.
+        await sevenZ(["x", "-o.", path.relative(tmpDir, dmg), "*/Obsidian.app", "Obsidian.app"], {cwd: tmpDir});
+        const files = await fsAsync.readdir(tmpDir);
+        if (files.includes("Obsidian.app")) {
+            return "Obsidian.app"
+        } else {
+            return path.join(files[0], "Obsidian.app")
         }
-        return tmpDir;
     })
 }
 
+/** Obsidian assets that have broken download links */
+const BROKEN_ASSETS = [
+    "https://releases.obsidian.md/release/obsidian-0.12.16.asar.gz",
+    "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.16/obsidian-0.12.16.asar.gz",
+    "https://releases.obsidian.md/release/obsidian-1.4.7.asar.gz",
+    "https://releases.obsidian.md/release/obsidian-1.4.8.asar.gz",
+];
 
-export function parseObsidianDesktopRelease(fileRelease: any, isBeta: boolean): Partial<ObsidianVersionInfo> {
-    return {
-        version: fileRelease.latestVersion,
-        minInstallerVersion: fileRelease.minimumVersion != '0.0.0' ? fileRelease.minimumVersion : undefined,
-        isBeta: isBeta,
-        downloads: {
-            asar: fileRelease.downloadUrl,
-        },
+type ParsedDesktopRelease = {current: DeepPartial<ObsidianVersionInfo>, beta?: DeepPartial<ObsidianVersionInfo>}
+export function parseObsidianDesktopRelease(fileRelease: any): ParsedDesktopRelease {
+    const parse = (r: any, isBeta: boolean): DeepPartial<ObsidianVersionInfo> => {
+        const version = r.latestVersion;
+        let minInstallerVersion = r.minimumVersion;
+        if (minInstallerVersion == "0.0.0") {
+            minInstallerVersion = undefined;
+        // there's some errors in the minInstaller versions listed that we need to correct manually
+        } else if (semver.satisfies(version, '>=1.3.0 <=1.3.4')) {
+            minInstallerVersion = "0.14.5"
+        // running Obsidian with installer older than 1.1.9 won't boot with errors about "ERR_BLOCKED_BY_CLIENT"
+        } else if (semver.gte(version, "1.5.3") && semver.lt(minInstallerVersion, "1.1.9")) {
+            minInstallerVersion = "1.1.9"
+        }
+
+        return {
+            version: r.latestVersion,
+            minInstallerVersion: minInstallerVersion,
+            isBeta: isBeta,
+            downloads: {
+                asar: BROKEN_ASSETS.includes(r.downloadUrl) ? undefined : r.downloadUrl,
+            },
+        };
     };
+
+    const result: ParsedDesktopRelease = { current: parse(fileRelease, false) };
+    if (fileRelease.beta && fileRelease.beta.latestVersion !== fileRelease.latestVersion) {
+        result.beta = parse(fileRelease.beta, true);
+    }
+    return result;
 }
 
-export function parseObsidianGithubRelease(gitHubRelease: any): Partial<ObsidianVersionInfo> {
+export function parseObsidianGithubRelease(gitHubRelease: any): DeepPartial<ObsidianVersionInfo> {
     const version = gitHubRelease.name;
-    const assets: string[] = gitHubRelease.assets.map((a: any) => a.browser_download_url);
-    const downloads = {
-        appImage: assets.find(u => u.match(`${version}.AppImage$`)),
-        appImageArm: assets.find(u => u.match(`${version}-arm64.AppImage$`)),
-        apk: assets.find(u => u.match(`${version}.apk$`)),
-        asar: assets.find(u => u.match(`${version}.asar.gz$`)),
-        dmg: assets.find(u => u.match(`${version}(-universal)?.dmg$`)),
-        exe: assets.find(u => u.match(`${version}.exe$`)),
-    }
+    let assets: {url: string, digest: string}[] = gitHubRelease.assets.map((a: any) => ({
+        url: a.browser_download_url,
+        digest: a.digest ?? `id:${a.id}`,
+    }));
+    assets = assets.filter(a => !BROKEN_ASSETS.includes(a.url));
+
+    const asar = assets.find(a => a.url.match(`${version}.asar.gz$`));
+    const appImage = assets.find(a => a.url.match(`${version}.AppImage$`));
+    const appImageArm = assets.find(a => a.url.match(`${version}-arm64.AppImage$`));
+    const tar = assets.find(a => a.url.match(`${version}.tar.gz$`));
+    const tarArm = assets.find(a => a.url.match(`${version}-arm64.tar.gz$`));
+    const dmg = assets.find(a => a.url.match(`${version}(-universal)?.dmg$`));
+    const exe = assets.find(a => a.url.match(`${version}.exe$`));
+    const apk = assets.find(a => a.url.match(`${version}.apk$`));
 
     return {
         version: version,
         gitHubRelease: gitHubRelease.html_url,
-        downloads: downloads,
+        downloads: {
+            asar: asar?.url,
+            appImage: appImage?.url,
+            appImageArm: appImageArm?.url,
+            tar: tar?.url,
+            tarArm: tarArm?.url,
+            dmg: dmg?.url,
+            exe: exe?.url,
+            apk: apk?.url,
+        },
+        installers: {
+            appImage: appImage ? {digest: appImage.digest} : undefined,
+            appImageArm: appImageArm ? {digest: appImageArm.digest} : undefined,
+            tar: tar ? {digest: tar.digest} : undefined,
+            tarArm: tarArm ? {digest: tarArm.digest} : undefined,
+            dmg: dmg ? {digest: dmg.digest} : undefined,
+            exe: exe ? {digest: exe.digest} : undefined,
+        },
     }
 }
 
 /**
- * Extract electron and chrome versions for an Obsidian version.
+ * Extract Electron and Chrome versions for an Obsidian version.
+ * Takes path to the installer (the whole folder, not just the entrypoint executable).
  */
-export async function getElectronVersionInfo(
-    version:string, binaryPath: string,
-):  Promise<Partial<ObsidianVersionInfo>> {
-    console.log(`${version}: Retrieving electron & chrome versions...`);
-
-    const configDir = await makeTmpDir('fetch-obsidian-versions-');
-
-    const proc = child_process.spawn(binaryPath, [
-        `--remote-debugging-port=0`, // 0 will make it choose a random available port
-        '--test-type=webdriver',
-        `--user-data-dir=${configDir}`,
-        '--no-sandbox', // Workaround for SUID issue, see https://github.com/electron/electron/issues/42510
-    ]);
-    const procExit = new Promise<number>((resolve) => proc.on('exit', (code) => resolve(code ?? -1)));
-    // proc.stdout.on('data', data => console.log(`stdout: ${data}`));
-    // proc.stderr.on('data', data => console.log(`stderr: ${data}`));
-
-    let dependencyVersions: any;
+export async function getInstallerInfo(
+    installerKey: keyof ObsidianVersionInfo['installers'], url: string,
+): Promise<Partial<ObsidianInstallerInfo>> {
+    const installerName = url.split("/").at(-1)!;
+    console.log(`Extrating installer info for ${installerName}...`)
+    const tmpDir = await makeTmpDir("obsidian-launcher-");
     try {
-        // Wait for the logs showing that Obsidian is ready, and pull the chosen DevTool Protocol port from it
-        const portPromise = new Promise<number>((resolve, reject) => {
-            procExit.then(() => reject("Processed ended without opening a port"))
-            proc.stderr.on('data', data => {
-                const port = data.toString().match(/ws:\/\/[\w.]+?:(\d+)/)?.[1];
-                if (port) {
-                    resolve(Number(port));
+        const installerPath = path.join(tmpDir, url.split("/").at(-1)!)
+        await downloadResponse(await fetch(url), installerPath);
+        const exractedPath = path.join(tmpDir, "Obsidian");
+        let platforms: string[] = [];
+
+        if (installerKey == "appImage" || installerKey == "appImageArm") {
+            await extractObsidianAppImage(installerPath, exractedPath);
+            platforms = ['linux-' + (installerKey == "appImage" ? 'x64' : 'arm64')];
+        } else if (installerKey == "tar" || installerKey == "tarArm") {
+            await extractObsidianTar(installerPath, exractedPath);
+            platforms = ['linux-' + (installerKey == "tar" ? 'x64' : 'arm64')];
+        } else if (installerKey == "exe") {
+            await extractObsidianExe(installerPath, "x64", exractedPath);
+            const {stdout} = await sevenZ(["l", '-ba', path.relative(tmpDir, installerPath)], {cwd: tmpDir});
+            const lines = stdout.trim().split("\n").map(l => l.trim());
+            const files = lines.map(l => l.split(/\s+/).at(-1)!.replace(/\\/g, "/"));
+
+            if (files.includes('$PLUGINSDIR/app-arm64.7z')) platforms.push("win32-arm64");
+            if (files.includes('$PLUGINSDIR/app-32.7z')) platforms.push("win32-ia32");
+            if (files.includes('$PLUGINSDIR/app-64.7z')) platforms.push("win32-x64");
+        } else if (installerKey == "dmg") {
+            await extractObsidianDmg(installerPath, exractedPath);
+            platforms = ['darwin-arm64', 'darwin-x64'];
+        } else {
+            throw new Error(`Unknown installer key ${installerKey}`)
+        }
+
+        // This is horrific but works...
+        // We grep the binary for the electron and chrome version strings. The proper way to do this would be to spin up
+        // Obsidian and use CDP protocol to extract `process.versions`. However, that requires running Obsidian, and we
+        // want to get the versions for all platforms and architectures. So we'd either have to set up some kind of
+        // GitHub job matrix to run this on all platform/arch combinations or we can just grep the binary.
+
+        const matches: string[] = [];
+        const installerFiles = await fsAsync.readdir(exractedPath, {recursive: true, withFileTypes: true});
+        for (const file of installerFiles) {
+            if (file.isFile() && !file.name.endsWith(".asar")) {
+                const stream = fs.createReadStream(path.join(file.parentPath, file.name), {encoding: "utf-8"});
+                let prev = "";
+                for await (let chunk of stream) {
+                    const regex = /Chrome\/\d+\.\d+\.\d+\.\d+|Electron\/\d+\.\d+\.\d+/g;
+                    chunk = prev + chunk; // include part of prev in case string gets split across chunks
+                    matches.push(...[...(prev + chunk).matchAll(regex)].map(m => m[0]))
+                    prev = chunk.slice(-64);
                 }
-            });
-        })
-
-        const port = await maybe(withTimeout(portPromise, 10 * 1000));
-        if (!port.success) {
-            throw new Error("Timed out waiting for Chrome DevTools protocol port");
+            }
         }
-        const client = await CDP({port: port.result});
-        const response = await client.Runtime.evaluate({ expression: "JSON.stringify(process.versions)" });
-        dependencyVersions = JSON.parse(response.result.value);
-        await client.close();
+
+        // get most recent versions
+        const versionSortKey = (v: string) => v.split(".").map(s => s.padStart(9, '0')).join(".");
+        const versions = _(matches)
+            .map(m => m.split("/"))
+            .groupBy(0)
+            .mapValues(ms => ms.map(m => m[1]))
+            .mapValues(ms => _.sortBy(ms, versionSortKey).at(-1)!)
+            .value();
+    
+        const electron = versions['Electron'];
+        const chrome = versions['Chrome'];
+
+        if (!electron || !chrome) {
+            throw new Error(`Failed to extract Electron and Chrome versions from binary ${installerPath}`);
+        }
+
+        console.log(`Extracted installer info for ${installerName}`)
+        return { electron, chrome, platforms };
     } finally {
-        proc.kill("SIGTERM");
-        const timeout = await maybe(withTimeout(procExit, 4 * 1000));
-        if (!timeout.success) {
-            console.log(`${version}: Stuck process ${proc.pid}, using SIGKILL`);
-            proc.kill("SIGKILL");
-        }
-        await procExit;
-        await sleep(1000); // Need to wait a bit or sometimes the rm fails because something else is writing to it
-        await fsAsync.rm(configDir, { recursive: true, force: true });
+        await fsAsync.rm(tmpDir, { recursive: true, force: true });
     }
-
-    if (!dependencyVersions?.electron || !dependencyVersions?.chrome) {
-        throw Error(`Failed to extract electron and chrome versions for ${version}`)
-    }
-
-    return {
-        electronVersion: dependencyVersions.electron,
-        chromeVersion: dependencyVersions.chrome,
-        nodeVersion: dependencyVersions.node,
-    };
 }
 
-/**
- * Add some corrections to the Obsidian version data.
- */
-export function correctObsidianVersionInfo(versionInfo: Partial<ObsidianVersionInfo>): Partial<ObsidianVersionInfo> {
-    const corrections: Partial<ObsidianVersionInfo>[] = [
-        // These version's downloads are missing or broken.
-        {version: '0.12.16', downloads: { asar: undefined }},
-        {version: '1.4.7', downloads: { asar: undefined }},
-        {version: '1.4.8', downloads: { asar: undefined }},
-        
-        // The minInstallerVersion here is incorrect
-        {version: "1.3.4", minInstallerVersion: "0.14.5"},
-        {version: "1.3.3", minInstallerVersion: "0.14.5"},
-        {version: "1.3.2", minInstallerVersion: "0.14.5"},
-        {version: "1.3.1", minInstallerVersion: "0.14.5"},
-        {version: "1.3.0", minInstallerVersion: "0.14.5"},
-    ]
-
-    const result = corrections.find(v => v.version == versionInfo.version) ?? {};
-    // minInstallerVersion is incorrect, running Obsidian with installer older than 1.1.9 won't boot with errors like
-    // `(node:11592) electron: Failed to load URL: app://obsidian.md/starter.html with error: ERR_BLOCKED_BY_CLIENT`
-    if (semver.gte(versionInfo.version!, "1.5.3") && semver.lt(versionInfo.minInstallerVersion!, "1.1.9")) {
-        result.minInstallerVersion = "1.1.9"
-    }
-
-    return result;
-}
 
 /**
  * Normalize order and remove undefined values.
  */
-export function normalizeObsidianVersionInfo(versionInfo: Partial<ObsidianVersionInfo>): ObsidianVersionInfo {
+export function normalizeObsidianVersionInfo(versionInfo: DeepPartial<ObsidianVersionInfo>): ObsidianVersionInfo {
     versionInfo = {
-        version: versionInfo.version,
-        minInstallerVersion: versionInfo.minInstallerVersion,
-        maxInstallerVersion: versionInfo.maxInstallerVersion,
-        isBeta: versionInfo.isBeta,
-        gitHubRelease: versionInfo.gitHubRelease,
-        downloads: {
-            asar: versionInfo.downloads?.asar,
-            appImage: versionInfo.downloads?.appImage,
-            appImageArm: versionInfo.downloads?.appImageArm,
-            apk: versionInfo.downloads?.apk,
-            dmg: versionInfo.downloads?.dmg,
-            exe: versionInfo.downloads?.exe,
-        },
-        electronVersion: versionInfo.electronVersion,
-        chromeVersion: versionInfo.chromeVersion,
-        nodeVersion: versionInfo.nodeVersion,
+        ...versionInfo,
+        // kept for backwards compatibility
+        electronVersion: versionInfo.installers?.appImage?.electron,
+        chromeVersion: versionInfo.installers?.appImage?.chrome,
     };
-    versionInfo.downloads = _.omitBy(versionInfo.downloads, _.isUndefined);
-    versionInfo = _.omitBy(versionInfo, _.isUndefined);
-    return versionInfo as ObsidianVersionInfo;
+    const canonicalForm = {
+        version: null,
+        minInstallerVersion: null,
+        maxInstallerVersion: null,
+        isBeta: null,
+        gitHubRelease: null,
+        downloads: {
+            asar: null,
+            appImage: null,
+            appImageArm: null,
+            tar: null,
+            tarArm: null,
+            dmg: null,
+            exe: null,
+            apk: null,
+        },
+        installers: {
+            appImage: {digest: null, electron: null, chrome: null, platforms: null},
+            appImageArm: {digest: null, electron: null, chrome: null, platforms: null},
+            tar: {digest: null, electron: null, chrome: null, platforms: null},
+            tarArm: {digest: null, electron: null, chrome: null, platforms: null},
+            dmg: {digest: null, electron: null, chrome: null, platforms: null},
+            exe: {digest: null, electron: null, chrome: null, platforms: null},
+        },
+        electronVersion: null,
+        chromeVersion: null,
+    };
+    return normalizeObject(canonicalForm, versionInfo) as ObsidianVersionInfo;
 }

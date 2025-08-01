@@ -2,8 +2,8 @@
 import { Command } from 'commander';
 import _ from "lodash";
 import { ObsidianLauncher } from "./launcher.js"
+import { watchFiles } from './utils.js';
 import { PluginEntry, ThemeEntry } from "./types.js";
-import fs from "fs";
 import path from "path"
 import fsAsync from "fs/promises";
 
@@ -11,11 +11,13 @@ import fsAsync from "fs/promises";
 function parsePlugins(plugins: string[] = []): PluginEntry[] {
     return plugins.map((p: string) => {
         if (p.startsWith("id:")) {
-            return {id: p.slice(3)}
+            const [id, version] = p.slice(3).split('=');
+            return {id, version};
         } else if (p.startsWith("repo:")) {
-            return {repo: p.slice(5)}
+            const [id, version] = p.slice(5).split('=');
+            return {id, version};
         } else {
-            return {path: p}
+            return {path: p};
         }
     })
 }
@@ -24,58 +26,40 @@ function parseThemes(themes: string[] = []): ThemeEntry[] {
     return themes.map((t: string, i: number) => {
         let result: ThemeEntry
         if (t.startsWith("name:")) {
-            result = {name: t.slice(5)}
+            result = {name: t.slice(5)};
         } else if (t.startsWith("repo:")) {
-            result = {repo: t.slice(5)}
+            result = {repo: t.slice(5)};
         } else {
-            result = {path: t}
+            result = {path: t};;
         }
         return {...result, enabled: i == themes.length - 1}
     })
-}
-
-/**
- * Watch a list of files, calls func whenever there's an update. Debounced files changes.
- */
-function watchFiles(
-    files: string[],
-    func: (curr: fs.Stats, prev: fs.Stats) => void,
-    options: { interval: number, persistent: boolean, debounce: number },
-) {
-    const debouncedFunc = _.debounce((curr: fs.Stats, prev: fs.Stats) => {
-        if (curr.mtimeMs > prev.mtimeMs || (curr.mtimeMs == 0 && prev.mtimeMs != 0)) {
-            func(curr, prev)
-        }
-    }, options.debounce);
-    for (const file of files) {
-        fs.watchFile(file, {interval: options.interval, persistent: options.persistent}, debouncedFunc);
-    }
 }
 
 const collectOpt = (curr: string, prev?: string[]) => [...(prev ?? []), curr];
 
 const versionOptionArgs = [
     '-v, --version <version>',
-    "Obsidian version to run",
+    "Obsidian app version",
     "latest",
 ] as const
 const installerOptionArgs = [
     '-i, --installer <version>',
-    "Obsidian installer version to run",
+    "Obsidian installer version",
     "latest",
 ] as const
 const cacheOptionArgs = [
     '-c, --cache <cache>',
-    'Directory to use as the download cache',
+    'Directory to use as the download cache. (default: OBSIDIAN_CACHE env var or ".obsidian-cache")',
 ] as const
 const pluginOptionArgs = [
     '-p, --plugin <plugin>',
-    `Plugin to install. Format: "<path>" or "repo:<github-repo>" or "id:<community-id>". Can be repeated.`,
+    'Plugin to install. Format: "<path>" or "repo:<github-repo>" or "id:<community-id>". Can be repeated.',
     collectOpt,
 ] as const
 const themeOptionArgs = [
     '-t, --theme <plugin>',
-    `Theme to install. Format: "<path>" or "repo:<github-repo>" or "name:<community-name>". Can be repeated but only last will be enabled.`,
+    'Theme to install. Format: "<path>" or "repo:<github-repo>" or "name:<community-name>". Can be repeated but only last will be enabled.',
     collectOpt,
 ] as const
 
@@ -89,7 +73,7 @@ program
     .option(...installerOptionArgs)
     .action(async (opts) => {
         const launcher = new ObsidianLauncher({cacheDir: opts.cache});
-        const [appVersion, installerVersion] = await launcher.resolveVersions(opts.version, opts.installerVersion);
+        const [appVersion, installerVersion] = await launcher.resolveVersion(opts.version, opts.installerVersion);
         const installerPath = await launcher.downloadInstaller(installerVersion);
         console.log(`Downloaded Obsidian installer to ${installerPath}`)
         const appPath = await launcher.downloadApp(appVersion);
@@ -117,7 +101,7 @@ program
     .description(
         "Download and launch Obsidian, opening the specified vault.\n" +
         "\n" +
-        "The Obsidian instance will have a sandboxed configuration directory. You can use this option to easily " +
+        "The Obsidian instance will have a sandboxed configuration directory. You can use this command to test " +
         "plugin behavior on different versions of Obsidian without messing with your system installation of " + 
         "Obsidian.\n" +
         "\n" +
@@ -245,7 +229,7 @@ program
     })
 
 program
-    .command("create-versions-list")
+    .command("update-version-list")
     .summary("Collect Obsidian version information into a single file")
     .description(
         "Collect Obsidian version information into a single file.\n" +
@@ -272,8 +256,8 @@ program
         }
 
         const launcher = new ObsidianLauncher({cacheDir: opts.cache});
-        versionInfos = await launcher.updateObsidianVersionInfos(versionInfos, { maxInstances });
-        fsAsync.writeFile(dest, JSON.stringify(versionInfos, undefined, 4));
+        versionInfos = await launcher.updateVersionList(versionInfos, { maxInstances });
+        await fsAsync.writeFile(dest, JSON.stringify(versionInfos, undefined, 4) + "\n");
         console.log(`Wrote updated version information to ${dest}`)
     })
 

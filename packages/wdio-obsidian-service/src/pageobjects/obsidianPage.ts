@@ -1,9 +1,23 @@
 import * as path from "path"
-import * as fs from "fs"
 import * as fsAsync from "fs/promises"
-import { OBSIDIAN_CAPABILITY_KEY } from "../types.js";
+import * as crypto from "crypto";
+import { fileURLToPath } from "url";
 import { TFile } from "obsidian";
+import { OBSIDIAN_CAPABILITY_KEY, NormalizedObsidianCapabilityOptions } from "../types.js";
+import { BasePage } from "./basePage.js";
+import { isAppium } from "../utils.js";
 import _ from "lodash";
+
+
+/** Returns true if a vault file path is hidden (either it or one of it's parent directories starts with ".") */
+function isHidden(file: string) {
+    return file.split("/").some(p => p.startsWith("."))
+}
+
+/** Returns true if this is a simple text file */
+function isText(file: string) {
+    return [".md", ".json", ".txt", ".js"].includes(path.extname(file).toLocaleLowerCase());
+}
 
 /**
  * Class with various helper methods for writing Obsidian tests using the
@@ -19,41 +33,95 @@ import _ from "lodash";
  * ```
  * 
  * @hideconstructor
+ * @category Utilities
  */
-class ObsidianPage {
+class ObsidianPage extends BasePage {
+    private getObsidianCapabilities(): NormalizedObsidianCapabilityOptions {
+        return this.browser.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY];
+    }
+
     /**
      * Returns the path to the vault opened in Obsidian.
      * 
      * wdio-obsidian-service copies your vault before running tests, so this is the path to the temporary copy.
      */
-    async getVaultPath(): Promise<string|undefined> {
-        if (browser.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].vault == undefined) {
-            return undefined; // no vault open
-        } else { // return the actual path to the vault
-            return await browser.executeObsidian(({app, obsidian}) => {
-                if (app.vault.adapter instanceof obsidian.FileSystemAdapter) {
-                    return app.vault.adapter.getBasePath()
-                } else { // TODO handle CapacitorAdapater
-                    throw new Error(`Unrecognized DataAdapater type`)
-                };
-            })
+    getVaultPath(): string {
+        const obsidianOptions = this.getObsidianCapabilities();
+        if (obsidianOptions.vaultCopy === undefined) {
+            throw Error("No vault open, set vault in wdio.conf.mts or use reloadObsidian to open a vault dynamically.")
         }
+        return obsidianOptions.uploadedVault ?? obsidianOptions.vaultCopy;
     }
 
     /**
-     * Return the path to the Obsidian config dir (".obsidian" unless you've changed it explicitly)
+     * Return the the Obsidian config dir (just ".obsidian" unless you changed the config dir name in settings).
      */
     async getConfigDir(): Promise<string> {
-        return await browser.executeObsidian(({app}) => {
-            return app.vault.configDir;
-        })
+        return await this.browser.executeObsidian(({app}) => app.vault.configDir)
+    }
+
+    /**
+     * Returns the Obsidian Platform object. Useful for skipping tests based on whether you are running in desktop or
+     * mobile, or based on OS.
+     */
+    async getPlatform(): Promise<Platform> {
+        const obsidianOptions = this.getObsidianCapabilities();
+        if (obsidianOptions.vault !== undefined) {
+            return await this.browser.executeObsidian(({obsidian}) => {
+                const p = obsidian.Platform;
+                return {
+                    isDesktop: p.isDesktop,
+                    isMobile: p.isMobile,
+                    isDesktopApp: p.isDesktopApp,
+                    isMobileApp: p.isMobileApp,
+                    isIosApp: p.isIosApp,
+                    isAndroidApp: p.isAndroidApp,
+                    isPhone: p.isPhone,
+                    isTablet: p.isTablet,
+                    isMacOS: p.isMacOS,
+                    isWin: p.isWin,
+                    isLinux: p.isLinux,
+                    isSafari: p.isSafari,
+                };
+            });
+        } else {
+            // hack to allow calling getPlatform before opening a vault. This is needed so you can use getPlatform to
+            // skip a test before wasting time opening the vault. we don't use this method the rest of the time as you
+            // can technically change the size or switch emulation mode during tests
+            const appium = isAppium(this.browser.requestedCapabilities);
+            const emulateMobile = obsidianOptions.emulateMobile;
+            const [width, height] = await this.browser.execute(() => [window.innerWidth, window.innerHeight]);
+
+            let isTablet = false;
+            let isPhone = false;
+            if (appium || emulateMobile) {
+                // replicate Obsidian's tablet vs phone breakpoint
+                isTablet = (width >= 600 && height >= 600);
+                isPhone = !isTablet;
+            }
+
+            return {
+                isDesktop: !(appium || emulateMobile),
+                isMobile: appium || emulateMobile,
+                isDesktopApp: !appium,
+                isMobileApp: appium,
+                isIosApp: false, // iOS is not supported
+                isAndroidApp: appium,
+                isPhone: isPhone,
+                isTablet: isTablet,
+                isMacOS: !appium && process.platform == 'darwin',
+                isWin: !appium && process.platform == 'win32',
+                isLinux: !appium && process.platform == 'linux',
+                isSafari: false, // iOS is not supported
+            };
+        }
     }
 
     /**
      * Enables a plugin by ID
      */
     async enablePlugin(pluginId: string): Promise<void> {
-        await browser.executeObsidian(
+        await this.browser.executeObsidian(
             async ({app}, pluginId) => await (app as any).plugins.enablePluginAndSave(pluginId),
             pluginId,
         );
@@ -63,7 +131,7 @@ class ObsidianPage {
      * Disables a plugin by ID
      */
     async disablePlugin(pluginId: string): Promise<void> {
-        await browser.executeObsidian(
+        await this.browser.executeObsidian(
             async ({app}, pluginId) => await (app as any).plugins.disablePluginAndSave(pluginId),
             pluginId,
         );
@@ -74,7 +142,7 @@ class ObsidianPage {
      */
     async setTheme(themeName: string): Promise<void> {
         themeName = themeName == 'default' ? '' : themeName;
-        await browser.executeObsidian(
+        await this.browser.executeObsidian(
             async ({app}, themeName) => await (app as any).customCss.setTheme(themeName),
             themeName,
         )
@@ -84,10 +152,12 @@ class ObsidianPage {
      * Opens a file in a new tab.
      */
     async openFile(path: string) {
-        await browser.executeObsidian(async ({app, obsidian}, path) => {
+        await this.browser.executeObsidian(async ({app, obsidian}, path) => {
             const file = app.vault.getAbstractFileByPath(path);
             if (file instanceof obsidian.TFile) {
-                await app.workspace.getLeaf('tab').openFile(file);
+                const leaf = app.workspace.getLeaf('tab');
+                await leaf.openFile(file);
+                app.workspace.setActiveLeaf(leaf, {focus: true});
             } else {
                 throw Error(`No file ${path} exists`);
             }
@@ -101,170 +171,316 @@ class ObsidianPage {
     async loadWorkspaceLayout(layout: any): Promise<void> {
         if (typeof layout == "string") {
             // read from .obsidian/workspaces.json like the built-in workspaces plugin does
-            const vaultPath = (await this.getVaultPath())!;
-            const configDir = await this.getConfigDir();
-            const workspacesPath = path.join(vaultPath, configDir, 'workspaces.json');
+            const workspacesPath = `${await this.getConfigDir()}/workspaces.json`;
             const layoutName = layout;
             try {
-                const fileContent = await fsAsync.readFile(workspacesPath, 'utf-8');
+                const fileContent = await this.browser.executeObsidian(async ({app}, workspacesPath) => {
+                    return await app.vault.adapter.read(workspacesPath);
+                }, workspacesPath);
                 layout = JSON.parse(fileContent)?.workspaces?.[layoutName];
             } catch {
-                throw new Error(`No workspace ${layoutName} found in ${configDir}/workspaces.json`);
+                throw new Error(`Failed to load ${workspacesPath}:${layoutName}`);
+            }
+            if (!layout) {
+                throw new Error(`No workspace ${layoutName} found in ${workspacesPath}`);
             }
         }
 
-        await browser.executeObsidian(async ({app}, layout) => {
+        await this.browser.executeObsidian(async ({app}, layout) => {
             await app.workspace.changeLayout(layout)
         }, layout)
     }
 
     /**
-     * Resets the vault files to the original state by deleting/creating/modifying vault files in place without
-     * reloading Obsidian.
+     * Deletes a file or folder in the vault.
+     * @param file path of inside vault, e.g. "/books/leviathan-wakes.md"
+     */
+    async delete(file: string) {
+        await this.browser.executeObsidian(async ({app, obsidian}, file, isVaultFile) => {
+            file = obsidian.normalizePath(file);
+            if (isVaultFile) {
+                const fileObj = app.vault.getAbstractFileByPath(file);
+                if (fileObj) {
+                    await app.vault.delete(fileObj, true);
+                };
+            } else {
+                const stat = await app.vault.adapter.stat(file);
+                if (stat && stat.type == "folder") {
+                    await app.vault.adapter.rmdir(file, true);
+                } else if (stat) {
+                    await app.vault.adapter.remove(file);
+                }
+            }
+        }, file, !isHidden(file));
+    }
+
+    /**
+     * Writes to a file in the vault. Creates parent directories if needed.
+     * @param file path of inside vault, e.g. "/books/leviathan-wakes.md"
+     * @param content content to write to the file
+    */
+    async write(file: string, content: string|ArrayBuffer) {
+        let strContent: string|undefined, binContent: string|undefined;
+        if (typeof content == "string") {
+            strContent = content;
+        } else {
+            binContent = Buffer.from(content).toString("base64");
+        }
+        await this.browser.executeObsidian(async ({app, obsidian}, file, isVaultFile, strContent, binContent) => {
+            file = obsidian.normalizePath(file);
+            const parent = file.split("/").slice(0, -1).join("/");
+            // there's a bug in Obsidian Android where occasionally creating a file silently fails, leaving just an
+            // empty file. So retry if that happens. See https://forum.obsidian.md/t/102935
+            let success = false;
+            let retries = 0;
+            while (!success && retries < 8) {
+                if (isVaultFile) {
+                    if (parent && !app.vault.getAbstractFileByPath(parent)) {
+                        await app.vault.createFolder(parent);
+                    }
+                    const fileObj = app.vault.getAbstractFileByPath(file);
+                    strContent = strContent ?? atob(binContent!);
+                    if (fileObj) {
+                        await app.vault.modify(fileObj as TFile, strContent);
+                    } else {
+                        await app.vault.create(file, strContent);
+                    }
+                } else {
+                    await app.vault.adapter.mkdir(parent);
+                    if (strContent) {
+                        await app.vault.adapter.write(file, strContent);
+                    } else {
+                        const buffer = Uint8Array.from(atob(binContent!), c => c.charCodeAt(0));
+                        await app.vault.adapter.writeBinary(file, buffer)
+                    }
+                }
+
+                success = (
+                    !obsidian.Platform.isAndroidApp ||
+                    (strContent?.length ?? binContent!.length) === 0 ||
+                    (await app.vault.adapter.stat(file))!.size > 0
+                );
+                retries++;
+            }
+            if (!success) {
+                throw new Error(`Failed to write file ${file}`);
+            }
+        }, file, !isHidden(file) && isText(file), strContent, binContent);
+    }
+
+    /**
+     * Create a folder in the vault. Creates parent directories if needed.
+     * @param file path of inside vault, e.g. "/books"
+     */
+    async mkdir(file: string) {
+        await this.browser.executeObsidian(async ({app, obsidian}, file, isVaultFile) => {
+            file = obsidian.normalizePath(file);
+            if (isVaultFile) {
+                if (parent && !app.vault.getAbstractFileByPath(file)) {
+                    await app.vault.createFolder(file);
+                }
+            } else {
+                await app.vault.adapter.mkdir(file);
+            }
+        }, file, !isHidden(file));
+    }
+
+    /**
+     * Updates the vault by modifying files in place without reloading Obsidian. Can be used to reset the vault back to
+     * its original state or to "switch" to an entirely different vault without rebooting Obsidian
      * 
-     * This will only reset regular vault files, it won't touch anything under `.obsidian`, and it won't reset any
-     * config and app state you've set in Obsidian. But if all you need is to reset the vault files, this can be used as
-     * a faster alternative to reloadObsidian.
+     * This will only update regular vault files, it won't touch anything under `.obsidian`, and it won't reset any
+     * Obsidian config or plugin settings. But if all you need is to reset the vault files, this can be used as a faster
+     * alternative to {@link ObsidianBrowserCommands.reloadObsidian | reloadObsidian}.
      * 
+     * You'll often want to combine resetVault with something like this to reset your plugin's configuration as well:
+     * ```ts
+     * await browser.executeObsidian(async ({plugins}, settings) => {
+     *     Object.assign(plugins.myPlugin.settings, settings);
+     *     await plugins.myPlugin.saveSettings();
+     * }, {...});
+     * ```
+     *
      * If no vault is passed, it resets the vault back to the oringal vault opened by the tests. You can also pass a
-     * path to a different vault, and it will sync the current vault to match that one (similar to "rsync"). Or,
-     * instead of passing a vault path you can pass an object mapping vault file paths to file content. E.g.
+     * path to a different vault, and it will replace the current files with the files of that vault (similar to an
+     * "rsync"). Or, instead of passing a vault path you can pass an object mapping vault file paths to file content.
+     * E.g.
      * ```ts
      * obsidianPage.resetVault({
      *     'path/in/vault.md': "Hello World",
      * })
      * ```
      * 
-     * You can also pass multiple vaults and the files will be merged. This can be useful if you want to add a few small
-     * modifications to the base vault. e.g:
+     * You can also pass multiple vaults and objects, and they will be merged. This can be useful if you want to add a
+     * few small modifications to the base vault. e.g:
      * ```ts
      * obsidianPage.resetVault('./path/to/vault', {
      *    "books/leviathan-wakes.md": "...",
      * })
      * ```
      */
-    async resetVault(...vaults: (string|Record<string, string>)[]) {
-        const origVaultPath: string = browser.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].vault;
-        vaults = vaults.length == 0 ? [origVaultPath] : vaults;
+    async resetVault(...vaults: (string|Record<string, string|ArrayBuffer>)[]) {
+        const obsidianOptions = this.getObsidianCapabilities();
+        if (!obsidianOptions.vault) {
+            // open an empty vault if there's no vault open
+            const defaultVaultPath = path.resolve(fileURLToPath(import.meta.url), '../../default-vault');
+            await this.browser.reloadObsidian({vault: defaultVaultPath});
+        }
         const configDir = await this.getConfigDir();
+        vaults = vaults.length == 0 ? [obsidianOptions.vault!] : vaults;
 
-        async function readVaultFiles(vault: string): Promise<Map<string, fs.Stats>> {
-            const files = await fsAsync.readdir(vault, { recursive: true, withFileTypes: true });
-            const paths = files
-                .filter(f => f.isFile())
-                .map(f => path.relative(vault, path.join(f.parentPath, f.name)).split(path.sep).join("/"))
-                .filter(f => !f.startsWith(configDir + "/"));
-            const promises = paths.map(async (p) => [p, await fsAsync.stat(path.join(vault, p))] as const);
-            return new Map(await Promise.all(promises));
-        }
-
-        function getFolders(files: Iterable<string>): Set<string> {
-            return new Set([...files].map(p => path.dirname(p)).filter(p => p != '.'));
-        }
-
-        // merge the vaults
-        const newFiles: Map<string, {stat?: fs.Stats, sourcePath?: string, sourceContent?: string}> = new Map();
+        // list all files in the new vault
+        type NewFileInfo = {type: "file"| "folder", sourceContent?: string|ArrayBuffer, sourceFile?: string};
+        const newVault: Map<string, NewFileInfo> = new Map();
         for (let vault of vaults) {
             if (typeof vault == "string") {
                 vault = path.resolve(vault);
-                for (const [file, stat] of await readVaultFiles(vault)) {
-                    newFiles.set(file, {stat, sourcePath: path.join(vault, file)});
+                const files = await fsAsync.readdir(vault, { recursive: true, withFileTypes: true });
+                for (const f of files) {
+                    const fullPath = path.join(f.parentPath, f.name);
+                    const vaultPath = path.relative(vault, fullPath).split(path.sep).join("/");
+                    if (!vaultPath.startsWith(configDir + "/")) {
+                        if (f.isDirectory()) {
+                            newVault.set(vaultPath, {type: 'folder'});
+                        } else {
+                            newVault.set(vaultPath, {type: 'file', sourceFile: fullPath});
+                        }
+                    }
                 }
             } else {
-                for (const [file, sourceContent] of Object.entries(vault)) {
-                    newFiles.set(file, {sourceContent});
+                for (const [file, content] of Object.entries(vault)) {
+                    newVault.set(file, {type: "file", sourceContent: content});
+                }
+                const folders = new Set(Object.keys(vault).map(p => path.posix.dirname(p)).filter(p => p !== "."));
+                for (const folder of folders) {
+                    newVault.set(folder, {type: "folder"});
                 }
             }
         }
 
-        // calculate the changes needed to the current vault
-        const newFolders = getFolders(newFiles.keys());
-        const currFiles = await readVaultFiles((await obsidianPage.getVaultPath())!);
-        const currFolders = getFolders(currFiles.keys());
+        // list all files in the current vault
+        type CurrFileInfo = {type: "file"| "folder", hash?: string};
+        const currVault = new Map(await this.browser.executeObsidian(({app}, configDir) => {
+            async function hash(data: ArrayBuffer) {
+                const hashBuffer = await window.crypto.subtle.digest('SHA-256', data);
+                const hashArray = Array.from(new Uint8Array(hashBuffer));
+                return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            }
 
-        type FileUpdateInstruction = {
-            action: string, path: string,
-            sourcePath?: string, sourceContent?: string,
-        };
-        const instructions: FileUpdateInstruction[] = [];
-
-        // delete files
-        for (const currFile of currFiles.keys()) {
-            if (!newFiles.has(currFile)) {
-                instructions.push({action: "delete-file", path: currFile});
-            }
-        }
-        // delete folders, sort so children are before parents
-        for (const currFolder of [...currFolders].sort().reverse()) {
-            if (!newFolders.has(currFolder)) {
-                instructions.push({action: "delete-folder", path: currFolder});
-            }
-        }
-        // create folders, sort so parents are before children
-        for (const newFolder of [...newFolders].sort()) {
-            if (!currFolders.has(newFolder)) {
-                instructions.push({action: "create-folder", path: newFolder});
-            }
-        }
-        // create/modify files
-        for (let [newFile, newFileInfo] of newFiles.entries()) {
-            const {stat: newStat, sourcePath, sourceContent} = newFileInfo;
-            const args = {path: newFile, sourcePath, sourceContent};
-            const currStat = currFiles.get(newFile);
-            if (!currStat) {
-                instructions.push({action: "create-file", ...args});
-            } else if ( // check if file has changed (setupVault preserves mtimes)
-                !newStat ||
-                currStat.mtime.getTime() != newStat.mtime.getTime() ||
-                currStat.size != newStat.size
-            ) {
-                instructions.push({action: "modify-file", ...args});
-            }
-        }
-
-        await browser.executeObsidian(async ({app, require}, instructions) => {
-            // the require is getting transpiled by tsup, so use it from args instead of globally
-            const fs = require('fs');
-    
-            for (const {action, path, sourcePath, sourceContent} of instructions) {
-                const isHidden = path.split("/").some(p => p.startsWith("."));
-                if (action == "delete-file") {
-                    if (isHidden) {
-                        await app.vault.adapter.remove(path);
-                    } else {
-                        await app.vault.delete(app.vault.getAbstractFileByPath(path)!);
+            async function listRecursive(path: string): Promise<[string, CurrFileInfo][]> {
+                const result: [string, CurrFileInfo][] = [];
+                const { folders, files } = await app.vault.adapter.list(path);
+                for (const folder of folders) {
+                    if (!folder.startsWith(configDir + "/")) {
+                        result.push([folder, {type: "folder"}]);
+                        result.push(...await listRecursive(folder));
                     }
-                } else if (action == "delete-folder") {
-                    if (isHidden) {
-                        await app.vault.adapter.rmdir(path, true);
-                    } else {
-                        await app.vault.delete(app.vault.getAbstractFileByPath(path)!, true);
-                    }
-                } else if (action == "create-folder") {
-                    if (isHidden) {
-                        await app.vault.adapter.mkdir(path);
-                    } else {
-                        await app.vault.createFolder(path);
-                    }
-                } else if (action == "create-file" || action == "modify-file") {
-                    const content = sourceContent ?? await fs.readFileSync(sourcePath!, 'utf-8');
-                    if (isHidden) {
-                        await app.vault.adapter.write(path, content);
-                    } else if (action == "modify-file") {
-                        await app.vault.modify(app.vault.getAbstractFileByPath(path) as TFile, content);
-                    } else { // action == "create-file"
-                        await app.vault.create(path, content);
-                    }
-                } else {
-                    throw Error(`Unknown action ${action}`)
                 }
+                for (const file of files) {
+                    if (!file.startsWith(configDir + "/")) {
+                        let fileHash = (app.metadataCache as any).getFileInfo(file)?.hash;
+                        if (!fileHash) { // hidden files etc. aren't in Obsidian's metadata cache
+                            fileHash = await hash(await app.vault.adapter.readBinary(file));
+                        }
+                        result.push([file, { type: "file", hash: fileHash }]);
+                    }
+                }
+                return result;
             }
-        }, instructions);
+
+            return listRecursive("/");
+        }, configDir));
+
+        // delete any files that need to be deleted
+        for (const file of [...currVault.keys()].sort().reverse()) {
+            const currFileInfo = currVault.get(file)!
+            if (!newVault.has(file) || newVault.get(file)!.type != currFileInfo.type) {
+                await this.delete(file);
+            }
+        }
+
+        // create files and folders
+        for (const [file, newFileInfo] of _.sortBy([...newVault.entries()], 0)) {
+            const currFileInfo = currVault.get(file);
+            if (newFileInfo.type == "file") {
+                const content = newFileInfo.sourceContent ?? await fsAsync.readFile(newFileInfo.sourceFile!);
+                const hash = crypto.createHash("SHA256")
+                    .update(typeof content == "string" ? content : new Uint8Array(content))
+                    .digest("hex");
+                if (!currFileInfo || currFileInfo.hash != hash) {
+                    await this.write(file, content);
+                }
+            } else if (newFileInfo.type == "folder" && !currFileInfo) {
+                await this.mkdir(file);
+            }
+        }
     }
 }
 
 /**
+ * Info on the platform we are running on or emulating, in similar format as
+ * [obsidian.Platform](https://docs.obsidian.md/Reference/TypeScript+API/Platform)
+ * @category Types
+ */
+export interface Platform {
+    /**
+     * The UI is in desktop mode.
+     */
+    isDesktop: boolean;
+    /**
+     * The UI is in mobile mode.
+     */
+    isMobile: boolean;
+    /**
+     * We're running the Electron-based desktop app.
+     * Note, when running under `emulateMobile` this will still be true and isDesktop will be false.
+     */
+    isDesktopApp: boolean;
+    /**
+     * We're running the Capacitor-js mobile app.
+     * Note, when running under `emulateMobile` this will still be false and isMobile will be true.
+     */
+    isMobileApp: boolean;
+    /** 
+     * We're running the iOS app.
+     * Note, wdio-obsidian-service doesn't support iOS yet, so this will always be false.
+     */
+    isIosApp: boolean;
+    /**
+     * We're running the Android app.
+     */
+    isAndroidApp: boolean;
+    /**
+     * We're in a mobile app that has very limited screen space.
+     */
+    isPhone: boolean;
+    /**
+     * We're in a mobile app that has sufficiently large screen space.
+     */
+    isTablet: boolean;
+    /**
+     * We're on a macOS device, or a device that pretends to be one (like iPhones and iPads).
+     * Typically used to detect whether to use command-based hotkeys vs ctrl-based hotkeys.
+     */
+    isMacOS: boolean;
+    /**
+     * We're on a Windows device.
+     */
+    isWin: boolean;
+    /**
+     * We're on a Linux device.
+     */
+    isLinux: boolean;
+    /**
+     * We're running in Safari.
+     * Note, wdio-obsidian-service doesn't support iOS yet, so this will always be false.
+     */
+    isSafari: boolean;
+};
+
+/**
  * Instance of {@link ObsidianPage} with helper methods for writing Obsidian tests.
+ * @category Utilities
  */
 const obsidianPage = new ObsidianPage()
 export default obsidianPage;
