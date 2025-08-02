@@ -14,8 +14,10 @@ function parsePlugins(plugins: string[] = []): PluginEntry[] {
             const [id, version] = p.slice(3).split('=');
             return {id, version};
         } else if (p.startsWith("repo:")) {
-            const [id, version] = p.slice(5).split('=');
-            return {id, version};
+            const [repo, version] = p.slice(5).split('=');
+            return {repo, version};
+        } else if (p.startsWith("path:")) {
+            return {path: p.slice(5)};
         } else {
             return {path: p};
         }
@@ -29,8 +31,10 @@ function parseThemes(themes: string[] = []): ThemeEntry[] {
             result = {name: t.slice(5)};
         } else if (t.startsWith("repo:")) {
             result = {repo: t.slice(5)};
+        } else if (t.startsWith("path:")) {
+            result = {path: t.slice(5)};
         } else {
-            result = {path: t};;
+            result = {path: t};
         }
         return {...result, enabled: i == themes.length - 1}
     })
