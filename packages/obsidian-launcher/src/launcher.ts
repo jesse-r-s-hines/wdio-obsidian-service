@@ -264,7 +264,7 @@ export class ObsidianLauncher {
         } else if (appVersion == "earliest") {
             appVersion = (await this.getRootManifest())?.minAppVersion;
             if (!appVersion) {
-                throw Error('Unable to resolve Obsidian app appVersion "earliest", no manifest.json or minAppVersion found.')
+                throw Error('Unable to resolve Obsidian appVersion "earliest", no manifest.json or minAppVersion found.')
             }
         } else {
             // if invalid match won't be found and we'll throw error below
@@ -329,7 +329,10 @@ export class ObsidianLauncher {
         if (key) {
             return {...versionInfo.installers[key]!, url: versionInfo.downloads[key]!};
         } else {
-            throw Error(`No Obsidian installer for ${installerVersion} ${platform}-${arch}`);
+            throw Error(
+                `No Obsidian installer for ${installerVersion} ${platform}-${arch}` +
+                (versionInfo.isBeta ? ` (${installerVersion} is a beta version)` : '')
+            );
         }
     }
 
@@ -472,7 +475,10 @@ export class ObsidianLauncher {
         const versionInfo = await this.getVersionInfo(version);
         const apkUrl = versionInfo.downloads.apk;
         if (!apkUrl) {
-            throw Error(`No apk found for Obsidian version ${version}`);
+            throw Error(
+                `No apk found for Obsidian version ${version}` +
+                (versionInfo.isBeta ? ` (${version} is a beta version)` : '')
+            );
         }
         const apkPath = path.join(this.cacheDir, 'obsidian-apk', `obsidian-${versionInfo.version}.apk`);
 
