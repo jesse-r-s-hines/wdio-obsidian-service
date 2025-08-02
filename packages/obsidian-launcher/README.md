@@ -1,15 +1,22 @@
 # Obsidian Launcher [![NPM](https://img.shields.io/npm/v/obsidian-launcher)](https://www.npmjs.com/package/obsidian-launcher)
 
-`obsidian-launcher` is a package for downloading and launching different versions of [Obsidian](https://obsidian.md) for testing Obsidian plugins. It can download and launch different versions of Obsidian, install plugins and themes into Obsidian vaults, and launch sandboxed Obsidian instances with isolated user configuration directories. You can use it either as a JavaScript package or as a command line interface.
+`obsidian-launcher` is a package for downloading and launching different versions of [Obsidian](https://obsidian.md) for testing Obsidian plugins. It can download and launch different versions of Obsidian, install plugins and themes into Obsidian vaults, and launch sandboxed Obsidian instances with isolated user configuration directories. You can use it as either a JavaScript package or as a command line interface.
 
 The primary use case for this package is to allow [wdio-obsidian-service](../wdio-obsidian-service/README.md) to automatically download Obsidian when testing plugins with WebdriverIO. However, it can also be used as a stand-alone package if you want to use the CLI to compare Obsidian versions during plugin development.
 
 ## Example Usage
-The default export of the package is the `ObsidianLauncher` class, which can be used like so:
+You can run the CLI via `npx`, e.g.:
+```bash
+npx obsidian-launcher watch --version 1.8.10 --copy -p . test/vault
+```
+This will download and launch Obsidian 1.8.10 with a sandboxed configuration directory so you don't need to worry about it interfering with your system Obsidian installation. You can even launch multiple different versions of Obsidian side-by-side. See [below](#cli) for CLI docs.
+
+To use the JavaScript API, use the `ObsidianLauncher` class, e.g.:
 ```js
+import ObsidianLauncher from "obsidian-launcher"
 const launcher = new ObsidianLauncher();
 const {proc} = await launcher.launch({
-    appVersion: "1.7.7",
+    appVersion: "1.8.10",
     vault: "path/to/my/vault",
     copy: true, // open a copy of the vault in Obsidian
     plugins: [
@@ -18,16 +25,15 @@ const {proc} = await launcher.launch({
     ],
 })
 ```
-This will download and launch Obsidian 1.7.7 with a sandboxed configuration directory so you don't need to worry about it interfering with your system Obsidian installation.
 
 ## Obsidian App vs Installer Versions
-Obsidian is distributed in two parts, the "installer" which is the executable containing Electron, and the "app" which is a bundle of JavaScript containing the Obsidian code. Obsidian's self-update system only updates the app JS bundle, and not the base installer/Electron version. This makes Obsidian's auto-update fast as it only needs to download a few MiB of JS instead of all of Electron. But, it means different users with the same Obsidian app version may be running on different versions of Electron, which can cause subtle differences in plugin behavior. Most ObsidianLauncher methods take both an `appVersion` and an `installerVersion` parameter, allowing you to test the same Obsidian app version on different versions of Electron.
+Obsidian Desktop is distributed in two parts, the "installer" which is the executable containing Electron, and the "app" which is a bundle of JavaScript containing the Obsidian code. Obsidian's self-update system only updates the app JS bundle, and not the base installer/Electron version. This makes Obsidian's auto-update fast as it only needs to download a few MiB of JS instead of all of Electron. But, it means different users with the same Obsidian app version may be running on different versions of Electron, which can cause subtle differences in plugin behavior. Most ObsidianLauncher methods take both an `appVersion` and an `installerVersion` parameter, allowing you to test the same Obsidian app version on different versions of Electron.
 
 `appVersion` can be set to one of:
 - a specific version string like "1.7.7"
 - "latest": run the latest non-beta Obsidian version
 - "latest-beta": run the latest beta Obsidian version (or latest is there is no current beta)
-    - To download Obsidian beta versions you'll need to have an Obsidian account with Catalyst and set the `OBSIDIAN_USERNAME` and `OBSIDIAN_PASSWORD` environment variables. 2FA needs to be disabled.
+    - To download Obsidian beta versions you'll need to have an Obsidian Insiders account
 - "earliest": run the `minAppVersion` set in your plugin's `manifest.json`
 
 `installerVersion` can be set to one of:
@@ -36,7 +42,7 @@ Obsidian is distributed in two parts, the "installer" which is the executable co
 - "earliest": run the oldest Obsidian installer compatible with `appVersion`
 
 ### Platform Support
-`obsidian-launcher` works for Obsidian desktop on Windows, Linux, and MacOS.
+`obsidian-launcher` works for Obsidian Desktop on Windows, Linux, and MacOS.
 
 Windows firewall will sometimes complain about NodeJS on launch, you can just cancel the popup it makes.
 
@@ -44,14 +50,8 @@ Windows firewall will sometimes complain about NodeJS on launch, you can just ca
 API docs for the package are available [here](https://jesse-r-s-hines.github.io/wdio-obsidian-service/obsidian-launcher/README.html).
 
 ## CLI
-`obsidian-launcher` also provides a CLI interface which can be used via `npx`
 ```bash
 npx obsidian-launcher [subcommand] ...
-```
-
-### Example
-```bash
-npx obsidian-launcher watch --version 1.8.10 --copy -p . test/vault
 ```
 
 ### Plugin and Theme format
@@ -70,7 +70,7 @@ The Obsidian instance will have a sandboxed configuration directory. You can use
 
 You can pass arguments through to the Obsidian executable using `--` like so:
 ```bash
-npx obsidian-launcher ./vault -- --remote-debugging-port=9222
+npx obsidian-launcher launch ./vault -- --remote-debugging-port=9222
 ```
 
 Arguments:

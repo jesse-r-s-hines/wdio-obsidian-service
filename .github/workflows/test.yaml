@@ -102,7 +102,7 @@ jobs:
           OBSIDIAN_VERSIONS: ${{matrix.obsidian-versions}}
           WDIO_MAX_INSTANCES: ${{matrix.max-instances || '4'}}
           # Secrets won't be available when run on a PR
-          OBSIDIAN_USERNAME: ${{ secrets.OBSIDIAN_USERNAME }}
+          OBSIDIAN_EMAIL: ${{ secrets.OBSIDIAN_EMAIL }}
           OBSIDIAN_PASSWORD: ${{ secrets.OBSIDIAN_PASSWORD }}
 
   test-android:
@@ -168,7 +168,7 @@ jobs:
           script: npm run test:android
         env:
           OBSIDIAN_VERSIONS: ${{ matrix.obsidian-version }}
-          OBSIDIAN_USERNAME: ${{ secrets.OBSIDIAN_USERNAME }}
+          OBSIDIAN_EMAIL: ${{ secrets.OBSIDIAN_EMAIL }}
           OBSIDIAN_PASSWORD: ${{ secrets.OBSIDIAN_PASSWORD }}
 
   check:

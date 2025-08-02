@@ -151,13 +151,13 @@ See the [sample plugin](https://github.com/jesse-r-s-hines/wdio-obsidian-service
 
 ### Obsidian App vs Installer Versions
 
-The Obsidian desktop app is distributed in two parts, the "installer" which is the executable containing Electron, and the "app" which is a bundle of JavaScript containing the Obsidian code. Obsidian's self-update system only updates the app JS bundle, and not the base installer/Electron version. This makes Obsidian's auto-update fast as it only needs to download a few MiB of JS instead of all of Electron. But, it means different users with the same Obsidian app version may be running on different versions of Electron, which can cause subtle differences in plugin behavior. You can specify both `appVersion` and `installerVersion` in your `wdio.conf.mts` capabilities section.
+Obsidian Desktop is distributed in two parts, the "installer" which is the executable containing Electron, and the "app" which is a bundle of JavaScript containing the Obsidian code. Obsidian's self-update system only updates the app JS bundle, and not the base installer/Electron version. This makes Obsidian's auto-update fast as it only needs to download a few MiB of JS instead of all of Electron. But, it means different users with the same Obsidian app version may be running on different versions of Electron, which can cause subtle differences in plugin behavior. You can specify both `appVersion` and `installerVersion` in your `wdio.conf.mts` capabilities section.
 
 To set the app version use `browserVersion` or `'wdio:obsidianOptions'.appVersion`. It can be set to one of:
 - a specific version string like "1.7.7"
 - "latest": run the latest non-beta Obsidian version
 - "latest-beta": run the latest beta Obsidian version (or latest is there is no current beta)
-    - To download Obsidian beta versions you'll need to have an Obsidian account with Catalyst and set the `OBSIDIAN_USERNAME` and `OBSIDIAN_PASSWORD` environment variables. 2FA needs to be disabled.
+    - To download Obsidian beta versions you'll need have an Obsidian Insiders account and either set the `OBSIDIAN_EMAIL` and `OBSIDIAN_PASSWORD` env vars (`.env` is supported) or pre-download the Obsidian beta with  `npx obsidian-launcher download -v latest-beta`.
 - "earliest": run the `minAppVersion` set in your plugin's `manifest.json`
 
 To set the installer version use `'wdio:obsidianOptions'.installerVersion`. It can be set to one of:

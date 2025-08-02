@@ -48,6 +48,7 @@
         "@types/lodash": "^4.17.20",
         "@types/mocha": "^10.0.10",
         "@types/node": "^18.19.121",
+        "@types/readline-sync": "^1.4.8",
         "@types/semver": "^7.7.0",
         "@types/serve-handler": "^6.1.4",
         "chai": "^5.2.1",
@@ -68,8 +69,10 @@
         "chrome-remote-interface": "^0.33.3",
         "classic-level": "^2.0.0",
         "commander": "^13.1.0",
+        "dotenv": "^17.2.1",
         "extract-zip": "^2.0.1",
         "lodash": "^4.17.21",
+        "readline-sync": "^1.4.10",
         "semver": "^7.6.3"
     },
     "engines": {

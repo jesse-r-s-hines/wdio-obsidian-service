@@ -72,7 +72,7 @@ program
     .option(...versionOptionArgs)
     .option(...installerOptionArgs)
     .action(async (opts) => {
-        const launcher = new ObsidianLauncher({cacheDir: opts.cache});
+        const launcher = new ObsidianLauncher({cacheDir: opts.cache, interactive: true});
         const [appVersion, installerVersion] = await launcher.resolveVersion(opts.version, opts.installerVersion);
         const installerPath = await launcher.downloadInstaller(installerVersion);
         console.log(`Downloaded Obsidian installer to ${installerPath}`)
@@ -88,7 +88,7 @@ program
     .option(...pluginOptionArgs)
     .option(...themeOptionArgs)
     .action(async (vault, opts) => {
-        const launcher = new ObsidianLauncher({cacheDir: opts.cache});
+        const launcher = new ObsidianLauncher({cacheDir: opts.cache, interactive: true});
         await launcher.installPlugins(vault, parsePlugins(opts.plugin));
         await launcher.installThemes(vault, parseThemes(opts.theme));
         console.log(`Installed plugins and themes into ${vault}`)
@@ -117,7 +117,7 @@ program
     .option(...themeOptionArgs)
     .option('--copy', "Copy the vault first")
     .action(async (vault: string|undefined, obsidianArgs: string[], opts: any) => {
-        const launcher = new ObsidianLauncher({cacheDir: opts.cache});
+        const launcher = new ObsidianLauncher({cacheDir: opts.cache, interactive: true});
         const {proc} = await launcher.launch({
             appVersion: opts.version, installerVersion: opts.installer,
             vault: vault,
@@ -153,7 +153,7 @@ program
     .option(...themeOptionArgs)
     .option('--copy', "Copy the vault first")
     .action(async (vault: string, obsidianArgs: string[], opts: any) => {
-        const launcher = new ObsidianLauncher({cacheDir: opts.cache});
+        const launcher = new ObsidianLauncher({cacheDir: opts.cache, interactive: true});
         // Normalize the plugins and themes
         const plugins = await launcher.downloadPlugins(parsePlugins(opts.plugin));
         const themes = await launcher.downloadThemes(parseThemes(opts.theme));
@@ -255,7 +255,7 @@ program
             throw Error(`Invalid number ${opts.maxInstances}`)
         }
 
-        const launcher = new ObsidianLauncher({cacheDir: opts.cache});
+        const launcher = new ObsidianLauncher({cacheDir: opts.cache, interactive: true});
         versionInfos = await launcher.updateVersionList(versionInfos, { maxInstances });
         await fsAsync.writeFile(dest, JSON.stringify(versionInfos, undefined, 4) + "\n");
         console.log(`Wrote updated version information to ${dest}`)

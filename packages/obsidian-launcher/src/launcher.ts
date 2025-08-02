@@ -6,12 +6,13 @@ import { downloadArtifact } from '@electron/get';
 import child_process from "child_process"
 import semver from "semver"
 import { fileURLToPath } from "url";
+import dotenv from "dotenv";
 import { fileExists, makeTmpDir, atomicCreate, linkOrCp, maybe, pool } from "./utils.js";
 import {
     ObsidianVersionInfo, ObsidianCommunityPlugin, ObsidianCommunityTheme, ObsidianVersionList, ObsidianInstallerInfo,
     PluginEntry, DownloadedPluginEntry, ThemeEntry, DownloadedThemeEntry, obsidianVersionsSchemaVersion,
 } from "./types.js";
-import { fetchObsidianAPI, fetchGitHubAPIPaginated, downloadResponse } from "./apis.js";
+import { obsidianApiLogin, fetchObsidianApi, fetchGitHubAPIPaginated, downloadResponse } from "./apis.js";
 import ChromeLocalStorage from "./chromeLocalStorage.js";
 import {
     normalizeGitHubRepo, extractGz, extractObsidianAppImage, extractObsidianExe, extractObsidianDmg,
@@ -42,35 +43,46 @@ export class ObsidianLauncher {
     /** Cached metadata files and requests */
     private metadataCache: Record<string, any>
 
+    readonly interactive: boolean = false;
+    private obsidianApiToken: string|undefined;
+
     /**
      * Construct an ObsidianLauncher.
-     * @param options.cacheDir Path to the cache directory. Defaults to "OBSIDIAN_CACHE" env var or ".obsidian-cache".
-     * @param options.versionsUrl Custom `obsidian-versions.json` url. Can be a file URL.
-     * @param options.communityPluginsUrl Custom `community-plugins.json` url. Can be a file URL.
-     * @param options.communityThemesUrl Custom `community-css-themes.json` url. Can be a file URL.
-     * @param options.cacheDuration If the cached version list is older than this (in ms), refetch it. Defaults to 30 minutes.
+     * @param opts.cacheDir Path to the cache directory. Defaults to "OBSIDIAN_CACHE" env var or ".obsidian-cache".
+     * @param opts.versionsUrl Custom `obsidian-versions.json` url. Can be a file URL.
+     * @param opts.communityPluginsUrl Custom `community-plugins.json` url. Can be a file URL.
+     * @param opts.communityThemesUrl Custom `community-css-themes.json` url. Can be a file URL.
+     * @param opts.cacheDuration If the cached version list is older than this (in ms), refetch it. Defaults to 30 minutes.
+     * @param opts.interactive If it can prompt the user for input (e.g. for Obsidian credentials). Default false.
      */
-    constructor(options: {
+    constructor(opts: {
         cacheDir?: string,
         versionsUrl?: string,
         communityPluginsUrl?: string,
         communityThemesUrl?: string,
         cacheDuration?: number,
+        interactive?: boolean,
     } = {}) {
-        this.cacheDir = path.resolve(options.cacheDir ?? process.env.OBSIDIAN_CACHE ?? "./.obsidian-cache");
+        this.cacheDir = path.resolve(opts.cacheDir ?? process.env.OBSIDIAN_CACHE ?? "./.obsidian-cache");
         
         const defaultVersionsUrl =  'https://raw.githubusercontent.com/jesse-r-s-hines/wdio-obsidian-service/HEAD/obsidian-versions.json'
-        this.versionsUrl = options.versionsUrl ?? defaultVersionsUrl;
+        this.versionsUrl = opts.versionsUrl ?? defaultVersionsUrl;
         
         const defaultCommunityPluginsUrl = "https://raw.githubusercontent.com/obsidianmd/obsidian-releases/HEAD/community-plugins.json";
-        this.communityPluginsUrl = options.communityPluginsUrl ?? defaultCommunityPluginsUrl;
+        this.communityPluginsUrl = opts.communityPluginsUrl ?? defaultCommunityPluginsUrl;
 
         const defaultCommunityThemesUrl = "https://raw.githubusercontent.com/obsidianmd/obsidian-releases/HEAD/community-css-themes.json";
-        this.communityThemesUrl = options.communityThemesUrl ?? defaultCommunityThemesUrl;
+        this.communityThemesUrl = opts.communityThemesUrl ?? defaultCommunityThemesUrl;
 
-        this.cacheDuration = options.cacheDuration ?? (30 * 60 * 1000);
+        this.cacheDuration = opts.cacheDuration ?? (30 * 60 * 1000);
+        this.interactive = opts.interactive ?? false;
 
         this.metadataCache = {};
+
+        dotenv.config({
+            path: [".env", path.join(this.cacheDir, "obsidian-credentials.env")],
+            quiet: true,
+        });
     }
 
     /**
@@ -371,8 +383,9 @@ export class ObsidianLauncher {
     /**
      * Downloads the Obsidian asar for the given version. Returns the file path.
      * 
-     * To download beta versions you'll need to have an Obsidian account with Catalyst and set the `OBSIDIAN_USERNAME`
-     * and `OBSIDIAN_PASSWORD` environment variables. 2FA needs to be disabled.
+     * To download Obsidian beta versions you'll need have an Obsidian Insiders account and either set the 
+     * `OBSIDIAN_EMAIL` and `OBSIDIAN_PASSWORD` env vars (`.env` is supported) or pre-download the Obsidian beta with
+     * `npx obsidian-launcher download -v latest-beta`
      * 
      * @param appVersion Obsidian version to download
      */
@@ -387,8 +400,19 @@ export class ObsidianLauncher {
         if (!(await fileExists(appPath))) {
             console.log(`Downloading Obsidian app v${versionInfo.version} ...`)
             await atomicCreate(appPath, async (tmpDir) => {
-                const isInsidersBuild = new URL(appUrl).hostname.endsWith('.obsidian.md');
-                const response = isInsidersBuild ? await fetchObsidianAPI(appUrl) : await fetch(appUrl);
+                const isInsiders = new URL(appUrl).hostname.endsWith('.obsidian.md');
+                let response: Response;
+                if (isInsiders) {
+                    if (!this.obsidianApiToken) {
+                        this.obsidianApiToken = await obsidianApiLogin({
+                            interactive: this.interactive,
+                            savePath: path.join(this.cacheDir, "obsidian-credentials.env"),
+                        });
+                    }
+                    response = await fetchObsidianApi(appUrl, {token: this.obsidianApiToken});
+                } else {
+                    response = await fetch(appUrl);
+                }
                 const archive = path.join(tmpDir, 'app.asar.gz');
                 const asar = path.join(tmpDir, 'app.asar')
                 await downloadResponse(response, archive);
@@ -1092,7 +1116,7 @@ export class ObsidianLauncher {
         const versionExists = !!(versionInfo.downloads.asar && versionInfo.minInstallerVersion)
 
         if (versionInfo.isBeta) {
-            const hasCreds = !!(process.env['OBSIDIAN_USERNAME'] && process.env['OBSIDIAN_PASSWORD']);
+            const hasCreds = !!(process.env['OBSIDIAN_EMAIL'] && process.env['OBSIDIAN_PASSWORD']);
             const inCache = await this.isInCache('app', versionInfo.version);
             return versionExists && (hasCreds || inCache);
         } else {

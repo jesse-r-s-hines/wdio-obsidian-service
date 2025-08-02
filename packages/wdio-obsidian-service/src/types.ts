@@ -26,8 +26,9 @@ export interface ObsidianCapabilityOptions {
      * Can be set to a specific version or one of:
      * - "latest": Run the latest non-beta Obsidian version
      * - "latest-beta": Run the latest beta Obsidian version (or latest is there is no current beta)
-     *   - To download Obsidian beta versions you'll need to have an Obsidian account with Catalyst and set the 
-     *     `OBSIDIAN_USERNAME` and `OBSIDIAN_PASSWORD` environment variables. 2FA needs to be disabled.
+     *     - To download Obsidian beta versions you'll need have an Obsidian Insiders account and either set the 
+     *       `OBSIDIAN_EMAIL` and `OBSIDIAN_PASSWORD` env vars (`.env` is supported) or pre-download the Obsidian beta
+     *       version with `npx obsidian-launcher download -v latest-beta`
      * - "earliest": Run the `minAppVersion` set in your `manifest.json`
      * 
      * Defaults to "latest".
@@ -41,9 +42,10 @@ export interface ObsidianCapabilityOptions {
     /**
      * Version of the Obsidian installer to download and run.
      * 
-     * Obsidian is distributed in two parts, the app which contains the JS, and the installer which is the binary with
-     * Electron. Obsidian's auto update only updates the app, so users on the same Obsidian version can be running
-     * different Electron versions. You can use this to test your plugin against different installer/Electron versions.
+     * Obsidian is Desktop distributed in two parts, the app which contains the JS, and the installer which is the
+     * binary with Electron. Obsidian's auto update only updates the app, so users on the same Obsidian version can be
+     * running different Electron versions. You can use this to test your plugin against different installer/Electron
+     * versions.
      * 
      * See also: [Obsidian App vs Installer Versions](../README.md#obsidian-app-vs-installer-versions)
      *

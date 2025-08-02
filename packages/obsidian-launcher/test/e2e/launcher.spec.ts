@@ -11,7 +11,7 @@ import CDP from 'chrome-remote-interface'
 import child_process from "child_process";
 import { createDirectory } from "../helpers.js";
 import { ObsidianLauncher } from "../../src/launcher.js";
-import { downloadResponse } from "../../src/apis.js";
+import { downloadResponse, obsidianApiLogin } from "../../src/apis.js";
 import { fileExists, atomicCreate, sleep, maybe } from "../../src/utils.js";
 import { AddressInfo } from "net";
 
@@ -66,7 +66,8 @@ describe("ObsidianLauncher", function() {
 
     before(async function() {
         this.timeout(10 * 60 * 1000);
-        launcher = new ObsidianLauncher(obsidianLauncherOpts);
+        const cacheDir = await fsAsync.mkdtemp(path.join(os.tmpdir(), "mocha-"));
+        launcher = new ObsidianLauncher({...obsidianLauncherOpts, cacheDir});
         await fsAsync.mkdir(testData, {recursive: true});
 
         const earliestAppVersionInfo = await launcher.getVersionInfo(earliestApp);
@@ -104,7 +105,6 @@ describe("ObsidianLauncher", function() {
                 })),
             }),
         });
-        const cacheDir = await fsAsync.mkdtemp(path.join(os.tmpdir(), "mocha-"));
 
         launcher = new ObsidianLauncher({
             ...obsidianLauncherOpts,
@@ -158,5 +158,33 @@ describe("ObsidianLauncher", function() {
         });
         await testLaunch(proc);
         await fsAsync.rm(configDir, { recursive: true, force: true });
+    })
+})
+
+
+describe("ObsidianLauncher login", function() {
+    let launcher: ObsidianLauncher;
+    this.timeout("60s");
+
+    before(async function() {
+        const cacheDir = await createDirectory();
+        // create the launcher so it loads dotenv files
+        launcher = new ObsidianLauncher({...obsidianLauncherOpts, cacheDir});
+        // only run this test on the CI where we know we have a valid, non-2FA set of credentials
+        if (!process.env.CI) this.skip();
+    })
+
+    it("test login", async function() {
+        const token = await obsidianApiLogin({interactive: false});
+        expect(!!token).to.eql(true);
+    })
+
+    it("test login error", async function() {
+        const pwdBefore = process.env.OBSIDIAN_PASSWORD;
+        after(() => { process.env.OBSIDIAN_PASSWORD = pwdBefore });
+        process.env.OBSIDIAN_PASSWORD = "incorrect-password";
+        const result = await obsidianApiLogin({interactive: false}).catch(e => e);
+        expect(result).to.be.instanceOf(Error);
+        expect(result.toString()).includes("login failed");
     })
 })
