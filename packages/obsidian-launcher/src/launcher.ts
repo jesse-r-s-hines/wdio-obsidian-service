@@ -286,21 +286,24 @@ export class ObsidianLauncher {
      * 
      * Example: 
      * ```js
-     * parseObsidianVersions("1.7.7 1.7.7/1.8.10 1.8.10/earliest latest-beta/latest")
+     * launcher.parseVersions("1.8.10/1.7.7 latest latest-beta/earliest")
      * ```
      * 
      * See also: [Obsidian App vs Installer Versions](../README.md#obsidian-app-vs-installer-versions)
      * 
      * @param versions string to parse
-     * @returns [appVersion, installerVersion][]
+     * @returns [appVersion, installerVersion][] resolved to specific versions.
      */
     async parseVersions(versions: string): Promise<[string, string][]> {
         let parsedVersions = versions.split(/[ ,]/).filter(v => v).map((v) => {
             const [appVersion, installerVersion = 'earliest'] = v.split("/");
             return [appVersion, installerVersion] as [string, string];
         });
-        parsedVersions = await Promise.all(parsedVersions.map(v => this.resolveVersion(...v)));
-        return _.uniqBy(parsedVersions, v => v.join('/'));
+        let resolvedVersions: [string, string][] = [];
+        for (let [appVersion, installerVersion] of parsedVersions) {
+            resolvedVersions.push(await this.resolveVersion(appVersion, installerVersion));
+        }
+        return _.uniqBy(resolvedVersions, v => v.join('/'));
     }
 
     private getInstallerKey(
@@ -1119,14 +1122,16 @@ export class ObsidianLauncher {
      */
     async isAvailable(appVersion: string): Promise<boolean> {
         const versionInfo = await this.getVersionInfo(appVersion);
-        const versionExists = !!(versionInfo.downloads.asar && versionInfo.minInstallerVersion)
+        if (!versionInfo.downloads.asar || !versionInfo.minInstallerVersion) { // check if version has a download
+            return false;
+        }
 
-        if (versionInfo.isBeta) {
+        if (new URL(versionInfo.downloads.asar).hostname.endsWith('.obsidian.md')) {
             const hasCreds = !!(process.env['OBSIDIAN_EMAIL'] && process.env['OBSIDIAN_PASSWORD']);
             const inCache = await this.isInCache('app', versionInfo.version);
-            return versionExists && (hasCreds || inCache);
+            return (hasCreds || inCache);
         } else {
-            return versionExists;
+            return true;
         }
     }
 }

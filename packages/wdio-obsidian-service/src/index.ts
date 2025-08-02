@@ -61,12 +61,9 @@ export const resolveObsidianVersions = deprecate(async function(
  * `versions` should be a space separated list of Obsidian app versions. You can optionally specify the installer
  * version by using "appVersion/installerVersion" e.g. `"1.7.7/1.8.10"`.
  * 
- * Like in {@link ObsidianCapabilityOptions}, appVersion can be a specific version, "latest", "latest-beta", or
- * "earliest" and installerVersion can be a specific version, "latest" or "earliest".
- * 
  * Example: 
  * ```js
- * parseObsidianVersions("1.7.7 1.7.7/1.8.10 1.8.10/earliest latest-beta/latest")
+ * parseObsidianVersions("1.8.10/1.7.7 latest latest-beta/earliest")
  * ```
  * 
  * See also: [Obsidian App vs Installer Versions](../README.md#obsidian-app-vs-installer-versions)
@@ -74,12 +71,12 @@ export const resolveObsidianVersions = deprecate(async function(
  * @category WDIO Helpers
  * @param versions string to parse
  * @param opts.cacheDir Obsidian cache dir, defaults to `.obsidian-cache`.
- * @returns [appVersion, installerVersion][]
+ * @returns [appVersion, installerVersion][] resolved to specific versions.
  */
 export async function parseObsidianVersions(
     versions: string,
     opts: {cacheDir?: string} = {},
 ): Promise<[string, string][]> {
-    const launcher = new ObsidianLauncher(opts);
+    const launcher = new ObsidianLauncher({cacheDir: opts.cacheDir});
     return launcher.parseVersions(versions);
 }
