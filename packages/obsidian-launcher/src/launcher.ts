@@ -171,7 +171,7 @@ export class ObsidianLauncher {
      */
     async getVersions(): Promise<ObsidianVersionInfo[]> {
         const isValid = (d: ObsidianVersionList) =>
-            semver.satisfies(d.metadata.schemaVersion ?? '1.0.0', `~${obsidianVersionsSchemaVersion}`);
+            semver.satisfies(d.metadata.schemaVersion ?? '1.0.0', `^${obsidianVersionsSchemaVersion}`);
         const versions = await this.cachedFetch(this.versionsUrl, "obsidian-versions.json", isValid);
         if (!isValid(versions)) {
             throw new Error(`${this.versionsUrl} format has changed, please update obsidian-launcher and wdio-obsidian-service`)
