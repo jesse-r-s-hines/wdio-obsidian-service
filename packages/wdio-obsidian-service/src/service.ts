@@ -446,8 +446,8 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
                     const remoteCommunityPlugins = `${remote}/community-plugins.json`;
                     const remoteAppearance = `${remote}/appearance.json`;
 
-                    await downloadFile(this, remoteCommunityPlugins, localCommunityPlugins);
-                    await downloadFile(this, remoteAppearance, localAppearance);
+                    await downloadFile(this, remoteCommunityPlugins, localCommunityPlugins).catch(() => {});
+                    await downloadFile(this, remoteAppearance, localAppearance).catch(() => {});
                     await service.obsidianLauncher.setupVault({
                         vault: oldObsidianOptions.vaultCopy!, copy: false,
                         plugins: selectedPlugins, themes: selectedThemes,
