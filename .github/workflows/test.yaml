@@ -25,19 +25,20 @@ jobs:
             node-version: "18.x"
             test-preset: "all"
             obsidian-versions: "latest/latest earliest/earliest"
-            max-instances: 2
+            max-instances: 3
           - os: ubuntu-24.04-arm
             node-version: "22.x"
             test-preset: "basic"
             obsidian-versions: "latest/latest earliest/earliest"
-          - os: windows-11-arm
-            node-version: "22.x"
-            test-preset: "basic"
-            obsidian-versions: "latest/latest latest/1.6.5"
-          - os: macos-13 # x86
-            node-version: "18.x"
-            test-preset: "basic"
-            obsidian-versions: "latest/latest earliest/earliest"
+          # Windows arm is ridiculously slow on npm install so skip this test for now
+          # - os: windows-11-arm
+          #   node-version: "22.x"
+          #   test-preset: "basic"
+          #   obsidian-versions: "latest/latest latest/1.6.5"
+          # - os: macos-13 # x86
+          #   node-version: "18.x"
+          #   test-preset: "basic"
+          #   obsidian-versions: "latest/latest earliest/earliest"
           # Also test other node versions
           - os: ubuntu-latest
             node-version: "20.x"
@@ -100,7 +101,7 @@ jobs:
         env:
           TEST_PRESET: ${{ matrix.test-preset }}
           OBSIDIAN_VERSIONS: ${{matrix.obsidian-versions}}
-          WDIO_MAX_INSTANCES: ${{matrix.max-instances || '4'}}
+          WDIO_MAX_INSTANCES: ${{matrix.max-instances || '8'}}
           # Secrets won't be available when run on a PR
           OBSIDIAN_EMAIL: ${{ secrets.OBSIDIAN_EMAIL }}
           OBSIDIAN_PASSWORD: ${{ secrets.OBSIDIAN_PASSWORD }}

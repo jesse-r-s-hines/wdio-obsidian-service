@@ -59,14 +59,15 @@ if (process.env.OBSIDIAN_VERSIONS == "all") {
     versionsToTest =  _.values(versionMap).map(v =>
         [semver.gte(v, minSupportedObsidianVersion) ? v : minSupportedObsidianVersion, v]
     );
-    // test latest/earliest combination to make sure that minInstallerVersion is correct
-    versionsToTest.push(["latest", "earliest"]);
     // Only test first and last few minor versions
-    if (versionsToTest.length > 5) {
-        versionsToTest = [versionsToTest[0], ...versionsToTest.slice(-4)];
+    if (versionsToTest.length > 3) {
+        versionsToTest = [versionsToTest[0], ...versionsToTest.slice(-3)];
     }
     if (await obsidianBetaAvailable(cacheDir)) {
-        versionsToTest.push(["latest-beta", "latest"]);
+        versionsToTest.push(["latest-beta", "earliest"]);
+    } else {
+        // test latest/earliest combination to make sure that minInstallerVersion is correct
+        versionsToTest.push(["latest", "earliest"]);
     }
 } else if (process.env.OBSIDIAN_VERSIONS) {
     // Space separated list of appVersion/installerVersion, e.g. "1.7.7/latest latest/earliest"

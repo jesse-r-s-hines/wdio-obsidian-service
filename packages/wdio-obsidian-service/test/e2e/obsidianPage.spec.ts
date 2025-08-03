@@ -20,12 +20,12 @@ async function getOpenFiles() {
 }
 
 describe("Test page object", () => {
-    before(() => {
+    before(async () => {
         expect(() => obsidianPage.getVaultPath()).toThrow("No vault open");
+        await browser.reloadObsidian({vault: "./test/vaults/basic"});
     })
 
     beforeEach(async () => {
-        await browser.reloadObsidian({vault: "./test/vaults/basic"});
         await obsidianPage.loadWorkspaceLayout("empty");
         expect(await getOpenFiles()).toEqual([]);
     })
