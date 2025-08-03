@@ -60,20 +60,20 @@
         "ts-node": "^10.9.2",
         "tsup": "^8.5.0",
         "tsx": "^4.20.3",
-        "typescript": "^5.8.2"
+        "typescript": "^5.8.3"
     },
     "dependencies": {
         "@electron/get": "^3.1.0",
         "@supercharge/promise-pool": "^3.2.0",
         "7z-wasm": "1.2.0",
         "chrome-remote-interface": "^0.33.3",
-        "classic-level": "^2.0.0",
+        "classic-level": "^3.0.0",
         "commander": "^13.1.0",
         "dotenv": "^17.2.1",
         "extract-zip": "^2.0.1",
         "lodash": "^4.17.21",
         "readline-sync": "^1.4.10",
-        "semver": "^7.6.3"
+        "semver": "^7.7.2"
     },
     "engines": {
         "node": ">=18"

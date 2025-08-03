@@ -33,14 +33,14 @@
     "homepage": "https://jesse-r-s-hines.github.io/wdio-obsidian-service/wdio-obsidian-reporter/README.html",
     "devDependencies": {
         "@types/node": "^18.19.121",
-        "@wdio/types": "^9.5.0",
+        "@wdio/types": "^9.16.2",
         "ts-node": "^10.9.2",
         "tsup": "^8.5.0",
         "tsx": "^4.20.3",
-        "typescript": "^5.8.2"
+        "typescript": "^5.8.3"
     },
     "dependencies": {
-        "@wdio/reporter": "^9.5.0",
+        "@wdio/reporter": "^9.18.0",
         "@wdio/spec-reporter": "^9.18.0"
     },
     "engines": {
