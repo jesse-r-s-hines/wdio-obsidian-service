@@ -50,7 +50,7 @@ const versionOptionArgs = [
 const installerOptionArgs = [
     '-i, --installer <version>',
     "Obsidian installer version",
-    "latest",
+    "earliest",
 ] as const
 const cacheOptionArgs = [
     '-c, --cache <cache>',
