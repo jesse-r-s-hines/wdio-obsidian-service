@@ -1,6 +1,6 @@
 {
     "name": "wdio-obsidian-service",
-    "version": "1.3.3",
+    "version": "2.0.0",
     "description": "A WebdriverIO service for end-to-end testing of Obsidian plugins",
     "keywords": [
         "obsidian",
@@ -59,11 +59,11 @@
         "tsup": "^8.5.0",
         "tsx": "^4.20.3",
         "typescript": "^5.8.3",
-        "wdio-obsidian-reporter": "^1.3.3"
+        "wdio-obsidian-reporter": "^2.0.0"
     },
     "dependencies": {
         "lodash": "^4.17.21",
-        "obsidian-launcher": "^1.3.3",
+        "obsidian-launcher": "^2.0.0",
         "semver": "^7.7.2"
     },
     "peerDependencies": {
