@@ -1,6 +1,6 @@
 {
     "name": "obsidian-launcher",
-    "version": "2.0.0",
+    "version": "2.0.1",
     "description": "Download and launch sandboxed Obsidian instances",
     "keywords": [
         "obsidian"
