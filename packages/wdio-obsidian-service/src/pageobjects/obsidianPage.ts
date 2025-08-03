@@ -54,7 +54,7 @@ class ObsidianPage extends BasePage {
     }
 
     /**
-     * Return the the Obsidian config dir (just ".obsidian" unless you changed the config dir name in settings).
+     * Return the Obsidian config dir (just ".obsidian" unless you changed the config dir name in settings).
      */
     async getConfigDir(): Promise<string> {
         return await this.browser.executeObsidian(({app}) => app.vault.configDir)
