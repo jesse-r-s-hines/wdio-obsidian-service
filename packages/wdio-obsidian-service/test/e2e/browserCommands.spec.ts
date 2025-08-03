@@ -1,4 +1,4 @@
-import { browser } from '@wdio/globals'
+import { browser, expect } from '@wdio/globals'
 import { TFile } from 'obsidian';
 import semver from "semver";
 import { obsidianPage } from 'wdio-obsidian-service';
@@ -22,6 +22,10 @@ describe("Test custom browser commands", () => {
         expect(plugins).toEqual({
             basicPlugin: true,
         })
+
+        await browser.executeObsidian(() => {
+            require('obsidian'); // test that require global is set up
+        });
     })
 
     it('runObsidianCommand', async () => {
@@ -31,16 +35,16 @@ describe("Test custom browser commands", () => {
     })
 
     it("getObsidianPage", async () => {
-        const commandObsidianPage = await browser.getObsidianPage();
-        expect(commandObsidianPage).toBe(obsidianPage);
+        const commandObsidianPage = browser.getObsidianPage();
+        expect(commandObsidianPage).toBeInstanceOf(obsidianPage.constructor);
     })
 })
 
 describe("Test windows", () => {
     before(async function() {
-        if (semver.lt(await browser.getObsidianInstallerVersion(), "0.12.19")) {
-            // Windows don't work on older installer versions
-            this.skip()
+        const installerVersion = browser.getObsidianInstallerVersion();
+        if (semver.lt(installerVersion, "0.12.19") || (await obsidianPage.getPlatform()).isMobile) {
+            this.skip(); // Windows don't work on older installer versions or mobile
         }
     })
 

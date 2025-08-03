@@ -3,6 +3,8 @@ import fs from "fs";
 import { finished } from 'stream/promises';
 import { Readable } from 'stream';
 import { ReadableStream } from "stream/web"
+import fsAsync from "fs/promises";
+import readlineSync from "readline-sync";
 
 /**
  * GitHub API stores pagination information in the "Link" header. The header looks like this:
@@ -61,7 +63,7 @@ export async function fetchGitHubAPI(url: string, params: Record<string, any> = 
     if (!response.ok) {
         throw new Error(`GitHub API error: ${await response.text()}`);
     }
-    return await response;
+    return response;
 }
 
 
@@ -79,25 +81,100 @@ export async function fetchGitHubAPIPaginated(url: string, params: Record<string
     return results;
 }
 
-/**
- * Fetch from the Obsidian API to download insider versions. Uses OBSIDIAN_USERNAME and
- * OBSIDIAN_PASSWORD environment variables.
- */
-export async function fetchObsidianAPI(url: string) {
-    url = createURL(url, "https://releases.obsidian.md");
 
-    const username = process.env.OBSIDIAN_USERNAME;
-    const password = process.env.OBSIDIAN_PASSWORD;
-    if (!username || !password) {
-        throw Error("OBSIDIAN_USERNAME or OBSIDIAN_PASSWORD environment variables are required to access the Obsidian API for beta versions.")
+/**
+ * Login and returns the token from the Obsidian API.
+ * @param opts.interactive if true, we can prompt the user for credentials
+ * @param opts.savePath Save/cache Obsidian credentials to this path
+ */
+export async function obsidianApiLogin(opts: {
+    interactive?: boolean,
+    savePath?: string,
+}): Promise<string> {
+    const {interactive = false, savePath} = opts;
+    // these will be populated by dotenv
+    let email = process.env.OBSIDIAN_EMAIL;
+    let password = process.env.OBSIDIAN_PASSWORD;
+    let mfa: string|undefined;
+
+    if (!email || !password) {
+        if (interactive) {
+            console.log("Obsidian Insiders account is required to download Obsidian beta versions.")
+            email = email || readlineSync.question("Obsidian email: ");
+            password = password || readlineSync.question("Obsidian password: ", {hideEchoBack: true});
+        } else  {
+            throw Error(
+                "Obsidian Insiders account is required to download Obsidian beta versions.  Either set the " +
+                "OBSIDIAN_EMAIL and OBSIDIAN_PASSWORD env vars (.env is supported) or pre-download the Obsidian beta " +
+                "with `npx obsidian-launcher download -v <version>`"
+            )
+        }
     }
 
+    const headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.183 Safari/537.36',
+        "Origin": "app://obsidian.md",
+        "Content-Type": "application/json",
+    }
+    let signin = await fetch("https://api.obsidian.md/user/signin", {
+        method: "post",
+        headers: headers,
+        body: JSON.stringify({email, password, mfa: ''})
+    }).then(r => r.json());
+    if (signin.error && signin.error.includes("2FA")) {
+        if (interactive) {
+            mfa = await readlineSync.question("Obsidian 2FA: ");
+            signin = await fetch("https://api.obsidian.md/user/signin", {
+                method: "post",
+                headers: headers,
+                body: JSON.stringify({email, password, mfa})
+            }).then(r => r.json());
+        } else {
+            throw Error(
+                "Can't login with 2FA in a non-interactive session. To download Obsidian beta versions, either " +
+                "disable 2FA on your account or pre-download the Obsidian beta with " +
+                "`npx obsidian-launcher download -v <version>`"
+            )
+        }
+    }
+
+    let error: any = undefined;
+    if (!signin.token) {
+        error = Error(`Obsidian login failed: ${signin.error}`)
+    }
+    if (!error && !signin.license) {
+        error = Error("Obsidian Insiders account is required to download Obsidian beta versions")
+    }
+    if (error) {
+        if (savePath) { // clear credential cache if credentials are invalid
+            await fsAsync.rm(savePath, {force: true});
+        }
+        throw error;
+    }
+
+    if (interactive && savePath && (!process.env.OBSIDIAN_EMAIL || !process.env.OBSIDIAN_PASSWORD)) {
+        const save = readlineSync.question("Save credentails to disk? [y/n]: ");
+        if (['y', 'yes'].includes(save.toLocaleLowerCase())) {
+            await fsAsync.writeFile(savePath,
+                `OBSIDIAN_EMAIL='${email}'\n` +
+                `OBSIDIAN_PASSWORD='${password}'\n`
+            );
+        }
+    }
+
+    return signin.token;
+}
+
+/**
+ * Fetch from the Obsidian API to download insider versions.
+ */
+export async function fetchObsidianApi(url: string, opts: {token: string}) {
+    url = createURL(url, "https://releases.obsidian.md");
     const response = await fetch(url, {
         headers: {
-            // For some reason you have to set the User-Agent or it won't let you download
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.183 Safari/537.36',
             "Origin": "app://obsidian.md",
-            'Authorization': 'Basic ' + btoa(username + ":" + password),
+            'Authorization': 'Bearer ' + opts.token,
         },
     })
     return response;
@@ -107,6 +184,9 @@ export async function fetchObsidianAPI(url: string) {
  * Downloads a url to disk.
  */
 export async function downloadResponse(response: Response, dest: string) {
+    if (!response.ok) {
+        throw Error(`${response.url} failed with ${response.status}`);
+    }
     const fileStream = fs.createWriteStream(dest, { flags: 'w' });
     // not sure why I have to cast this
     const fetchStream = Readable.fromWeb(response.body as ReadableStream);

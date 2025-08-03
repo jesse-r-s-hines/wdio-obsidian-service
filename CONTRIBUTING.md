@@ -17,4 +17,4 @@ To run tests for a single package, pass the package to the npm `--workspace` par
 npm run -w packages/obsidian-launcher test:unit
 ```
 
-Make sure to rebuild after any codes changes before running the tests again.
+Make sure to rebuild after any code changes before running the tests again.

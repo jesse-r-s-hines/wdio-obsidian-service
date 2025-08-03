@@ -13,13 +13,23 @@ class ObsidianReporter extends SpecReporter {
 
     // Override this method to change the label shown for each capability 
     getHeaderDisplay(runner: RunnerStats) {
-        const obsidianOptions = (runner.config as any).capabilities?.['wdio:obsidianOptions']
+        const cap = (runner.config as any).capabilities;
+        const obsidianOptions = cap?.['wdio:obsidianOptions'];
 
         let combo: string
         if (obsidianOptions) {
-            const appVersion = obsidianOptions.appVersion;
-            const installerVersion = obsidianOptions.installerVersion;
-            combo = `obsidian v${appVersion} (installer: v${installerVersion})`
+            const {appVersion, installerVersion, emulateMobile} = obsidianOptions;
+            const automationName = cap['appium:options']?.automationName ?? cap['appium:automationName']
+            const isAppium = automationName?.toLocaleLowerCase() == 'uiautomator2'
+            let platform: string
+            if (isAppium) {
+                platform = "android";
+            } else if (emulateMobile) {
+                platform = "emulate-mobile";
+            } else {
+                platform = process.platform;
+            }
+            combo = `obsidian v${appVersion} (installer: v${installerVersion}, platform: ${platform})`;
         } else { // fall back to SpecReporter behavior
             combo = this.getEnviromentCombo(runner.capabilities, undefined, runner.isMultiremote).trim()
         }

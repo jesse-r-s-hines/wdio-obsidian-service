@@ -1,6 +1,6 @@
 {
     "name": "wdio-obsidian-service-workspace",
-    "version": "1.3.3",
+    "version": "2.0.0",
     "private": true,
     "workspaces": [
         "packages/*"
@@ -14,21 +14,24 @@
         "build": "npm run --workspaces build",
         "version": "node scripts/bumpVersions.mjs",
         "postversion": "git add package*.json **/package*.json && git commit -m \"Bump $npm_package_version\"",
-        "lint": "eslint packages/*/src packages/*/test",
+        "lint": "eslint packages/*/src packages/*/test/e2e packages/*/test/unit packages/*/test/standalone",
         "test": "run-s test:*",
         "test:unit": "npm run --workspaces --if-present test:unit",
         "test:e2e": "npm run --workspaces --if-present test:e2e",
+        "test:android": "npm run --workspaces --if-present test:android",
         "doc": "typedoc",
-        "preview-doc": "typedoc && cd generated-docs && http-server"
+        "preview-doc": "npm run build && typedoc && cd generated-docs && serve"
     },
     "devDependencies": {
-        "@eslint/js": "^9.22.0",
-        "eslint": "^9.22.0",
-        "http-server": "^14.1.1",
+        "@eslint/js": "^9.32.0",
+        "appium": "^2.19.0",
+        "appium-uiautomator2-driver": "^4.2.7",
+        "eslint": "^9.32.0",
         "npm-run-all": "^4.1.5",
-        "typedoc": "^0.28.0",
-        "typescript": "^5.8.2",
-        "typescript-eslint": "^8.26.1"
+        "serve": "^14.2.4",
+        "typedoc": "^0.28.9",
+        "typescript": "^5.8.3",
+        "typescript-eslint": "^8.38.0"
     },
     "engines": {
         "node": ">=18"

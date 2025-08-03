@@ -1,8 +1,12 @@
+export const obsidianVersionsSchemaVersion = '2.0.0';
+
 /**
  * Type of the obsidian-versions.json file.
+ * @category Types
  */
-export type ObsidianVersionInfos = {
+export type ObsidianVersionList = {
     metadata: {
+        schemaVersion: string,
         commitDate: string,
         commitSha: string,
         timestamp: string,
@@ -11,8 +15,28 @@ export type ObsidianVersionInfos = {
 }
 
 /**
+ * Metadata about a specific Obsidian desktop installer.
+ * @category Types
+ */
+export type ObsidianInstallerInfo = {
+    /**
+     * Hash of the file content.
+     * For releases from before GitHub started storing digests, this will be set to file "id" which also changes if the
+     * file is updated.
+     */
+    digest: string,
+    /** Electron version */
+    electron: string,
+    /** Chrome version */
+    chrome: string,
+    /** platform-arch combinations supported by the installer */
+    platforms: string[],
+}
+
+/**
  * Metadata about a specific Obsidian version, including the min/max compatible installer versions, download urls, and
- * the internal electron version.
+ * the internal Electron version.
+ * @category Types
  */
 export type ObsidianVersionInfo = {
     version: string,
@@ -24,17 +48,29 @@ export type ObsidianVersionInfo = {
         asar?: string,
         appImage?: string,
         appImageArm?: string,
-        apk?: string,
+        tar?: string,
+        tarArm?: string,
         dmg?: string,
         exe?: string,
+        apk?: string,
     },
+    installers: {
+        appImage?: ObsidianInstallerInfo,
+        appImageArm?: ObsidianInstallerInfo,
+        tar?: ObsidianInstallerInfo,
+        tarArm?: ObsidianInstallerInfo,
+        dmg?: ObsidianInstallerInfo,
+        exe?: ObsidianInstallerInfo,
+    },
+    /** @deprecated Use installers instead */
     electronVersion?: string,
+    /** @deprecated Use installers instead */
     chromeVersion?: string,
-    nodeVersion?: string,
 }
 
 /**
  * Schema of entries in https://github.com/obsidianmd/obsidian-releases/blob/HEAD/community-plugins.json
+ * @category Types
  */
 export type ObsidianCommunityPlugin = {
     id: string,
@@ -46,6 +82,7 @@ export type ObsidianCommunityPlugin = {
 
 /**
  * Schema of entries in https://github.com/obsidianmd/obsidian-releases/blob/HEAD/community-css-themes.json
+ * @category Types
  */
 export type ObsidianCommunityTheme = {
     name: string,
@@ -56,24 +93,24 @@ export type ObsidianCommunityTheme = {
 }
 
 /** @inline */
-type BasePluginEntry = {
+interface BasePluginEntry {
     /** Set false to install the plugin but start it disabled. Default true. */
     enabled?: boolean,
 }
 /** @inline */
-type LocalPluginEntry = BasePluginEntry & {
+interface LocalPluginEntry extends BasePluginEntry {
     /** Path on disk to the plugin to install. */
     path: string,
 }
 /** @inline */
-type GitHubPluginEntry = BasePluginEntry & {
+interface GitHubPluginEntry extends BasePluginEntry {
     /** Github repo of the plugin to install, e.g. "some-user/some-plugin". */
     repo: string,
     /** Version of the plugin to install. Defaults to latest. */
     version?: string,
 }
 /** @inline */
-type CommunityPluginEntry = BasePluginEntry & {
+interface CommunityPluginEntry extends BasePluginEntry {
     /** Plugin ID to install from Obsidian community plugins. */
     id: string,
     /** Version of the plugin to install. Defaults to latest. */
@@ -87,9 +124,15 @@ type CommunityPluginEntry = BasePluginEntry & {
  * - `id` to install a community plugin
  * 
  * You can also pass `enabled: false` to install the plugin, but start it disabled by default.
+ * 
+ * @category Types
  */
 export type PluginEntry = string|LocalPluginEntry|GitHubPluginEntry|CommunityPluginEntry
 
+/**
+ * PluginEntry plus downloaded path.
+ * @category Types
+ */
 export type DownloadedPluginEntry = {
     /** If the plugin is enabled */
     enabled: boolean,
@@ -102,7 +145,7 @@ export type DownloadedPluginEntry = {
 }
 
 /** @inline */
-type BaseThemeEntry = {
+interface BaseThemeEntry {
     /**
      * Set false to install the theme but not enable it. Defaults to true.
      * Only one theme can be enabled.
@@ -110,17 +153,17 @@ type BaseThemeEntry = {
     enabled?: boolean,
 }
 /** @inline */
-type LocalThemeEntry = BaseThemeEntry & {
+interface LocalThemeEntry extends BaseThemeEntry {
     /** Path on disk to the theme to install. */
     path: string,
 }
 /** @inline */
-type GitHubThemeEntry = BaseThemeEntry & {
+interface GitHubThemeEntry extends BaseThemeEntry {
     /** Github repo of the theme to install, e.g. "some-user/some-theme". */
     repo: string,
 }
 /** @inline */
-type CommunityThemeEntry = BaseThemeEntry & {
+interface CommunityThemeEntry extends BaseThemeEntry {
     /** Theme name to install from Obsidian community themes. */
     name: string,
 }
@@ -134,9 +177,15 @@ type CommunityThemeEntry = BaseThemeEntry & {
  * 
  * You can also pass `enabled: false` to install the theme, but start it disabled by default. You can only have one
  * enabled theme, so if you pass multiple you need to disable all but one.
+ * 
+ * @category Types
  */
 export type ThemeEntry = string|LocalThemeEntry|GitHubThemeEntry|CommunityThemeEntry
 
+/**
+ * ThemeEntry plus downloaded path.
+ * @category Types
+ */
 export type DownloadedThemeEntry = {
     /** If the theme is enabled */
     enabled: boolean,
