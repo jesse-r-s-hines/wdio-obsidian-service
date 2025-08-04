@@ -123,7 +123,7 @@ export async function obsidianApiLogin(opts: {
     }).then(r => r.json());
     if (signin.error && signin.error.includes("2FA")) {
         if (interactive) {
-            mfa = await readlineSync.question("Obsidian 2FA: ");
+            mfa = readlineSync.question("Obsidian 2FA: ");
             signin = await fetch("https://api.obsidian.md/user/signin", {
                 method: "post",
                 headers: headers,
@@ -141,8 +141,7 @@ export async function obsidianApiLogin(opts: {
     let error: any = undefined;
     if (!signin.token) {
         error = Error(`Obsidian login failed: ${signin.error}`)
-    }
-    if (!error && !signin.license) {
+    } else if (!signin.license) {
         error = Error("Obsidian Insiders account is required to download Obsidian beta versions")
     }
     if (error) {

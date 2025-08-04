@@ -295,12 +295,12 @@ export class ObsidianLauncher {
      * @returns [appVersion, installerVersion][] resolved to specific versions.
      */
     async parseVersions(versions: string): Promise<[string, string][]> {
-        let parsedVersions = versions.split(/[ ,]/).filter(v => v).map((v) => {
+        const parsedVersions = versions.split(/[ ,]/).filter(v => v).map((v) => {
             const [appVersion, installerVersion = 'earliest'] = v.split("/");
             return [appVersion, installerVersion] as [string, string];
         });
-        let resolvedVersions: [string, string][] = [];
-        for (let [appVersion, installerVersion] of parsedVersions) {
+        const resolvedVersions: [string, string][] = [];
+        for (const [appVersion, installerVersion] of parsedVersions) {
             resolvedVersions.push(await this.resolveVersion(appVersion, installerVersion));
         }
         return _.uniqBy(resolvedVersions, v => v.join('/'));
