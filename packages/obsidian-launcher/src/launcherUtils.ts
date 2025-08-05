@@ -280,12 +280,15 @@ export async function getInstallerInfo(
  * Normalize order and remove undefined values.
  */
 export function normalizeObsidianVersionInfo(versionInfo: DeepPartial<ObsidianVersionInfo>): ObsidianVersionInfo {
-    versionInfo = {
-        ...versionInfo,
-        // kept for backwards compatibility
-        electronVersion: versionInfo.installers?.appImage?.electron,
-        chromeVersion: versionInfo.installers?.appImage?.chrome,
-    };
+    versionInfo = _.cloneDeep(versionInfo);
+    // kept for backwards compatibility
+    versionInfo.electronVersion = versionInfo.installers?.appImage?.electron;
+    versionInfo.chromeVersion = versionInfo.installers?.appImage?.chrome;
+    // make sure downloads and installers exist even if empty
+    versionInfo.downloads = versionInfo.downloads ?? {};
+    versionInfo.installers = versionInfo.installers ?? {};
+
+    // normalize order and removed undefined
     const canonicalForm = {
         version: null,
         minInstallerVersion: null,
@@ -315,3 +318,4 @@ export function normalizeObsidianVersionInfo(versionInfo: DeepPartial<ObsidianVe
     };
     return normalizeObject(canonicalForm, versionInfo) as ObsidianVersionInfo;
 }
+
