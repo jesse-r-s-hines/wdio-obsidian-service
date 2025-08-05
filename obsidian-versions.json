@@ -7307,7 +7307,7 @@
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.9.7.asar.gz"
             },
-            "installers": {},
+            "installers": {}
         }
     ]
 }
