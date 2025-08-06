@@ -6,6 +6,7 @@ import { downloadArtifact } from '@electron/get';
 import child_process from "child_process"
 import semver from "semver"
 import { fileURLToPath } from "url";
+import _ from "lodash"
 import dotenv from "dotenv";
 import { fileExists, makeTmpDir, atomicCreate, linkOrCp, maybe, pool } from "./utils.js";
 import {
@@ -18,13 +19,14 @@ import {
     normalizeGitHubRepo, extractGz, extractObsidianAppImage, extractObsidianExe, extractObsidianDmg,
     parseObsidianDesktopRelease, parseObsidianGithubRelease, getInstallerInfo, normalizeObsidianVersionInfo,
 } from "./launcherUtils.js";
-import _ from "lodash"
 import { DeepPartial } from "ts-essentials";
 
 const currentPlatform = {
     platform: process.platform,
     arch: process.arch,
 }
+
+dotenv.config({path: [".env"], quiet: true});
 
 /**
  * The `ObsidianLauncher` class.
@@ -78,11 +80,6 @@ export class ObsidianLauncher {
         this.interactive = opts.interactive ?? false;
 
         this.metadataCache = {};
-
-        dotenv.config({
-            path: [".env", path.join(this.cacheDir, "obsidian-credentials.env")],
-            quiet: true,
-        });
     }
 
     /**
