@@ -60,7 +60,7 @@ if (process.env.OBSIDIAN_VERSIONS == "all") {
         [semver.gte(v, minSupportedObsidianVersion) ? v : minSupportedObsidianVersion, v]
     );
     // Only test first and last few minor versions
-    if (versionsToTest.length > 3) {
+    if (versionsToTest.length > 4) {
         versionsToTest = [versionsToTest[0], ...versionsToTest.slice(-3)];
     }
     if (await obsidianBetaAvailable(cacheDir)) {
@@ -124,7 +124,7 @@ export const config: WebdriverIO.Config = {
                 'wdio:obsidianOptions': { vault: 'test/vaults/basic' },
             }),
         ]
-        if (process.env.TEST_PRESET != 'basic') {
+        if (process.env.TEST_LEVEL != 'basic') {
             caps.push(
                 _.merge({}, cap, { 'wdio:exclude': [excludeBasic] }),
                 _.merge({}, cap, emulateMobileOptions, { 'wdio:exclude': [excludeBasic] }),

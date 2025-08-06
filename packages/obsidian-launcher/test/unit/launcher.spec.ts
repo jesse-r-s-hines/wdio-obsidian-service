@@ -7,7 +7,7 @@ import semver from "semver";
 import { createDirectory } from "../helpers.js"
 import { ObsidianLauncher } from "../../src/launcher.js";
 import { fileExists } from "../../src/utils.js";
-import { ObsidianVersionInfo } from "../../src/types.js";
+import { ObsidianVersionInfo, obsidianVersionsSchemaVersion } from "../../src/types.js";
 import ChromeLocalStorage from "../../src/chromeLocalStorage.js";
 
 
@@ -31,7 +31,7 @@ describe('ObsdianLauncher resolve versions', () => {
         const tmpDir = await createDirectory({
             "obsidian-versions.json": JSON.stringify({
                 metadata: {
-                    schemaVersion: '2.0.0',
+                    schemaVersion: obsidianVersionsSchemaVersion,
                     commitDate: "2025-01-07T00:00:00Z",
                     commitSha: "0000000"
                 },

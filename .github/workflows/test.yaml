@@ -12,46 +12,37 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          # Test os and architecture combinations
+          # Matrix of
+          #     os: [ubuntu, windows, macos]
+          #     arch: [x86, arm],
+          #     [node18, node20, node22, node24]
+          # organized to minimize job count
           - os: ubuntu-latest
             node-version: "18.x"
-            test-preset: "all"
+            test-level: "all"
             obsidian-versions: "sample"
           - os: windows-latest
-            node-version: "18.x"
-            test-preset: "all"
+            node-version: "20.x"
+            test-level: "standard"
             obsidian-versions: "latest/latest earliest/earliest"
           - os: macos-latest # arm
-            node-version: "18.x"
-            test-preset: "all"
+            node-version: "22.x"
+            test-level: "standard"
             obsidian-versions: "latest/latest earliest/earliest"
             max-instances: 3
           - os: ubuntu-24.04-arm
-            node-version: "22.x"
-            test-preset: "basic"
+            node-version: "24.x"
+            test-level: "standard"
             obsidian-versions: "latest/latest earliest/earliest"
           # Windows arm is ridiculously slow on npm install so skip this test for now
           # - os: windows-11-arm
           #   node-version: "22.x"
-          #   test-preset: "basic"
+          #   test-level: "basic"
           #   obsidian-versions: "latest/latest latest/1.6.5"
-          # - os: macos-13 # x86
-          #   node-version: "18.x"
-          #   test-preset: "basic"
-          #   obsidian-versions: "latest/latest earliest/earliest"
-          # Also test other node versions
-          - os: ubuntu-latest
-            node-version: "20.x"
-            test-preset: "all"
-            obsidian-versions: "latest/latest"
-          - os: ubuntu-latest
+          - os: macos-13 # x86
             node-version: "22.x"
-            test-preset: "all"
-            obsidian-versions: "latest/latest"
-          - os: ubuntu-latest
-            node-version: "24.x"
-            test-preset: "all"
-            obsidian-versions: "latest/latest"
+            test-level: "basic"
+            obsidian-versions: "latest/latest earliest/earliest"
     runs-on: ${{ matrix.os }}
     timeout-minutes: 30
     name: test (${{ matrix.os }}, node ${{ matrix.node-version }})
@@ -99,7 +90,11 @@ jobs:
       - name: Run e2e tests
         run: npm run test:e2e
         env:
-          TEST_PRESET: ${{ matrix.test-preset }}
+          # 3 test levels:
+          #   - basic (fast, just test the core features)
+          #   - standard (medium, run most the tests)
+          #   - all (slow, include the expensive tests)
+          TEST_LEVEL: ${{ matrix.test-level }}
           OBSIDIAN_VERSIONS: ${{matrix.obsidian-versions}}
           WDIO_MAX_INSTANCES: ${{matrix.max-instances || '8'}}
           # Secrets won't be available when run on a PR
@@ -116,17 +111,19 @@ jobs:
           - obsidian-version: latest
             android-api-level: 36
             android-profile: pixel
+            node-version: "18.x"
           - obsidian-version: earliest
             android-api-level: 36
             android-profile: pixel
+            node-version: "24.x"
     runs-on: ubuntu-latest
     name: test (android, api ${{ matrix.android-api-level }}, profile ${{ matrix.android-profile }}, obsidian ${{ matrix.obsidian-version }})
     steps:
       - uses: actions/checkout@v4
-      - name: Use Node.js
+      - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
-          node-version: 22.x
+          node-version: ${{ matrix.node-version }}
           cache: 'npm'
 
       - name: Cache .obsidian-cache
