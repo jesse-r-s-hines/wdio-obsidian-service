@@ -124,7 +124,7 @@ describe("file manipulation", () => {
             const expectedContent = new Uint8Array(await fsAsync.readFile('test/vaults/fileTypes/image.png'));
             const expectedHash = crypo.createHash("SHA256").update(expectedContent).digest("hex");
 
-            await obsidianPage.write("newImage.png", expectedContent);
+            await obsidianPage.write("newImage.png", expectedContent.buffer);
 
             const actualContent = new Uint8Array(await browser.executeObsidian(async ({app}) => {
                 const content = await app.vault.adapter.readBinary("newImage.png");

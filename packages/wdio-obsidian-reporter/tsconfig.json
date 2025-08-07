@@ -5,7 +5,7 @@
         "lib": ["es2020", "dom"],
         "module": "node16",
         "moduleResolution": "node16",
-        "types": ["node", "@wdio/globals/types"],
+        "types": ["node"],
         "outDir": "dist",
         "esModuleInterop": true,
         "forceConsistentCasingInFileNames": true,
