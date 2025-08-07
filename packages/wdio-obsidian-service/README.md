@@ -1,4 +1,4 @@
-# WDIO Obsidian Service [![NPM](https://img.shields.io/npm/v/wdio-obsidian-service)](https://www.npmjs.com/package/wdio-obsidian-service)
+# WDIO Obsidian Service [![](https://img.shields.io/npm/v/wdio-obsidian-service)](https://www.npmjs.com/package/wdio-obsidian-service)
 
 Test your [Obsidian](https://obsidian.md) plugins end-to-end using [WebdriverIO](https://webdriver.io)!
 
@@ -157,7 +157,7 @@ To set the app version use `browserVersion` or `'wdio:obsidianOptions'.appVersio
 - a specific version string like "1.7.7"
 - "latest": run the latest non-beta Obsidian version
 - "latest-beta": run the latest beta Obsidian version (or latest is there is no current beta)
-    - To download Obsidian beta versions you'll need have an Obsidian Insiders account and either set the `OBSIDIAN_EMAIL` and `OBSIDIAN_PASSWORD` env vars (`.env` is supported) or pre-download the Obsidian beta with  `npx obsidian-launcher download -v latest-beta`.
+    - To download Obsidian beta versions you'll need to have an Obsidian Insiders account and either set the `OBSIDIAN_EMAIL` and `OBSIDIAN_PASSWORD` env vars (`.env` file is supported) or pre-download the Obsidian beta with  `npx obsidian-launcher download -v latest-beta`.
 - "earliest": run the `minAppVersion` set in your plugin's `manifest.json`
 
 To set the installer version use `'wdio:obsidianOptions'.installerVersion`. It can be set to one of:
@@ -195,7 +195,7 @@ it("test the thing", async function() {
 
 `wdio-obsidian-service` can test Obsidian desktop on Windows, MacOS, and Linux.
 
-There are two approaches to testing Obsidian mobile. You can emulate the mobile UI in desktop app, which is easy to set up but an imperfect emulation of mobile. Or you can run tests on the real mobile app using an Android Virtual Device (avd). `wdio-obsidian-service` supports both options.
+`wdio-obsidian-service` supports two approaches to testing Obsidian mobile. You can emulate the mobile UI on the desktop app, which is easy to set up but an imperfect emulation of mobile. Or you can run tests on the real mobile app using an Android Virtual Device (avd).
 
 Testing on iOS is currently not supported.
 
@@ -231,13 +231,11 @@ To set this up, install Appium and the Appium Android driver:
 npm install --save-dev appium appium-uiautomator2-driver @wdio/appium-service
 ```
 
-Then follow these instructions: [Appium - Set up Android automation requirements](https://appium.io/docs/en/2.19/quickstart/uiauto2-driver/#set-up-android-automation-requirements)
+Then follow [these instructions](https://appium.io/docs/en/latest/quickstart/uiauto2-driver/#set-up-android-automation-requirements) to install Android Studio. You can skip the `appium driver install ...` bit as you already installed the driver via npm above.
 
-You can skip the `appium driver install ...` bit as you already installed the driver via npm above.
+Now you can use the Android Studio "Virtual Device Manager" to create a Android Virtual Device. Name the AVD `obsidian_test`.
 
-Then use the Android Studio "Virtual Device Manager" to create a Android Virtual Device and name it `obsidian_test`.
-
-Then set up a new `wdio.mobile.conf.mts` file like so:
+Set up a new `wdio.mobile.conf.mts` file like this:
 ```ts
 import * as path from "path"
 
@@ -261,7 +259,12 @@ export const config: WebdriverIO.Config = {
         },
     }],
 
-    services: ["obsidian"],
+    services: [
+        "obsidian",
+        ["appium", {
+            args: { allowInsecure: "chromedriver_autodownload,adb_shell" },
+        }],
+    ],
     reporters: ['obsidian'],
 
     cacheDir: path.resolve(".obsidian-cache"),
