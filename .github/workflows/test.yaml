@@ -74,7 +74,7 @@ jobs:
         name: "Install window manager"
         uses: awalsh128/cache-apt-pkgs-action@v1.4.3
         with:
-          packages: herbstluftwm
+          packages: herbstluftwm dzen2
           version: 1
           execute_install_scripts: true
       - if: ${{ startsWith(matrix.os, 'ubuntu-') }}
@@ -96,7 +96,7 @@ jobs:
           #   - all (slow, include the expensive tests)
           TEST_LEVEL: ${{ matrix.test-level }}
           OBSIDIAN_VERSIONS: ${{matrix.obsidian-versions}}
-          WDIO_MAX_INSTANCES: ${{matrix.max-instances || '8'}}
+          WDIO_MAX_INSTANCES: ${{matrix.max-instances || '3'}}
           # Secrets won't be available when run on a PR
           OBSIDIAN_EMAIL: ${{ secrets.OBSIDIAN_EMAIL }}
           OBSIDIAN_PASSWORD: ${{ secrets.OBSIDIAN_PASSWORD }}
