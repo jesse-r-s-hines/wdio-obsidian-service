@@ -1,9 +1,8 @@
 import { browser, expect } from '@wdio/globals'
 import { obsidianPage } from 'wdio-obsidian-service';
-import os from "os";
 import fsAsync from "fs/promises"
 import path from "path"
-import { getAllFiles } from '../helpers.js';
+import { getAllFiles, createDirectory } from '../helpers.js';
 
 // resetVault tests are split into 2 files so they parallelize better
 
@@ -75,16 +74,14 @@ describe("resetVault2", function() {
         expect(files['.obsidian/foo.json'].content).toEqual("{}");
     })
 
-    it("Empty folder", async () => {
-        const tmpDir = await fsAsync.mkdtemp(path.join(os.tmpdir(), "mocha-"));
-        after(async () => { await fsAsync.rm(tmpDir, { recursive: true, force: true }); });
-        await fsAsync.mkdir(path.join(tmpDir, 'foo'));
+    it("empty folder", async () => {
+        const vault = await createDirectory();
+        await fsAsync.mkdir(path.join(vault, 'foo'));
 
         await browser.reloadObsidian({ vault: "./test/vaults/basic" });
+        await obsidianPage.resetVault(vault);
 
-        await obsidianPage.resetVault(tmpDir);
-        const {folders, files} = await browser.executeObsidian(({app}) => app.vault.adapter.list("/"));
-        expect(folders).toEqual(["foo"]);
-        expect(files).toEqual([]);
+        const files = await getAllFiles({folders: true});
+        expect(files).toEqual({"foo": {type: "folder"}});
     })
 })
