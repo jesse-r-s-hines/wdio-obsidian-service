@@ -5,90 +5,78 @@ import os from "os";
 import fsAsync from "fs/promises";
 import path from "path";
 import { pathToFileURL } from "url";
-import serverHandler from "serve-handler";
-import http from "http";
 import CDP from 'chrome-remote-interface'
-import { createDirectory } from "../helpers.js";
 import { ObsidianLauncher } from "../../src/launcher.js";
-import { downloadResponse, obsidianApiLogin } from "../../src/apis.js";
-import { fileExists, atomicCreate, maybe } from "../../src/utils.js";
-import { AddressInfo } from "net";
-import { obsidianVersionsSchemaVersion } from "../../src/types.js";
+import { obsidianApiLogin } from "../../src/apis.js";
+import { fileExists, maybe } from "../../src/utils.js";
+import { ObsidianVersionList } from "../../src/types.js";
+import { cachedDownload, createServer } from "../helpers.js";
 
 const obsidianLauncherOpts = {
+    cacheDir: path.resolve("../../.obsidian-cache"),
     versionsUrl: pathToFileURL("../../obsidian-versions.json").toString(),
     communityPluginsUrl: pathToFileURL("./test/data/community-plugins.json").toString(),
     communityThemesUrl: pathToFileURL("./test/data/community-css-themes.json").toString(),
 }
 
-async function downloadIfNotExists(url: string, dest: string) {
-    const name = url.split("/").at(-1)!;
-    dest = path.join(dest, name);
-    if (!(await fileExists(dest))) {
-        await atomicCreate(dest, async (tmpDir) => {
-            await downloadResponse(await fetch(url), path.join(tmpDir, "out"));
-            return path.join(tmpDir, "out");
-        })
-    }
-}
-
-
 describe("ObsidianLauncher", function() {
     this.timeout(60 * 1000);
     let launcher: ObsidianLauncher;
     const testData = path.resolve("../../.obsidian-cache/test-data");
-    let server: http.Server|undefined;
-    let latest = "";
+    const obsidianVersionsPath = path.resolve("../../obsidian-versions.json");
     const earliestApp = (process.platform == "win32" && process.arch == "arm64") ? "1.6.5" : "1.0.3";
+    let latest = "";
     let earliestInstaller = "";
+    let latestInstaller = "";
 
     before(async function() {
         this.timeout(10 * 60 * 1000);
-        let cacheDir = await createDirectory();
-        launcher = new ObsidianLauncher({...obsidianLauncherOpts, cacheDir});
+        launcher = new ObsidianLauncher(obsidianLauncherOpts);
         await fsAsync.mkdir(testData, {recursive: true});
 
-        const earliestAppVersionInfo = await launcher.getVersionInfo(earliestApp);
         earliestInstaller = (await launcher.resolveVersion(earliestApp, "earliest"))[1];
-        const earliestInstallerVersionInfo = await launcher.getVersionInfo(earliestInstaller);
-        const latestVersionInfo = await launcher.getVersionInfo("latest");
-        latest = latestVersionInfo.version;
+        latestInstaller = (await launcher.resolveVersion("latest", "latest"))[1];
+        latest = (await launcher.getVersionInfo("latest")).version;
         const {platform, arch} = process;
 
-        server = http.createServer((request, response) => {
-            return serverHandler(request, response, {public: testData});
-        });
-        await new Promise<void>(resolve => server!.listen({port: 0}, resolve));
-        const port = (server.address() as AddressInfo).port;
+        const earliestInstallerFile = await cachedDownload(
+            (await launcher.getInstallerInfo(earliestInstaller, {platform, arch})).url,
+            testData,
+        );
+        const latestInstallerFile = await cachedDownload(
+            (await launcher.getInstallerInfo(latest, {platform, arch})).url,
+            testData,
+        );
+        const latestAppFile = await cachedDownload(
+            (await launcher.getVersionInfo(latest)).downloads.asar!,
+            testData,
+        );
+        const obsidianVersions: ObsidianVersionList = JSON.parse(await fsAsync.readFile(obsidianVersionsPath, 'utf-8'));
 
-        await downloadIfNotExists((await launcher.getInstallerInfo(earliestInstaller, {platform, arch})).url, testData);
-        await downloadIfNotExists(latestVersionInfo.downloads.asar!, testData);
-        await downloadIfNotExists((await launcher.getInstallerInfo(latest, {platform, arch})).url, testData);
-        await fsAsync.writeFile(path.join(testData, "obsidian-versions.json"), JSON.stringify({
-            metadata: {
-                schemaVersion: obsidianVersionsSchemaVersion,
-                commitDate: "2025-01-07T00:00:00Z",
-                commitSha: "0000000",
-            },
-            versions: [earliestInstallerVersionInfo, earliestAppVersionInfo, latestVersionInfo].map(v => ({
-                ...v,
-                downloads: _.mapValues(v.downloads,
-                    v => `http://localhost:${port}/${v!.split("/").at(-1)!}`,
-                ),
-            })),
-        }))
+        const server = await createServer();
+        await server.addEndpoints({
+            [path.basename(earliestInstallerFile)]: {path: earliestInstallerFile},
+            [path.basename(latestInstallerFile)]: {path: latestInstallerFile},
+            [path.basename(latestAppFile)]: {path: latestAppFile},
+            "obsidian-versions.json": {content: JSON.stringify({
+                ...obsidianVersions,
+                versions: obsidianVersions.versions.map(v => ({
+                    ...v,
+                    downloads: _.mapValues(v.downloads,
+                        v => `${server.url}/${v!.split("/").at(-1)!}`
+                    ),
+                })),
+            })},
+        })
 
-        cacheDir = await fsAsync.mkdtemp(path.join(os.tmpdir(), "mocha-")); // fresh cacheDir
         launcher = new ObsidianLauncher({
             ...obsidianLauncherOpts,
-            cacheDir: cacheDir,
-            versionsUrl: `http://localhost:${port}/obsidian-versions.json`,
+            cacheDir: await fsAsync.mkdtemp(path.join(os.tmpdir(), "mocha-")), // fresh cacheDir
+            versionsUrl: `${server.url}/obsidian-versions.json`,
         });
     })
 
     after(async function() {
-        server?.closeAllConnections();
-        server?.close();
         // on Windows something is holding on to files in the installer that causes the rm to be unreliable
         const success = (await maybe(fsAsync.rm(launcher.cacheDir, {force: true, recursive: true}))).success;
         if (!success) {
