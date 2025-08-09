@@ -57,3 +57,7 @@ You can choose from two approaches for testing your plugin on mobile. You can us
 
 ## 2.0.1
 - Fix peer dependency conflict
+
+## 2.0.2
+- Fix some intermittent errors in reloadObsidian when using Appium
+- Documentation fixes
