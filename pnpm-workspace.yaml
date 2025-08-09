@@ -1,0 +1,14 @@
+packages:
+  - packages/obsidian-launcher
+  - packages/wdio-obsidian-reporter
+  - packages/wdio-obsidian-service
+
+linkWorkspacePackages: true
+
+onlyBuiltDependencies:
+  - appium
+  - classic-level
+  - edgedriver
+  - esbuild
+  - geckodriver
+  - sharp

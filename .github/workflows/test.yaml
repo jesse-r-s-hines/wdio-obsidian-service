@@ -29,30 +29,36 @@ jobs:
             node-version: "22.x"
             test-level: "standard"
             obsidian-versions: "latest/latest earliest/earliest"
+            # macos runners have less RAM and have issues with high parallelism
             max-instances: 2
+            pnpm-args: "--sequential"
           - os: ubuntu-24.04-arm
             node-version: "24.x"
             test-level: "standard"
             obsidian-versions: "latest/latest earliest/earliest"
-          # Windows arm is ridiculously slow on npm install so skip this test for now
-          # - os: windows-11-arm
-          #   node-version: "22.x"
-          #   test-level: "basic"
-          #   obsidian-versions: "latest/latest latest/1.6.5"
+          - os: windows-11-arm
+            node-version: "22.x"
+            test-level: "basic"
+            obsidian-versions: "latest/latest latest/1.6.5"
           - os: macos-13 # x86
             node-version: "22.x"
             test-level: "basic"
             obsidian-versions: "latest/latest earliest/earliest"
+            max-instances: 2
+            pnpm-args: "--sequential"
     runs-on: ${{ matrix.os }}
     timeout-minutes: 30
     name: test (${{ matrix.os }}, node ${{ matrix.node-version }})
     steps:
       - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'npm'
+          cache: 'pnpm'
 
       - name: Cache .obsidian-cache
         uses: actions/cache@v4
@@ -60,12 +66,12 @@ jobs:
           path: .obsidian-cache
           key: obsidian-cache-${{ matrix.os }}-${{ matrix.obsidian-versions }}-${{ hashFiles('./obsidian-versions.json') }}
 
-      - run: npm ci
+      - run: pnpm install --frozen-lockfile
       - name: Build
-        run: npm run build
+        run: pnpm run --aggregate-output --reporter-hide-prefix build
       
       - name: Run unit tests
-        run: npm run test:unit
+        run: pnpm run --aggregate-output --reporter-hide-prefix test:unit
 
       # On linux runners we need to set up a virtual graphics stack for Obsidian. Here we use xvfb as a virtual display
       # server and herbstluftwm as the window manager. (You can often get by without a window manager but Obsidian
@@ -88,7 +94,7 @@ jobs:
           sleep 1
 
       - name: Run e2e tests
-        run: npm run test:e2e
+        run: pnpm run --aggregate-output --reporter-hide-prefix ${{ matrix.pnpm-args }} test:e2e
         env:
           # 3 test levels:
           #   - basic (fast, just test the core features)
@@ -120,11 +126,14 @@ jobs:
     name: test (android, api ${{ matrix.android-api-level }}, profile ${{ matrix.android-profile }}, obsidian ${{ matrix.obsidian-version }})
     steps:
       - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'npm'
+          cache: 'pnpm'
 
       - name: Cache .obsidian-cache
         uses: actions/cache@v4
@@ -132,9 +141,9 @@ jobs:
           path: .obsidian-cache
           key: obsidian-cache-android-${{ matrix.obsidian-version }}-${{ hashFiles('./obsidian-versions.json') }}
 
-      - run: npm ci
+      - run: pnpm install --frozen-lockfile
       - name: Build
-        run: npm run build
+        run: pnpm run --aggregate-output --reporter-hide-prefix build
 
       - name: Enable KVM
         run: |
@@ -163,7 +172,7 @@ jobs:
           profile: ${{ matrix.android-profile }}
           disk-size: 4096M
           heap-size: 512M
-          script: npm run test:android
+          script: pnpm run --aggregate-output --reporter-hide-prefix test:android
         env:
           OBSIDIAN_VERSIONS: ${{ matrix.obsidian-version }}
           OBSIDIAN_EMAIL: ${{ secrets.OBSIDIAN_EMAIL }}

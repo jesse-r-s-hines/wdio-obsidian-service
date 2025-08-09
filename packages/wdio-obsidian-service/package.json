@@ -22,9 +22,9 @@
     ],
     "scripts": {
         "build": "tsup",
-        "test": "run-s test:*",
+        "test": "pnpm run '/^test:.*(?<!:e2e)$/'",
         "test:unit": "tsc --noEmit && mocha --config .mocharc.unit.json",
-        "test:e2e": "run-s test:e2e:*",
+        "test:e2e": "pnpm run '/^test:e2e:.*/'",
         "test:e2e:wdio": "wdio run ./wdio.conf.ts",
         "test:e2e:standalone": "mocha --config .mocharc.standalone.json",
         "test:android": "wdio run ./wdio.mobile.conf.ts"
@@ -56,7 +56,6 @@
         "chai": "^5.2.1",
         "cross-env": "^7.0.3",
         "mocha": "^10.8.2",
-        "npm-run-all": "^4.1.5",
         "ts-node": "^10.9.2",
         "tsup": "^8.5.0",
         "tsx": "^4.20.3",

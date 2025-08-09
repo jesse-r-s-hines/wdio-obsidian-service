@@ -1,5 +1,5 @@
 # yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
-# Trigger this workflow with `npm run release patch`
+# Trigger this workflow with `pnpm run release patch`
 name: Publish
 on:
   push:
@@ -13,16 +13,19 @@ jobs:
       id-token: write
     steps:
       - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
       - uses: actions/setup-node@v4
         with:
           node-version: 18
-          cache: 'npm'
+          cache: 'pnpm'
           registry-url: 'https://registry.npmjs.org'
 
       - name: Build
         run: |
-          npm ci
-          npm run build
+          pnpm install --frozen-lockfile
+          pnpm run --aggregate-output --reporter-hide-prefix build
 
       - name: Github Release
         run: |
@@ -33,13 +36,13 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish
-        run: npm publish --workspaces --provenance --access public --tag $RELEASE_TYPE
+        run: pnpm publish -r --aggregate-output --reporter-hide-prefix --provenance --access public --tag $RELEASE_TYPE
         env:
           RELEASE_TYPE: ${{ contains(github.ref, '-') && 'beta' || 'latest'}}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Generate docs
-        run: npm run doc
+        run: pnpm run doc
 
       - name: Upload docs as artifact
         id: deployment
