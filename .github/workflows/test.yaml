@@ -29,7 +29,7 @@ jobs:
             node-version: "22.x"
             test-level: "standard"
             obsidian-versions: "latest/latest earliest/earliest"
-            max-instances: 3
+            max-instances: 2
           - os: ubuntu-24.04-arm
             node-version: "24.x"
             test-level: "standard"
