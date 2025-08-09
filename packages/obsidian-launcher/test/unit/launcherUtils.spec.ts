@@ -1,6 +1,27 @@
 import { describe, it } from "mocha";
 import { expect } from "chai";
-import { normalizeGitHubRepo, parseObsidianDesktopRelease } from "../../src/launcherUtils.js";
+import path from "path";
+import {
+    normalizeGitHubRepo, parseObsidianDesktopRelease, parseObsidianGithubRelease, updateObsidianVersionList,
+} from "../../src/launcherUtils.js";
+import fsAsync from "fs/promises";
+import _ from "lodash";
+import { DeepPartial } from "ts-essentials";
+import { ObsidianVersionInfo } from "../../src/types.js";
+
+
+function compareVersionLists(actual: DeepPartial<ObsidianVersionInfo>[], expected: DeepPartial<ObsidianVersionInfo>[]) {
+    expect(actual.map(v => v.version)).to.eql(expected.map(v => v.version));
+    for (let i = 0; i < actual.length; i++) {
+        expect(actual[i]).to.eql(expected[i]);
+    }
+}
+
+async function readJson(name: string) {
+    const filePath = path.resolve("./test/data", name) + ".json";
+    return JSON.parse(await fsAsync.readFile(filePath, 'utf-8'));
+
+}
 
 describe('launcherUtils', () => {
     [
@@ -74,10 +95,64 @@ describe('launcherUtils', () => {
                 minInstallerVersion: undefined,
                 version: "0.5.0",
             },
-        }]
+        }],
     ].forEach(([input, expected]) => {
         it(`parseObsidianDesktopRelease(${JSON.stringify(input)})`, async () => {
             expect(parseObsidianDesktopRelease(input)).to.eql(expected);
         })
+    })
+
+    it("updateObsidianVersionList no change", async function () {
+        const sampleObsidianVersions = await readJson("sample-obsidian-versions");
+        const actual = updateObsidianVersionList({
+            original: sampleObsidianVersions.versions,
+        });
+        compareVersionLists(actual, sampleObsidianVersions.versions);
+    })
+
+    it("updateObsidianVersionList new versions", async function () {
+        const sampleObsidianVersions = await readJson("sample-obsidian-versions");
+        const newObsidianVersions = await readJson("new-obsidian-versions");
+        const actual = updateObsidianVersionList({
+            original: sampleObsidianVersions.versions,
+            destkopReleases: await readJson("new-desktop-releases"),
+            gitHubReleases: await readJson("new-github-releases"),
+            installerInfos: await readJson('new-installer-infos'),
+        });
+        compareVersionLists(actual, sampleObsidianVersions.versions.concat(newObsidianVersions));
+    })
+
+    it("updateObsidianVersionList no installer infos", async function () {
+        const sampleObsidianVersions = await readJson("sample-obsidian-versions");
+        const newObsidianVersions = await readJson("new-obsidian-versions");
+        const actual = updateObsidianVersionList({
+            original: sampleObsidianVersions.versions,
+            destkopReleases: await readJson("new-desktop-releases"),
+            gitHubReleases: await readJson("new-github-releases"),
+        });
+        compareVersionLists(actual, [
+            ...sampleObsidianVersions.versions,
+            ...newObsidianVersions.map((v: any) => _.omit(
+                {...v, installers: _.mapValues(v.installers, i => ({digest: i!.digest}))},
+                ["electronVersion", "chromeVersion"],
+            )),
+        ]);
+    })
+
+    it("updateObsidianVersionList change installer info", async function () {
+        const sampleObsidianVersions = await readJson("sample-obsidian-versions");
+        const newObsidianVersions = await readJson("new-obsidian-versions");
+        const newGithubReleases = await readJson("new-github-releases");
+        const asset = newGithubReleases.at(-1).assets.find((a: any) => a.name == "Obsidian-1.8.9-arm64.AppImage")!
+        asset.digest = 'sha256:deadbeaf';
+        const actual = updateObsidianVersionList({
+            original: sampleObsidianVersions.versions.concat(newObsidianVersions),
+            destkopReleases: [],
+            gitHubReleases: newGithubReleases,
+        });
+        const expected: DeepPartial<ObsidianVersionInfo>[] = sampleObsidianVersions.versions.concat(newObsidianVersions);
+        const version = expected.find(v => v.version == "1.8.9")!;
+        version.installers!.appImageArm = {digest: 'sha256:deadbeaf'}
+        compareVersionLists(actual, expected);
     })
 });

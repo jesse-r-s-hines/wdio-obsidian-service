@@ -7,6 +7,7 @@ import path from "path";
 import { pathToFileURL } from "url";
 import CDP from 'chrome-remote-interface'
 import { ObsidianLauncher } from "../../src/launcher.js";
+import { extractInstallerInfo } from "../../src/launcherUtils.js";
 import { obsidianApiLogin } from "../../src/apis.js";
 import { fileExists, maybe } from "../../src/utils.js";
 import { ObsidianVersionList } from "../../src/types.js";
@@ -127,6 +128,15 @@ describe("ObsidianLauncher", function() {
         await client.close();
         proc.kill("SIGTERM");
         await procExit;
+    })
+
+    it("test extractInstallerInfo", async function() {
+        if (process.env.TEST_LEVEL != "all") this.skip();
+        const versionInfo = await launcher.getVersionInfo(latestInstaller);
+        const key = launcher['getInstallerKey'](versionInfo)!;
+        const result = await extractInstallerInfo(key, versionInfo.downloads[key]!);
+        expect(result.electron).match(/^.*\..*\..*$/)
+        expect(result.chrome).match(/^.*\..*\..*\..*$/)
     })
 })
 
