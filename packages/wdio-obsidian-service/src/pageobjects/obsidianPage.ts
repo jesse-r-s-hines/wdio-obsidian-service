@@ -54,7 +54,7 @@ class ObsidianPage extends BasePage {
     }
 
     /**
-     * Return the the Obsidian config dir (just ".obsidian" unless you changed the config dir name in settings).
+     * Return the Obsidian config dir (just ".obsidian" unless you changed the config dir name in settings).
      */
     async getConfigDir(): Promise<string> {
         return await this.browser.executeObsidian(({app}) => app.vault.configDir)
@@ -250,8 +250,8 @@ class ObsidianPage extends BasePage {
                     if (strContent) {
                         await app.vault.adapter.write(file, strContent);
                     } else {
-                        const buffer = Uint8Array.from(atob(binContent!), c => c.charCodeAt(0));
-                        await app.vault.adapter.writeBinary(file, buffer)
+                        const buffer = Uint8Array.from(atob(binContent!), c => c.charCodeAt(0)).buffer;
+                        await app.vault.adapter.writeBinary(file, buffer);
                     }
                 }
 
@@ -403,7 +403,10 @@ class ObsidianPage extends BasePage {
         for (const [file, newFileInfo] of _.sortBy([...newVault.entries()], 0)) {
             const currFileInfo = currVault.get(file);
             if (newFileInfo.type == "file") {
-                const content = newFileInfo.sourceContent ?? await fsAsync.readFile(newFileInfo.sourceFile!);
+                let content = newFileInfo.sourceContent;
+                if (!content) {
+                    content = (await fsAsync.readFile(newFileInfo.sourceFile!)).buffer as ArrayBuffer;
+                }
                 const hash = crypto.createHash("SHA256")
                     .update(typeof content == "string" ? content : new Uint8Array(content))
                     .digest("hex");

@@ -31,16 +31,17 @@ export async function makeTmpDir(prefix?: string) {
  * @param dest Path the file or folder should end up at.
  * @param func Function takes path to a temporary directory it can use as scratch space. The path it returns will be
  *     moved to `dest`. If no path is returned, it will move the whole tmpDir to dest.
- * @param options.preserveTmpDir Don't delete tmpDir on failure. Default false.
+ * @param opts.preserveTmpDir Don't delete tmpDir on failure. Default false.
  */
 export async function atomicCreate(
     dest: string, func: (tmpDir: string) => Promise<string|void>,
-    options: {preserveTmpDir?: boolean} = {},
+    opts: {preserveTmpDir?: boolean} = {},
 ): Promise<void> {
     dest = path.resolve(dest);
     // mkdir returns first parent created, or undefined if none were created
     const createdParentDir = await fsAsync.mkdir(path.dirname(dest), { recursive: true });
     const tmpDir = await fsAsync.mkdtemp(path.join(path.dirname(dest), `.${path.basename(dest)}.tmp.`));
+    let success = false;
     try {
         let result = await func(tmpDir) ?? tmpDir;
         result = path.resolve(tmpDir, result);
@@ -51,15 +52,15 @@ export async function atomicCreate(
         if (await fileExists(dest) && (await fsAsync.stat(dest)).isDirectory()) {
             await fsAsync.rename(dest, tmpDir + ".old")
         }
-        
         await fsAsync.rename(result, dest);
-        await fsAsync.rm(tmpDir + ".old", { recursive: true, force: true });
-        await fsAsync.rm(tmpDir, { recursive: true, force: true });
-    } catch (e) {
-        if (!options.preserveTmpDir) {
+        success = true;
+    } finally {
+        if (success) {
+            await fsAsync.rm(tmpDir + ".old", { recursive: true, force: true });
+            await fsAsync.rm(tmpDir, { recursive: true, force: true });
+        } else if (!opts.preserveTmpDir) {
             await fsAsync.rm(createdParentDir ?? tmpDir, { recursive: true, force: true });
         }
-        throw e;
     }
 }
 

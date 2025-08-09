@@ -81,7 +81,7 @@ export const config: WebdriverIO.Config = {
                 'wdio:obsidianOptions': { vault: 'test/vaults/basic' },
             }),
         ]
-        if (process.env.TEST_PRESET != 'basic') {
+        if (process.env.TEST_LEVEL != 'basic') {
             caps.push(
                 _.merge({}, cap, { 'wdio:exclude': [excludeBasic]}),
             )

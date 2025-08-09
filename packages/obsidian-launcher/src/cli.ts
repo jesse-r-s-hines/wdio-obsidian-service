@@ -145,8 +145,7 @@ program
         "Downloads Obsidian and opens a vault, then watches for changes to plugins and themes.\n" +
         "\n" +
         'Takes the same arguments as the "launch" command but watches for changes to any local plugins or themes and ' +
-        'updates the the vault. Automatically installs "pjeby/hot-reload" so plugins will hot reload as they are ' +
-        'updated.'
+        'updates the vault. Automatically installs "pjeby/hot-reload" so plugins will hot reload as they are updated.'
     )
     .argument('[vault]', 'Vault to open')
     .argument('[obsidian-args...]', 'Arguments to pass to Obsidian')

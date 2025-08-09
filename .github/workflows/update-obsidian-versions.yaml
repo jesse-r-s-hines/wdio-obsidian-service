@@ -1,8 +1,8 @@
 # yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
 name: Update Obsidian Versions
 on:
-  schedule: # Run every 6 hours at minute 22
-    - cron: '22 */6 * * *'
+  schedule: # Run every 8 hours at minute 22
+    - cron: '22 */8 * * *'
   workflow_dispatch:
 
 concurrency:
@@ -48,11 +48,11 @@ jobs:
                 // workflows after 60 days of repo "inactivity". update-obsidian-versions will add a commit if it's been
                 // 30 days since the last Obsidian update to keep the repository "active". Running the script will also
                 // let it catch re-uploads of Obsidian assets or anything like that.
-                timeSinceLastUpdate >= 7 * 24 * 60 * 60 ||
+                timeSinceLastUpdate >= 30 * 24 * 60 * 60 ||
                 // The desktop-releases.json can be updated a bit before the GitHub release is actually created, which
-                // could cause in obsidian-versions.json to be incomplete. So we'll re-run it a second time after an
-                // update to make sure that gets corrected.
-                timeSinceLastUpdate <= 14 * 60 * 60
+                // could cause in obsidian-versions.json to be incomplete. So we'll re-run for a bit after an update to
+                // make sure we catch any changes to it
+                timeSinceLastUpdate <= 24 * 60 * 60
             );
             return needsUpdate ? 'true' : 'false';
 

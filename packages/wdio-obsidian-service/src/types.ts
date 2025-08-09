@@ -26,9 +26,9 @@ export interface ObsidianCapabilityOptions {
      * Can be set to a specific version or one of:
      * - "latest": Run the latest non-beta Obsidian version
      * - "latest-beta": Run the latest beta Obsidian version (or latest is there is no current beta)
-     *     - To download Obsidian beta versions you'll need have an Obsidian Insiders account and either set the 
-     *       `OBSIDIAN_EMAIL` and `OBSIDIAN_PASSWORD` env vars (`.env` is supported) or pre-download the Obsidian beta
-     *       version with `npx obsidian-launcher download -v latest-beta`
+     *     - To download Obsidian beta versions you'll need to have an Obsidian Insiders account and either set the 
+     *       `OBSIDIAN_EMAIL` and `OBSIDIAN_PASSWORD` env vars (`.env` file is supported) or pre-download the Obsidian 
+     *       beta version with `npx obsidian-launcher download -v latest-beta`
      * - "earliest": Run the `minAppVersion` set in your `manifest.json`
      * 
      * Defaults to "latest".
@@ -90,14 +90,15 @@ export interface ObsidianCapabilityOptions {
     vault?: string,
 
     /**
-     * Set to true to simulate mobile on the Electron desktop app. This uses Obsidian `app.emulateMobile()` to switch
+     * Set to true to emulate mobile on the Electron desktop app. This uses Obsidian `app.emulateMobile()` to switch
      * Obsidian to the mobile UI, and you can use Chrome's mobileEmulation to set the screen size. You can compare
      * tablet vs phone UIs by setting the screen size or emulated device. Obsidian tablet UI triggers at
      * width/height >= 600.
      *
      * Note that Obsidian Mobile runs on Capacitor instead of Electron so there are various platform differences that
      * can't be emulated. But it's good enough for most cases as long as you aren't interacting directly with the
-     * operating system or Electron APIs.
+     * operating system or Electron APIs. You can use an Android Virtual Device instead if you want a more accurate
+     * (but slower) mobile test.
      *
      * See [Mobile Emulation](../README.md#mobile-emulation) for more info.
      * See [Android](../README.md#android) if you want to test the real mobile app on an Android Virtual Device instead.

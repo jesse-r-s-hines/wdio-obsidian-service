@@ -6,6 +6,7 @@ import { downloadArtifact } from '@electron/get';
 import child_process from "child_process"
 import semver from "semver"
 import { fileURLToPath } from "url";
+import _ from "lodash"
 import dotenv from "dotenv";
 import { fileExists, makeTmpDir, atomicCreate, linkOrCp, maybe, pool } from "./utils.js";
 import {
@@ -18,13 +19,14 @@ import {
     normalizeGitHubRepo, extractGz, extractObsidianAppImage, extractObsidianExe, extractObsidianDmg,
     parseObsidianDesktopRelease, parseObsidianGithubRelease, getInstallerInfo, normalizeObsidianVersionInfo,
 } from "./launcherUtils.js";
-import _ from "lodash"
 import { DeepPartial } from "ts-essentials";
 
 const currentPlatform = {
     platform: process.platform,
     arch: process.arch,
 }
+
+dotenv.config({path: [".env"], quiet: true});
 
 /**
  * The `ObsidianLauncher` class.
@@ -78,11 +80,6 @@ export class ObsidianLauncher {
         this.interactive = opts.interactive ?? false;
 
         this.metadataCache = {};
-
-        dotenv.config({
-            path: [".env", path.join(this.cacheDir, "obsidian-credentials.env")],
-            quiet: true,
-        });
     }
 
     /**
@@ -295,12 +292,12 @@ export class ObsidianLauncher {
      * @returns [appVersion, installerVersion][] resolved to specific versions.
      */
     async parseVersions(versions: string): Promise<[string, string][]> {
-        let parsedVersions = versions.split(/[ ,]/).filter(v => v).map((v) => {
+        const parsedVersions = versions.split(/[ ,]/).filter(v => v).map((v) => {
             const [appVersion, installerVersion = 'earliest'] = v.split("/");
             return [appVersion, installerVersion] as [string, string];
         });
-        let resolvedVersions: [string, string][] = [];
-        for (let [appVersion, installerVersion] of parsedVersions) {
+        const resolvedVersions: [string, string][] = [];
+        for (const [appVersion, installerVersion] of parsedVersions) {
             resolvedVersions.push(await this.resolveVersion(appVersion, installerVersion));
         }
         return _.uniqBy(resolvedVersions, v => v.join('/'));
@@ -389,9 +386,9 @@ export class ObsidianLauncher {
     /**
      * Downloads the Obsidian asar for the given version. Returns the file path.
      * 
-     * To download Obsidian beta versions you'll need have an Obsidian Insiders account and either set the 
-     * `OBSIDIAN_EMAIL` and `OBSIDIAN_PASSWORD` env vars (`.env` is supported) or pre-download the Obsidian beta with
-     * `npx obsidian-launcher download -v latest-beta`
+     * To download Obsidian beta versions you'll need to have an Obsidian Insiders account and either set the 
+     * `OBSIDIAN_EMAIL` and `OBSIDIAN_PASSWORD` env vars (`.env` file is supported) or pre-download the Obsidian beta
+     * with `npx obsidian-launcher download -v latest-beta`
      * 
      * @param appVersion Obsidian version to download
      */
