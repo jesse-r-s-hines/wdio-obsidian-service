@@ -12,7 +12,7 @@ import { browserCommands } from "./browserCommands.js"
 import {
     ObsidianServiceOptions, NormalizedObsidianCapabilityOptions, OBSIDIAN_CAPABILITY_KEY,
 } from "./types.js"
-import { sleep, isAppium, uploadFolder, downloadFile, uploadFile, getAppiumOptions, fileExists } from "./utils.js";
+import { isAppium, uploadFolder, downloadFile, uploadFile, getAppiumOptions, fileExists } from "./utils.js";
 import semver from "semver"
 import _ from "lodash"
 
@@ -435,9 +435,9 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
                     // hack to disable the Obsidian app and make sure it doesn't write to the vault while we modify it
                     await this.execute(() => {
                         window.location.replace('http://localhost/_capacitor_file_/not-a-file');
-                    })
+                    });
 
-                    await sleep(2000)
+                    await this.pause(2000);
 
                     // while Obsidian is down, modify the vault files to setup plugins and themes
                     const local = path.join(oldObsidianOptions.vaultCopy!, ".obsidian");
@@ -482,7 +482,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
                     // Obsidian debounces saves to the config dir, and so changes to configuration made in the tests may
                     // not get saved to disk before the reboot. I haven't found a better way to flush everything than
                     // just waiting a bit.
-                    await sleep(2000);
+                    await this.pause(2000);
 
                     await this.deleteSession({shutdownDriver: false});
                     // while Obsidian is down, modify the vault files to setup plugins and themes

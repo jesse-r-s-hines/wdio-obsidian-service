@@ -7,7 +7,41 @@ on:
   workflow_dispatch:
 
 jobs:
+  pre-check: # Check and avoid running tests on the same code (e.g. after pr merge)
+    runs-on: ubuntu-latest
+    outputs:
+      should_skip: ${{ steps.skip_check.outputs.should_skip }}
+    steps:
+      - id: skip_check
+        uses: fkirc/skip-duplicate-actions@v5
+        with:
+          paths_ignore: '["**/*.md"]'
+          cancel_others: 'true'
+          concurrent_skipping: 'never'
+          skip_after_successful_duplicate: 'true'
+          do_not_skip: '["workflow_dispatch"]'
+
+  lint:
+    needs: [pre-check]
+    if: ${{ needs.pre-check.outputs.should_skip != 'true' }}
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18.x"
+          cache: 'pnpm'
+      - run: pnpm install --frozen-lockfile
+      - name: Run Lint
+        run: pnpm run lint
+
   test-desktop:
+    needs: [lint]
     strategy:
       fail-fast: false
       matrix:
@@ -29,12 +63,14 @@ jobs:
             node-version: "22.x"
             test-level: "standard"
             obsidian-versions: "latest/latest earliest/earliest"
+            # macos runners have less RAM and have issues with high parallelism
             max-instances: 2
+            pnpm-args: "--sequential"
           - os: ubuntu-24.04-arm
             node-version: "24.x"
             test-level: "standard"
             obsidian-versions: "latest/latest earliest/earliest"
-          # Windows arm is ridiculously slow on npm install so skip this test for now
+          # Window arm runner is really slow, so skip this test for now
           # - os: windows-11-arm
           #   node-version: "22.x"
           #   test-level: "basic"
@@ -43,16 +79,21 @@ jobs:
             node-version: "22.x"
             test-level: "basic"
             obsidian-versions: "latest/latest earliest/earliest"
+            max-instances: 2
+            pnpm-args: "--sequential"
     runs-on: ${{ matrix.os }}
     timeout-minutes: 30
     name: test (${{ matrix.os }}, node ${{ matrix.node-version }})
     steps:
       - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'npm'
+          cache: 'pnpm'
 
       - name: Cache .obsidian-cache
         uses: actions/cache@v4
@@ -60,12 +101,12 @@ jobs:
           path: .obsidian-cache
           key: obsidian-cache-${{ matrix.os }}-${{ matrix.obsidian-versions }}-${{ hashFiles('./obsidian-versions.json') }}
 
-      - run: npm ci
+      - run: pnpm install --frozen-lockfile
       - name: Build
-        run: npm run build
+        run: pnpm run --aggregate-output --reporter-hide-prefix build
       
       - name: Run unit tests
-        run: npm run test:unit
+        run: pnpm run --aggregate-output --reporter-hide-prefix test:unit
 
       # On linux runners we need to set up a virtual graphics stack for Obsidian. Here we use xvfb as a virtual display
       # server and herbstluftwm as the window manager. (You can often get by without a window manager but Obsidian
@@ -74,7 +115,7 @@ jobs:
         name: "Install window manager"
         uses: awalsh128/cache-apt-pkgs-action@v1.4.3
         with:
-          packages: herbstluftwm
+          packages: herbstluftwm dzen2
           version: 1
           execute_install_scripts: true
       - if: ${{ startsWith(matrix.os, 'ubuntu-') }}
@@ -88,7 +129,7 @@ jobs:
           sleep 1
 
       - name: Run e2e tests
-        run: npm run test:e2e
+        run: pnpm run --aggregate-output --reporter-hide-prefix ${{ matrix.pnpm-args }} test:e2e
         env:
           # 3 test levels:
           #   - basic (fast, just test the core features)
@@ -96,12 +137,13 @@ jobs:
           #   - all (slow, include the expensive tests)
           TEST_LEVEL: ${{ matrix.test-level }}
           OBSIDIAN_VERSIONS: ${{matrix.obsidian-versions}}
-          WDIO_MAX_INSTANCES: ${{matrix.max-instances || '8'}}
+          WDIO_MAX_INSTANCES: ${{matrix.max-instances || '3'}}
           # Secrets won't be available when run on a PR
           OBSIDIAN_EMAIL: ${{ secrets.OBSIDIAN_EMAIL }}
           OBSIDIAN_PASSWORD: ${{ secrets.OBSIDIAN_PASSWORD }}
 
   test-android:
+    needs: [lint]
     env:
       AVD_ARGS: "-no-metrics -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none"
     strategy:
@@ -120,11 +162,14 @@ jobs:
     name: test (android, api ${{ matrix.android-api-level }}, profile ${{ matrix.android-profile }}, obsidian ${{ matrix.obsidian-version }})
     steps:
       - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'npm'
+          cache: 'pnpm'
 
       - name: Cache .obsidian-cache
         uses: actions/cache@v4
@@ -132,9 +177,9 @@ jobs:
           path: .obsidian-cache
           key: obsidian-cache-android-${{ matrix.obsidian-version }}-${{ hashFiles('./obsidian-versions.json') }}
 
-      - run: npm ci
+      - run: pnpm install --frozen-lockfile
       - name: Build
-        run: npm run build
+        run: pnpm run --aggregate-output --reporter-hide-prefix build
 
       - name: Enable KVM
         run: |
@@ -163,18 +208,20 @@ jobs:
           profile: ${{ matrix.android-profile }}
           disk-size: 4096M
           heap-size: 512M
-          script: npm run test:android
+          script: pnpm run --aggregate-output --reporter-hide-prefix test:android
         env:
           OBSIDIAN_VERSIONS: ${{ matrix.obsidian-version }}
           OBSIDIAN_EMAIL: ${{ secrets.OBSIDIAN_EMAIL }}
           OBSIDIAN_PASSWORD: ${{ secrets.OBSIDIAN_PASSWORD }}
 
-  check:
+  post-check:
     if: always()
-    needs: [test-desktop, test-android]
+    needs: [lint, test-desktop, test-android]
     runs-on: ubuntu-latest
     steps:
       - name: Check all tests passed
         uses: re-actors/alls-green@release/v1
         with:
           jobs: ${{ toJSON(needs) }}
+          allowed-skips: ${{ toJSON(needs) }}
+

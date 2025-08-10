@@ -9,7 +9,7 @@ async function main() {
         console.log("Please pass major|minor|patch|premajor|preminor|prepatch|prerelease");
         process.exit(1);
     }
-    execFileSync("npm", ["version", versionArg, "--no-git-tag-version", '--preid', 'beta'], {encoding: 'utf-8'});
+    execFileSync("pnpm", ["version", versionArg, "--no-git-tag-version", '--preid', 'beta'], {encoding: 'utf-8'});
     const version = JSON.parse(fs.readFileSync("package.json", 'utf-8')).version;
     const isPrerelease = version.includes("-")
 
@@ -29,7 +29,7 @@ async function main() {
         }
         fs.writeFileSync(pkgJsonPath, JSON.stringify(pkgJson, undefined, 4) + "\n");
     }
-    execFileSync("npm", ["install"]);
+    execFileSync("pnpm", ["install"]);
     console.log()
 
     let notes = "";

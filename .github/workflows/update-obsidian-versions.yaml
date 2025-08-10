@@ -67,16 +67,20 @@ jobs:
           # - https://stackoverflow.com/questions/67550727 
           token: ${{ secrets.GH_PAT }}
       - if: ${{ steps.check.outputs.result == 'true' }}
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - if: ${{ steps.check.outputs.result == 'true' }}
         uses: actions/setup-node@v4
         with:
           node-version: 18
-          cache: 'npm'
+          cache: 'pnpm'
       - if: ${{ steps.check.outputs.result == 'true' }}
         name: "Update obsidian-versions.json"
         run: |
-          npm ci
+          pnpm install --frozen-lockfile
           cd packages/obsidian-launcher
-          npm run build
+          pnpm run build
           npx obsidian-launcher update-version-list --max-instances 4 ../../obsidian-versions.json
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

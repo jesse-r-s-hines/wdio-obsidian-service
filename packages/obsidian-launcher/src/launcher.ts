@@ -13,13 +13,13 @@ import {
     ObsidianVersionInfo, ObsidianCommunityPlugin, ObsidianCommunityTheme, ObsidianVersionList, ObsidianInstallerInfo,
     PluginEntry, DownloadedPluginEntry, ThemeEntry, DownloadedThemeEntry, obsidianVersionsSchemaVersion,
 } from "./types.js";
-import { obsidianApiLogin, fetchObsidianApi, fetchGitHubAPIPaginated, downloadResponse } from "./apis.js";
+import { obsidianApiLogin, fetchObsidianApi, downloadResponse } from "./apis.js";
 import ChromeLocalStorage from "./chromeLocalStorage.js";
 import {
     normalizeGitHubRepo, extractGz, extractObsidianAppImage, extractObsidianExe, extractObsidianDmg,
-    parseObsidianDesktopRelease, parseObsidianGithubRelease, getInstallerInfo, normalizeObsidianVersionInfo,
+    extractInstallerInfo, fetchObsidianDesktopReleases, fetchObsidianGitHubReleases, updateObsidianVersionList,
+    INSTALLER_KEYS,
 } from "./launcherUtils.js";
-import { DeepPartial } from "ts-essentials";
 
 const currentPlatform = {
     platform: process.platform,
@@ -1002,83 +1002,36 @@ export class ObsidianLauncher {
         original?: ObsidianVersionList, opts: { maxInstances?: number } = {},
     ): Promise<ObsidianVersionList> {
         const { maxInstances = 1 } = opts;
-        const repo = 'obsidianmd/obsidian-releases';
-        const originalVersions = _.keyBy(original?.versions ?? [], v => v.version);
-        const versions: _.Dictionary<DeepPartial<ObsidianVersionInfo>> = _.cloneDeep(originalVersions);
 
-        // Extract info from desktop-releases.json
-        let commitHistory = await fetchGitHubAPIPaginated(`repos/${repo}/commits`, {
-            path: "desktop-releases.json",
-            since: original?.metadata?.commitDate,
-        });
-        commitHistory.reverse();
-        if (original?.metadata?.commitSha) {
-            commitHistory = _.takeRightWhile(commitHistory, c => c.sha != original.metadata.commitSha);
-        }
-        const fileHistory: any[] = await pool(maxInstances, commitHistory, commit =>
-            fetch(`https://raw.githubusercontent.com/${repo}/${commit.sha}/desktop-releases.json`).then(r => r.json())
+        const [destkopReleases, commitInfo] = await fetchObsidianDesktopReleases(
+            original?.metadata.commitDate, original?.metadata.commitSha,
         );
-    
-        for (const fileVersion of fileHistory) {
-            const {current, beta} = parseObsidianDesktopRelease(fileVersion);
-            if (beta) {
-                versions[beta.version!] = _.merge(versions[beta.version!] ?? {}, beta);
-            }
-            versions[current.version!] = _.merge(versions[current.version!] ?? {}, current);
-        }
-
-        // Extract info from github releases
-        const githubReleases = (await fetchGitHubAPIPaginated(`repos/${repo}/releases`)).reverse();
-        for (const release of githubReleases) {
-            if (semver.valid(release.name)) { // Skip some special "preleases"
-                const parsed = parseObsidianGithubRelease(release);
-                versions[parsed.version!] = _.merge(versions[parsed.version!] ?? {}, parsed);
-            }
-        }
-
-        // Extract info from installers
-        const installerKeys = ["appImage", "appImageArm", "tar", "tarArm", "dmg", "exe"] as const;
-        const newInstallers = Object.values(versions)
-            .flatMap(v => installerKeys.map(k => [v, k] as const))
-        const installerInfos = await pool(maxInstances, newInstallers, async ([v, key]) => {
-            let installerInfo: Partial<ObsidianInstallerInfo>|undefined;
-            const hasAsset = !!v.downloads?.[key];
-            const alreadyExtracted = !!v.installers?.[key]?.chrome;
-            const changed = v.installers?.[key]?.digest != originalVersions[v.version!]?.installers[key]?.digest;
-            if (hasAsset && (!alreadyExtracted || changed)) {
-                installerInfo = await getInstallerInfo(key, v.downloads![key]!);
-            }
-            return {version: v.version, installerInfo: {[key]: installerInfo}} as DeepPartial<ObsidianVersionInfo>;
+        const gitHubReleases = await fetchObsidianGitHubReleases();
+        let newVersions = updateObsidianVersionList({
+            original: original?.versions,
+            destkopReleases, gitHubReleases,
         });
-        for (const installerInfo of installerInfos) {
-            versions[installerInfo.version!] = _.merge(versions[installerInfo.version!] ?? {}, installerInfo);
-        }
 
-        // populate minInstallerVersion and maxInstallerVersion
-        let minInstallerVersion: string|undefined = undefined;
-        let maxInstallerVersion: string|undefined = undefined;
-        for (const version of Object.keys(versions).sort(semver.compare)) {
-            // older versions have 0.0.0 as their min version, which doesn't exist anywhere we can download.
-            // we'll set those to the first available installer version.
-            if (!minInstallerVersion && versions[version].downloads!.appImage) {
-                minInstallerVersion = version;
-            }
-            if (versions[version].downloads!.appImage) {
-                maxInstallerVersion = version;
-            }
-            versions[version] = _.merge({ minInstallerVersion, maxInstallerVersion }, versions[version]);
-        }
-    
+        // extract installer info
+        const newInstallers = newVersions
+            .flatMap(v => INSTALLER_KEYS.map(k => [v, k] as const))
+            .filter(([v, key]) => v.downloads?.[key] && !v.installers?.[key]?.chrome);
+        const installerInfos = await pool(maxInstances, newInstallers, async ([v, key]) => {
+            const installerInfo = await extractInstallerInfo(key, v.downloads[key]!);
+            return {version: v.version, key, installerInfo};
+        });
+
+        // update again with the installerInfo
+        newVersions = updateObsidianVersionList({original: newVersions, installerInfos});
+
         const result: ObsidianVersionList = {
             metadata: {
                 schemaVersion: obsidianVersionsSchemaVersion,
-                commitDate: commitHistory.at(-1)?.commit.committer.date ?? original?.metadata.commitDate,
-                commitSha: commitHistory.at(-1)?.sha ?? original?.metadata.commitSha,
+                commitDate: commitInfo.commitDate,
+                commitSha: commitInfo.commitSha,
                 timestamp: original?.metadata.timestamp ?? "", // set down below
             },
-            versions: Object.values(versions)
-                .map(normalizeObsidianVersionInfo)
-                .sort((a, b) => semver.compare(a.version, b.version)),
+            versions: newVersions,
         }
 
         // Update timestamp if anything has changed. Also, GitHub will cancel scheduled workflows if the repository is

@@ -8,8 +8,8 @@ import { pipeline } from "stream/promises";
 import zlib from "zlib"
 import { fileURLToPath } from "url"
 import { DeepPartial } from "ts-essentials";
-import { atomicCreate, makeTmpDir, normalizeObject } from "./utils.js";
-import { downloadResponse } from "./apis.js"
+import { atomicCreate, makeTmpDir, normalizeObject, pool } from "./utils.js";
+import { downloadResponse, fetchGitHubAPIPaginated } from "./apis.js"
 import { ObsidianInstallerInfo, ObsidianVersionInfo } from "./types.js";
 
 
@@ -112,6 +112,41 @@ export async function extractObsidianDmg(dmg: string, dest: string) {
     })
 }
 
+// Helpers for use in updateVersionList
+
+type CommitInfo = {commitDate: string, commitSha: string}
+/**
+ * Fetch all versions of obsidianmd/obsidian-releases desktop-releases.json since sinceDate and sinceSha
+ */
+export async function fetchObsidianDesktopReleases(
+    sinceDate?: string, sinceSha?: string,
+): Promise<[any[], CommitInfo]> {
+    // Extract info from desktop-releases.json
+    const repo = "obsidianmd/obsidian-releases";
+    let commitHistory = await fetchGitHubAPIPaginated(`repos/${repo}/commits`, {
+        path: "desktop-releases.json",
+        since: sinceDate,
+    });
+    commitHistory.reverse(); // sort oldest first
+    if (sinceSha) {
+        commitHistory = _.takeRightWhile(commitHistory, c => c.sha != sinceSha);
+    }
+    const fileHistory = await pool(4, commitHistory, commit =>
+        fetch(`https://raw.githubusercontent.com/${repo}/${commit.sha}/desktop-releases.json`).then(r => r.json())
+    );
+ 
+    const commitDate = commitHistory.at(-1)?.commit.committer.date ?? sinceDate;
+    const commitSha = commitHistory.at(-1)?.sha ?? sinceSha;
+
+    return [fileHistory, {commitDate, commitSha}]
+}
+
+/** Fetches all GitHub release information from obsidianmd/obsidian-releases */
+export async function fetchObsidianGitHubReleases(): Promise<any[]> {
+    const gitHubReleases = await fetchGitHubAPIPaginated(`repos/obsidianmd/obsidian-releases/releases`);
+    return gitHubReleases.reverse(); // sort oldest first
+}
+
 /** Obsidian assets that have broken download links */
 const BROKEN_ASSETS = [
     "https://releases.obsidian.md/release/obsidian-0.12.16.asar.gz",
@@ -193,13 +228,83 @@ export function parseObsidianGithubRelease(gitHubRelease: any): DeepPartial<Obsi
     }
 }
 
+type InstallerKey = keyof ObsidianVersionInfo['installers'];
+export const INSTALLER_KEYS: InstallerKey[] = [
+    "appImage", "appImageArm", "tar", "tarArm", "dmg", "exe",
+];
+
+/**
+ * Updates obsidian version information.
+ * Does NOT call add installer electron/chromium information, but does remove any out-of-date installer info.
+ */
+export function updateObsidianVersionList(args: {
+    original?: ObsidianVersionInfo[],
+    destkopReleases?: any[],
+    gitHubReleases?: any[],
+    installerInfos?: {version: string, key: InstallerKey, installerInfo: Omit<ObsidianInstallerInfo, "digest">}[],
+}): ObsidianVersionInfo[] {
+    const {original = [], destkopReleases = [], gitHubReleases = [], installerInfos = []} = args;
+    const oldVersions = _.keyBy(original, v => v.version);
+    const newVersions: _.Dictionary<DeepPartial<ObsidianVersionInfo>> = _.cloneDeep(oldVersions);
+
+    for (const destkopRelease of destkopReleases) {
+        const {current, beta} = parseObsidianDesktopRelease(destkopRelease);
+        if (beta) {
+            newVersions[beta.version!] = _.merge(newVersions[beta.version!] ?? {}, beta);
+        }
+        newVersions[current.version!] = _.merge(newVersions[current.version!] ?? {}, current);
+    }
+
+    for (const githubRelease of gitHubReleases) {
+        // Skip some special "preleases"
+        if (semver.valid(githubRelease.name) && !semver.prerelease(githubRelease.name)) {
+            const parsed = parseObsidianGithubRelease(githubRelease);
+            const newVersion = _.merge(newVersions[parsed.version!] ?? {}, parsed);
+            // remove out of date installerInfo (the installers can change for a version as happened with 1.8.10)
+            for (const installerKey of INSTALLER_KEYS) {
+                const oldDigest = oldVersions[parsed.version!]?.installers[installerKey]?.digest;
+                const newDigest = newVersion.installers?.[installerKey]?.digest;
+                if (oldDigest && oldDigest != newDigest) {
+                    newVersion.installers![installerKey] = {digest: newDigest}; // wipe electron/chrome versions
+                }
+            }
+            newVersions[parsed.version!] = newVersion;
+        }
+    }
+
+    // populate minInstallerVersion and maxInstallerVersion
+    let minInstallerVersion: string|undefined = undefined;
+    let maxInstallerVersion: string|undefined = undefined;
+    for (const version of Object.keys(newVersions).sort(semver.compare)) {
+        if (newVersions[version].downloads!.appImage) {
+            maxInstallerVersion = version;
+            if (!minInstallerVersion) {
+                minInstallerVersion = version;
+            }
+        }
+        newVersions[version] = _.merge({ minInstallerVersion, maxInstallerVersion }, newVersions[version]);
+    }
+
+    // merge in installerInfos
+    for (const installerInfo of installerInfos) {
+        newVersions[installerInfo.version] = _.merge(newVersions[installerInfo.version] ?? {}, {
+            version: installerInfo.version,
+            installers: {[installerInfo.key]: installerInfo.installerInfo},
+        });
+    }
+
+    return Object.values(newVersions)
+        .map(normalizeObsidianVersionInfo)
+        .sort((a, b) => semver.compare(a.version, b.version));
+}
+
 /**
  * Extract Electron and Chrome versions for an Obsidian version.
  * Takes path to the installer (the whole folder, not just the entrypoint executable).
  */
-export async function getInstallerInfo(
+export async function extractInstallerInfo(
     installerKey: keyof ObsidianVersionInfo['installers'], url: string,
-): Promise<Partial<ObsidianInstallerInfo>> {
+): Promise<Omit<ObsidianInstallerInfo, "digest">> {
     const installerName = url.split("/").at(-1)!;
     console.log(`Extrating installer info for ${installerName}...`)
     const tmpDir = await makeTmpDir("obsidian-launcher-");
