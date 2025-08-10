@@ -2,7 +2,7 @@ import { describe, it } from "mocha";
 import { expect } from "chai";
 import path from "path";
 import {
-    normalizeGitHubRepo, parseObsidianDesktopRelease, parseObsidianGithubRelease, updateObsidianVersionList,
+    normalizeGitHubRepo, parseObsidianDesktopRelease, updateObsidianVersionList,
 } from "../../src/launcherUtils.js";
 import fsAsync from "fs/promises";
 import _ from "lodash";

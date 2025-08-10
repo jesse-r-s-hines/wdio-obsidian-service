@@ -1017,7 +1017,7 @@ export class ObsidianLauncher {
             .flatMap(v => INSTALLER_KEYS.map(k => [v, k] as const))
             .filter(([v, key]) => v.downloads?.[key] && !v.installers?.[key]?.chrome);
         const installerInfos = await pool(maxInstances, newInstallers, async ([v, key]) => {
-            const installerInfo = await extractInstallerInfo(key, v.downloads![key]!);
+            const installerInfo = await extractInstallerInfo(key, v.downloads[key]!);
             return {version: v.version, key, installerInfo};
         });
 
