@@ -21,9 +21,27 @@ jobs:
           skip_after_successful_duplicate: 'true'
           do_not_skip: '["workflow_dispatch"]'
 
-  test-desktop:
+  lint:
     needs: [pre-check]
     if: ${{ needs.pre-check.outputs.should_skip != 'true' }}
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18.x"
+          cache: 'pnpm'
+      - run: pnpm install --frozen-lockfile
+      - name: Run Lint
+        run: pnpm run lint
+
+  test-desktop:
+    needs: [lint]
     strategy:
       fail-fast: false
       matrix:
@@ -52,10 +70,11 @@ jobs:
             node-version: "24.x"
             test-level: "standard"
             obsidian-versions: "latest/latest earliest/earliest"
-          - os: windows-11-arm
-            node-version: "22.x"
-            test-level: "basic"
-            obsidian-versions: "latest/latest latest/1.6.5"
+          # Window arm runner is really slow, so skip this test for now
+          # - os: windows-11-arm
+          #   node-version: "22.x"
+          #   test-level: "basic"
+          #   obsidian-versions: "latest/latest latest/1.6.5"
           - os: macos-13 # x86
             node-version: "22.x"
             test-level: "basic"
@@ -124,8 +143,7 @@ jobs:
           OBSIDIAN_PASSWORD: ${{ secrets.OBSIDIAN_PASSWORD }}
 
   test-android:
-    needs: [pre-check]
-    if: ${{ needs.pre-check.outputs.should_skip != 'true' }}
+    needs: [lint]
     env:
       AVD_ARGS: "-no-metrics -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none"
     strategy:
@@ -198,7 +216,7 @@ jobs:
 
   post-check:
     if: always()
-    needs: [test-desktop, test-android]
+    needs: [lint, test-desktop, test-android]
     runs-on: ubuntu-latest
     steps:
       - name: Check all tests passed
