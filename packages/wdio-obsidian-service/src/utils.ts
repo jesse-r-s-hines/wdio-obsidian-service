@@ -3,10 +3,6 @@ import crypto from "crypto";
 import fsAsync from "fs/promises";
 import _ from "lodash";
 
-export async function sleep(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
-
 /** Quote string for use in shell scripts */
 export function quote(input: string) {
     return `'${input.replace(/'/g, "'\\''")}'`;
