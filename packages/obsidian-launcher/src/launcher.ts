@@ -760,20 +760,23 @@ export class ObsidianLauncher {
             const pluginDest = path.join(obsidianDir, 'plugins', pluginId);
             await fsAsync.mkdir(pluginDest, { recursive: true });
 
-            const files: Record<string, [boolean, boolean]> = {
-                "manifest.json": [true, true],
-                "main.js": [true, true],
-                "styles.css": [false, true],
-                "data.json": [false, false],
+            const files = {
+                "manifest.json": true,
+                "main.js": true,
+                "styles.css": false,
             }
-            for (const [file, [required, deleteIfMissing]] of Object.entries(files)) {
+            for (const [file, required] of Object.entries(files)) {
                 if (await fileExists(path.join(pluginPath, file))) {
                     await linkOrCp(path.join(pluginPath, file), path.join(pluginDest, file));
                 } else if (required) {
                     throw Error(`${pluginPath}/${file} missing.`);
-                } else if (deleteIfMissing) {
+                } else {
                     await fsAsync.rm(path.join(pluginDest, file), {force: true});
                 }
+            }
+            if (await fileExists(path.join(pluginPath, "data.json"))) {
+                // don't link data.json since it can be modified. Don't delete it if it already exists.
+                await fsAsync.cp(path.join(pluginPath, "data.json"), path.join(pluginDest, "data.json"));
             }
 
             const pluginAlreadyListed = enabledPlugins.includes(pluginId);
