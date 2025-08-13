@@ -37,7 +37,7 @@ export function isAppium(cap: WebdriverIO.Capabilities) {
 /**
  * Push a folder to the appium device.
  */
-export async function uploadFolder(browser: WebdriverIO.Browser, src: string, dest: string) {
+export async function appiumUploadFolder(browser: WebdriverIO.Browser, src: string, dest: string) {
     src = path.resolve(src);
     dest = path.posix.normalize(dest).replace(/\/$/, '');
 
@@ -52,18 +52,17 @@ export async function uploadFolder(browser: WebdriverIO.Browser, src: string, de
         if (file.isDirectory()) {
             await browser.execute("mobile: shell", {command: "mkdir", args: ["-p", quote(destPath)]});
         } else if (file.isFile()) {
-            await uploadFile(browser, srcPath, destPath);
+            await appiumUploadFile(browser, srcPath, destPath);
         }
     }
 }
-
 
 /**
  * Uploads a file to the appium device.
  * Wrapper around pushFile that works around a bug in pushFile where it doesn't escape special characters in parent
  * directory names. See https://github.com/appium/appium-android-driver/issues/1004
  */
-export async function uploadFile(browser: WebdriverIO.Browser, src: string, dest: string) {
+export async function appiumUploadFile(browser: WebdriverIO.Browser, src: string, dest: string) {
     src = path.resolve(src);
     dest = path.posix.normalize(dest);
     const slug = crypto.randomBytes(8).toString("base64url").replace(/[-_]/g, '0');
@@ -77,7 +76,7 @@ export async function uploadFile(browser: WebdriverIO.Browser, src: string, dest
 /**
  * Downloads a file from the appium device.
  */
-export async function downloadFile(browser: WebdriverIO.Browser, src: string, dest: string) {
+export async function appiumDownloadFile(browser: WebdriverIO.Browser, src: string, dest: string) {
     src = path.posix.normalize(src);
     dest = path.resolve(dest);
     const content = Buffer.from(await browser.pullFile(src), "base64");

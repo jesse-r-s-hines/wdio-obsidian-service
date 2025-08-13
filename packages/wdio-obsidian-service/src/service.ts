@@ -12,7 +12,9 @@ import { browserCommands } from "./browserCommands.js"
 import {
     ObsidianServiceOptions, NormalizedObsidianCapabilityOptions, OBSIDIAN_CAPABILITY_KEY,
 } from "./types.js"
-import { isAppium, uploadFolder, downloadFile, uploadFile, getAppiumOptions, fileExists } from "./utils.js";
+import {
+    isAppium, appiumUploadFolder, appiumDownloadFile, appiumUploadFile, getAppiumOptions, fileExists, quote,
+ } from "./utils.js";
 import semver from "semver"
 import _ from "lodash"
 
@@ -68,6 +70,10 @@ function selectThemes(currentThemes: DownloadedThemeEntry[], selection?: string)
     } else {
         return currentThemes;
     }
+}
+
+function getNormalizedObsidianOptions(cap: WebdriverIO.Capabilities): NormalizedObsidianCapabilityOptions {
+    return cap[OBSIDIAN_CAPABILITY_KEY] as NormalizedObsidianCapabilityOptions;
 }
 
 
@@ -268,7 +274,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
      * Creates a copy of the vault with plugins and themes installed
      */
     private async setupVault(cap: WebdriverIO.Capabilities) {
-        const obsidianOptions = cap[OBSIDIAN_CAPABILITY_KEY] as NormalizedObsidianCapabilityOptions;
+        const obsidianOptions = getNormalizedObsidianOptions(cap);
         let vaultCopy: string|undefined;
         if (obsidianOptions.vault != undefined) {
             log.info(`Opening vault ${obsidianOptions.vault}`);
@@ -289,7 +295,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
      * Sets up the --user-data-dir for the Electron app. Sets the obsidian.json in the dir to open the vault on boot.
      */
     private async electronSetupConfigDir(cap: WebdriverIO.Capabilities) {
-        const obsidianOptions = cap[OBSIDIAN_CAPABILITY_KEY] as NormalizedObsidianCapabilityOptions;
+        const obsidianOptions = getNormalizedObsidianOptions(cap);
         const configDir = await this.obsidianLauncher.setupConfigDir({
             appVersion: obsidianOptions.appVersion, installerVersion: obsidianOptions.installerVersion,
             appPath: obsidianOptions.appPath,
@@ -317,12 +323,12 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
      */
     private async appiumOpenVault() {
         const browser = this.browser!;
-        const obsidianOptions: NormalizedObsidianCapabilityOptions = browser.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY];
+        const obsidianOptions = getNormalizedObsidianOptions(browser.requestedCapabilities);
         const androidVault = `${this.androidVaultDir}/${path.basename(obsidianOptions.vaultCopy!)}`;
         // TODO: Capabilities is not really the right place to be storing state like vaultCopy and uploadVault
         obsidianOptions.uploadedVault = androidVault;
         // transfer the vault to the device
-        await uploadFolder(browser, obsidianOptions.vaultCopy!, androidVault);
+        await appiumUploadFolder(browser, obsidianOptions.vaultCopy!, androidVault);
 
         // open vault by setting the localStorage keys and relaunching Obsidian
         // on appium restarting the app with appium:fullReset is *really* slow. And, unlike electron we can actually
@@ -372,7 +378,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
      */
     private async prepareApp() {
         const browser = this.browser!;
-        const obsidianOptions: NormalizedObsidianCapabilityOptions = browser.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY];
+        const obsidianOptions = getNormalizedObsidianOptions(browser.requestedCapabilities);
 
         if (obsidianOptions.emulateMobile && obsidianOptions.vault != undefined) {
             // I don't think this is technically necessary, but when you set the window size via emulateMobile it sets
@@ -411,7 +417,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
             this: WebdriverIO.Browser,
             {vault, plugins, theme} = {},
         ) {
-            const oldObsidianOptions: NormalizedObsidianCapabilityOptions = this.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY];
+            const oldObsidianOptions = getNormalizedObsidianOptions(this.requestedCapabilities);
             const selectedPlugins = selectPlugins(oldObsidianOptions.plugins, plugins);
             const selectedThemes = selectThemes(oldObsidianOptions.themes, theme);
             if (!vault && oldObsidianOptions.vaultCopy == undefined) {
@@ -447,17 +453,17 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
                     const remoteCommunityPlugins = `${remote}/community-plugins.json`;
                     const remoteAppearance = `${remote}/appearance.json`;
 
-                    await downloadFile(this, remoteCommunityPlugins, localCommunityPlugins).catch(() => {});
-                    await downloadFile(this, remoteAppearance, localAppearance).catch(() => {});
+                    await appiumDownloadFile(this, remoteCommunityPlugins, localCommunityPlugins).catch(() => {});
+                    await appiumDownloadFile(this, remoteAppearance, localAppearance).catch(() => {});
                     await service.obsidianLauncher.setupVault({
                         vault: oldObsidianOptions.vaultCopy!, copy: false,
                         plugins: selectedPlugins, themes: selectedThemes,
                     });
                     if (await fileExists(localCommunityPlugins)) {
-                        await uploadFile(this, localCommunityPlugins, remoteCommunityPlugins);
+                        await appiumUploadFile(this, localCommunityPlugins, remoteCommunityPlugins);
                     }
                     if (await fileExists(localAppearance)) {
-                        await uploadFile(this, localAppearance, remoteAppearance);
+                        await appiumUploadFile(this, localAppearance, remoteAppearance);
                     }
                 
                     // switch the app back
@@ -499,7 +505,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
     }
 
     /**
-     * Handles vault and sandboxed config directory setup.
+     * Runs before the session and browser have started.
      */
     async beforeSession(config: Options.Testrunner, cap: WebdriverIO.Capabilities) {
         try {
@@ -516,7 +522,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
     }
 
     /**
-     * Setup custom browser commands.
+     * Runs after session and browser have started, but before tests.
      */
     async before(cap: WebdriverIO.Capabilities, specs: unknown, browser: WebdriverIO.Browser) {
         this.browser = browser;
@@ -546,8 +552,11 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
         }
     }
 
+    /** Runs after tests are done, but before the session is shut down */
     async after(result: number, cap: WebdriverIO.Capabilities) {
         const browser = this.browser!;
+        if (!cap[OBSIDIAN_CAPABILITY_KEY]) return;
+
         if (isAppium(cap)) {
             const packageName = await browser.getCurrentPackage();
             await browser.execute('mobile: terminateApp', { appId: packageName });
