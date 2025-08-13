@@ -178,6 +178,9 @@ export class ObsidianLauncherService implements Services.ServiceInstance {
                     cap['appium:app'] = apk;
                     cap['appium:chromedriverExecutableDir'] = chromedriverDir;
                     cap["wdio:enforceWebDriverClassic"] = true; // BiDi doesn't seem to work on Obsidian mobile
+                    if (!getAppiumOptions(cap)['noReset']) {
+                        console.warn("Note: For best performance set noReset to true, wdio-obsidian-service will handle resetting Obsidian between tests.")
+                    }
                 } else {
                     const [, installerVersion] = await this.obsidianLauncher.resolveVersion(
                         appVersion, obsidianOptions.installerVersion ?? "earliest",
@@ -320,6 +323,62 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
     }
 
     /**
+     * Sets up the Obsidian app. Installs and launches it if needed, and sets permissions and contexts.
+     * 
+     * You can configure Appium to install and launch the app for you. However, if you do that it reboots the app after
+     * every session/spec which is really slow. So we are handling the app setup manually here.
+     */
+    private async appiumSetupApp() {
+        const browser = this.browser!;
+        const appiumOptions = getAppiumOptions(browser.requestedCapabilities);
+        const obsidianOptions = getNormalizedObsidianOptions(browser.requestedCapabilities);
+        const appId = "md.obsidian";
+
+        // install/reinstall Obsidian if needed
+        const dumpsys: string = await browser.execute("mobile: shell", {command: "dumpsys", args: ["package", appId]});
+        const installedObsidianVersion = dumpsys.match(/versionName[=:](.*)$/m)?.[1]?.trim();
+        if (installedObsidianVersion != obsidianOptions.appVersion) {
+            await browser.execute('mobile: terminateApp', {appId}); // terminate app (if running)
+            await browser.execute('mobile: removeApp', {appId, keepData: false}); // uninstall (if present)
+            await browser.execute('mobile: installApp', {
+                appPath: appiumOptions.app, // the APK
+                timeout: appiumOptions.androidInstallTimeout, // respect appium configuration
+                grantPermissions: true, // this and autoGrantPermissions don't seem to really work, see below
+            });
+        }
+
+        // start app if needed
+        const appState: number = await browser.execute("mobile: queryAppState", {appId});
+        if (appState < 4) { // 0: not installed, 1: not running, 3: running in background, 4: running in foreground
+            await browser.execute("mobile: activateApp", {appId});
+        }
+
+        // grant Obsidian the permissions it needs, mainly file access.
+        // appium:autoGrantPermissions is supposed to automatically grant everything it needs, but I can't get it to
+        // work. The "mobile: changePermissions" "all" option also doesn't seem to work here. I have to explicitly list
+        // the permissions and use the "appops" target. See https://github.com/appium/appium/issues/19991
+        // I'm calling "mobile: changePermissions" "all" as well just in case it is actually doing something
+        await browser.execute("mobile: changePermissions", {
+            action: "grant",
+            appPackage: appId,
+            permissions: "all",
+        });
+        await browser.execute("mobile: changePermissions", {
+            action: "allow",
+            appPackage: appId,
+            permissions: [ // these are from apk AndroidManifest.xml (extracted with apktool)
+                "READ_EXTERNAL_STORAGE", "WRITE_EXTERNAL_STORAGE", "MANAGE_EXTERNAL_STORAGE",
+            ],
+            target: "appops", // requires appium --allow-insecure adb_shell
+        });
+
+        // switch to the webview context
+        const context = "WEBVIEW_md.obsidian";
+        await browser.waitUntil(async () => (await browser.getContexts() as string[]).includes(context));
+        await browser.switchContext(context);
+    }
+
+    /**
      * Opens the vault in appium.
      */
     private async appiumOpenVault() {
@@ -343,35 +402,6 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
             localStorage.setItem(`enable-plugin-${androidVault}`, 'true');
             window.location.reload();
         }, androidVault);
-    }
-
-    /**
-     * Sets appium app permissions and context
-     */
-    private async appiumSetContext() {
-        const browser = this.browser!;
-        // grant Obsidian the permissions it needs, mainly file access.
-        // appium:autoGrantPermissions is supposed to automatically grant everything it needs, but I can't get it to
-        // work. The "mobile: changePermissions" "all" option also doesn't seem to work here. I have to explicitly list
-        // the permissions and use the "appops" target. See https://github.com/appium/appium/issues/19991
-        // I'm calling "mobile: changePermissions" "all" as well just in case it is actually doing something
-
-        await browser.execute("mobile: changePermissions", {
-            action: "grant",
-            appPackage: "md.obsidian",
-            permissions: "all",
-        });
-
-        await browser.execute("mobile: changePermissions", {
-            action: "allow",
-            appPackage: "md.obsidian",
-            permissions: [ // these are from apk AndroidManifest.xml (extracted with apktool)
-                "READ_EXTERNAL_STORAGE", "WRITE_EXTERNAL_STORAGE", "MANAGE_EXTERNAL_STORAGE",
-            ],
-            target: "appops", // requires appium --allow-insecure adb_shell
-        });
-
-        await browser.switchContext("WEBVIEW_md.obsidian");
     }
 
     /**
@@ -542,7 +572,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
             }
 
             if (isAppium(browser.requestedCapabilities)) {
-                await this.appiumSetContext();
+                await this.appiumSetupApp();
                 if (cap[OBSIDIAN_CAPABILITY_KEY].vault) {
                     await this.appiumOpenVault();
                 }
