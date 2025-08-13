@@ -23,6 +23,9 @@ importers:
       serve:
         specifier: ^14.2.4
         version: 14.2.4
+      tsx:
+        specifier: ^4.20.3
+        version: 4.20.3
       typedoc:
         specifier: ^0.28.9
         version: 0.28.9(typescript@5.9.2)
