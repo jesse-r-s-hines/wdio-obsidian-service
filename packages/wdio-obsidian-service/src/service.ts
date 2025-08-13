@@ -13,7 +13,8 @@ import {
     ObsidianServiceOptions, NormalizedObsidianCapabilityOptions, OBSIDIAN_CAPABILITY_KEY,
 } from "./types.js"
 import {
-    isAppium, appiumUploadFolder, appiumDownloadFile, appiumUploadFile, getAppiumOptions, fileExists, quote,
+    isAppium, appiumUploadFolder, appiumDownloadFile, appiumUploadFile, appiumReaddir, getAppiumOptions, fileExists,
+    quote,
  } from "./utils.js";
 import semver from "semver"
 import _ from "lodash"
@@ -556,15 +557,15 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
     async after(result: number, cap: WebdriverIO.Capabilities) {
         const browser = this.browser!;
         if (!cap[OBSIDIAN_CAPABILITY_KEY]) return;
+        const obsidianOptions = getNormalizedObsidianOptions(browser.requestedCapabilities);
 
         if (isAppium(cap)) {
-            const packageName = await browser.getCurrentPackage();
-            await browser.execute('mobile: terminateApp', { appId: packageName });
-            // "mobile: deleteFile" doesn't work on folders
-            // "mobile:shell" requires appium --allow-insecure adb_shell
-            await browser.execute("mobile: shell", {
-                command: "rm", args: ["-rf", this.androidVaultDir],
-            });
+            // "mobile: deleteFile" doesn't work on folders. "mobile:shell" requires appium --allow-insecure adb_shell
+            // don't delete currently open vault to avoid confusing Obsidian (it will be removed next run)
+            const vaults = await appiumReaddir(browser, this.androidVaultDir);
+            await browser.execute("mobile: shell", {command: "rm", args: ["-rf",
+                ...vaults.filter(v => v != obsidianOptions.uploadedVault).map(v => quote(v)),
+            ]});
         }
     }
 

@@ -82,3 +82,10 @@ export async function appiumDownloadFile(browser: WebdriverIO.Browser, src: stri
     const content = Buffer.from(await browser.pullFile(src), "base64");
     await fsAsync.writeFile(dest, content);
 }
+
+/** Lists all files under a folder. Returns full paths. */
+export async function appiumReaddir(browser: WebdriverIO.Browser, dir: string) {
+    // list all files, one per line, no escaping
+    const stdout: string = await browser.execute("mobile: shell", {command: "ls", args: ["-NA1", dir]});
+    return stdout.split("\n").filter(f => f).map(f => path.join(dir, f)).sort();
+}
