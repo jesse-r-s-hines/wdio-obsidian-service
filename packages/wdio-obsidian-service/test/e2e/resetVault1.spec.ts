@@ -2,9 +2,11 @@ import { browser, expect } from '@wdio/globals'
 import { obsidianPage } from 'wdio-obsidian-service';
 import { TFile } from 'obsidian';
 import { getAllFiles } from '../helpers.js';
+import { OBSIDIAN_CAPABILITY_KEY } from '../../src/types.js';
 
 describe("resetVault1", function() {
     it("no vault open", async () => {
+        expect(browser.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].vault).toEqual(undefined);
         await obsidianPage.resetVault({ "foo.md": "BAR" });
         expect(await getAllFiles({content: true})).toEqual({ "foo.md": {content: "BAR"} });
     })
