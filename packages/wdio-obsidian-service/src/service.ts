@@ -13,9 +13,8 @@ import {
     ObsidianServiceOptions, NormalizedObsidianCapabilityOptions, OBSIDIAN_CAPABILITY_KEY,
 } from "./types.js"
 import {
-    isAppium, appiumUploadFolder, appiumDownloadFile, appiumUploadFile, appiumReaddir, getAppiumOptions, fileExists,
-    quote,
- } from "./utils.js";
+    isAppium, appiumUploadFolder, appiumDownloadFile, appiumUploadFile, getAppiumOptions, fileExists,
+} from "./utils.js";
 import semver from "semver"
 import _ from "lodash"
 
@@ -376,6 +375,16 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
         const context = "WEBVIEW_md.obsidian";
         await browser.waitUntil(async () => (await browser.getContexts() as string[]).includes(context));
         await browser.switchContext(context);
+
+        // Clear app state
+        await browser.execute(() => { // in case tests get interrupted during the `_capacitor_file_` bit
+            if (window.location.href != "http://localhost/") {
+                window.location.replace('http://localhost/');
+            }
+        })
+        if (!obsidianOptions.vault) { // skip if vault is set, as we'll clear stat when we open the new vault
+            await this.appiumCloseVault();
+        }
     }
 
     /**
@@ -402,6 +411,19 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
             localStorage.setItem(`enable-plugin-${androidVault}`, 'true');
             window.location.reload();
         }, androidVault);
+    }
+
+    /**
+     * Close any open vault and go back to the vault switcher
+     */
+    private async appiumCloseVault() {
+        const browser = this.browser!;
+        await browser.execute(async () => {
+            if (localStorage.length > 0) { // skip if we're already on the vault switcher
+                localStorage.clear();
+                location.reload();
+            }
+        });
     }
 
     /**
@@ -587,15 +609,11 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
     async after(result: number, cap: WebdriverIO.Capabilities) {
         const browser = this.browser!;
         if (!cap[OBSIDIAN_CAPABILITY_KEY]) return;
-        const obsidianOptions = getNormalizedObsidianOptions(browser.requestedCapabilities);
 
         if (isAppium(cap)) {
+            await this.appiumCloseVault();
             // "mobile: deleteFile" doesn't work on folders. "mobile:shell" requires appium --allow-insecure adb_shell
-            // don't delete currently open vault to avoid confusing Obsidian (it will be removed next run)
-            const vaults = await appiumReaddir(browser, this.androidVaultDir);
-            await browser.execute("mobile: shell", {command: "rm", args: ["-rf",
-                ...vaults.filter(v => v != obsidianOptions.uploadedVault).map(v => quote(v)),
-            ]});
+            await browser.execute("mobile: shell", {command: "rm", args: ["-rf", this.androidVaultDir]});
         }
     }
 
