@@ -1,6 +1,7 @@
 import path from "path";
 import crypto from "crypto";
 import fsAsync from "fs/promises";
+import * as tar from "tar";
 import _ from "lodash";
 
 /** Quote string for use in shell scripts */
@@ -35,47 +36,63 @@ export function isAppium(cap: WebdriverIO.Capabilities) {
 }
 
 /**
- * Push a folder to the appium device.
+ * Upload multiple files at once. Uploads files as a tar for much better performance and to avoid issues with special
+ * characters in names. (see https://github.com/appium/appium-android-driver/issues/1004)
+ * 
+ * @param opts.src Directory to copy from (-C in tar)
+ * @param opts.dest Directory to copy to
+ * @param opts.files Files under src to copy. Defaults to the whole dir.
+ * @param opts.chunkSize Size to split the tar into while uploading (to avoid excessive RAM usage)
  */
-export async function appiumUploadFolder(browser: WebdriverIO.Browser, src: string, dest: string) {
+export async function appiumUploadFiles(browser: WebdriverIO.Browser, opts: {
+    src: string, dest: string, files?: string[], chunkSize?: number,
+}) {
+    let {
+        src, dest,
+        files = [src],
+        chunkSize = 2 * 1024 * 1024,
+    } = opts;
     src = path.resolve(src);
     dest = path.posix.normalize(dest).replace(/\/$/, '');
+    files = files.map(f => path.relative(src, f) || ".");
+    if (files.length == 0) return; // nothing to do
 
-    let files = await fsAsync.readdir(src, {recursive: true, withFileTypes: true});
-    files = _.sortBy(files, f => path.join(f.parentPath, f.name)); // sort files before children
+    // We'll tar the files up and then extract the tar on Android side. This is a lot faster than doing many small
+    // pushFiles. Since pushFile requires sending the whole file contents as a base64 string, we'll split up the tar
+    // into chunks to keep the size manageable for large vaults.
 
-    await browser.execute("mobile: shell", {command: "mkdir", args: ["-p", quote(dest)]});
-    for (const file of files) {
-        const srcPath = path.join(file.parentPath, file.name);
-        const relPath = path.relative(src, path.join(file.parentPath, file.name));
-        const destPath = path.posix.join(dest, relPath.split(path.sep).join("/"));
-        if (file.isDirectory()) {
-            await browser.execute("mobile: shell", {command: "mkdir", args: ["-p", quote(destPath)]});
-        } else if (file.isFile()) {
-            await appiumUploadFile(browser, srcPath, destPath);
+    const tmpDir = "/data/local/tmp"
+    const slug = crypto.randomBytes(10).toString("base64url").replace(/[-_]/g, '0');
+    const stream = tar.create({C: src, gzip: { level: 2 }}, files);
+
+    // buffer/chunk size of the tar stream varies. Without compression it appears to be one chunk per file, splitting
+    // large files at maxReadSize, plus some chunks for the header. However compression adds another layer that appears
+    // to limit the output chunk size to about 16K.
+    let buffers: Buffer[] = [];
+    let bufferSize = 0;
+    let i = 0;
+    for await (const chunk of stream) {
+        if (bufferSize + chunk.length > chunkSize) {
+            const data = Buffer.concat(buffers).toString('base64');
+            await browser.pushFile(`${tmpDir}/${slug}-${String(i).padStart(6, '0')}.tar`, data);
+            i++;
+            buffers = [];
+            bufferSize = 0;
         }
+        buffers.push(chunk);
+        bufferSize += chunk.length;
     }
+    const data = Buffer.concat(buffers).toString('base64');
+    await browser.pushFile(`${tmpDir}/${slug}-${String(i).padStart(6, '0')}.tar`, data);
+
+    // extract the tar. `mobile: shell` does NOT escape arguments despite taking an argument array.
+    await browser.execute("mobile: shell", {command: "sh", args: ["-c", quote(`
+        mkdir -p ${quote(dest)};
+        cat ${tmpDir}/${slug}-*.tar | tar -xz -C ${quote(dest)};
+        rm ${tmpDir}/${slug}-*.tar;
+    `)]});
 }
 
-/**
- * Uploads a file to the appium device.
- * Wrapper around pushFile that works around a bug in pushFile where it doesn't escape special characters in parent
- * directory names. See https://github.com/appium/appium-android-driver/issues/1004
- */
-export async function appiumUploadFile(browser: WebdriverIO.Browser, src: string, dest: string) {
-    src = path.resolve(src);
-    dest = path.posix.normalize(dest);
-    const slug = crypto.randomBytes(8).toString("base64url").replace(/[-_]/g, '0');
-    const tmpFile = `/data/local/tmp/upload-${slug}.tmp`;
-    const content = await fsAsync.readFile(src);
-
-    await browser.pushFile(tmpFile, content.toString('base64'));
-    await browser.execute("mobile: shell", {command: "mv", args: [tmpFile, quote(dest)]});
-}
-
-/**
- * Downloads a file from the appium device.
- */
 export async function appiumDownloadFile(browser: WebdriverIO.Browser, src: string, dest: string) {
     src = path.posix.normalize(src);
     dest = path.resolve(dest);

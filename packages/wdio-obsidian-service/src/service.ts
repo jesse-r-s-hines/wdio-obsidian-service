@@ -13,7 +13,7 @@ import {
     ObsidianServiceOptions, NormalizedObsidianCapabilityOptions, OBSIDIAN_CAPABILITY_KEY,
 } from "./types.js"
 import {
-    isAppium, appiumUploadFolder, appiumDownloadFile, appiumUploadFile, getAppiumOptions, fileExists,
+    isAppium, appiumUploadFiles, appiumDownloadFile, getAppiumOptions, fileExists,
 } from "./utils.js";
 import semver from "semver"
 import _ from "lodash"
@@ -397,7 +397,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
         // TODO: Capabilities is not really the right place to be storing state like vaultCopy and uploadVault
         obsidianOptions.uploadedVault = androidVault;
         // transfer the vault to the device
-        await appiumUploadFolder(browser, obsidianOptions.vaultCopy!, androidVault);
+        await appiumUploadFiles(browser, {src: obsidianOptions.vaultCopy!, dest: androidVault});
 
         // open vault by setting the localStorage keys and relaunching Obsidian
         // on appium restarting the app with appium:fullReset is *really* slow. And, unlike electron we can actually
@@ -512,13 +512,10 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
                         vault: oldObsidianOptions.vaultCopy!, copy: false,
                         plugins: selectedPlugins, themes: selectedThemes,
                     });
-                    if (await fileExists(localCommunityPlugins)) {
-                        await appiumUploadFile(this, localCommunityPlugins, remoteCommunityPlugins);
-                    }
-                    if (await fileExists(localAppearance)) {
-                        await appiumUploadFile(this, localAppearance, remoteAppearance);
-                    }
-                
+                    let files = [localCommunityPlugins, localAppearance];
+                    files = (await Promise.all(files.map(async f => await fileExists(f) ? f : ""))).filter(f => f);
+                    await appiumUploadFiles(this, {src: local, dest: remote, files});
+
                     // switch the app back
                     await this.execute(() => {
                         window.location.replace('http://localhost/');

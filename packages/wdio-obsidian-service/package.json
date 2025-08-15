@@ -65,7 +65,8 @@
     "dependencies": {
         "lodash": "^4.17.21",
         "obsidian-launcher": "2.0.2",
-        "semver": "^7.7.2"
+        "semver": "^7.7.2",
+        "tar": "^7.4.3"
     },
     "peerDependencies": {
         "@wdio/cli": "^9.18.1",
