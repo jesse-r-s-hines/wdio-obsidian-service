@@ -5,19 +5,9 @@ import { fileURLToPath } from "url";
 import { TFile } from "obsidian";
 import { OBSIDIAN_CAPABILITY_KEY, NormalizedObsidianCapabilityOptions } from "../types.js";
 import { BasePage } from "./basePage.js";
-import { isAppium } from "../utils.js";
+import { isAppium, normalizePath, isHidden, isText } from "../utils.js";
 import _ from "lodash";
 
-
-/** Returns true if a vault file path is hidden (either it or one of it's parent directories starts with ".") */
-function isHidden(file: string) {
-    return file.split("/").some(p => p.startsWith("."))
-}
-
-/** Returns true if this is a simple text file */
-function isText(file: string) {
-    return [".md", ".json", ".txt", ".js"].includes(path.extname(file).toLocaleLowerCase());
-}
 
 /**
  * Class with various helper methods for writing Obsidian tests using the
@@ -330,7 +320,7 @@ class ObsidianPage extends BasePage {
         vaults = vaults.length == 0 ? [obsidianOptions.vault!] : vaults;
 
         // list all files in the new vault
-        type NewFileInfo = {type: "file"| "folder", sourceContent?: string|ArrayBuffer, sourceFile?: string};
+        type NewFileInfo = {type: "file"|"folder", sourceContent?: string|ArrayBuffer, sourceFile?: string};
         const newVault: Map<string, NewFileInfo> = new Map();
         for (let vault of vaults) {
             if (typeof vault == "string") {
@@ -348,6 +338,7 @@ class ObsidianPage extends BasePage {
                     }
                 }
             } else {
+                vault = _.mapKeys(vault, (v, k) => normalizePath(k));
                 for (const [file, content] of Object.entries(vault)) {
                     newVault.set(file, {type: "file", sourceContent: content});
                 }
@@ -359,7 +350,7 @@ class ObsidianPage extends BasePage {
         }
 
         // list all files in the current vault
-        type CurrFileInfo = {type: "file"| "folder", hash?: string};
+        type CurrFileInfo = {type: "file"|"folder", hash?: string};
         const currVault = new Map(await this.browser.executeObsidian(({app}, configDir) => {
             async function hash(data: ArrayBuffer) {
                 const hashBuffer = await window.crypto.subtle.digest('SHA-256', data);

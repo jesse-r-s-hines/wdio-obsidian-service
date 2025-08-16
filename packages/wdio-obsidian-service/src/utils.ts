@@ -106,3 +106,31 @@ export async function appiumReaddir(browser: WebdriverIO.Browser, dir: string) {
     const stdout: string = await browser.execute("mobile: shell", {command: "ls", args: ["-NA1", dir]});
     return stdout.split("\n").filter(f => f).map(f => path.join(dir, f)).sort();
 }
+
+/** SHA256 hash */
+export async function hash(content: string|ArrayBufferLike) {
+    return crypto.createHash("SHA256")
+        .update(typeof content == "string" ? content : new Uint8Array(content))
+        .digest("hex");
+}
+
+/** Replicate obsidian.normalizePath */
+export function normalizePath(p: string) {
+    p = p.replace(/([\\/])+/g, "/").replace(/(^\/+|\/+$)/g, "");
+    if (p == "") {
+        p = "/"
+    }
+    p = p.replace(/\u00A0|\u202F/g, " "); // replace special space characters
+    p = p.normalize("NFC");
+    return p;
+}
+
+/** Returns true if a vault file path is hidden (either it or one of it's parent directories starts with ".") */
+export function isHidden(file: string) {
+    return file.split("/").some(p => p.startsWith("."))
+}
+
+/** Returns true if this is a simple text file */
+export function isText(file: string) {
+    return [".md", ".json", ".txt", ".js"].includes(path.extname(file).toLocaleLowerCase());
+}
