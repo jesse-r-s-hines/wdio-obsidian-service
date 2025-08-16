@@ -3,7 +3,7 @@ import { Command } from 'commander';
 import _ from "lodash";
 import { ObsidianLauncher } from "./launcher.js"
 import { watchFiles } from './utils.js';
-import { PluginEntry, ThemeEntry } from "./types.js";
+import { ObsidianVersionList, PluginEntry, ThemeEntry } from "./types.js";
 import path from "path"
 import fsAsync from "fs/promises";
 
@@ -96,7 +96,7 @@ program
     .option(...themeOptionArgs)
     .option('--copy', "Copy the vault first")
     .option(...cacheOptionArgs)
-    .action(async (vault: string|undefined, obsidianArgs: string[], opts: any) => {
+    .action(async (vault: string|undefined, obsidianArgs: string[], opts) => {
         const launcher = getLauncher(opts);
         const {proc} = await launcher.launch({
             appVersion: opts.version, installerVersion: opts.installer,
@@ -131,7 +131,7 @@ program
     .option(...themeOptionArgs)
     .option('--copy', "Copy the vault first")
     .option(...cacheOptionArgs)
-    .action(async (vault: string, obsidianArgs: string[], opts: any) => {
+    .action(async (vault: string, obsidianArgs: string[], opts) => {
         const launcher = getLauncher(opts);
         // Normalize the plugins and themes
         const plugins = await launcher.downloadPlugins(parsePlugins(opts.plugin));
@@ -286,7 +286,7 @@ program
     .option(...cacheOptionArgs)
     .option('--max-instances <count>', "Number of parallel Obsidian instances to launch when checking Electron versions", "1")
     .action(async (dest, opts) => {
-        let versionInfos: any;
+        let versionInfos: ObsidianVersionList|undefined;
         try {
             versionInfos = JSON.parse(await fsAsync.readFile(dest, "utf-8"))
         } catch {

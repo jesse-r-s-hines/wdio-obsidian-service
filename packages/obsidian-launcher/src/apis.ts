@@ -43,11 +43,11 @@ export function parseLinkHeader(linkHeader: string): Record<string, Record<strin
     return Object.fromEntries(linkDatas.map(l => [l.rel, l]));
 };
 
-
-function createURL(url: string, base: string, params: Record<string, any> = {}) {
-    params =_.pickBy(params, x => x !== undefined);
+type SearchParamsDict = Record<string, string|number|undefined>;
+function createURL(url: string, base: string, params: SearchParamsDict = {}) {
+    const cleanParams = _(params).pickBy(x => x !== undefined).mapValues(v => String(v)).value();
     const urlObj = new URL(url, base);
-    const searchParams = new URLSearchParams({...Object.fromEntries(urlObj.searchParams), ...params});
+    const searchParams = new URLSearchParams({...Object.fromEntries(urlObj.searchParams), ...cleanParams});
     if ([...searchParams].length > 0) {
         urlObj.search = '?' + searchParams;
     }
@@ -59,7 +59,7 @@ function createURL(url: string, base: string, params: Record<string, any> = {}) 
  * Fetch from the GitHub API. Uses GITHUB_TOKEN if available. You can access the API without a token, but will hit
  * the usage caps very quickly.
  */
-export async function fetchGitHubAPI(url: string, params: Record<string, any> = {}) {
+export async function fetchGitHubAPI(url: string, params: SearchParamsDict = {}) {
     url = createURL(url, "https://api.github.com", params)
     const token = env.GITHUB_TOKEN;
     const headers: Record<string, string> = token ? {Authorization: "Bearer " + token} : {};
@@ -74,7 +74,7 @@ export async function fetchGitHubAPI(url: string, params: Record<string, any> = 
 /**
  * Fetch all data from a paginated GitHub API request.
  */
-export async function fetchGitHubAPIPaginated(url: string, params: Record<string, any> = {}) {
+export async function fetchGitHubAPIPaginated(url: string, params: SearchParamsDict = {}) {
     const results: any[] = [];
     let next: string|undefined = createURL(url, "https://api.github.com", { per_page: 100, ...params });
     while (next) {
@@ -118,7 +118,8 @@ export async function obsidianApiLogin(opts: {
 
     let needsMfa = false;
     let retries = 0;
-    let signin: any = undefined;
+    type SigninResult = {token?: string, error?: string, license?: string};
+    let signin: SigninResult|undefined = undefined;
     while (!signin?.token && retries < 3) {
         // exponential backoff with random offset. Always trigger in CI to avoid multiple jobs hitting the API at once
         if (retries > 0 || env.CI) {
@@ -138,7 +139,7 @@ export async function obsidianApiLogin(opts: {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({email, password, mfa})
-        }).then(r => r.json());
+        }).then(r => r.json()) as SigninResult;
 
         const error = signin.error?.toLowerCase();
         if (error?.includes("2fa") && !needsMfa) {
@@ -158,9 +159,9 @@ export async function obsidianApiLogin(opts: {
         }
     }
 
-    if (!signin.token) {
-        throw Error(`Obsidian login failed: ${signin.error ?? 'unknown error'}`);
-    } else if (!signin.license) {
+    if (!signin?.token) {
+        throw Error(`Obsidian login failed: ${signin?.error ?? 'unknown error'}`);
+    } else if (!signin?.license) {
         throw Error("Obsidian Insiders account is required to download Obsidian beta versions");
     }
 

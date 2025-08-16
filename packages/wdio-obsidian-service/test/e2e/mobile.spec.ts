@@ -93,9 +93,9 @@ describe("Appium Utils", function() {
 
     it("splitting", async function() {
         const src = await createDirectory();
-        await fsAsync.writeFile(path.join(src, 'a'), await crypto.randomBytes(1024 * 1024).toString('base64'));
-        await fsAsync.writeFile(path.join(src, 'b'), await crypto.randomBytes(1024).toString('base64'));
-        await fsAsync.writeFile(path.join(src, 'c'), await crypto.randomBytes(1024).toString('base64'));
+        await fsAsync.writeFile(path.join(src, 'a'), crypto.randomBytes(1024 * 1024).toString('base64'));
+        await fsAsync.writeFile(path.join(src, 'b'), crypto.randomBytes(1024).toString('base64'));
+        await fsAsync.writeFile(path.join(src, 'c'), crypto.randomBytes(1024).toString('base64'));
         await appiumUploadFiles(browser, {src, dest: testDest, chunkSize: 16 * 1024});
         await checkUploadSuccessful(src, testDest);
     })

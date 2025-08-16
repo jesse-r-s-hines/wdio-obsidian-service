@@ -11,6 +11,7 @@ import { DeepPartial } from "ts-essentials";
 import { atomicCreate, makeTmpDir, normalizeObject, pool } from "./utils.js";
 import { downloadResponse, fetchGitHubAPIPaginated } from "./apis.js"
 import { ObsidianInstallerInfo, ObsidianVersionInfo } from "./types.js";
+import { ObsidianDesktopRelease } from "./obsidianTypes.js"
 
 
 export function normalizeGitHubRepo(repo: string) {
@@ -120,7 +121,7 @@ type CommitInfo = {commitDate: string, commitSha: string}
  */
 export async function fetchObsidianDesktopReleases(
     sinceDate?: string, sinceSha?: string,
-): Promise<[any[], CommitInfo]> {
+): Promise<[ObsidianDesktopRelease[], CommitInfo]> {
     // Extract info from desktop-releases.json
     const repo = "obsidianmd/obsidian-releases";
     let commitHistory = await fetchGitHubAPIPaginated(`repos/${repo}/commits`, {
@@ -155,11 +156,11 @@ const BROKEN_ASSETS = [
     "https://releases.obsidian.md/release/obsidian-1.4.8.asar.gz",
 ];
 
-type ParsedDesktopRelease = {current: DeepPartial<ObsidianVersionInfo>, beta?: DeepPartial<ObsidianVersionInfo>}
-export function parseObsidianDesktopRelease(fileRelease: any): ParsedDesktopRelease {
-    const parse = (r: any, isBeta: boolean): DeepPartial<ObsidianVersionInfo> => {
+export type ParsedDesktopRelease = {current: DeepPartial<ObsidianVersionInfo>, beta?: DeepPartial<ObsidianVersionInfo>}
+export function parseObsidianDesktopRelease(fileRelease: ObsidianDesktopRelease): ParsedDesktopRelease {
+    const parse = (r: ObsidianDesktopRelease, isBeta: boolean): DeepPartial<ObsidianVersionInfo> => {
         const version = r.latestVersion;
-        let minInstallerVersion = r.minimumVersion;
+        let minInstallerVersion: string|undefined = r.minimumVersion;
         if (minInstallerVersion == "0.0.0") {
             minInstallerVersion = undefined;
         // there's some errors in the minInstaller versions listed that we need to correct manually
@@ -239,7 +240,7 @@ export const INSTALLER_KEYS: InstallerKey[] = [
  */
 export function updateObsidianVersionList(args: {
     original?: ObsidianVersionInfo[],
-    destkopReleases?: any[],
+    destkopReleases?: ObsidianDesktopRelease[],
     gitHubReleases?: any[],
     installerInfos?: {version: string, key: InstallerKey, installerInfo: Omit<ObsidianInstallerInfo, "digest">}[],
 }): ObsidianVersionInfo[] {

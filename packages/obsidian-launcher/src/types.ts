@@ -68,29 +68,6 @@ export type ObsidianVersionInfo = {
     chromeVersion?: string,
 }
 
-/**
- * Schema of entries in https://github.com/obsidianmd/obsidian-releases/blob/HEAD/community-plugins.json
- * @category Types
- */
-export type ObsidianCommunityPlugin = {
-    id: string,
-    name: string
-    author: string,
-    description: string,
-    repo: string,
-}
-
-/**
- * Schema of entries in https://github.com/obsidianmd/obsidian-releases/blob/HEAD/community-css-themes.json
- * @category Types
- */
-export type ObsidianCommunityTheme = {
-    name: string,
-    author: string,
-    repo: string,
-    screenshot: string,
-    modes: string[],
-}
 
 /** @inline */
 interface BasePluginEntry {

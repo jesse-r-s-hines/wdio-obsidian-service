@@ -10,9 +10,10 @@ import _ from "lodash"
 import dotenv from "dotenv";
 import { fileExists, makeTmpDir, atomicCreate, linkOrCp, maybe, pool } from "./utils.js";
 import {
-    ObsidianVersionInfo, ObsidianCommunityPlugin, ObsidianCommunityTheme, ObsidianVersionList, ObsidianInstallerInfo,
-    PluginEntry, DownloadedPluginEntry, ThemeEntry, DownloadedThemeEntry, obsidianVersionsSchemaVersion,
+    ObsidianVersionInfo, ObsidianVersionList, ObsidianInstallerInfo, PluginEntry, DownloadedPluginEntry, ThemeEntry,
+    DownloadedThemeEntry, obsidianVersionsSchemaVersion,
 } from "./types.js";
+import { ObsidianAppearanceConfig, ObsidianCommunityPlugin, ObsidianCommunityTheme, PluginManifest } from "./obsidianTypes.js";
 import { obsidianApiLogin, fetchObsidianApi, downloadResponse } from "./apis.js";
 import ChromeLocalStorage from "./chromeLocalStorage.js";
 import {
@@ -146,7 +147,7 @@ export class ObsidianLauncher {
     /**
      * Get parsed content of the current project's manifest.json
      */
-    private async getRootManifest(): Promise<any> {
+    private async getRootManifest(): Promise<PluginManifest|null> {
         if (!('manifest.json' in this.metadataCache)) {
             const root = path.parse(process.cwd()).root;
             let dir = process.cwd();
@@ -259,10 +260,11 @@ export class ObsidianLauncher {
         } else if (appVersion == "latest") {
             appVersion = versions.filter(v => !v.isBeta).at(-1)!.version;
         } else if (appVersion == "earliest") {
-            appVersion = (await this.getRootManifest())?.minAppVersion;
-            if (!appVersion) {
+            const manifest = await this.getRootManifest();
+            if (!manifest?.minAppVersion) {
                 throw Error('Unable to resolve Obsidian appVersion "earliest", no manifest.json or minAppVersion found.')
             }
+            appVersion = manifest.minAppVersion;
         } else {
             // if invalid match won't be found and we'll throw error below
             appVersion = semver.valid(appVersion) ?? appVersion;
@@ -850,7 +852,7 @@ export class ObsidianLauncher {
 
         if (themes.length > 0) { // Only update appearance.json if we set the themes
             const appearancePath = path.join(obsidianDir, 'appearance.json');
-            let appearance: any = {}
+            let appearance: ObsidianAppearanceConfig = {}
             if (await fileExists(appearancePath)) {
                 appearance = JSON.parse(await fsAsync.readFile(appearancePath, 'utf-8'));
             }
