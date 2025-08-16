@@ -26,11 +26,13 @@ function parsePlugins(plugins: string[] = []): PluginEntry[] {
 
 function parseThemes(themes: string[] = []): ThemeEntry[] {
     return themes.map((t: string, i: number) => {
-        let result: ThemeEntry
+        let result: ThemeEntry;
         if (t.startsWith("name:")) {
-            result = {name: t.slice(5)};
+            const [name, version] = t.slice(5).split('=');
+            result = {name, version};
         } else if (t.startsWith("repo:")) {
-            result = {repo: t.slice(5)};
+            const [repo, version] = t.slice(5).split('=');
+            result = {repo, version};
         } else if (t.startsWith("path:")) {
             result = {path: t.slice(5)};
         } else {
@@ -214,9 +216,11 @@ program
     .option(...cacheOptionArgs)
     .action(async (vault, opts) => {
         const launcher = getLauncher(opts);
-        await launcher.installPlugins(vault, parsePlugins(opts.plugin));
-        await launcher.installThemes(vault, parseThemes(opts.theme));
-        console.log(`Installed plugins and themes into ${vault}`)
+        const plugins = parsePlugins(opts.plugin);
+        const themes = parseThemes(opts.theme);
+        await launcher.installPlugins(vault, plugins);
+        await launcher.installThemes(vault, themes);
+        console.log(`Installed plugins/themes into vault.`)
     })
 
 program

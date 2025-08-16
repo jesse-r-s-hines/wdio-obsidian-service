@@ -161,11 +161,15 @@ interface LocalThemeEntry extends BaseThemeEntry {
 interface GitHubThemeEntry extends BaseThemeEntry {
     /** Github repo of the theme to install, e.g. "some-user/some-theme". */
     repo: string,
+    /** Version of the theme to install. Defaults to latest. */
+    version?: string,
 }
 /** @inline */
 interface CommunityThemeEntry extends BaseThemeEntry {
     /** Theme name to install from Obsidian community themes. */
     name: string,
+    /** Version of the theme to install. Defaults to latest. */
+    version?: string,
 }
 
 /**

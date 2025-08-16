@@ -615,123 +615,6 @@ export class ObsidianLauncher {
         );
     }
 
-    /** Gets the latest version of a theme. */
-    private async getLatestThemeVersion(repo: string) {
-        repo = normalizeGitHubRepo(repo)
-        const manifestUrl = `https://raw.githubusercontent.com/${repo}/HEAD/manifest.json`;
-        const cacheDest = path.join("obsidian-themes", repo, "latest.json");
-        const manifest = await this.cachedFetch(manifestUrl, cacheDest);
-        return manifest.version;
-    }
-
-    /**
-     * Downloads a theme from a GitHub repo to the cache.
-     * @param repo Repo
-     * @returns path to the downloaded theme
-     */
-    private async downloadGitHubTheme(repo: string): Promise<string> {
-        repo = normalizeGitHubRepo(repo)
-        // Obsidian theme's are just pulled from the repo HEAD, not releases, so we can't really choose a specific 
-        // version of a theme.
-        // We use the manifest.json version to check if the theme has changed.
-        const version = await this.getLatestThemeVersion(repo);
-        const themeDir = path.join(this.cacheDir, "obsidian-themes", repo, version);
-
-        if (!(await fileExists(themeDir))) {
-            await atomicCreate(themeDir, async (tmpDir) => {
-                const assetsToDownload = ['manifest.json', 'theme.css'];
-                await Promise.all(
-                    assetsToDownload.map(async (file) => {
-                        const url = `https://raw.githubusercontent.com/${repo}/HEAD/${file}`;
-                        const response = await fetch(url);
-                        if (response.ok) {
-                            await downloadResponse(response, path.join(tmpDir, file));
-                        } else {
-                            throw Error(`No ${file} found for ${repo}`);
-                        }
-                    })
-                )
-                return tmpDir;
-            });
-        }
-
-        return themeDir;
-    }
-
-    /**
-     * Downloads a community theme to the cache.
-     * @param name name of the theme
-     * @returns path to the downloaded theme
-     */
-    private async downloadCommunityTheme(name: string): Promise<string> {
-        const communityThemes = await this.getCommunityThemes();
-        const themeInfo = communityThemes.find(p => p.name == name);
-        if (!themeInfo) {
-            throw Error(`No theme with name ${name} found.`);
-        }
-        return await this.downloadGitHubTheme(themeInfo.repo);
-    }
-
-    /**
-     * Downloads a list of themes to the cache and returns a list of {@link DownloadedThemeEntry} with the downloaded
-     * paths. Also adds the `name` property to the plugins based on the manifest.
-     * 
-     * You can download themes from GitHub using `{repo: "org/repo"}` and community themes using `{name: 'theme-name'}`.
-     * Local themes will just be passed through.
-     * 
-     * @param themes List of themes to download
-     */
-    async downloadThemes(themes: ThemeEntry[]): Promise<DownloadedThemeEntry[]> {
-        return await Promise.all(
-            themes.map(async (theme) => {
-                if (typeof theme == "object" && "originalType" in theme) {
-                    return {...theme as DownloadedThemeEntry}
-                }
-                let themePath: string
-                let originalType: "local"|"github"|"community"
-                if (typeof theme == "string") {
-                    themePath = path.resolve(theme);
-                    originalType = "local";
-                } else if ("path" in theme) {;
-                    themePath = path.resolve(theme.path);
-                    originalType = "local";
-                } else if ("repo" in theme) {
-                    themePath = await this.downloadGitHubTheme(theme.repo);
-                    originalType = "github";
-                } else if ("name" in theme) {
-                    themePath = await this.downloadCommunityTheme(theme.name);
-                    originalType = "community";
-                } else {
-                    throw Error("You must specify one of theme path, repo, or name")
-                }
-
-                const manifestPath = path.join(themePath, "manifest.json");
-                if (!(await fileExists(manifestPath))) {
-                    throw Error(`No theme found at ${themePath}`)
-                }
-                let themeName = (typeof theme == "object" && ("name" in theme)) ? theme.name : undefined;
-                if (!themeName) {
-                    const manifestPath = path.join(themePath, "manifest.json");
-                    themeName = JSON.parse(await fsAsync.readFile(manifestPath, 'utf8').catch(() => "{}")).name;
-                    if (!themeName) {
-                        throw Error(`${themePath}/manifest.json malformed.`);
-                    }
-                }
-                if (!(await fileExists(path.join(themePath, "theme.css")))) {
-                    throw Error(`No theme.css found under ${themePath}`)
-                }
-
-                let enabled: boolean
-                if (typeof theme == "string") {
-                    enabled = true
-                } else {
-                    enabled = theme.enabled ?? true;
-                }
-                return {path: themePath, name: themeName, enabled: enabled, originalType};
-            })
-        );
-    }
-
     /**
      * Installs plugins into an Obsidian vault
      * @param vault Path to the vault to install the plugins in
@@ -797,7 +680,137 @@ export class ObsidianLauncher {
         }
     }
 
-    /** 
+    /** Gets the latest version of a theme. */
+    private async getLatestThemeVersion(repo: string) {
+        repo = normalizeGitHubRepo(repo)
+        const manifestUrl = `https://raw.githubusercontent.com/${repo}/HEAD/manifest.json`;
+        const cacheDest = path.join("obsidian-themes", repo, "latest.json");
+        const manifest = await this.cachedFetch(manifestUrl, cacheDest);
+        return manifest.version;
+    }
+
+    /**
+     * Downloads a theme from a GitHub repo to the cache.
+     * @param repo Repo
+     * @returns path to the downloaded theme
+     */
+    private async downloadGitHubTheme(repo: string, version = "latest"): Promise<string> {
+        repo = normalizeGitHubRepo(repo)
+        const latest = await this.getLatestThemeVersion(repo);
+        if (version == "latest") {
+            version = latest;
+        }
+        if (!semver.valid(version)) {
+            throw Error(`Invalid version "${version}"`);
+        }
+        version = semver.valid(version)!;
+        
+        const themeDir = path.join(this.cacheDir, "obsidian-themes", repo, version);
+
+        if (!(await fileExists(themeDir))) {
+            await atomicCreate(themeDir, async (tmpDir) => {
+                // Obsidian themes can be downloaded from releases like plugins, but have fallback "legacy" behavior
+                // that just downloads from repo HEAD directly.
+                const assetsToDownload = ['manifest.json', 'theme.css'];
+                let baseUrl = `https://github.com/${repo}/releases/download/${version}`;
+                if (!(await fetch(`${baseUrl}/manifest.json`)).ok) {
+                    if (version != latest) {
+                        throw Error(`No theme version "${version}" found`);
+                    }
+                    baseUrl = `https://raw.githubusercontent.com/${repo}/HEAD`;
+                }
+                await Promise.all(
+                    assetsToDownload.map(async (file) => {
+                        const url = `${baseUrl}/${file}`;
+                        const response = await fetch(url);
+                            if (response.ok) {
+                            await downloadResponse(response, path.join(tmpDir, file));
+                        } else {
+                            throw Error(`No ${file} found for ${repo}`);
+                        }
+                    }
+                ))
+            });
+        }
+
+        return themeDir;
+    }
+
+    /**
+     * Downloads a community theme to the cache.
+     * @param name name of the theme
+     * @returns path to the downloaded theme
+     */
+    private async downloadCommunityTheme(name: string, version = "latest"): Promise<string> {
+        const communityThemes = await this.getCommunityThemes();
+        const themeInfo = communityThemes.find(p => p.name == name);
+        if (!themeInfo) {
+            throw Error(`No theme with name ${name} found.`);
+        }
+        return await this.downloadGitHubTheme(themeInfo.repo, version);
+    }
+
+    /**
+     * Downloads a list of themes to the cache and returns a list of {@link DownloadedThemeEntry} with the downloaded
+     * paths. Also adds the `name` property to the plugins based on the manifest.
+     * 
+     * You can download themes from GitHub using `{repo: "org/repo"}` and community themes using `{name: 'theme-name'}`.
+     * Local themes will just be passed through.
+     * 
+     * @param themes List of themes to download
+     */
+    async downloadThemes(themes: ThemeEntry[]): Promise<DownloadedThemeEntry[]> {
+        return await Promise.all(
+            themes.map(async (theme) => {
+                if (typeof theme == "object" && "originalType" in theme) {
+                    return {...theme as DownloadedThemeEntry}
+                }
+                let themePath: string
+                let originalType: "local"|"github"|"community"
+                if (typeof theme == "string") {
+                    themePath = path.resolve(theme);
+                    originalType = "local";
+                } else if ("path" in theme) {;
+                    themePath = path.resolve(theme.path);
+                    originalType = "local";
+                } else if ("repo" in theme) {
+                    themePath = await this.downloadGitHubTheme(theme.repo, theme.version);
+                    originalType = "github";
+                } else if ("name" in theme) {
+                    themePath = await this.downloadCommunityTheme(theme.name, theme.version);
+                    originalType = "community";
+                } else {
+                    throw Error("You must specify one of theme path, repo, or name")
+                }
+
+                const manifestPath = path.join(themePath, "manifest.json");
+                if (!(await fileExists(manifestPath))) {
+                    throw Error(`No theme found at ${themePath}`)
+                }
+                let themeName = (typeof theme == "object" && ("name" in theme)) ? theme.name : undefined;
+                if (!themeName) {
+                    const manifestPath = path.join(themePath, "manifest.json");
+                    themeName = JSON.parse(await fsAsync.readFile(manifestPath, 'utf8').catch(() => "{}")).name;
+                    if (!themeName) {
+                        throw Error(`${themePath}/manifest.json malformed.`);
+                    }
+                }
+                if (!(await fileExists(path.join(themePath, "theme.css")))) {
+                    throw Error(`No theme.css found under ${themePath}`)
+                }
+
+                let enabled: boolean
+                if (typeof theme == "string") {
+                    enabled = true
+                } else {
+                    enabled = theme.enabled ?? true;
+                }
+                return {path: themePath, name: themeName, enabled: enabled, originalType};
+            })
+        );
+    }
+
+    /**
      * Installs themes into an Obsidian vault
      * @param vault Path to the theme to install the themes in
      * @param themes List of themes to install
