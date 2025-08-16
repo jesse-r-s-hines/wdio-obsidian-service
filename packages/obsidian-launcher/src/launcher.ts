@@ -388,7 +388,7 @@ export class ObsidianLauncher {
      * 
      * To download Obsidian beta versions you'll need to have an Obsidian Insiders account and either set the 
      * `OBSIDIAN_EMAIL` and `OBSIDIAN_PASSWORD` env vars (`.env` file is supported) or pre-download the Obsidian beta
-     * with `npx obsidian-launcher download -v latest-beta`
+     * with `npx obsidian-launcher download --type app -v latest-beta`
      * 
      * @param appVersion Obsidian version to download
      */

@@ -74,88 +74,26 @@ const themeOptionArgs = [
 const program = new Command("obsidian-launcher");
 
 program
-    .command("download")
-    .summary("Download Obsidian to the cache")
-    .description(
-        "Download Obsidian to the cache.\n" +
-        "\n" + 
-        "Pre-download Obsidian to the cache. Pass --type to select what variant to download, which can be one of:\n" +
-        "  - app: Download the desktop app JS bundle\n" +
-        "  - installer: Download the desktop installer\n" +
-        "  - desktop: Download both the desktop app and installer (the default)\n" +
-        "  - apk: Download the mobile app APK file"
-    )
-    .option('--type <version>', '"Type to download', "desktop")
-    .option('-v, --version <version>', 'Obsidian version (default: latest)')
-    .option('-i, --installer <version>', 'Obsidian installer version (default: earliest)')
-    .option('--platform <platform>', "Platform of the installer, one of linux, win32, darwin. (default: system platform)")
-    .option('--arch <arch>', "Architecture of the installer, one of arm64, ia32, x64. (default: system arch)")
-    .option(...cacheOptionArgs)
-    .action(async (opts) => {
-        const launcher = getLauncher(opts);
-        if (opts.type == "desktop") {
-            const [appVersion, installerVersion] = await launcher.resolveVersion(
-                opts.version ?? "latest",
-                opts.installerVersion ?? "earliest",
-            );
-            const installerPath = await launcher.downloadInstaller(installerVersion, {
-                platform: opts.platform, arch: opts.arch,
-            });
-            console.log(`Downloaded Obsidian installer to ${installerPath}`)
-            const appPath = await launcher.downloadApp(appVersion);
-            console.log(`Downloaded Obsidian app to ${appPath}`)
-        } else if (opts.type == "app") {
-            const appPath = await launcher.downloadApp(opts.version ?? "latest");
-            console.log(`Downloaded Obsidian app to ${appPath}`)
-        } else if (opts.type == "installer") {
-            const installerPath = await launcher.downloadInstaller(opts.installer ?? opts.version ?? "latest", {
-                platform: opts.platform, arch: opts.arch,
-            });
-            console.log(`Downloaded Obsidian installer to ${installerPath}`)
-        } else if (opts.type == "apk") {
-            const apkPath = await launcher.downloadAndroid(opts.version ?? "latest");
-            console.log(`Downloaded Obsidian apk to ${apkPath}`)
-        } else {
-            throw Error(`Invalid type ${opts.type}`)
-        }
-    })
-
-program
-    .command("install")
-    .description("Install plugins and themes into an Obsidian vault")
-    .argument('<vault>', 'Vault to install into')
-    .option(...cacheOptionArgs)
-    .option(...pluginOptionArgs)
-    .option(...themeOptionArgs)
-    .action(async (vault, opts) => {
-        const launcher = getLauncher(opts);
-        await launcher.installPlugins(vault, parsePlugins(opts.plugin));
-        await launcher.installThemes(vault, parseThemes(opts.theme));
-        console.log(`Installed plugins and themes into ${vault}`)
-    })
-
-
-program
     .command("launch")
     .summary("Download and launch Obsidian")
     .description(
         "Download and launch Obsidian, opening the specified vault.\n" +
         "\n" +
-        "The Obsidian instance will have a sandboxed configuration directory. You can use this command to test " +
+        "The Obsidian instance will have a sandboxed configuration directory. You can use this command to compare " +
         "plugin behavior on different versions of Obsidian without messing with your system installation of " + 
         "Obsidian.\n" +
         "\n" +
-        "You can pass arguments through to the Obsidian executable using\n" +
-        "    npx obsidian-launcher ./vault -- --remote-debugging-port=9222"
+        "You can pass arguments through to the Obsidian executable using `--`:\n" +
+        "    npx obsidian-launcher launch ./vault -- --remote-debugging-port=9222"
     )
     .argument('[vault]', 'Vault to open')
     .argument('[obsidian-args...]', 'Arguments to pass to Obsidian')
-    .option(...cacheOptionArgs)
     .option(...versionOptionArgs)
     .option(...installerOptionArgs)
     .option(...pluginOptionArgs)
     .option(...themeOptionArgs)
     .option('--copy', "Copy the vault first")
+    .option(...cacheOptionArgs)
     .action(async (vault: string|undefined, obsidianArgs: string[], opts: any) => {
         const launcher = getLauncher(opts);
         const {proc} = await launcher.launch({
@@ -185,12 +123,12 @@ program
     )
     .argument('[vault]', 'Vault to open')
     .argument('[obsidian-args...]', 'Arguments to pass to Obsidian')
-    .option(...cacheOptionArgs)
     .option(...versionOptionArgs)
     .option(...installerOptionArgs)
     .option(...pluginOptionArgs)
     .option(...themeOptionArgs)
     .option('--copy', "Copy the vault first")
+    .option(...cacheOptionArgs)
     .action(async (vault: string, obsidianArgs: string[], opts: any) => {
         const launcher = getLauncher(opts);
         // Normalize the plugins and themes
@@ -265,6 +203,67 @@ program
 
         console.log("Watching for changes to plugins and themes...")
         await procExit;
+    })
+
+program
+    .command("install")
+    .description("Install plugins and themes into an Obsidian vault")
+    .argument('<vault>', 'Vault to install into')
+    .option(...pluginOptionArgs)
+    .option(...themeOptionArgs)
+    .option(...cacheOptionArgs)
+    .action(async (vault, opts) => {
+        const launcher = getLauncher(opts);
+        await launcher.installPlugins(vault, parsePlugins(opts.plugin));
+        await launcher.installThemes(vault, parseThemes(opts.theme));
+        console.log(`Installed plugins and themes into ${vault}`)
+    })
+
+program
+    .command("download")
+    .summary("Download Obsidian to the cache")
+    .description(
+        "Download Obsidian to the cache.\n" +
+        "\n" + 
+        "Pre-download Obsidian to the cache. Pass --type to select what variant to download, which can be one of:\n" +
+        "  - app: Download the desktop app JS bundle\n" +
+        "  - installer: Download the desktop installer\n" +
+        "  - desktop: Download both the desktop app and installer (the default)\n" +
+        "  - apk: Download the mobile app APK file"
+    )
+    .option('--type <version>', '"Type to download', "desktop")
+    .option('-v, --version <version>', 'Obsidian version (default: "latest")')
+    .option('-i, --installer <version>', 'Obsidian installer version (default: "earliest")')
+    .option('--platform <platform>', "Platform of the installer, one of linux, win32, darwin. (default: system platform)")
+    .option('--arch <arch>', "Architecture of the installer, one of arm64, ia32, x64. (default: system arch)")
+    .option(...cacheOptionArgs)
+    .action(async (opts) => {
+        const launcher = getLauncher(opts);
+        if (opts.type == "desktop") {
+            const [appVersion, installerVersion] = await launcher.resolveVersion(
+                opts.version ?? "latest",
+                opts.installerVersion ?? "earliest",
+            );
+            const installerPath = await launcher.downloadInstaller(installerVersion, {
+                platform: opts.platform, arch: opts.arch,
+            });
+            console.log(`Downloaded Obsidian installer to ${installerPath}`)
+            const appPath = await launcher.downloadApp(appVersion);
+            console.log(`Downloaded Obsidian app to ${appPath}`)
+        } else if (opts.type == "app") {
+            const appPath = await launcher.downloadApp(opts.version ?? "latest");
+            console.log(`Downloaded Obsidian app to ${appPath}`)
+        } else if (opts.type == "installer") {
+            const installerPath = await launcher.downloadInstaller(opts.installer ?? opts.version ?? "latest", {
+                platform: opts.platform, arch: opts.arch,
+            });
+            console.log(`Downloaded Obsidian installer to ${installerPath}`)
+        } else if (opts.type == "apk") {
+            const apkPath = await launcher.downloadAndroid(opts.version ?? "latest");
+            console.log(`Downloaded Obsidian apk to ${apkPath}`)
+        } else {
+            throw Error(`Invalid type ${opts.type}`)
+        }
     })
 
 program

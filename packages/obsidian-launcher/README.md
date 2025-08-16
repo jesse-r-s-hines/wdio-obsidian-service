@@ -66,9 +66,9 @@ You can install a specific version of a plugin with `-p id:myplugin=1.2.3`.
 ### launch
 Download and launch Obsidian, opening the specified vault.
 
-The Obsidian instance will have a sandboxed configuration directory. You can use this option to easily compare plugin behavior on different versions of Obsidian without messing with your system installation of Obsidian.
+The Obsidian instance will have a sandboxed configuration directory. You can use this command to compare plugin behavior on different versions of Obsidian without messing with your system installation of Obsidian.
 
-You can pass arguments through to the Obsidian executable using `--` like so:
+You can pass arguments through to the Obsidian executable using `--`:
 ```bash
 npx obsidian-launcher launch ./vault -- --remote-debugging-port=9222
 ```
@@ -77,12 +77,12 @@ Arguments:
 - `vault`: Vault to open
 
 Options:
-- `-c, --cache <cache>`: Directory to use as the download cache (default: OBSIDIAN_CACHE env var or ".obsidian-cache")
 - `-v, --version <version>`: Obsidian app version to run (default: "latest")
-- `-i, --installer <version>`: Obsidian installer version to run (default: "latest")
+- `-i, --installer <version>`: Obsidian installer version to run (default: "earliest")
 - `-p, --plugin <plugin>`: Plugin(s) to install
 - `-t, --theme <plugin>`: Theme(s) to install
 - `--copy`: Copy the vault first
+- `-c, --cache <cache>`: Directory to use as the download cache (default: OBSIDIAN_CACHE env var or ".obsidian-cache")
 
 ### watch
 Downloads Obsidian and opens a vault, then watches for changes to plugins and themes.
@@ -93,20 +93,12 @@ Arguments:
 - `vault`: Vault to open
 
 Options:
-- `-c, --cache <cache>`: Directory to use as the download cache (default: OBSIDIAN_CACHE env var or ".obsidian-cache")
 - `-v, --version <version>`: Obsidian app version to run (default: "latest")
 - `-i, --installer <version>`: Obsidian installer version to run (default: "latest")
 - `-p, --plugin <plugin>`: Plugin(s) to install
 - `-t, --theme <plugin>`: Theme to install
 - `--copy`: Copy the vault first
-
-### download
-Download Obsidian to the cache without launching.
-
-Options:
 - `-c, --cache <cache>`: Directory to use as the download cache (default: OBSIDIAN_CACHE env var or ".obsidian-cache")
-- `-v, --version <version>`: Obsidian app version to download (default: "latest")
-- `-i, --installer <version>`: Obsidian installer version to download (default: "latest")
 
 ### install
 Install plugins and themes into an Obsidian vault.
@@ -115,6 +107,24 @@ Arguments:
 - `vault`: Vault to install into
 
 Options:
-- `-c, --cache <cache>`: Directory to use as the download cache (default: OBSIDIAN_CACHE env var or ".obsidian-cache")
 - `-p, --plugin <plugin>`: Plugin(s) to install
 - `-t, --theme <plugin>`: Theme(s) to install.
+- `-c, --cache <cache>`: Directory to use as the download cache (default: OBSIDIAN_CACHE env var or ".obsidian-cache")
+
+### download
+Download Obsidian to the cache.
+
+Pre-download Obsidian to the cache. Pass --type to select what variant to download, which can be one of:
+- app: Download the desktop app JS bundle
+- installer: Download the desktop installer
+- desktop: Download both the desktop app and installer (the default)
+- apk: Download the mobile app APK file
+
+Options:
+- `--type <version>`: Type to download (default: "desktop")
+- `-v, --version <version>`: Obsidian version (default: "latest")
+- `-i, --installer <version>`: Obsidian installer version (default: "earliest")
+- `--platform <platform>`: Platform of the installer, one of linux, win32, darwin. (default: system platform)
+- `--arch <arch>`: Architecture of the installer, one of arm64, ia32, x64. (default: system arch)
+- `-c, --cache <cache>`: Directory to use as the download cache (default: OBSIDIAN_CACHE env var or ".obsidian-cache")
+
