@@ -307,7 +307,7 @@ export class ObsidianLauncher {
         installerVersionInfo: ObsidianVersionInfo,
         opts: {platform?: NodeJS.Platform, arch?: NodeJS.Architecture} = {},
     ): keyof ObsidianVersionInfo['installers']|undefined {
-        const {platform, arch} = _.merge({}, opts, currentPlatform);
+        const {platform, arch} = _.defaults({}, opts, currentPlatform);
         const platformName = `${platform}-${arch}`;
         const key = _.findKey(installerVersionInfo.installers, v => v && v.platforms.includes(platformName));
         return key as keyof ObsidianVersionInfo['installers']|undefined;
@@ -323,7 +323,7 @@ export class ObsidianLauncher {
         installerVersion: string,
         opts: {platform?: NodeJS.Platform, arch?: NodeJS.Architecture} = {},
     ): Promise<ObsidianInstallerInfo & {url: string}> {
-        const {platform, arch} = _.merge({}, opts, currentPlatform);
+        const {platform, arch} = _.defaults({}, opts, currentPlatform);
         const versionInfo = await this.getVersionInfo(installerVersion);
         const key = this.getInstallerKey(versionInfo, {platform, arch});
         if (key) {
@@ -347,7 +347,7 @@ export class ObsidianLauncher {
         installerVersion: string,
         opts: {platform?: NodeJS.Platform, arch?: NodeJS.Architecture} = {},
     ): Promise<string> {
-        const {platform, arch} = _.merge({}, opts, currentPlatform);
+        const {platform, arch} = _.defaults({}, opts, currentPlatform);
         const versionInfo = await this.getVersionInfo(installerVersion);
         installerVersion = versionInfo.version;
         const installerInfo = await this.getInstallerInfo(installerVersion, {platform, arch});
@@ -442,7 +442,7 @@ export class ObsidianLauncher {
         installerVersion: string,
         opts: {platform?: NodeJS.Platform, arch?: NodeJS.Architecture} = {},
     ): Promise<string> {
-        const {platform, arch} = _.merge({}, opts, currentPlatform);
+        const {platform, arch} = _.defaults({}, opts, currentPlatform);
         const installerInfo = await this.getInstallerInfo(installerVersion, {platform, arch});
         const cacheDir = path.join(this.cacheDir, `electron-chromedriver/${platform}-${arch}/${installerInfo.electron}`);
         let chromedriverPath: string;
