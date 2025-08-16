@@ -496,8 +496,6 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
                         window.location.replace('http://localhost/_capacitor_file_/not-a-file');
                     });
 
-                    await this.pause(2000);
-
                     // while Obsidian is down, modify the vault files to setup plugins and themes
                     const local = path.join(oldObsidianOptions.vaultCopy!, ".obsidian");
                     const localCommunityPlugins = path.join(local, "community-plugins.json");
