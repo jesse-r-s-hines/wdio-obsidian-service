@@ -111,7 +111,7 @@ export async function obsidianApiLogin(opts: {
             throw Error(
                 "Obsidian Insiders account is required to download Obsidian beta versions. Either set the " +
                 "OBSIDIAN_EMAIL and OBSIDIAN_PASSWORD env vars (.env file is supported) or pre-download the " +
-                "Obsidian beta with `npx obsidian-launcher download --type app -v <version>`"
+                "Obsidian beta with `npx obsidian-launcher download app -v <version>`"
             )
         }
     }
@@ -147,7 +147,7 @@ export async function obsidianApiLogin(opts: {
                 throw Error(
                     "Can't login with 2FA in a non-interactive session. To download Obsidian beta versions, either " +
                     "disable 2FA on your account or pre-download the Obsidian beta with " +
-                    "`npx obsidian-launcher download --type app -v <version>`"
+                    "`npx obsidian-launcher download app -v <version>`"
                 );
             }
         } else if (["please wait", "try again"].some(m => error?.includes(m))) {

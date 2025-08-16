@@ -114,14 +114,16 @@ Options:
 ### download
 Download Obsidian to the cache.
 
-Pre-download Obsidian to the cache. Pass --type to select what variant to download, which can be one of:
+Pre-download Obsidian to the cache. Pass asset to select what variant to download, which can be one of:
 - app: Download the desktop app JS bundle
 - installer: Download the desktop installer
-- desktop: Download both the desktop app and installer (the default)
+- desktop: Download both the desktop app bundle and installer (the default)
 - apk: Download the mobile app APK file
 
+Arguments:
+- `asset`: Obsidian asset to download (default: "desktop")
+
 Options:
-- `--type <version>`: Type to download (default: "desktop")
 - `-v, --version <version>`: Obsidian version (default: "latest")
 - `-i, --installer <version>`: Obsidian installer version (default: "earliest")
 - `--platform <platform>`: Platform of the installer, one of linux, win32, darwin. (default: system platform)

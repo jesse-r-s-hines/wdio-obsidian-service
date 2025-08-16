@@ -225,21 +225,21 @@ program
     .description(
         "Download Obsidian to the cache.\n" +
         "\n" + 
-        "Pre-download Obsidian to the cache. Pass --type to select what variant to download, which can be one of:\n" +
+        "Pre-download Obsidian to the cache. Pass asset to select what variant to download, which can be one of:\n" +
         "  - app: Download the desktop app JS bundle\n" +
         "  - installer: Download the desktop installer\n" +
         "  - desktop: Download both the desktop app and installer (the default)\n" +
         "  - apk: Download the mobile app APK file"
     )
-    .option('--type <version>', '"Type to download', "desktop")
+    .argument('[asset]', 'Obsidian asset to download', "desktop")
     .option('-v, --version <version>', 'Obsidian version (default: "latest")')
     .option('-i, --installer <version>', 'Obsidian installer version (default: "earliest")')
     .option('--platform <platform>', "Platform of the installer, one of linux, win32, darwin. (default: system platform)")
     .option('--arch <arch>', "Architecture of the installer, one of arm64, ia32, x64. (default: system arch)")
     .option(...cacheOptionArgs)
-    .action(async (opts) => {
+    .action(async (asset, opts) => {
         const launcher = getLauncher(opts);
-        if (opts.type == "desktop") {
+        if (asset == "desktop") {
             const [appVersion, installerVersion] = await launcher.resolveVersion(
                 opts.version ?? "latest",
                 opts.installerVersion ?? "earliest",
@@ -250,19 +250,19 @@ program
             console.log(`Downloaded Obsidian installer to ${installerPath}`)
             const appPath = await launcher.downloadApp(appVersion);
             console.log(`Downloaded Obsidian app to ${appPath}`)
-        } else if (opts.type == "app") {
+        } else if (asset == "app") {
             const appPath = await launcher.downloadApp(opts.version ?? "latest");
             console.log(`Downloaded Obsidian app to ${appPath}`)
-        } else if (opts.type == "installer") {
+        } else if (asset == "installer") {
             const installerPath = await launcher.downloadInstaller(opts.installer ?? opts.version ?? "latest", {
                 platform: opts.platform, arch: opts.arch,
             });
             console.log(`Downloaded Obsidian installer to ${installerPath}`)
-        } else if (opts.type == "apk") {
+        } else if (asset == "apk") {
             const apkPath = await launcher.downloadAndroid(opts.version ?? "latest");
             console.log(`Downloaded Obsidian apk to ${apkPath}`)
         } else {
-            throw Error(`Invalid type ${opts.type}`)
+            throw Error(`Invalid asset type ${asset}`)
         }
     })
 
