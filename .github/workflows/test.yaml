@@ -37,6 +37,8 @@ jobs:
           node-version: "18.x"
           cache: 'pnpm'
       - run: pnpm install --frozen-lockfile
+      - name: Build
+        run: pnpm run --aggregate-output --reporter-hide-prefix build
       - name: Run Lint
         run: pnpm run lint
 
