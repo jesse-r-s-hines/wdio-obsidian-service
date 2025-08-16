@@ -14,6 +14,7 @@ function compareVersionLists(actual: DeepPartial<ObsidianVersionInfo>[], expecte
     expect(actual.map(v => v.version)).to.eql(expected.map(v => v.version));
     for (let i = 0; i < actual.length; i++) {
         expect(actual[i]).to.eql(expected[i]);
+        expect(JSON.stringify(actual[i])).to.eql(JSON.stringify(expected[i]));
     }
 }
 
