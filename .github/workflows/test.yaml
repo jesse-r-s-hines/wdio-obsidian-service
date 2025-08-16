@@ -6,6 +6,8 @@ on:
     branches: [ "main" ]
   workflow_dispatch:
 
+permissions: {}
+
 jobs:
   pre-check: # Check and avoid running tests on the same code (e.g. after pr merge)
     runs-on: ubuntu-latest
