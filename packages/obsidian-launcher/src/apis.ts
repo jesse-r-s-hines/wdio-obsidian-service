@@ -172,8 +172,8 @@ export async function obsidianApiLogin(opts: {
                 `OBSIDIAN_EMAIL='${email}'\n` +
                 `OBSIDIAN_PASSWORD='${password}'\n`
             );
+            console.log(`Saved Obsidian credentials to ${path.relative(process.cwd(), savePath)}`);
         }
-        console.log(`Saved Obsidian credentials to ${path.relative(process.cwd(), savePath)}`);
     }
 
     return signin.token;
