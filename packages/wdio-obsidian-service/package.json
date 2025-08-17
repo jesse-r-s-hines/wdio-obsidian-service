@@ -9,6 +9,10 @@
         "wdio-service",
         "tests"
     ],
+    "publishConfig": {
+        "access": "public",
+        "provenance": true
+    },
     "type": "module",
     "main": "./dist/index.js",
     "types": "./dist/index.d.ts",
