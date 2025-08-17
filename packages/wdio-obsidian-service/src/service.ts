@@ -63,10 +63,10 @@ function selectPlugins(currentPlugins: DownloadedPluginEntry[], selection?: stri
 /** Returns a theme list with only the selected theme enabled. */
 function selectThemes(currentThemes: DownloadedThemeEntry[], selection?: string): DownloadedThemeEntry[] {
     if (selection !== undefined) {
-        if (selection != "default" && currentThemes.every((t: any) => t.name != selection)) {
+        if (selection != "default" && currentThemes.every(t => t.name != selection)) {
             throw Error(`Unknown theme: ${selection}`);
         }
-        return currentThemes.map((t: any) => ({...t, enabled: selection != 'default' && t.name === selection}));
+        return currentThemes.map(t => ({...t, enabled: selection != 'default' && t.name === selection}));
     } else {
         return currentThemes;
     }
@@ -233,7 +233,7 @@ export class ObsidianLauncherService implements Services.ServiceInstance {
                         allowedIps: [],
                         ...cap['wdio:chromedriverOptions'],
                         binary: chromedriverPath,
-                    } as any
+                    } as WebdriverIO.ChromedriverOptions;
                     cap["wdio:enforceWebDriverClassic"] = true; // electron doesn't support BiDi yet.
                 }
             }

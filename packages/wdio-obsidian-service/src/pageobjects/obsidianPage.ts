@@ -3,10 +3,11 @@ import * as fsAsync from "fs/promises"
 import * as crypto from "crypto";
 import { fileURLToPath } from "url";
 import { TFile } from "obsidian";
+import _ from "lodash";
 import { OBSIDIAN_CAPABILITY_KEY, NormalizedObsidianCapabilityOptions } from "../types.js";
 import { BasePage } from "./basePage.js";
 import { isAppium, normalizePath, isHidden, isText } from "../utils.js";
-import _ from "lodash";
+import { AppInternal } from "../obsidianTypes.js";
 
 
 /**
@@ -112,7 +113,7 @@ class ObsidianPage extends BasePage {
      */
     async enablePlugin(pluginId: string): Promise<void> {
         await this.browser.executeObsidian(
-            async ({app}, pluginId) => await (app as any).plugins.enablePluginAndSave(pluginId),
+            async ({app}, pluginId) => await (app as AppInternal).plugins.enablePluginAndSave(pluginId),
             pluginId,
         );
     }
@@ -122,7 +123,7 @@ class ObsidianPage extends BasePage {
      */
     async disablePlugin(pluginId: string): Promise<void> {
         await this.browser.executeObsidian(
-            async ({app}, pluginId) => await (app as any).plugins.disablePluginAndSave(pluginId),
+            async ({app}, pluginId) => await (app as AppInternal).plugins.disablePluginAndSave(pluginId),
             pluginId,
         );
     }
@@ -133,7 +134,7 @@ class ObsidianPage extends BasePage {
     async setTheme(themeName: string): Promise<void> {
         themeName = themeName == 'default' ? '' : themeName;
         await this.browser.executeObsidian(
-            async ({app}, themeName) => await (app as any).customCss.setTheme(themeName),
+            async ({app}, themeName) => await (app as AppInternal).customCss.setTheme(themeName),
             themeName,
         )
     }
@@ -369,7 +370,7 @@ class ObsidianPage extends BasePage {
                 }
                 for (const file of files) {
                     if (!file.startsWith(configDir + "/")) {
-                        let fileHash = (app.metadataCache as any).getFileInfo(file)?.hash;
+                        let fileHash = (app as AppInternal).metadataCache.getFileInfo(file)?.hash;
                         if (!fileHash) { // hidden files etc. aren't in Obsidian's metadata cache
                             fileHash = await hash(await app.vault.adapter.readBinary(file));
                         }

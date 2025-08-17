@@ -23,7 +23,11 @@ export async function startWdioSession(
     const testRunnerOptions: Options.Testrunner = {
         cacheDir: params.cacheDir,
     };
-    const launcherService = new ObsidianLauncherService(serviceOptions, [capabilities] as any, testRunnerOptions);
+    const launcherService = new ObsidianLauncherService(
+        serviceOptions,
+        [capabilities] as WebdriverIO.Capabilities,
+        testRunnerOptions,
+    );
     const workerService = new ObsidianWorkerService(serviceOptions, capabilities, testRunnerOptions);
 
     await launcherService.onPrepare(testRunnerOptions, [capabilities]);

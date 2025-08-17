@@ -25,7 +25,7 @@ export async function fileExists(path: string) {
 export function getAppiumOptions(
     cap: WebdriverIO.Capabilities,
 ): Exclude<WebdriverIO.Capabilities['appium:options'], undefined> {
-    let result: any = _.pickBy(cap, (v, k) => k.startsWith("appium:") && k != 'appium:options');
+    let result = _.pickBy(cap, (v, k) => k.startsWith("appium:") && k != 'appium:options');
     result = _.mapKeys(result, (v, k) => k.slice(7))
     return {...result, ...cap['appium:options']};
 }
