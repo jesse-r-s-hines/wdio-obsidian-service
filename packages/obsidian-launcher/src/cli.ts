@@ -3,7 +3,7 @@ import { Command } from 'commander';
 import _ from "lodash";
 import { ObsidianLauncher } from "./launcher.js"
 import { watchFiles } from './utils.js';
-import { PluginEntry, ThemeEntry } from "./types.js";
+import { ObsidianVersionList, PluginEntry, ThemeEntry } from "./types.js";
 import path from "path"
 import fsAsync from "fs/promises";
 
@@ -26,11 +26,13 @@ function parsePlugins(plugins: string[] = []): PluginEntry[] {
 
 function parseThemes(themes: string[] = []): ThemeEntry[] {
     return themes.map((t: string, i: number) => {
-        let result: ThemeEntry
+        let result: ThemeEntry;
         if (t.startsWith("name:")) {
-            result = {name: t.slice(5)};
+            const [name, version] = t.slice(5).split('=');
+            result = {name, version};
         } else if (t.startsWith("repo:")) {
-            result = {repo: t.slice(5)};
+            const [repo, version] = t.slice(5).split('=');
+            result = {repo, version};
         } else if (t.startsWith("path:")) {
             result = {path: t.slice(5)};
         } else {
@@ -41,6 +43,10 @@ function parseThemes(themes: string[] = []): ThemeEntry[] {
 }
 
 const collectOpt = (curr: string, prev?: string[]) => [...(prev ?? []), curr];
+
+function getLauncher(opts: {cache: string}) {
+    return new ObsidianLauncher({cacheDir: opts.cache, interactive: !!process.stdin.isTTY});
+}
 
 const versionOptionArgs = [
     '-v, --version <version>',
@@ -70,58 +76,28 @@ const themeOptionArgs = [
 const program = new Command("obsidian-launcher");
 
 program
-    .command("download")
-    .description("Download Obsidian to the cache")
-    .option(...cacheOptionArgs)
-    .option(...versionOptionArgs)
-    .option(...installerOptionArgs)
-    .action(async (opts) => {
-        const launcher = new ObsidianLauncher({cacheDir: opts.cache, interactive: true});
-        const [appVersion, installerVersion] = await launcher.resolveVersion(opts.version, opts.installerVersion);
-        const installerPath = await launcher.downloadInstaller(installerVersion);
-        console.log(`Downloaded Obsidian installer to ${installerPath}`)
-        const appPath = await launcher.downloadApp(appVersion);
-        console.log(`Downloaded Obsidian app to ${appPath}`)
-    })
-
-program
-    .command("install")
-    .description("Install plugins and themes into an Obsidian vault")
-    .argument('<vault>', 'Vault to install into')
-    .option(...cacheOptionArgs)
-    .option(...pluginOptionArgs)
-    .option(...themeOptionArgs)
-    .action(async (vault, opts) => {
-        const launcher = new ObsidianLauncher({cacheDir: opts.cache, interactive: true});
-        await launcher.installPlugins(vault, parsePlugins(opts.plugin));
-        await launcher.installThemes(vault, parseThemes(opts.theme));
-        console.log(`Installed plugins and themes into ${vault}`)
-    })
-
-
-program
     .command("launch")
     .summary("Download and launch Obsidian")
     .description(
         "Download and launch Obsidian, opening the specified vault.\n" +
         "\n" +
-        "The Obsidian instance will have a sandboxed configuration directory. You can use this command to test " +
+        "The Obsidian instance will have a sandboxed configuration directory. You can use this command to compare " +
         "plugin behavior on different versions of Obsidian without messing with your system installation of " + 
         "Obsidian.\n" +
         "\n" +
-        "You can pass arguments through to the Obsidian executable using\n" +
-        "    npx obsidian-launcher ./vault -- --remote-debugging-port=9222"
+        "You can pass arguments through to the Obsidian executable using `--`:\n" +
+        "    npx obsidian-launcher launch ./vault -- --remote-debugging-port=9222"
     )
     .argument('[vault]', 'Vault to open')
     .argument('[obsidian-args...]', 'Arguments to pass to Obsidian')
-    .option(...cacheOptionArgs)
     .option(...versionOptionArgs)
     .option(...installerOptionArgs)
     .option(...pluginOptionArgs)
     .option(...themeOptionArgs)
     .option('--copy', "Copy the vault first")
-    .action(async (vault: string|undefined, obsidianArgs: string[], opts: any) => {
-        const launcher = new ObsidianLauncher({cacheDir: opts.cache, interactive: true});
+    .option(...cacheOptionArgs)
+    .action(async (vault: string|undefined, obsidianArgs: string[], opts) => {
+        const launcher = getLauncher(opts);
         const {proc} = await launcher.launch({
             appVersion: opts.version, installerVersion: opts.installer,
             vault: vault,
@@ -149,14 +125,14 @@ program
     )
     .argument('[vault]', 'Vault to open')
     .argument('[obsidian-args...]', 'Arguments to pass to Obsidian')
-    .option(...cacheOptionArgs)
     .option(...versionOptionArgs)
     .option(...installerOptionArgs)
     .option(...pluginOptionArgs)
     .option(...themeOptionArgs)
     .option('--copy', "Copy the vault first")
-    .action(async (vault: string, obsidianArgs: string[], opts: any) => {
-        const launcher = new ObsidianLauncher({cacheDir: opts.cache, interactive: true});
+    .option(...cacheOptionArgs)
+    .action(async (vault: string, obsidianArgs: string[], opts) => {
+        const launcher = getLauncher(opts);
         // Normalize the plugins and themes
         const plugins = await launcher.downloadPlugins(parsePlugins(opts.plugin));
         const themes = await launcher.downloadThemes(parseThemes(opts.theme));
@@ -232,6 +208,69 @@ program
     })
 
 program
+    .command("install")
+    .description("Install plugins and themes into an Obsidian vault")
+    .argument('<vault>', 'Vault to install into')
+    .option(...pluginOptionArgs)
+    .option(...themeOptionArgs)
+    .option(...cacheOptionArgs)
+    .action(async (vault, opts) => {
+        const launcher = getLauncher(opts);
+        const plugins = parsePlugins(opts.plugin);
+        const themes = parseThemes(opts.theme);
+        await launcher.installPlugins(vault, plugins);
+        await launcher.installThemes(vault, themes);
+        console.log(`Installed plugins/themes into vault.`)
+    })
+
+program
+    .command("download")
+    .summary("Download Obsidian to the cache")
+    .description(
+        "Download Obsidian to the cache.\n" +
+        "\n" + 
+        "Pre-download Obsidian to the cache. Pass asset to select what variant to download, which can be one of:\n" +
+        "  - app: Download the desktop app JS bundle\n" +
+        "  - installer: Download the desktop installer\n" +
+        "  - desktop: Download both the desktop app and installer (the default)\n" +
+        "  - apk: Download the mobile app APK file"
+    )
+    .argument('[asset]', 'Obsidian asset to download', "desktop")
+    .option('-v, --version <version>', 'Obsidian version (default: "latest")')
+    .option('-i, --installer <version>', 'Obsidian installer version (default: "earliest")')
+    .option('--platform <platform>', "Platform of the installer, one of linux, win32, darwin. (default: system platform)")
+    .option('--arch <arch>', "Architecture of the installer, one of arm64, ia32, x64. (default: system arch)")
+    .option(...cacheOptionArgs)
+    .action(async (asset, opts) => {
+        const launcher = getLauncher(opts);
+        if (asset == "desktop") {
+            const [appVersion, installerVersion] = await launcher.resolveVersion(
+                opts.version ?? "latest",
+                opts.installerVersion ?? "earliest",
+            );
+            const installerPath = await launcher.downloadInstaller(installerVersion, {
+                platform: opts.platform, arch: opts.arch,
+            });
+            console.log(`Downloaded Obsidian installer to ${installerPath}`)
+            const appPath = await launcher.downloadApp(appVersion);
+            console.log(`Downloaded Obsidian app to ${appPath}`)
+        } else if (asset == "app") {
+            const appPath = await launcher.downloadApp(opts.version ?? "latest");
+            console.log(`Downloaded Obsidian app to ${appPath}`)
+        } else if (asset == "installer") {
+            const installerPath = await launcher.downloadInstaller(opts.installer ?? opts.version ?? "latest", {
+                platform: opts.platform, arch: opts.arch,
+            });
+            console.log(`Downloaded Obsidian installer to ${installerPath}`)
+        } else if (asset == "apk") {
+            const apkPath = await launcher.downloadAndroid(opts.version ?? "latest");
+            console.log(`Downloaded Obsidian apk to ${apkPath}`)
+        } else {
+            throw Error(`Invalid asset type ${asset}`)
+        }
+    })
+
+program
     .command("update-version-list")
     .summary("Collect Obsidian version information into a single file")
     .description(
@@ -247,7 +286,7 @@ program
     .option(...cacheOptionArgs)
     .option('--max-instances <count>', "Number of parallel Obsidian instances to launch when checking Electron versions", "1")
     .action(async (dest, opts) => {
-        let versionInfos: any;
+        let versionInfos: ObsidianVersionList|undefined;
         try {
             versionInfos = JSON.parse(await fsAsync.readFile(dest, "utf-8"))
         } catch {
@@ -258,7 +297,7 @@ program
             throw Error(`Invalid number ${opts.maxInstances}`)
         }
 
-        const launcher = new ObsidianLauncher({cacheDir: opts.cache, interactive: true});
+        const launcher = getLauncher(opts);
         versionInfos = await launcher.updateVersionList(versionInfos, { maxInstances });
         await fsAsync.writeFile(dest, JSON.stringify(versionInfos, undefined, 4) + "\n");
         console.log(`Wrote updated version information to ${dest}`)

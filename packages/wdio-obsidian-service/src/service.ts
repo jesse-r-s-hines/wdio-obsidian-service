@@ -12,7 +12,9 @@ import { browserCommands } from "./browserCommands.js"
 import {
     ObsidianServiceOptions, NormalizedObsidianCapabilityOptions, OBSIDIAN_CAPABILITY_KEY,
 } from "./types.js"
-import { isAppium, uploadFolder, downloadFile, uploadFile, getAppiumOptions, fileExists } from "./utils.js";
+import {
+    isAppium, appiumUploadFiles, appiumDownloadFile, getAppiumOptions, fileExists,
+} from "./utils.js";
 import semver from "semver"
 import _ from "lodash"
 
@@ -61,13 +63,17 @@ function selectPlugins(currentPlugins: DownloadedPluginEntry[], selection?: stri
 /** Returns a theme list with only the selected theme enabled. */
 function selectThemes(currentThemes: DownloadedThemeEntry[], selection?: string): DownloadedThemeEntry[] {
     if (selection !== undefined) {
-        if (selection != "default" && currentThemes.every((t: any) => t.name != selection)) {
+        if (selection != "default" && currentThemes.every(t => t.name != selection)) {
             throw Error(`Unknown theme: ${selection}`);
         }
-        return currentThemes.map((t: any) => ({...t, enabled: selection != 'default' && t.name === selection}));
+        return currentThemes.map(t => ({...t, enabled: selection != 'default' && t.name === selection}));
     } else {
         return currentThemes;
     }
+}
+
+function getNormalizedObsidianOptions(cap: WebdriverIO.Capabilities): NormalizedObsidianCapabilityOptions {
+    return cap[OBSIDIAN_CAPABILITY_KEY] as NormalizedObsidianCapabilityOptions;
 }
 
 
@@ -171,6 +177,9 @@ export class ObsidianLauncherService implements Services.ServiceInstance {
                     cap['appium:app'] = apk;
                     cap['appium:chromedriverExecutableDir'] = chromedriverDir;
                     cap["wdio:enforceWebDriverClassic"] = true; // BiDi doesn't seem to work on Obsidian mobile
+                    if (!getAppiumOptions(cap)['noReset']) {
+                        console.warn("Note: For best performance set noReset to true, wdio-obsidian-service will handle resetting Obsidian between tests.")
+                    }
                 } else {
                     const [, installerVersion] = await this.obsidianLauncher.resolveVersion(
                         appVersion, obsidianOptions.installerVersion ?? "earliest",
@@ -224,7 +233,7 @@ export class ObsidianLauncherService implements Services.ServiceInstance {
                         allowedIps: [],
                         ...cap['wdio:chromedriverOptions'],
                         binary: chromedriverPath,
-                    } as any
+                    } as WebdriverIO.ChromedriverOptions;
                     cap["wdio:enforceWebDriverClassic"] = true; // electron doesn't support BiDi yet.
                 }
             }
@@ -268,7 +277,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
      * Creates a copy of the vault with plugins and themes installed
      */
     private async setupVault(cap: WebdriverIO.Capabilities) {
-        const obsidianOptions = cap[OBSIDIAN_CAPABILITY_KEY] as NormalizedObsidianCapabilityOptions;
+        const obsidianOptions = getNormalizedObsidianOptions(cap);
         let vaultCopy: string|undefined;
         if (obsidianOptions.vault != undefined) {
             log.info(`Opening vault ${obsidianOptions.vault}`);
@@ -289,7 +298,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
      * Sets up the --user-data-dir for the Electron app. Sets the obsidian.json in the dir to open the vault on boot.
      */
     private async electronSetupConfigDir(cap: WebdriverIO.Capabilities) {
-        const obsidianOptions = cap[OBSIDIAN_CAPABILITY_KEY] as NormalizedObsidianCapabilityOptions;
+        const obsidianOptions = getNormalizedObsidianOptions(cap);
         const configDir = await this.obsidianLauncher.setupConfigDir({
             appVersion: obsidianOptions.appVersion, installerVersion: obsidianOptions.installerVersion,
             appPath: obsidianOptions.appPath,
@@ -313,16 +322,82 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
     }
 
     /**
+     * Sets up the Obsidian app. Installs and launches it if needed, and sets permissions and contexts.
+     * 
+     * You can configure Appium to install and launch the app for you. However, if you do that it reboots the app after
+     * every session/spec which is really slow. So we are handling the app setup manually here.
+     */
+    private async appiumSetupApp() {
+        const browser = this.browser!;
+        const appiumOptions = getAppiumOptions(browser.requestedCapabilities);
+        const obsidianOptions = getNormalizedObsidianOptions(browser.requestedCapabilities);
+        const appId = "md.obsidian";
+
+        // install/reinstall Obsidian if needed
+        const dumpsys: string = await browser.execute("mobile: shell", {command: "dumpsys", args: ["package", appId]});
+        const installedObsidianVersion = dumpsys.match(/versionName[=:](.*)$/m)?.[1]?.trim();
+        if (installedObsidianVersion != obsidianOptions.appVersion) {
+            await browser.execute('mobile: terminateApp', {appId}); // terminate app (if running)
+            await browser.execute('mobile: removeApp', {appId, keepData: false}); // uninstall (if present)
+            await browser.execute('mobile: installApp', {
+                appPath: appiumOptions.app, // the APK
+                timeout: appiumOptions.androidInstallTimeout, // respect appium configuration
+                grantPermissions: true, // this and autoGrantPermissions don't seem to really work, see below
+            });
+        }
+
+        // start app if needed
+        const appState: number = await browser.execute("mobile: queryAppState", {appId});
+        if (appState < 4) { // 0: not installed, 1: not running, 3: running in background, 4: running in foreground
+            await browser.execute("mobile: activateApp", {appId});
+        }
+
+        // grant Obsidian the permissions it needs, mainly file access.
+        // appium:autoGrantPermissions is supposed to automatically grant everything it needs, but I can't get it to
+        // work. The "mobile: changePermissions" "all" option also doesn't seem to work here. I have to explicitly list
+        // the permissions and use the "appops" target. See https://github.com/appium/appium/issues/19991
+        // I'm calling "mobile: changePermissions" "all" as well just in case it is actually doing something
+        await browser.execute("mobile: changePermissions", {
+            action: "grant",
+            appPackage: appId,
+            permissions: "all",
+        });
+        await browser.execute("mobile: changePermissions", {
+            action: "allow",
+            appPackage: appId,
+            permissions: [ // these are from apk AndroidManifest.xml (extracted with apktool)
+                "READ_EXTERNAL_STORAGE", "WRITE_EXTERNAL_STORAGE", "MANAGE_EXTERNAL_STORAGE",
+            ],
+            target: "appops", // requires appium --allow-insecure adb_shell
+        });
+
+        // switch to the webview context
+        const context = "WEBVIEW_md.obsidian";
+        await browser.waitUntil(async () => (await browser.getContexts() as string[]).includes(context));
+        await browser.switchContext(context);
+
+        // Clear app state
+        await browser.execute(() => { // in case tests get interrupted during the `_capacitor_file_` bit
+            if (window.location.href != "http://localhost/") {
+                window.location.replace('http://localhost/');
+            }
+        })
+        if (!obsidianOptions.vault) { // skip if vault is set, as we'll clear stat when we open the new vault
+            await this.appiumCloseVault();
+        }
+    }
+
+    /**
      * Opens the vault in appium.
      */
     private async appiumOpenVault() {
         const browser = this.browser!;
-        const obsidianOptions: NormalizedObsidianCapabilityOptions = browser.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY];
+        const obsidianOptions = getNormalizedObsidianOptions(browser.requestedCapabilities);
         const androidVault = `${this.androidVaultDir}/${path.basename(obsidianOptions.vaultCopy!)}`;
         // TODO: Capabilities is not really the right place to be storing state like vaultCopy and uploadVault
         obsidianOptions.uploadedVault = androidVault;
         // transfer the vault to the device
-        await uploadFolder(browser, obsidianOptions.vaultCopy!, androidVault);
+        await appiumUploadFiles(browser, {src: obsidianOptions.vaultCopy!, dest: androidVault});
 
         // open vault by setting the localStorage keys and relaunching Obsidian
         // on appium restarting the app with appium:fullReset is *really* slow. And, unlike electron we can actually
@@ -339,32 +414,16 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
     }
 
     /**
-     * Sets appium app permissions and context
+     * Close any open vault and go back to the vault switcher
      */
-    private async appiumSetContext() {
+    private async appiumCloseVault() {
         const browser = this.browser!;
-        // grant Obsidian the permissions it needs, mainly file access.
-        // appium:autoGrantPermissions is supposed to automatically grant everything it needs, but I can't get it to
-        // work. The "mobile: changePermissions" "all" option also doesn't seem to work here. I have to explicitly list
-        // the permissions and use the "appops" target. See https://github.com/appium/appium/issues/19991
-        // I'm calling "mobile: changePermissions" "all" as well just in case it is actually doing something
-
-        await browser.execute("mobile: changePermissions", {
-            action: "grant",
-            appPackage: "md.obsidian",
-            permissions: "all",
+        await browser.execute(async () => {
+            if (localStorage.length > 0) { // skip if we're already on the vault switcher
+                localStorage.clear();
+                location.reload();
+            }
         });
-
-        await browser.execute("mobile: changePermissions", {
-            action: "allow",
-            appPackage: "md.obsidian",
-            permissions: [ // these are from apk AndroidManifest.xml (extracted with apktool)
-                "READ_EXTERNAL_STORAGE", "WRITE_EXTERNAL_STORAGE", "MANAGE_EXTERNAL_STORAGE",
-            ],
-            target: "appops", // requires appium --allow-insecure adb_shell
-        });
-
-        await browser.switchContext("WEBVIEW_md.obsidian");
     }
 
     /**
@@ -372,7 +431,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
      */
     private async prepareApp() {
         const browser = this.browser!;
-        const obsidianOptions: NormalizedObsidianCapabilityOptions = browser.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY];
+        const obsidianOptions = getNormalizedObsidianOptions(browser.requestedCapabilities);
 
         if (obsidianOptions.emulateMobile && obsidianOptions.vault != undefined) {
             // I don't think this is technically necessary, but when you set the window size via emulateMobile it sets
@@ -411,7 +470,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
             this: WebdriverIO.Browser,
             {vault, plugins, theme} = {},
         ) {
-            const oldObsidianOptions: NormalizedObsidianCapabilityOptions = this.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY];
+            const oldObsidianOptions = getNormalizedObsidianOptions(this.requestedCapabilities);
             const selectedPlugins = selectPlugins(oldObsidianOptions.plugins, plugins);
             const selectedThemes = selectThemes(oldObsidianOptions.themes, theme);
             if (!vault && oldObsidianOptions.vaultCopy == undefined) {
@@ -437,8 +496,6 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
                         window.location.replace('http://localhost/_capacitor_file_/not-a-file');
                     });
 
-                    await this.pause(2000);
-
                     // while Obsidian is down, modify the vault files to setup plugins and themes
                     const local = path.join(oldObsidianOptions.vaultCopy!, ".obsidian");
                     const localCommunityPlugins = path.join(local, "community-plugins.json");
@@ -447,19 +504,16 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
                     const remoteCommunityPlugins = `${remote}/community-plugins.json`;
                     const remoteAppearance = `${remote}/appearance.json`;
 
-                    await downloadFile(this, remoteCommunityPlugins, localCommunityPlugins).catch(() => {});
-                    await downloadFile(this, remoteAppearance, localAppearance).catch(() => {});
+                    await appiumDownloadFile(this, remoteCommunityPlugins, localCommunityPlugins).catch(() => {});
+                    await appiumDownloadFile(this, remoteAppearance, localAppearance).catch(() => {});
                     await service.obsidianLauncher.setupVault({
                         vault: oldObsidianOptions.vaultCopy!, copy: false,
                         plugins: selectedPlugins, themes: selectedThemes,
                     });
-                    if (await fileExists(localCommunityPlugins)) {
-                        await uploadFile(this, localCommunityPlugins, remoteCommunityPlugins);
-                    }
-                    if (await fileExists(localAppearance)) {
-                        await uploadFile(this, localAppearance, remoteAppearance);
-                    }
-                
+                    let files = [localCommunityPlugins, localAppearance];
+                    files = (await Promise.all(files.map(async f => await fileExists(f) ? f : ""))).filter(f => f);
+                    await appiumUploadFiles(this, {src: local, dest: remote, files});
+
                     // switch the app back
                     await this.execute(() => {
                         window.location.replace('http://localhost/');
@@ -499,7 +553,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
     }
 
     /**
-     * Handles vault and sandboxed config directory setup.
+     * Runs before the session and browser have started.
      */
     async beforeSession(config: Options.Testrunner, cap: WebdriverIO.Capabilities) {
         try {
@@ -516,7 +570,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
     }
 
     /**
-     * Setup custom browser commands.
+     * Runs after session and browser have started, but before tests.
      */
     async before(cap: WebdriverIO.Capabilities, specs: unknown, browser: WebdriverIO.Browser) {
         this.browser = browser;
@@ -535,7 +589,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
             }
 
             if (isAppium(browser.requestedCapabilities)) {
-                await this.appiumSetContext();
+                await this.appiumSetupApp();
                 if (cap[OBSIDIAN_CAPABILITY_KEY].vault) {
                     await this.appiumOpenVault();
                 }
@@ -546,16 +600,15 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
         }
     }
 
+    /** Runs after tests are done, but before the session is shut down */
     async after(result: number, cap: WebdriverIO.Capabilities) {
         const browser = this.browser!;
+        if (!cap[OBSIDIAN_CAPABILITY_KEY]) return;
+
         if (isAppium(cap)) {
-            const packageName = await browser.getCurrentPackage();
-            await browser.execute('mobile: terminateApp', { appId: packageName });
-            // "mobile: deleteFile" doesn't work on folders
-            // "mobile:shell" requires appium --allow-insecure adb_shell
-            await browser.execute("mobile: shell", {
-                command: "rm", args: ["-rf", this.androidVaultDir],
-            });
+            await this.appiumCloseVault();
+            // "mobile: deleteFile" doesn't work on folders. "mobile:shell" requires appium --allow-insecure adb_shell
+            await browser.execute("mobile: shell", {command: "rm", args: ["-rf", this.androidVaultDir]});
         }
     }
 

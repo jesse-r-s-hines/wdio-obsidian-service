@@ -24,6 +24,7 @@
         "appium-uiautomator2-driver": "^4.2.7",
         "eslint": "^9.32.0",
         "serve": "^14.2.4",
+        "tsx": "^4.20.3",
         "typedoc": "^0.28.9",
         "typescript": "^5.9.2",
         "typescript-eslint": "^8.39.0"

@@ -3,21 +3,12 @@ import * as fsAsync from "fs/promises"
 import * as crypto from "crypto";
 import { fileURLToPath } from "url";
 import { TFile } from "obsidian";
+import _ from "lodash";
 import { OBSIDIAN_CAPABILITY_KEY, NormalizedObsidianCapabilityOptions } from "../types.js";
 import { BasePage } from "./basePage.js";
-import { isAppium } from "../utils.js";
-import _ from "lodash";
+import { isAppium, normalizePath, isHidden, isText } from "../utils.js";
+import { AppInternal } from "../obsidianTypes.js";
 
-
-/** Returns true if a vault file path is hidden (either it or one of it's parent directories starts with ".") */
-function isHidden(file: string) {
-    return file.split("/").some(p => p.startsWith("."))
-}
-
-/** Returns true if this is a simple text file */
-function isText(file: string) {
-    return [".md", ".json", ".txt", ".js"].includes(path.extname(file).toLocaleLowerCase());
-}
 
 /**
  * Class with various helper methods for writing Obsidian tests using the
@@ -122,7 +113,7 @@ class ObsidianPage extends BasePage {
      */
     async enablePlugin(pluginId: string): Promise<void> {
         await this.browser.executeObsidian(
-            async ({app}, pluginId) => await (app as any).plugins.enablePluginAndSave(pluginId),
+            async ({app}, pluginId) => await (app as AppInternal).plugins.enablePluginAndSave(pluginId),
             pluginId,
         );
     }
@@ -132,7 +123,7 @@ class ObsidianPage extends BasePage {
      */
     async disablePlugin(pluginId: string): Promise<void> {
         await this.browser.executeObsidian(
-            async ({app}, pluginId) => await (app as any).plugins.disablePluginAndSave(pluginId),
+            async ({app}, pluginId) => await (app as AppInternal).plugins.disablePluginAndSave(pluginId),
             pluginId,
         );
     }
@@ -143,7 +134,7 @@ class ObsidianPage extends BasePage {
     async setTheme(themeName: string): Promise<void> {
         themeName = themeName == 'default' ? '' : themeName;
         await this.browser.executeObsidian(
-            async ({app}, themeName) => await (app as any).customCss.setTheme(themeName),
+            async ({app}, themeName) => await (app as AppInternal).customCss.setTheme(themeName),
             themeName,
         )
     }
@@ -330,7 +321,7 @@ class ObsidianPage extends BasePage {
         vaults = vaults.length == 0 ? [obsidianOptions.vault!] : vaults;
 
         // list all files in the new vault
-        type NewFileInfo = {type: "file"| "folder", sourceContent?: string|ArrayBuffer, sourceFile?: string};
+        type NewFileInfo = {type: "file"|"folder", sourceContent?: string|ArrayBuffer, sourceFile?: string};
         const newVault: Map<string, NewFileInfo> = new Map();
         for (let vault of vaults) {
             if (typeof vault == "string") {
@@ -348,6 +339,7 @@ class ObsidianPage extends BasePage {
                     }
                 }
             } else {
+                vault = _.mapKeys(vault, (v, k) => normalizePath(k));
                 for (const [file, content] of Object.entries(vault)) {
                     newVault.set(file, {type: "file", sourceContent: content});
                 }
@@ -359,7 +351,7 @@ class ObsidianPage extends BasePage {
         }
 
         // list all files in the current vault
-        type CurrFileInfo = {type: "file"| "folder", hash?: string};
+        type CurrFileInfo = {type: "file"|"folder", hash?: string};
         const currVault = new Map(await this.browser.executeObsidian(({app}, configDir) => {
             async function hash(data: ArrayBuffer) {
                 const hashBuffer = await window.crypto.subtle.digest('SHA-256', data);
@@ -378,7 +370,7 @@ class ObsidianPage extends BasePage {
                 }
                 for (const file of files) {
                     if (!file.startsWith(configDir + "/")) {
-                        let fileHash = (app.metadataCache as any).getFileInfo(file)?.hash;
+                        let fileHash = (app as AppInternal).metadataCache.getFileInfo(file)?.hash;
                         if (!fileHash) { // hidden files etc. aren't in Obsidian's metadata cache
                             fileHash = await hash(await app.vault.adapter.readBinary(file));
                         }

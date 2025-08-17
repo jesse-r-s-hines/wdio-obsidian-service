@@ -9,8 +9,9 @@ import zlib from "zlib"
 import { fileURLToPath } from "url"
 import { DeepPartial } from "ts-essentials";
 import { atomicCreate, makeTmpDir, normalizeObject, pool } from "./utils.js";
-import { downloadResponse, fetchGitHubAPIPaginated } from "./apis.js"
+import { downloadResponse, getGithubClient } from "./apis.js"
 import { ObsidianInstallerInfo, ObsidianVersionInfo } from "./types.js";
+import { ObsidianDesktopRelease } from "./obsidianTypes.js"
 
 
 export function normalizeGitHubRepo(repo: string) {
@@ -120,12 +121,14 @@ type CommitInfo = {commitDate: string, commitSha: string}
  */
 export async function fetchObsidianDesktopReleases(
     sinceDate?: string, sinceSha?: string,
-): Promise<[any[], CommitInfo]> {
+): Promise<[ObsidianDesktopRelease[], CommitInfo]> {
     // Extract info from desktop-releases.json
     const repo = "obsidianmd/obsidian-releases";
-    let commitHistory = await fetchGitHubAPIPaginated(`repos/${repo}/commits`, {
-        path: "desktop-releases.json",
-        since: sinceDate,
+    const github = getGithubClient();
+    let commitHistory = await github.paginate(github.rest.repos.listCommits, {
+        owner: "obsidianmd", repo: "obsidian-releases",
+        path: "desktop-releases.json", since: sinceDate,
+        per_page: 100,
     });
     commitHistory.reverse(); // sort oldest first
     if (sinceSha) {
@@ -135,16 +138,21 @@ export async function fetchObsidianDesktopReleases(
         fetch(`https://raw.githubusercontent.com/${repo}/${commit.sha}/desktop-releases.json`).then(r => r.json())
     );
  
-    const commitDate = commitHistory.at(-1)?.commit.committer.date ?? sinceDate;
-    const commitSha = commitHistory.at(-1)?.sha ?? sinceSha;
+    const commitDate = commitHistory.at(-1)?.commit.committer?.date ?? sinceDate!;
+    const commitSha = commitHistory.at(-1)?.sha ?? sinceSha!;
 
     return [fileHistory, {commitDate, commitSha}]
 }
 
 /** Fetches all GitHub release information from obsidianmd/obsidian-releases */
-export async function fetchObsidianGitHubReleases(): Promise<any[]> {
-    const gitHubReleases = await fetchGitHubAPIPaginated(`repos/obsidianmd/obsidian-releases/releases`);
-    return gitHubReleases.reverse(); // sort oldest first
+export async function fetchObsidianGitHubReleases() {
+    const github = getGithubClient();
+    let gitHubReleases = await github.paginate(github.rest.repos.listReleases, {
+        owner: "obsidianmd", repo: "obsidian-releases",
+        per_page: 100,
+    });
+    gitHubReleases = gitHubReleases.reverse(); // sort oldest first
+    return gitHubReleases;
 }
 
 /** Obsidian assets that have broken download links */
@@ -155,11 +163,11 @@ const BROKEN_ASSETS = [
     "https://releases.obsidian.md/release/obsidian-1.4.8.asar.gz",
 ];
 
-type ParsedDesktopRelease = {current: DeepPartial<ObsidianVersionInfo>, beta?: DeepPartial<ObsidianVersionInfo>}
-export function parseObsidianDesktopRelease(fileRelease: any): ParsedDesktopRelease {
-    const parse = (r: any, isBeta: boolean): DeepPartial<ObsidianVersionInfo> => {
+export type ParsedDesktopRelease = {current: DeepPartial<ObsidianVersionInfo>, beta?: DeepPartial<ObsidianVersionInfo>}
+export function parseObsidianDesktopRelease(fileRelease: ObsidianDesktopRelease): ParsedDesktopRelease {
+    const parse = (r: ObsidianDesktopRelease, isBeta: boolean): DeepPartial<ObsidianVersionInfo> => {
         const version = r.latestVersion;
-        let minInstallerVersion = r.minimumVersion;
+        let minInstallerVersion: string|undefined = r.minimumVersion;
         if (minInstallerVersion == "0.0.0") {
             minInstallerVersion = undefined;
         // there's some errors in the minInstaller versions listed that we need to correct manually
@@ -239,7 +247,7 @@ export const INSTALLER_KEYS: InstallerKey[] = [
  */
 export function updateObsidianVersionList(args: {
     original?: ObsidianVersionInfo[],
-    destkopReleases?: any[],
+    destkopReleases?: ObsidianDesktopRelease[],
     gitHubReleases?: any[],
     installerInfos?: {version: string, key: InstallerKey, installerInfo: Omit<ObsidianInstallerInfo, "digest">}[],
 }): ObsidianVersionInfo[] {

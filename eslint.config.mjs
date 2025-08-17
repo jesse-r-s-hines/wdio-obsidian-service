@@ -17,6 +17,9 @@ export default tseslint.config(
         rules: {
             "no-prototype-builtins": "off",
             'no-undef': 'off',
+            "prefer-const": ["error", {
+                "destructuring": "all",
+            }],
             "@typescript-eslint/no-explicit-any": "off",
             "@typescript-eslint/no-unsafe-argument": "off",
             "@typescript-eslint/no-unsafe-assignment": "off",

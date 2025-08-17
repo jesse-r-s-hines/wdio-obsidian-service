@@ -10,9 +10,10 @@ import _ from "lodash"
 import dotenv from "dotenv";
 import { fileExists, makeTmpDir, atomicCreate, linkOrCp, maybe, pool } from "./utils.js";
 import {
-    ObsidianVersionInfo, ObsidianCommunityPlugin, ObsidianCommunityTheme, ObsidianVersionList, ObsidianInstallerInfo,
-    PluginEntry, DownloadedPluginEntry, ThemeEntry, DownloadedThemeEntry, obsidianVersionsSchemaVersion,
+    ObsidianVersionInfo, ObsidianVersionList, ObsidianInstallerInfo, PluginEntry, DownloadedPluginEntry, ThemeEntry,
+    DownloadedThemeEntry, obsidianVersionsSchemaVersion,
 } from "./types.js";
+import { ObsidianAppearanceConfig, ObsidianCommunityPlugin, ObsidianCommunityTheme, PluginManifest } from "./obsidianTypes.js";
 import { obsidianApiLogin, fetchObsidianApi, downloadResponse } from "./apis.js";
 import ChromeLocalStorage from "./chromeLocalStorage.js";
 import {
@@ -146,7 +147,7 @@ export class ObsidianLauncher {
     /**
      * Get parsed content of the current project's manifest.json
      */
-    private async getRootManifest(): Promise<any> {
+    private async getRootManifest(): Promise<PluginManifest|null> {
         if (!('manifest.json' in this.metadataCache)) {
             const root = path.parse(process.cwd()).root;
             let dir = process.cwd();
@@ -259,10 +260,11 @@ export class ObsidianLauncher {
         } else if (appVersion == "latest") {
             appVersion = versions.filter(v => !v.isBeta).at(-1)!.version;
         } else if (appVersion == "earliest") {
-            appVersion = (await this.getRootManifest())?.minAppVersion;
-            if (!appVersion) {
+            const manifest = await this.getRootManifest();
+            if (!manifest?.minAppVersion) {
                 throw Error('Unable to resolve Obsidian appVersion "earliest", no manifest.json or minAppVersion found.')
             }
+            appVersion = manifest.minAppVersion;
         } else {
             // if invalid match won't be found and we'll throw error below
             appVersion = semver.valid(appVersion) ?? appVersion;
@@ -307,7 +309,7 @@ export class ObsidianLauncher {
         installerVersionInfo: ObsidianVersionInfo,
         opts: {platform?: NodeJS.Platform, arch?: NodeJS.Architecture} = {},
     ): keyof ObsidianVersionInfo['installers']|undefined {
-        const {platform, arch} = _.merge({}, opts, currentPlatform);
+        const {platform, arch} = _.defaults({}, opts, currentPlatform);
         const platformName = `${platform}-${arch}`;
         const key = _.findKey(installerVersionInfo.installers, v => v && v.platforms.includes(platformName));
         return key as keyof ObsidianVersionInfo['installers']|undefined;
@@ -323,7 +325,7 @@ export class ObsidianLauncher {
         installerVersion: string,
         opts: {platform?: NodeJS.Platform, arch?: NodeJS.Architecture} = {},
     ): Promise<ObsidianInstallerInfo & {url: string}> {
-        const {platform, arch} = _.merge({}, opts, currentPlatform);
+        const {platform, arch} = _.defaults({}, opts, currentPlatform);
         const versionInfo = await this.getVersionInfo(installerVersion);
         const key = this.getInstallerKey(versionInfo, {platform, arch});
         if (key) {
@@ -347,7 +349,7 @@ export class ObsidianLauncher {
         installerVersion: string,
         opts: {platform?: NodeJS.Platform, arch?: NodeJS.Architecture} = {},
     ): Promise<string> {
-        const {platform, arch} = _.merge({}, opts, currentPlatform);
+        const {platform, arch} = _.defaults({}, opts, currentPlatform);
         const versionInfo = await this.getVersionInfo(installerVersion);
         installerVersion = versionInfo.version;
         const installerInfo = await this.getInstallerInfo(installerVersion, {platform, arch});
@@ -388,7 +390,7 @@ export class ObsidianLauncher {
      * 
      * To download Obsidian beta versions you'll need to have an Obsidian Insiders account and either set the 
      * `OBSIDIAN_EMAIL` and `OBSIDIAN_PASSWORD` env vars (`.env` file is supported) or pre-download the Obsidian beta
-     * with `npx obsidian-launcher download -v latest-beta`
+     * with `npx obsidian-launcher download app -v latest-beta`
      * 
      * @param appVersion Obsidian version to download
      */
@@ -442,7 +444,7 @@ export class ObsidianLauncher {
         installerVersion: string,
         opts: {platform?: NodeJS.Platform, arch?: NodeJS.Architecture} = {},
     ): Promise<string> {
-        const {platform, arch} = _.merge({}, opts, currentPlatform);
+        const {platform, arch} = _.defaults({}, opts, currentPlatform);
         const installerInfo = await this.getInstallerInfo(installerVersion, {platform, arch});
         const cacheDir = path.join(this.cacheDir, `electron-chromedriver/${platform}-${arch}/${installerInfo.electron}`);
         let chromedriverPath: string;
@@ -615,6 +617,71 @@ export class ObsidianLauncher {
         );
     }
 
+    /**
+     * Installs plugins into an Obsidian vault
+     * @param vault Path to the vault to install the plugins in
+     * @param plugins List plugins to install
+     */
+    async installPlugins(vault: string, plugins: PluginEntry[]) {
+        const downloadedPlugins = await this.downloadPlugins(plugins);
+
+        const obsidianDir = path.join(vault, '.obsidian');
+        await fsAsync.mkdir(obsidianDir, { recursive: true });
+
+        const enabledPluginsPath = path.join(obsidianDir, 'community-plugins.json');
+        let originalEnabledPlugins: string[] = [];
+        if (await fileExists(enabledPluginsPath)) {
+            originalEnabledPlugins = JSON.parse(await fsAsync.readFile(enabledPluginsPath, 'utf-8'));
+        }
+        let enabledPlugins = [...originalEnabledPlugins];
+
+        for (const {path: pluginPath, enabled = true, originalType} of downloadedPlugins) {
+            const manifestPath = path.join(pluginPath, 'manifest.json');
+            const pluginId = JSON.parse(await fsAsync.readFile(manifestPath, 'utf8').catch(() => "{}")).id;
+            if (!pluginId) {
+                throw Error(`${manifestPath} missing or malformed.`);
+            }
+
+            const pluginDest = path.join(obsidianDir, 'plugins', pluginId);
+            await fsAsync.mkdir(pluginDest, { recursive: true });
+
+            const files = {
+                "manifest.json": true,
+                "main.js": true,
+                "styles.css": false,
+            }
+            for (const [file, required] of Object.entries(files)) {
+                if (await fileExists(path.join(pluginPath, file))) {
+                    await linkOrCp(path.join(pluginPath, file), path.join(pluginDest, file));
+                } else if (required) {
+                    throw Error(`${pluginPath}/${file} missing.`);
+                } else {
+                    await fsAsync.rm(path.join(pluginDest, file), {force: true});
+                }
+            }
+            if (await fileExists(path.join(pluginPath, "data.json"))) {
+                // don't link data.json since it can be modified. Don't delete it if it already exists.
+                await fsAsync.cp(path.join(pluginPath, "data.json"), path.join(pluginDest, "data.json"));
+            }
+
+            const pluginAlreadyListed = enabledPlugins.includes(pluginId);
+            if (enabled && !pluginAlreadyListed) {
+                enabledPlugins.push(pluginId)
+            } else if (!enabled && pluginAlreadyListed) {
+                enabledPlugins = enabledPlugins.filter(p => p != pluginId);
+            }
+
+            if (originalType == "local") {
+                // Add a .hotreload file for the https://github.com/pjeby/hot-reload plugin
+                await fsAsync.writeFile(path.join(pluginDest, '.hotreload'), '');
+            }
+        }
+
+        if (!_.isEqual(enabledPlugins, originalEnabledPlugins)) {
+            await fsAsync.writeFile(enabledPluginsPath, JSON.stringify(enabledPlugins, undefined, 2));
+        }
+    }
+
     /** Gets the latest version of a theme. */
     private async getLatestThemeVersion(repo: string) {
         repo = normalizeGitHubRepo(repo)
@@ -629,29 +696,42 @@ export class ObsidianLauncher {
      * @param repo Repo
      * @returns path to the downloaded theme
      */
-    private async downloadGitHubTheme(repo: string): Promise<string> {
+    private async downloadGitHubTheme(repo: string, version = "latest"): Promise<string> {
         repo = normalizeGitHubRepo(repo)
-        // Obsidian theme's are just pulled from the repo HEAD, not releases, so we can't really choose a specific 
-        // version of a theme.
-        // We use the manifest.json version to check if the theme has changed.
-        const version = await this.getLatestThemeVersion(repo);
+        const latest = await this.getLatestThemeVersion(repo);
+        if (version == "latest") {
+            version = latest;
+        }
+        if (!semver.valid(version)) {
+            throw Error(`Invalid version "${version}"`);
+        }
+        version = semver.valid(version)!;
+        
         const themeDir = path.join(this.cacheDir, "obsidian-themes", repo, version);
 
         if (!(await fileExists(themeDir))) {
             await atomicCreate(themeDir, async (tmpDir) => {
+                // Obsidian themes can be downloaded from releases like plugins, but have fallback "legacy" behavior
+                // that just downloads from repo HEAD directly.
                 const assetsToDownload = ['manifest.json', 'theme.css'];
+                let baseUrl = `https://github.com/${repo}/releases/download/${version}`;
+                if (!(await fetch(`${baseUrl}/manifest.json`)).ok) {
+                    if (version != latest) {
+                        throw Error(`No theme version "${version}" found`);
+                    }
+                    baseUrl = `https://raw.githubusercontent.com/${repo}/HEAD`;
+                }
                 await Promise.all(
                     assetsToDownload.map(async (file) => {
-                        const url = `https://raw.githubusercontent.com/${repo}/HEAD/${file}`;
+                        const url = `${baseUrl}/${file}`;
                         const response = await fetch(url);
-                        if (response.ok) {
+                            if (response.ok) {
                             await downloadResponse(response, path.join(tmpDir, file));
                         } else {
                             throw Error(`No ${file} found for ${repo}`);
                         }
-                    })
-                )
-                return tmpDir;
+                    }
+                ))
             });
         }
 
@@ -663,13 +743,13 @@ export class ObsidianLauncher {
      * @param name name of the theme
      * @returns path to the downloaded theme
      */
-    private async downloadCommunityTheme(name: string): Promise<string> {
+    private async downloadCommunityTheme(name: string, version = "latest"): Promise<string> {
         const communityThemes = await this.getCommunityThemes();
         const themeInfo = communityThemes.find(p => p.name == name);
         if (!themeInfo) {
             throw Error(`No theme with name ${name} found.`);
         }
-        return await this.downloadGitHubTheme(themeInfo.repo);
+        return await this.downloadGitHubTheme(themeInfo.repo, version);
     }
 
     /**
@@ -696,10 +776,10 @@ export class ObsidianLauncher {
                     themePath = path.resolve(theme.path);
                     originalType = "local";
                 } else if ("repo" in theme) {
-                    themePath = await this.downloadGitHubTheme(theme.repo);
+                    themePath = await this.downloadGitHubTheme(theme.repo, theme.version);
                     originalType = "github";
                 } else if ("name" in theme) {
-                    themePath = await this.downloadCommunityTheme(theme.name);
+                    themePath = await this.downloadCommunityTheme(theme.name, theme.version);
                     originalType = "community";
                 } else {
                     throw Error("You must specify one of theme path, repo, or name")
@@ -733,68 +813,6 @@ export class ObsidianLauncher {
     }
 
     /**
-     * Installs plugins into an Obsidian vault
-     * @param vault Path to the vault to install the plugins in
-     * @param plugins List plugins to install
-     */
-    async installPlugins(vault: string, plugins: PluginEntry[]) {
-        const downloadedPlugins = await this.downloadPlugins(plugins);
-
-        const obsidianDir = path.join(vault, '.obsidian');
-        await fsAsync.mkdir(obsidianDir, { recursive: true });
-
-        const enabledPluginsPath = path.join(obsidianDir, 'community-plugins.json');
-        let originalEnabledPlugins: string[] = [];
-        if (await fileExists(enabledPluginsPath)) {
-            originalEnabledPlugins = JSON.parse(await fsAsync.readFile(enabledPluginsPath, 'utf-8'));
-        }
-        let enabledPlugins = [...originalEnabledPlugins];
-
-        for (const {path: pluginPath, enabled = true, originalType} of downloadedPlugins) {
-            const manifestPath = path.join(pluginPath, 'manifest.json');
-            const pluginId = JSON.parse(await fsAsync.readFile(manifestPath, 'utf8').catch(() => "{}")).id;
-            if (!pluginId) {
-                throw Error(`${manifestPath} missing or malformed.`);
-            }
-
-            const pluginDest = path.join(obsidianDir, 'plugins', pluginId);
-            await fsAsync.mkdir(pluginDest, { recursive: true });
-
-            const files: Record<string, [boolean, boolean]> = {
-                "manifest.json": [true, true],
-                "main.js": [true, true],
-                "styles.css": [false, true],
-                "data.json": [false, false],
-            }
-            for (const [file, [required, deleteIfMissing]] of Object.entries(files)) {
-                if (await fileExists(path.join(pluginPath, file))) {
-                    await linkOrCp(path.join(pluginPath, file), path.join(pluginDest, file));
-                } else if (required) {
-                    throw Error(`${pluginPath}/${file} missing.`);
-                } else if (deleteIfMissing) {
-                    await fsAsync.rm(path.join(pluginDest, file), {force: true});
-                }
-            }
-
-            const pluginAlreadyListed = enabledPlugins.includes(pluginId);
-            if (enabled && !pluginAlreadyListed) {
-                enabledPlugins.push(pluginId)
-            } else if (!enabled && pluginAlreadyListed) {
-                enabledPlugins = enabledPlugins.filter(p => p != pluginId);
-            }
-
-            if (originalType == "local") {
-                // Add a .hotreload file for the https://github.com/pjeby/hot-reload plugin
-                await fsAsync.writeFile(path.join(pluginDest, '.hotreload'), '');
-            }
-        }
-
-        if (!_.isEqual(enabledPlugins, originalEnabledPlugins)) {
-            await fsAsync.writeFile(enabledPluginsPath, JSON.stringify(enabledPlugins, undefined, 2));
-        }
-    }
-
-    /** 
      * Installs themes into an Obsidian vault
      * @param vault Path to the theme to install the themes in
      * @param themes List of themes to install
@@ -834,7 +852,7 @@ export class ObsidianLauncher {
 
         if (themes.length > 0) { // Only update appearance.json if we set the themes
             const appearancePath = path.join(obsidianDir, 'appearance.json');
-            let appearance: any = {}
+            let appearance: ObsidianAppearanceConfig = {}
             if (await fileExists(appearancePath)) {
                 appearance = JSON.parse(await fsAsync.readFile(appearancePath, 'utf-8'));
             }

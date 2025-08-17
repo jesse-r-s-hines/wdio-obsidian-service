@@ -1,6 +1,7 @@
 import type * as obsidian from "obsidian"
 import { ObsidianPage } from "./pageobjects/obsidianPage.js"
 import { NormalizedObsidianCapabilityOptions, OBSIDIAN_CAPABILITY_KEY } from "./types.js";
+import { AppInternal } from "./obsidianTypes.js";
 
 export const browserCommands = {
     /**
@@ -82,7 +83,10 @@ export const browserCommands = {
      * @param id Id of the command to run.
      */
     async executeObsidianCommand(this: WebdriverIO.Browser, id: string) {
-        const result = await this.executeObsidian(({app}, id) => (app as any).commands.executeCommandById(id), id);
+        const result = await this.executeObsidian(
+            ({app}, id) => (app as AppInternal).commands.executeCommandById(id),
+            id,
+        );
         if (!result) {
             throw Error(`Obsidian command ${id} not found or failed.`);
         }

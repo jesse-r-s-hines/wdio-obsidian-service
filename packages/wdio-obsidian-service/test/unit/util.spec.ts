@@ -1,6 +1,6 @@
 import { describe, it } from "mocha";
 import { expect } from "chai";
-import { quote } from "../../src/utils.js";
+import { quote, normalizePath } from "../../src/utils.js";
 
 
 describe("quote", () => {
@@ -14,5 +14,17 @@ describe("quote", () => {
         it(`quote: ${input}`, async () => {
             expect(quote(input)).to.eql(expected);
         })
-    })
+    });
+
+    [
+        ["a", "a"],
+        ["/path/to/file/", "path/to/file"],
+        ["/", "/"],
+        ["", "/"],
+        ["//path//to//file//", "path/to/file"],
+    ].forEach(([input, expected]) => {
+        it(`normalizePath: ${input}`, async () => {
+            expect(normalizePath(input)).to.eql(expected);
+        })
+    });
 })

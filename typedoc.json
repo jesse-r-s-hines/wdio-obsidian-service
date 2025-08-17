@@ -24,7 +24,8 @@
     "router": "structure",
     "projectDocuments": [
         "./README.md",
-        "./CONTRIBUTING.md"
+        "./CONTRIBUTING.md",
+        "./CHANGELOG.md"
     ],
     "packageOptions": {
         "entryPoints": ["src/index.ts"],

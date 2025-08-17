@@ -114,7 +114,7 @@ describe("ObsidianLauncher", function() {
         // proc.stdout!.on('data', data => console.log(`obsidian: ${data}`));
         // proc.stderr!.on('data', data => console.log(`obsidian: ${data}`));
         const port = await new Promise<number>((resolve, reject) => {
-            void procExit.then(() => reject(Error("Processed ended without opening a port")))
+            void procExit.then(() => reject(Error("Process ended without opening a port")))
             proc.stderr!.on('data', data => {
                 const port = data.toString().match(/ws:\/\/[\w.]+?:(\d+)/)?.[1];
                 if (port) {

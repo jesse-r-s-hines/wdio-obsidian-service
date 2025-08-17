@@ -7,84 +7,25 @@ import fsAsync from "fs/promises";
 import readlineSync from "readline-sync";
 import dotenv from "dotenv";
 import path from "path";
+import { Octokit } from "octokit";
 import { env } from "process";
 import { sleep } from "./utils.js";
 
-/**
- * GitHub API stores pagination information in the "Link" header. The header looks like this:
- * ```
- * <https://api.github.com/repositories/1300192/issues?page=2>; rel="prev", <https://api.github.com/repositories/1300192/issues?page=4>; rel="next"
- * ```
- */
-export function parseLinkHeader(linkHeader: string): Record<string, Record<string, string>> {
-    function parseLinkData(linkData: string) {
-        return Object.fromEntries(
-            linkData.split(";").flatMap(x => {
-                const partMatch = x.trim().match(/^([^=]+?)\s*=\s*"?([^"]+)"?$/);
-                return partMatch ? [[partMatch[1], partMatch[2]]] : [];
-            })
-        )
-    }
 
-    const linkDatas = linkHeader
-        .split(/,\s*(?=<)/)
-        .flatMap(link => {
-            const linkMatch = link.trim().match(/^<([^>]*)>(.*)$/);
-            if (linkMatch) {
-                return [{
-                    url: linkMatch[1],
-                    ...parseLinkData(linkMatch[2]),
-                } as Record<string, string>];
-            } else {
-                return [];
-            }
-        })
-        .filter(l => l.rel)
-    return Object.fromEntries(linkDatas.map(l => [l.rel, l]));
-};
-
-
-function createURL(url: string, base: string, params: Record<string, any> = {}) {
-    params =_.pickBy(params, x => x !== undefined);
+type SearchParamsDict = Record<string, string|number|undefined>;
+function createURL(url: string, base: string, params: SearchParamsDict = {}) {
+    const cleanParams = _(params).pickBy(x => x !== undefined).mapValues(v => String(v)).value();
     const urlObj = new URL(url, base);
-    const searchParams = new URLSearchParams({...Object.fromEntries(urlObj.searchParams), ...params});
+    const searchParams = new URLSearchParams({...Object.fromEntries(urlObj.searchParams), ...cleanParams});
     if ([...searchParams].length > 0) {
         urlObj.search = '?' + searchParams;
     }
     return urlObj.toString();
 }
 
-
-/**
- * Fetch from the GitHub API. Uses GITHUB_TOKEN if available. You can access the API without a token, but will hit
- * the usage caps very quickly.
- */
-export async function fetchGitHubAPI(url: string, params: Record<string, any> = {}) {
-    url = createURL(url, "https://api.github.com", params)
-    const token = env.GITHUB_TOKEN;
-    const headers: Record<string, string> = token ? {Authorization: "Bearer " + token} : {};
-    const response = await fetch(url, { headers });
-    if (!response.ok) {
-        throw new Error(`GitHub API error: ${await response.text()}`);
-    }
-    return response;
+export function getGithubClient(): Octokit {
+    return new Octokit({auth: env.GITHUB_TOKEN});
 }
-
-
-/**
- * Fetch all data from a paginated GitHub API request.
- */
-export async function fetchGitHubAPIPaginated(url: string, params: Record<string, any> = {}) {
-    const results: any[] = [];
-    let next: string|undefined = createURL(url, "https://api.github.com", { per_page: 100, ...params });
-    while (next) {
-        const response = await fetchGitHubAPI(next);
-        results.push(...await response.json());
-        next = parseLinkHeader(response.headers.get('link') ?? '').next?.url;
-    }
-    return results;
-}
-
 
 /**
  * Login and returns the token from the Obsidian API.
@@ -111,14 +52,15 @@ export async function obsidianApiLogin(opts: {
             throw Error(
                 "Obsidian Insiders account is required to download Obsidian beta versions. Either set the " +
                 "OBSIDIAN_EMAIL and OBSIDIAN_PASSWORD env vars (.env file is supported) or pre-download the " +
-                "Obsidian beta with `npx obsidian-launcher download -v <version>`"
+                "Obsidian beta with `npx obsidian-launcher download app -v <version>`"
             )
         }
     }
 
     let needsMfa = false;
     let retries = 0;
-    let signin: any = undefined;
+    type SigninResult = {token?: string, error?: string, license?: string};
+    let signin: SigninResult|undefined = undefined;
     while (!signin?.token && retries < 3) {
         // exponential backoff with random offset. Always trigger in CI to avoid multiple jobs hitting the API at once
         if (retries > 0 || env.CI) {
@@ -138,7 +80,7 @@ export async function obsidianApiLogin(opts: {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({email, password, mfa})
-        }).then(r => r.json());
+        }).then(r => r.json()) as SigninResult;
 
         const error = signin.error?.toLowerCase();
         if (error?.includes("2fa") && !needsMfa) {
@@ -147,7 +89,7 @@ export async function obsidianApiLogin(opts: {
                 throw Error(
                     "Can't login with 2FA in a non-interactive session. To download Obsidian beta versions, either " +
                     "disable 2FA on your account or pre-download the Obsidian beta with " +
-                    "`npx obsidian-launcher download -v <version>`"
+                    "`npx obsidian-launcher download app -v <version>`"
                 );
             }
         } else if (["please wait", "try again"].some(m => error?.includes(m))) {
@@ -158,9 +100,9 @@ export async function obsidianApiLogin(opts: {
         }
     }
 
-    if (!signin.token) {
-        throw Error(`Obsidian login failed: ${signin.error ?? 'unknown error'}`);
-    } else if (!signin.license) {
+    if (!signin?.token) {
+        throw Error(`Obsidian login failed: ${signin?.error ?? 'unknown error'}`);
+    } else if (!signin?.license) {
         throw Error("Obsidian Insiders account is required to download Obsidian beta versions");
     }
 
@@ -172,8 +114,8 @@ export async function obsidianApiLogin(opts: {
                 `OBSIDIAN_EMAIL='${email}'\n` +
                 `OBSIDIAN_PASSWORD='${password}'\n`
             );
+            console.log(`Saved Obsidian credentials to ${path.relative(process.cwd(), savePath)}`);
         }
-        console.log(`Saved Obsidian credentials to ${path.relative(process.cwd(), savePath)}`);
     }
 
     return signin.token;

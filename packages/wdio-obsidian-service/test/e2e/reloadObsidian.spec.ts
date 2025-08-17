@@ -5,7 +5,14 @@ describe("reloadObsidian", () => {
     before(async () => {
         // Obsidian should start with no vault open
         expect(browser.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].vault).toEqual(undefined);
+        // I'm using the global app instance here
+        let vault: string|null = await browser.execute(() => (window as any).app?.vault?.adapter?.getFullPath(""));
+        expect(vault).toEqual(null);
+        
         await browser.reloadObsidian({vault: "./test/vaults/basic"});
+        
+        vault = await browser.execute(() => (window as any).app?.vault?.adapter?.getFullPath(""));
+        expect(vault).toMatch(/basic-/);
     })
 
     // Used to test that local storage and the config dir does or does not get cleared.

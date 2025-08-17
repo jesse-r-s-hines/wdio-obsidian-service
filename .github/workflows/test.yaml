@@ -6,6 +6,10 @@ on:
     branches: [ "main" ]
   workflow_dispatch:
 
+permissions:
+  actions: write
+  contents: read
+
 jobs:
   pre-check: # Check and avoid running tests on the same code (e.g. after pr merge)
     runs-on: ubuntu-latest
@@ -37,6 +41,8 @@ jobs:
           node-version: "18.x"
           cache: 'pnpm'
       - run: pnpm install --frozen-lockfile
+      - name: Build
+        run: pnpm run --aggregate-output --reporter-hide-prefix build
       - name: Run Lint
         run: pnpm run lint
 
@@ -109,24 +115,25 @@ jobs:
         run: pnpm run --aggregate-output --reporter-hide-prefix test:unit
 
       # On linux runners we need to set up a virtual graphics stack for Obsidian. Here we use xvfb as a virtual display
-      # server and herbstluftwm as the window manager. (You can often get by without a window manager but Obsidian
-      # popout windows will have issues without it.)
-      - if: ${{ startsWith(matrix.os, 'ubuntu-') }}
-        name: "Install window manager"
-        uses: awalsh128/cache-apt-pkgs-action@v1.4.3
-        with:
-          packages: herbstluftwm dzen2
-          version: 1
-          execute_install_scripts: true
+      # server and herbstluftwm as the window manager. (You can sometimes get by without the window manager, but some
+      # Obsidian features won't work properly wihtout it.)
       - if: ${{ startsWith(matrix.os, 'ubuntu-') }}
         name: "Setup virtual graphics"
         run: |
-          export DISPLAY=:99
-          echo "DISPLAY=$DISPLAY" >> "$GITHUB_ENV"
-          Xvfb $DISPLAY -screen 0 1280x1024x24 +extension GLX -noreset &
-          sleep 1
-          herbstluftwm &
-          sleep 1
+            # Some hacks to speed up apt install
+            sudo rm -rf /etc/apt/sources.list.d/*.list
+            echo "set man-db/auto-update false" | sudo debconf-communicate
+            sudo dpkg-reconfigure man-db
+
+            sudo apt-get update -q
+            sudo apt-get install -q herbstluftwm dzen2 x11-xserver-utils
+
+            export DISPLAY=:99
+            echo "DISPLAY=$DISPLAY" >> "$GITHUB_ENV"
+            Xvfb $DISPLAY -screen 0 1280x1024x24 +extension GLX -noreset &
+            sleep 1
+            herbstluftwm &
+            sleep 1
 
       - name: Run e2e tests
         run: pnpm run --aggregate-output --reporter-hide-prefix ${{ matrix.pnpm-args }} test:e2e
