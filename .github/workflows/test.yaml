@@ -6,7 +6,9 @@ on:
     branches: [ "main" ]
   workflow_dispatch:
 
-permissions: {}
+permissions:
+  actions: write
+  contents: read
 
 jobs:
   pre-check: # Check and avoid running tests on the same code (e.g. after pr merge)
