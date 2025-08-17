@@ -117,7 +117,7 @@ jobs:
       # On linux runners we need to set up a virtual graphics stack for Obsidian. Here we use xvfb as a virtual display
       # server and herbstluftwm as the window manager. (You can sometimes get by without the window manager, but some
       # Obsidian features won't work properly wihtout it.)
-      - if: ${{ matrix.os == 'ubuntu-latest' }}
+      - if: ${{ startsWith(matrix.os, 'ubuntu-') }}
         name: "Setup virtual graphics"
         run: |
             # Some hacks to speed up apt install
