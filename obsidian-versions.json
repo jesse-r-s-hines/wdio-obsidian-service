@@ -3,7 +3,7 @@
         "schemaVersion": "2.0.0",
         "commitDate": "2025-08-15T19:38:13Z",
         "commitSha": "4b8a978269b62e7f12942b4a211cc5418bdeeb60",
-        "timestamp": "2025-08-16T00:38:57.927Z"
+        "timestamp": "2025-08-17T01:27:32.011Z"
     },
     "versions": [
         {
@@ -5339,9 +5339,7 @@
             "minInstallerVersion": "0.14.5",
             "maxInstallerVersion": "1.4.5",
             "isBeta": true,
-            "downloads": {
-                "asar": "https://releases.obsidian.md/release/obsidian-1.4.7.asar.gz"
-            },
+            "downloads": {},
             "installers": {}
         },
         {
@@ -5349,9 +5347,7 @@
             "minInstallerVersion": "0.14.5",
             "maxInstallerVersion": "1.4.5",
             "isBeta": true,
-            "downloads": {
-                "asar": "https://releases.obsidian.md/release/obsidian-1.4.8.asar.gz"
-            },
+            "downloads": {},
             "installers": {}
         },
         {
