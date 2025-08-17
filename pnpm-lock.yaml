@@ -170,8 +170,8 @@ importers:
         specifier: ^1.8.7
         version: 1.8.7(@codemirror/state@6.5.2)(@codemirror/view@6.38.1)
       obsidian-launcher:
-        specifier: 2.0.2
-        version: 2.0.2
+        specifier: 2.1.0
+        version: link:../obsidian-launcher
       semver:
         specifier: ^7.7.2
         version: 7.7.2
@@ -240,8 +240,8 @@ importers:
         specifier: ^5.9.2
         version: 5.9.2
       wdio-obsidian-reporter:
-        specifier: 2.0.2
-        version: 2.0.2
+        specifier: 2.1.0
+        version: link:../wdio-obsidian-reporter
 
 packages:
 
@@ -3253,11 +3253,6 @@ packages:
     resolution: {integrity: sha512-NuAESUOUMrlIXOfHKzD6bpPu3tYt3xvjNdRIQ+FeT0lNb4K8WR70CaDxhuNguS2XG+GjkyMwOzsN5ZktImfhLA==}
     engines: {node: '>= 0.4'}
 
-  obsidian-launcher@2.0.2:
-    resolution: {integrity: sha512-O61w+Be0Vz81JgLq1hQwafXbrwTOJgKDAWAc5NtkZ63YMqPMLaOuHH8PW7qSlIg6Urc1JBNR0aAejF287L9OGQ==}
-    engines: {node: '>=18'}
-    hasBin: true
-
   obsidian@1.8.7:
     resolution: {integrity: sha512-h4bWwNFAGRXlMlMAzdEiIM2ppTGlrh7uGOJS6w4gClrsjc+ei/3YAtU2VdFUlCiPuTHpY4aBpFJJW75S1Tl/JA==}
     peerDependencies:
@@ -4258,10 +4253,6 @@ packages:
 
   wcwidth@1.0.1:
     resolution: {integrity: sha512-XHPEwS0q6TaxcvG85+8EYkbiCux2XtWG2mkc47Ng2A77BQu9+DqIOJldST4HgPkuea7dvKSj5VgX3P1d4rW8Tg==}
-
-  wdio-obsidian-reporter@2.0.2:
-    resolution: {integrity: sha512-a8xIe4FLLLHWlfFlI/4+U2pRR9UFrVE2YgUCrrwSAwRRNKRTxqpd+QFwQY+Izckm4a0QvzlDpbYBYOpLB3MxXw==}
-    engines: {node: '>=18'}
 
   web-streams-polyfill@3.3.3:
     resolution: {integrity: sha512-d2JWLCivmZYTSIoge9MsgFCZrt571BikcWGYkjC1khllbTeDlGqZ2D8vD8E/lJa8WGWbb7Plm8/XJYV7IJHZZw==}
@@ -7842,24 +7833,6 @@ snapshots:
   object-keys@1.1.1:
     optional: true
 
-  obsidian-launcher@2.0.2:
-    dependencies:
-      7z-wasm: 1.2.0
-      '@electron/get': 3.1.0
-      '@supercharge/promise-pool': 3.2.0
-      chrome-remote-interface: 0.33.3
-      classic-level: 3.0.0
-      commander: 13.1.0
-      dotenv: 17.2.1
-      extract-zip: 2.0.1
-      lodash: 4.17.21
-      readline-sync: 1.4.10
-      semver: 7.7.2
-    transitivePeerDependencies:
-      - bufferutil
-      - supports-color
-      - utf-8-validate
-
   obsidian@1.8.7(@codemirror/state@6.5.2)(@codemirror/view@6.38.1):
     dependencies:
       '@codemirror/state': 6.5.2
@@ -8956,11 +8929,6 @@ snapshots:
   wcwidth@1.0.1:
     dependencies:
       defaults: 1.0.4
-
-  wdio-obsidian-reporter@2.0.2:
-    dependencies:
-      '@wdio/reporter': 9.18.0
-      '@wdio/spec-reporter': 9.18.0
 
   web-streams-polyfill@3.3.3: {}
 

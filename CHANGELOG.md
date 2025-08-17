@@ -63,3 +63,12 @@ You can choose from two approaches for testing your plugin on mobile. You can us
 ## 2.0.2
 - Fix some intermittent errors in reloadObsidian when using Appium
 - Documentation fixes
+
+## 2.1.0
+- Performance improvements to mobile Appium testing
+    - Now supports using the `appium:noReset` option to avoid relaunching Obsidian before every test
+    - Improved performance of transfering vault to the AVD
+- Expand `obsidian-launcher download` command to download more asset types
+- Support installing specific theme versions
+- Fix sample CI workflow's window-manager setup (again)
+- Fix ObsidianLauncher ignoring the platform and arch arguments
