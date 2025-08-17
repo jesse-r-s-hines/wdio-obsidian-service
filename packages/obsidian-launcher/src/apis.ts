@@ -7,41 +7,10 @@ import fsAsync from "fs/promises";
 import readlineSync from "readline-sync";
 import dotenv from "dotenv";
 import path from "path";
+import { Octokit } from "octokit";
 import { env } from "process";
 import { sleep } from "./utils.js";
 
-/**
- * GitHub API stores pagination information in the "Link" header. The header looks like this:
- * ```
- * <https://api.github.com/repositories/1300192/issues?page=2>; rel="prev", <https://api.github.com/repositories/1300192/issues?page=4>; rel="next"
- * ```
- */
-export function parseLinkHeader(linkHeader: string): Record<string, Record<string, string>> {
-    function parseLinkData(linkData: string) {
-        return Object.fromEntries(
-            linkData.split(";").flatMap(x => {
-                const partMatch = x.trim().match(/^([^=]+?)\s*=\s*"?([^"]+)"?$/);
-                return partMatch ? [[partMatch[1], partMatch[2]]] : [];
-            })
-        )
-    }
-
-    const linkDatas = linkHeader
-        .split(/,\s*(?=<)/)
-        .flatMap(link => {
-            const linkMatch = link.trim().match(/^<([^>]*)>(.*)$/);
-            if (linkMatch) {
-                return [{
-                    url: linkMatch[1],
-                    ...parseLinkData(linkMatch[2]),
-                } as Record<string, string>];
-            } else {
-                return [];
-            }
-        })
-        .filter(l => l.rel)
-    return Object.fromEntries(linkDatas.map(l => [l.rel, l]));
-};
 
 type SearchParamsDict = Record<string, string|number|undefined>;
 function createURL(url: string, base: string, params: SearchParamsDict = {}) {
@@ -54,37 +23,9 @@ function createURL(url: string, base: string, params: SearchParamsDict = {}) {
     return urlObj.toString();
 }
 
-
-/**
- * Fetch from the GitHub API. Uses GITHUB_TOKEN if available. You can access the API without a token, but will hit
- * the usage caps very quickly.
- */
-export async function fetchGitHubAPI(url: string, params: SearchParamsDict = {}) {
-    url = createURL(url, "https://api.github.com", params)
-    const token = env.GITHUB_TOKEN;
-    const headers: Record<string, string> = token ? {Authorization: "Bearer " + token} : {};
-    const response = await fetch(url, { headers });
-    if (!response.ok) {
-        throw new Error(`GitHub API error: ${await response.text()}`);
-    }
-    return response;
+export function getGithubClient(): Octokit {
+    return new Octokit({auth: env.GITHUB_TOKEN});
 }
-
-
-/**
- * Fetch all data from a paginated GitHub API request.
- */
-export async function fetchGitHubAPIPaginated(url: string, params: SearchParamsDict = {}) {
-    const results: any[] = [];
-    let next: string|undefined = createURL(url, "https://api.github.com", { per_page: 100, ...params });
-    while (next) {
-        const response = await fetchGitHubAPI(next);
-        results.push(...await response.json());
-        next = parseLinkHeader(response.headers.get('link') ?? '').next?.url;
-    }
-    return results;
-}
-
 
 /**
  * Login and returns the token from the Obsidian API.
