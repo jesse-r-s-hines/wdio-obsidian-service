@@ -3,13 +3,17 @@ import fs from "fs"
 import path from "path";
 import { createInterface } from 'readline/promises';
 
+function exec(...args) {
+    return execFileSync(args[0], args.slice(1), {encoding: 'utf-8'});
+}
+
 async function main() {
     const versionArg = process.argv[2];
     if (!versionArg) {
         console.log("Please pass major|minor|patch|premajor|preminor|prepatch|prerelease");
         process.exit(1);
     }
-    execFileSync("pnpm", ["version", versionArg, "--no-git-tag-version", '--preid', 'beta'], {encoding: 'utf-8'});
+    exec("pnpm", "version", versionArg, "--no-git-tag-version", '--preid', 'beta');
     const version = JSON.parse(fs.readFileSync("package.json", 'utf-8')).version;
     const isPrerelease = version.includes("-")
 
@@ -29,7 +33,7 @@ async function main() {
         }
         fs.writeFileSync(pkgJsonPath, JSON.stringify(pkgJson, undefined, 4) + "\n");
     }
-    execFileSync("pnpm", ["install"]);
+    exec("pnpm", "install");
     console.log()
 
     let notes = "";
@@ -46,12 +50,12 @@ async function main() {
         await rl.close();
     }
 
-    execFileSync("git", ["add",
-        "package.json", "package-lock.json", "packages/*/package.json",
+    exec("git", "add",
+        "package.json", "pnpm-lock.yaml", "packages/*/package.json",
         "CHANGELOG.md",
-    ]);
-    execFileSync("git", ["commit", '-m', `Release ${version}`]);
-    execFileSync("git", ["tag", '-a', version, '-m', notes]);
+    );
+    exec("git", "commit", '-m', `Release ${version}`);
+    exec("git", "tag", '-a', version, '-m', notes);
 
     console.log(`Release notes:`)
     console.log(`## ${version}` )
@@ -62,6 +66,3 @@ async function main() {
 }
 
 await main();
-
-
-
