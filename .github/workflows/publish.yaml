@@ -13,12 +13,16 @@ jobs:
       id-token: write
     steps:
       - uses: actions/checkout@v4
+        with: # Needed for the `--notes-from-tag` option to work
+          fetch-depth: 0
+          ref: ${{ github.ref }}
+
       - uses: pnpm/action-setup@v4
         with:
           version: 10
       - uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 22
           cache: 'pnpm'
           registry-url: 'https://registry.npmjs.org'
 
@@ -30,13 +34,13 @@ jobs:
       - name: Github Release
         run: |
           VERSION="${GITHUB_REF#refs/tags/}"
-          gh release create "$VERSION" --title="$VERSION" --notes-from-tag $RELEASE_TYPE
+          gh release create "$VERSION" --title="$VERSION" --verify-tag --notes-from-tag $RELEASE_TYPE
         env:
           RELEASE_TYPE: ${{ contains(github.ref, '-') && '--prerelease' || ''}}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish
-        run: pnpm publish -r --aggregate-output --provenance --access public --no-git-checks --tag $RELEASE_TYPE
+        run: pnpm publish -r --aggregate-output --no-git-checks --tag $RELEASE_TYPE
         env:
           RELEASE_TYPE: ${{ contains(github.ref, '-') && 'beta' || 'latest'}}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
