@@ -36,7 +36,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish
-        run: pnpm publish -r --aggregate-output --reporter-hide-prefix --provenance --access public --tag $RELEASE_TYPE
+        run: pnpm publish -r --aggregate-output --provenance --access public --no-git-checks --tag $RELEASE_TYPE
         env:
           RELEASE_TYPE: ${{ contains(github.ref, '-') && 'beta' || 'latest'}}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
