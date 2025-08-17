@@ -8,7 +8,7 @@ WDIO Obsidian Service can:
 - 📦 Sandbox Obsidian so tests don't interfere with your system or each other
 - 📂 Open and switch between vaults
 - 🛠️ Provide helper functions for common testing tasks
-- 🤖 Run tests in GitHub CI
+- 🤖 Run tests in CI
 
 ## Installation and Setup
 
