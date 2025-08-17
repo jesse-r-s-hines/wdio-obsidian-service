@@ -72,3 +72,6 @@ You can choose from two approaches for testing your plugin on mobile. You can us
 - Support installing specific theme versions
 - Fix sample CI workflow's window-manager setup (again)
 - Fix ObsidianLauncher ignoring the platform and arch arguments
+
+## 2.1.1
+- Fix octokit dependency breaking package on older moduleResolution modes
