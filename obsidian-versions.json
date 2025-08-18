@@ -7328,7 +7328,7 @@
         {
             "version": "1.9.10",
             "minInstallerVersion": "1.1.9",
-            "maxInstallerVersion": "1.8.10",
+            "maxInstallerVersion": "1.9.10",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.9.10",
             "downloads": {
