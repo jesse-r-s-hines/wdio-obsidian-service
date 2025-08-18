@@ -46,6 +46,7 @@
     },
     "homepage": "https://jesse-r-s-hines.github.io/wdio-obsidian-service/obsidian-launcher/README.html",
     "devDependencies": {
+        "@octokit/rest": "^22.0.0",
         "@types/chai": "^5.2.2",
         "@types/chrome-remote-interface": "^0.31.14",
         "@types/cross-spawn": "^6.0.6",
@@ -57,7 +58,6 @@
         "@types/serve-handler": "^6.1.4",
         "chai": "^5.2.1",
         "mocha": "^11.7.1",
-        "octokit": "^5.0.3",
         "serve": "^14.2.4",
         "serve-handler": "^6.1.6",
         "ts-essentials": "^10.1.1",

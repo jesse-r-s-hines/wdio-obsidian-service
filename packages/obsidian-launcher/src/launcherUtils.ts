@@ -8,7 +8,7 @@ import { pipeline } from "stream/promises";
 import zlib from "zlib"
 import { fileURLToPath } from "url"
 import { DeepPartial } from "ts-essentials";
-import type { Octokit } from "octokit";
+import type { RestEndpointMethodTypes } from "@octokit/rest";
 import { atomicCreate, makeTmpDir, normalizeObject, pool } from "./utils.js";
 import { downloadResponse, fetchGitHubAPIPaginated } from "./apis.js"
 import { ObsidianInstallerInfo, ObsidianVersionInfo } from "./types.js";
@@ -143,7 +143,7 @@ export async function fetchObsidianDesktopReleases(
     return [fileHistory, {commitDate, commitSha}]
 }
 
-type GitHubRelease = ReturnType<Octokit['rest']["repos"]["listReleases"]>
+export type GitHubRelease = RestEndpointMethodTypes["repos"]["listReleases"]['response']['data'][number];
 /** Fetches all GitHub release information from obsidianmd/obsidian-releases */
 export async function fetchObsidianGitHubReleases(): Promise<GitHubRelease[]> {
     const gitHubReleases = await fetchGitHubAPIPaginated(`repos/obsidianmd/obsidian-releases/releases`);
@@ -243,7 +243,7 @@ export const INSTALLER_KEYS: InstallerKey[] = [
 export function updateObsidianVersionList(args: {
     original?: ObsidianVersionInfo[],
     destkopReleases?: ObsidianDesktopRelease[],
-    gitHubReleases?: any[],
+    gitHubReleases?: GitHubRelease[],
     installerInfos?: {version: string, key: InstallerKey, installerInfo: Omit<ObsidianInstallerInfo, "digest">}[],
 }): ObsidianVersionInfo[] {
     const {original = [], destkopReleases = [], gitHubReleases = [], installerInfos = []} = args;
@@ -260,7 +260,7 @@ export function updateObsidianVersionList(args: {
 
     for (const githubRelease of gitHubReleases) {
         // Skip some special "preleases"
-        if (semver.valid(githubRelease.name) && !semver.prerelease(githubRelease.name)) {
+        if (semver.valid(githubRelease.name) && !semver.prerelease(githubRelease.name!)) {
             const parsed = parseObsidianGithubRelease(githubRelease);
             const newVersion = _.merge(newVersions[parsed.version!] ?? {}, parsed);
             // remove out of date installerInfo (the installers can change for a version as happened with 1.8.10)
