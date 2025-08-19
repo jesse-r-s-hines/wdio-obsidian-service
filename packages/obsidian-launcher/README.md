@@ -7,7 +7,7 @@ The primary use case for this package is to allow [wdio-obsidian-service](../wdi
 ## Example Usage
 You can run the CLI via `npx`, e.g.:
 ```bash
-npx obsidian-launcher watch --version 1.8.10 --copy -p . test/vault
+npx obsidian-launcher watch --version 1.8.10 --copy --plugin . test/vault
 ```
 This will download and launch Obsidian 1.8.10 with a sandboxed configuration directory so you don't need to worry about it interfering with your system Obsidian installation. You can even launch multiple different versions of Obsidian side-by-side. See [below](#cli) for CLI docs.
 
@@ -61,7 +61,7 @@ Several commands can take a list of plugins and themes to install. You can speci
 - `id:<community-id>`: For plugins, id of a community plugin, e.g. `id:templater-obsidian`
 - `name:<community-name>`: For themes, name of a community theme, e.g. `name:Minimal`
 
-You can install a specific version of a plugin or theme with `-p id:myplugin=1.2.3`.
+You can install a specific version of a plugin or theme with `-p id:myplugin@1.2.3`.
 
 ### launch
 Download and launch Obsidian, opening the specified vault.
