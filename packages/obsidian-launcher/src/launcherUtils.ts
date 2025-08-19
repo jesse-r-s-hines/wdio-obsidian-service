@@ -285,7 +285,10 @@ export function updateObsidianVersionList(args: {
                 minInstallerVersion = version;
             }
         }
-        newVersions[version] = _.merge({ minInstallerVersion, maxInstallerVersion }, newVersions[version]);
+        newVersions[version] = _.merge(newVersions[version], {
+            minInstallerVersion: newVersions[version]?.minInstallerVersion ?? minInstallerVersion,
+            maxInstallerVersion, // override maxInstallerVersion if it was already set
+        });
     }
 
     // merge in installerInfos
