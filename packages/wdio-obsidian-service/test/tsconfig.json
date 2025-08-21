@@ -1,0 +1,7 @@
+{
+    // separate tsconfig so that we don't build the tests before we've built the package
+    "extends": "../tsconfig.json",
+    "include": ["../**/*"],
+    "compilerOptions": {
+    }
+}

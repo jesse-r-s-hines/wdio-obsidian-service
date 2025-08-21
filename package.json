@@ -10,8 +10,8 @@
     "scripts": {
         "build": "pnpm run -r build",
         "release": "node scripts/release.mjs",
-        "lint": "eslint packages/*/src packages/*/test/e2e packages/*/test/unit packages/*/test/standalone",
         "test": "pnpm run \"/^test:.*/\"",
+        "test:lint": "eslint packages/*/src packages/*/test/e2e packages/*/test/unit packages/*/test/standalone",
         "test:unit": "pnpm run -r --if-present test:unit",
         "test:e2e": "pnpm run -r --if-present test:e2e",
         "test:android": "pnpm run -r --if-present test:android",

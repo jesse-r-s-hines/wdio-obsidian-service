@@ -29,10 +29,10 @@
         "obsidian-launcher": "./dist/cli.js"
     },
     "scripts": {
-        "build": "tsup",
+        "build": "tsc && tsup",
         "test": "pnpm run \"/^test:.*/\"",
-        "test:unit": "tsc --noEmit && mocha --config .mocharc.unit.json",
-        "test:e2e": "tsc --noEmit && mocha --config .mocharc.e2e.json"
+        "test:unit": "mocha --config .mocharc.unit.json",
+        "test:e2e": "mocha --config .mocharc.e2e.json"
     },
     "repository": {
         "type": "git",
