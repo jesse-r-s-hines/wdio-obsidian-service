@@ -22,7 +22,7 @@
         "dist"
     ],
     "scripts": {
-        "build": "tsup"
+        "build": "tsc && tsup"
     },
     "repository": {
         "type": "git",

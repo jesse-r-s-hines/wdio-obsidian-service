@@ -25,9 +25,9 @@
         "default-vault"
     ],
     "scripts": {
-        "build": "tsup",
+        "build": "tsc && tsup",
         "test": "pnpm run \"/^test:.*(?<!:e2e)$/\"",
-        "test:unit": "tsc --noEmit && mocha --config .mocharc.unit.json",
+        "test:unit": "tsc -p ./test && mocha --config .mocharc.unit.json",
         "test:e2e": "pnpm run \"/^test:e2e:.*/\"",
         "test:e2e:wdio": "wdio run ./wdio.conf.ts",
         "test:e2e:standalone": "mocha --config .mocharc.standalone.json",

@@ -60,7 +60,7 @@
         {
             "version": "0.6.6",
             "minInstallerVersion": "0.6.4",
-            "maxInstallerVersion": "0.6.5",
+            "maxInstallerVersion": "0.6.4",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.6.6",
             "downloads": {
@@ -229,7 +229,7 @@
         {
             "version": "1.8.0",
             "minInstallerVersion": "1.1.9",
-            "maxInstallerVersion": "1.7.7",
+            "maxInstallerVersion": "1.0.3",
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.8.0.asar.gz"
@@ -239,7 +239,7 @@
         {
             "version": "1.8.1",
             "minInstallerVersion": "1.1.9",
-            "maxInstallerVersion": "1.7.7",
+            "maxInstallerVersion": "1.0.3",
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.8.1.asar.gz"
@@ -249,7 +249,7 @@
         {
             "version": "1.8.2",
             "minInstallerVersion": "1.1.9",
-            "maxInstallerVersion": "1.7.7",
+            "maxInstallerVersion": "1.0.3",
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.8.2.asar.gz"

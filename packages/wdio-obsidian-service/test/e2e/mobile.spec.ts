@@ -122,4 +122,12 @@ describe("Appium Utils", function() {
         await appiumUploadFiles(browser, {src, dest: testDest, files: []});
         expect(await appiumIsDir(testDest)).toEqual(false);
     })
+
+    it("special characters", async function() {
+        const src = await createDirectory({
+            "special characters;.md": "Hello world",
+        })
+        await appiumUploadFiles(browser, {src, dest: testDest});
+        await checkUploadSuccessful(src, testDest);
+    })
 })

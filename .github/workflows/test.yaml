@@ -44,7 +44,7 @@ jobs:
       - name: Build
         run: pnpm run --aggregate-output --reporter-hide-prefix build
       - name: Run Lint
-        run: pnpm run lint
+        run: pnpm run test:lint
 
   test-desktop:
     needs: [lint]
