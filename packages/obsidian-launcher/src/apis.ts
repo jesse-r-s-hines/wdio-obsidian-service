@@ -156,6 +156,7 @@ export async function obsidianApiLogin(opts: {
             }
         } else if (["please wait", "try again"].some(m => error?.includes(m))) {
             console.warn(`Obsidian login failed: ${signin.error}`);
+            console.warn("Retrying obsidian login...")
             retries++; // continue to next loop
         } else if (!signin.token) { // fatal error
             throw Error(`Obsidian login failed: ${signin.error ?? 'unknown error'}`);
