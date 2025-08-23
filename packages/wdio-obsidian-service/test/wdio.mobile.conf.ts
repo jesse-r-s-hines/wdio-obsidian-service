@@ -28,7 +28,7 @@ if (process.env.OBSIDIAN_VERSIONS == "all") {
         .filter(v => !!v.downloads.apk && semver.gte(v.version, minSupportedObsidianAndroidVersion))
         .map(v => v.version);
 } else if (process.env.OBSIDIAN_VERSIONS == "sample") {
-    // Test every minor installer version and every minor appVersion since minSupportedObsidianAndroidVersion
+    // Get every minor installer version and every minor appVersion since minSupportedObsidianAndroidVersion
     const versionMap = _(allVersions)
         .filter(v => !!v.downloads.apk && semver.gte(v.version, minSupportedObsidianAndroidVersion))
         .map(v => v.version)
@@ -36,9 +36,7 @@ if (process.env.OBSIDIAN_VERSIONS == "all") {
         .value();
     versionMap[minorVersion(minSupportedObsidianAndroidVersion)] = minSupportedObsidianAndroidVersion;
     versionsToTest = _.values(versionMap);
-    if (versionsToTest.length > 5) {
-        versionsToTest = [versionsToTest[0], ...versionsToTest.slice(-4)];
-    }
+    versionsToTest = [versionsToTest[0], ...versionsToTest.slice(Math.max(versionsToTest.length - 2, 1))];
 } else if (process.env.OBSIDIAN_VERSIONS) {
     versionsToTest = process.env.OBSIDIAN_VERSIONS.split(/[ ,]+/).map(v => {
         return v == "earliest" ? minSupportedObsidianAndroidVersion : v;
