@@ -29,9 +29,9 @@
         "test": "pnpm run \"/^test:.*(?<!:e2e)$/\"",
         "test:unit": "tsc -p ./test && mocha --config .mocharc.unit.json",
         "test:e2e": "pnpm run \"/^test:e2e:.*/\"",
-        "test:e2e:wdio": "wdio run ./wdio.conf.ts",
+        "test:e2e:wdio": "wdio run ./test/wdio.conf.ts",
         "test:e2e:standalone": "mocha --config .mocharc.standalone.json",
-        "test:android": "wdio run ./wdio.mobile.conf.ts"
+        "test:android": "wdio run ./test/wdio.mobile.conf.ts"
     },
     "repository": {
         "type": "git",
