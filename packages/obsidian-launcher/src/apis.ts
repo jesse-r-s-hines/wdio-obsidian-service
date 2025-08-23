@@ -101,15 +101,17 @@ export async function obsidianApiLogin(opts: {
     const {interactive = false, savePath} = opts;
     // you can also just use a regular .env file, but we'll prompt to cache credentials for convenience
     // The root .env is loaded elsewhere
-    if (savePath) dotenv.config({path: [savePath], quiet: true});
+    const cached = savePath ? dotenv.parse(await fsAsync.readFile(savePath).catch(() => '')) : {};
+    let email = env.OBSIDIAN_EMAIL ?? cached.OBSIDIAN_EMAIL;
+    let password = env.OBSIDIAN_PASSWORD ?? cached.OBSIDIAN_PASSWORD;
+    let promptedCredentials = false;
 
-    let email = env.OBSIDIAN_EMAIL;
-    let password = env.OBSIDIAN_PASSWORD;
     if (!email || !password) {
         if (interactive) {
             console.log("Obsidian Insiders account is required to download Obsidian beta versions.")
             email = email || readlineSync.question("Obsidian email: ");
             password = password || readlineSync.question("Obsidian password: ", {hideEchoBack: true});
+            promptedCredentials = true;
         } else  {
             throw Error(
                 "Obsidian Insiders account is required to download Obsidian beta versions. Either set the " +
@@ -169,7 +171,7 @@ export async function obsidianApiLogin(opts: {
         throw Error("Obsidian Insiders account is required to download Obsidian beta versions");
     }
 
-    if (interactive && savePath && (!env.OBSIDIAN_EMAIL || !env.OBSIDIAN_PASSWORD)) {
+    if (savePath && promptedCredentials) {
         const save = readlineSync.question("Cache credentails to disk? [y/n]: ");
         if (['y', 'yes'].includes(save.toLowerCase())) {
             // you don't need to escape ' in dotenv, it still reads to the last quote (weird...)
