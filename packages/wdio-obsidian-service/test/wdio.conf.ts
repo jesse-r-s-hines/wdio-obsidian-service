@@ -8,7 +8,7 @@ import { ObsidianVersionInfo } from "obsidian-launcher"
 import _ from "lodash"
 
 const maxInstances = Number(process.env['WDIO_MAX_INSTANCES'] ?? 4);
-const workspacePath = path.resolve(fileURLToPath(import.meta.url), "../../..")
+const workspacePath = path.resolve(fileURLToPath(import.meta.url), "../../../..")
 const obsidianVersionsJson = path.join(workspacePath, "obsidian-versions.json");
 const allVersions: ObsidianVersionInfo[] = JSON.parse(await fsAsync.readFile(obsidianVersionsJson, 'utf-8')).versions;
 const minInstallerVersion = allVersions.find(v => v.version == minSupportedObsidianVersion)!.minInstallerVersion!;
@@ -85,10 +85,10 @@ export const config: WebdriverIO.Config = {
 
     // How many instances of Obsidian should be launched in parallel during testing.
     maxInstances: maxInstances,
-    specs: ['./test/e2e/**/*.ts'],
+    specs: ['./e2e/**/*.ts'],
 
     capabilities: versionsToTest.flatMap(([appVersion, installerVersion]) => {
-        const excludeBasic = 'test/e2e/basic.spec.ts';
+        const excludeBasic = 'e2e/basic.spec.ts';
         const excludeRest = '!(basic.spec.ts)';
 
         const cap: WebdriverIO.Capabilities = {
@@ -97,10 +97,10 @@ export const config: WebdriverIO.Config = {
             'wdio:obsidianOptions': {
                 installerVersion: installerVersion,
                 plugins: [
-                    "./test/plugins/basic-plugin",
+                    "./plugins/basic-plugin",
                 ],
                 themes: [
-                    "./test/themes/basic-theme",
+                    "./themes/basic-theme",
                 ],
             },
         }
@@ -117,11 +117,11 @@ export const config: WebdriverIO.Config = {
         const caps: WebdriverIO.Capabilities[] = [
             _.merge({}, cap, { // separate capability for basic tests, test passing vault in the capability
                 'wdio:exclude': [excludeRest], // --spec command overrides wdio:specs, so use wdio:exclude instead
-                'wdio:obsidianOptions': { vault: 'test/vaults/basic' },
+                'wdio:obsidianOptions': { vault: './vaults/basic' },
             }),
             _.merge({}, cap, emulateMobileOptions, {
                 'wdio:exclude': [excludeRest],
-                'wdio:obsidianOptions': { vault: 'test/vaults/basic' },
+                'wdio:obsidianOptions': { vault: './vaults/basic' },
             }),
         ]
         if (process.env.TEST_LEVEL != 'basic') {

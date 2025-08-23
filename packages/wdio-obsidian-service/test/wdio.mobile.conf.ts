@@ -6,7 +6,7 @@ import semver from "semver";
 import { ObsidianVersionInfo } from "obsidian-launcher"
 import _ from "lodash"
 
-const workspacePath = path.resolve(fileURLToPath(import.meta.url), "../../..")
+const workspacePath = path.resolve(fileURLToPath(import.meta.url), "../../../..")
 const obsidianVersionsJson = path.join(workspacePath, "obsidian-versions.json");
 const allVersions: ObsidianVersionInfo[] = JSON.parse(await fsAsync.readFile(obsidianVersionsJson, 'utf-8')).versions;
 const cacheDir = path.join(workspacePath, ".obsidian-cache");
@@ -50,13 +50,13 @@ if (process.env.OBSIDIAN_VERSIONS == "all") {
 export const config: WebdriverIO.Config = {
     runner: 'local',
     maxInstances: 1,
-    specs: ['./test/e2e/**/*.ts'],
+    specs: ['./e2e/**/*.ts'],
 
     hostname: process.env.APPIUM_HOST || 'localhost',
     port: parseInt(process.env.APPIUM_PORT || "4723"),
 
     capabilities: versionsToTest.flatMap((version) => {
-        const excludeBasic = 'test/e2e/basic.spec.ts';
+        const excludeBasic = 'e2e/basic.spec.ts';
         const excludeRest = '!(basic.spec.ts)';
         const cap: WebdriverIO.Capabilities = {
             browserName: "obsidian",
@@ -70,17 +70,17 @@ export const config: WebdriverIO.Config = {
             'appium:adbExecTimeout': 60 * 1000,
             'wdio:obsidianOptions': {
                 plugins: [
-                    "./test/plugins/basic-plugin",
+                    "./plugins/basic-plugin",
                 ],
                 themes: [
-                    "./test/themes/basic-theme",
+                    "./themes/basic-theme",
                 ],
             },
         }
         const caps: WebdriverIO.Capabilities[] = [
             _.merge({}, cap, { // separate capability for basic tests, test passing vault in the capability
                 'wdio:exclude': [excludeRest], // --spec command overrides wdio:specs, so use wdio:exclude instead
-                'wdio:obsidianOptions': { vault: 'test/vaults/basic' },
+                'wdio:obsidianOptions': { vault: './vaults/basic' },
             }),
         ]
         if (process.env.TEST_LEVEL != 'basic') {
