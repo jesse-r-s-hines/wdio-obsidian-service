@@ -101,15 +101,17 @@ export async function obsidianApiLogin(opts: {
     const {interactive = false, savePath} = opts;
     // you can also just use a regular .env file, but we'll prompt to cache credentials for convenience
     // The root .env is loaded elsewhere
-    if (savePath) dotenv.config({path: [savePath], quiet: true});
+    const cached = savePath ? dotenv.parse(await fsAsync.readFile(savePath).catch(() => '')) : {};
+    let email = env.OBSIDIAN_EMAIL ?? cached.OBSIDIAN_EMAIL;
+    let password = env.OBSIDIAN_PASSWORD ?? cached.OBSIDIAN_PASSWORD;
+    let promptedCredentials = false;
 
-    let email = env.OBSIDIAN_EMAIL;
-    let password = env.OBSIDIAN_PASSWORD;
     if (!email || !password) {
         if (interactive) {
             console.log("Obsidian Insiders account is required to download Obsidian beta versions.")
             email = email || readlineSync.question("Obsidian email: ");
             password = password || readlineSync.question("Obsidian password: ", {hideEchoBack: true});
+            promptedCredentials = true;
         } else  {
             throw Error(
                 "Obsidian Insiders account is required to download Obsidian beta versions. Either set the " +
@@ -126,7 +128,7 @@ export async function obsidianApiLogin(opts: {
     while (!signin?.token && retries < 3) {
         // exponential backoff with random offset. Always trigger in CI to avoid multiple jobs hitting the API at once
         if (retries > 0 || env.CI) {
-            await sleep(2*Math.random() + retries*retries * 2);
+            await sleep(2*Math.random() + retries*retries * 3);
         }
 
         let mfa = '';
@@ -156,6 +158,7 @@ export async function obsidianApiLogin(opts: {
             }
         } else if (["please wait", "try again"].some(m => error?.includes(m))) {
             console.warn(`Obsidian login failed: ${signin.error}`);
+            console.warn("Retrying obsidian login...")
             retries++; // continue to next loop
         } else if (!signin.token) { // fatal error
             throw Error(`Obsidian login failed: ${signin.error ?? 'unknown error'}`);
@@ -168,7 +171,7 @@ export async function obsidianApiLogin(opts: {
         throw Error("Obsidian Insiders account is required to download Obsidian beta versions");
     }
 
-    if (interactive && savePath && (!env.OBSIDIAN_EMAIL || !env.OBSIDIAN_PASSWORD)) {
+    if (savePath && promptedCredentials) {
         const save = readlineSync.question("Cache credentails to disk? [y/n]: ");
         if (['y', 'yes'].includes(save.toLowerCase())) {
             // you don't need to escape ' in dotenv, it still reads to the last quote (weird...)

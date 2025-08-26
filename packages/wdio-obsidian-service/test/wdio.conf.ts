@@ -8,7 +8,7 @@ import { ObsidianVersionInfo } from "obsidian-launcher"
 import _ from "lodash"
 
 const maxInstances = Number(process.env['WDIO_MAX_INSTANCES'] ?? 4);
-const workspacePath = path.resolve(fileURLToPath(import.meta.url), "../../..")
+const workspacePath = path.resolve(fileURLToPath(import.meta.url), "../../../..")
 const obsidianVersionsJson = path.join(workspacePath, "obsidian-versions.json");
 const allVersions: ObsidianVersionInfo[] = JSON.parse(await fsAsync.readFile(obsidianVersionsJson, 'utf-8')).versions;
 const minInstallerVersion = allVersions.find(v => v.version == minSupportedObsidianVersion)!.minInstallerVersion!;
@@ -33,7 +33,9 @@ function minorVersion(v: string) {
     return v.split(".").slice(0, 2).join('.')
 };
 
-let versionsToTest: [string, string][]
+const defaultTestLevel = process.env.TEST_LEVEL ?? 'standard';
+
+let versionsToTest: [string, string, string?][] // [app, installer, testLevel]
 if (process.env.OBSIDIAN_VERSIONS == "all") {
     versionsToTest = allVersions
         .filter(v => !v.isBeta && semver.gte(v.version, minInstallerVersion))
@@ -49,7 +51,7 @@ if (process.env.OBSIDIAN_VERSIONS == "all") {
         versionsToTest.push(["latest-beta", "latest"]);
     }
 } else if (process.env.OBSIDIAN_VERSIONS == "sample") {
-    // Test every minor installer version and every minor appVersion since minSupportedObsidianVersion
+    // Get every minor installer version and every minor appVersion since minSupportedObsidianVersion
     const versionMap = _(allVersions)
         .filter(v => !!v.installers.appImage && !v.isBeta && semver.gte(v.version, minInstallerVersion))
         .map(v => v.version)
@@ -60,9 +62,7 @@ if (process.env.OBSIDIAN_VERSIONS == "all") {
         [semver.gte(v, minSupportedObsidianVersion) ? v : minSupportedObsidianVersion, v]
     );
     // Only test first and last few minor versions
-    if (versionsToTest.length > 4) {
-        versionsToTest = [versionsToTest[0], ...versionsToTest.slice(-3)];
-    }
+    versionsToTest = [versionsToTest[0], ...versionsToTest.slice(Math.max(versionsToTest.length - 2, 1))];
     if (await obsidianBetaAvailable(cacheDir)) {
         versionsToTest.push(["latest-beta", "earliest"]);
     } else {
@@ -72,9 +72,9 @@ if (process.env.OBSIDIAN_VERSIONS == "all") {
 } else if (process.env.OBSIDIAN_VERSIONS) {
     // Space separated list of appVersion/installerVersion, e.g. "1.7.7/latest latest/earliest"
     versionsToTest = process.env.OBSIDIAN_VERSIONS.split(/[ ,]+/).map(v => {
-        let [app, installer = "earliest"] = v.split("/"); // default to earliest installer
+        let [app, installer = "earliest", testLevel = defaultTestLevel] = v.split("/");
         app = app == "earliest" ? minSupportedObsidianVersion : app;
-        return [app, installer];
+        return [app, installer, testLevel];
     })
 } else {
     versionsToTest = [[minSupportedObsidianVersion, "earliest"], ["latest", "latest"]];
@@ -85,10 +85,10 @@ export const config: WebdriverIO.Config = {
 
     // How many instances of Obsidian should be launched in parallel during testing.
     maxInstances: maxInstances,
-    specs: ['./test/e2e/**/*.ts'],
+    specs: ['./e2e/**/*.ts'],
 
-    capabilities: versionsToTest.flatMap(([appVersion, installerVersion]) => {
-        const excludeBasic = 'test/e2e/basic.spec.ts';
+    capabilities: versionsToTest.flatMap(([appVersion, installerVersion, testLevel = defaultTestLevel]) => {
+        const excludeBasic = 'e2e/basic.spec.ts';
         const excludeRest = '!(basic.spec.ts)';
 
         const cap: WebdriverIO.Capabilities = {
@@ -97,10 +97,10 @@ export const config: WebdriverIO.Config = {
             'wdio:obsidianOptions': {
                 installerVersion: installerVersion,
                 plugins: [
-                    "./test/plugins/basic-plugin",
+                    "./plugins/basic-plugin",
                 ],
                 themes: [
-                    "./test/themes/basic-theme",
+                    "./themes/basic-theme",
                 ],
             },
         }
@@ -117,14 +117,14 @@ export const config: WebdriverIO.Config = {
         const caps: WebdriverIO.Capabilities[] = [
             _.merge({}, cap, { // separate capability for basic tests, test passing vault in the capability
                 'wdio:exclude': [excludeRest], // --spec command overrides wdio:specs, so use wdio:exclude instead
-                'wdio:obsidianOptions': { vault: 'test/vaults/basic' },
+                'wdio:obsidianOptions': { vault: './vaults/basic' },
             }),
             _.merge({}, cap, emulateMobileOptions, {
                 'wdio:exclude': [excludeRest],
-                'wdio:obsidianOptions': { vault: 'test/vaults/basic' },
+                'wdio:obsidianOptions': { vault: './vaults/basic' },
             }),
         ]
-        if (process.env.TEST_LEVEL != 'basic') {
+        if (testLevel != 'basic') {
             caps.push(
                 _.merge({}, cap, { 'wdio:exclude': [excludeBasic] }),
                 _.merge({}, cap, emulateMobileOptions, { 'wdio:exclude': [excludeBasic] }),

@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
 name: Test
 on:
   push:
@@ -25,10 +26,11 @@ jobs:
           skip_after_successful_duplicate: 'true'
           do_not_skip: '["workflow_dispatch"]'
 
-  lint:
+  # Test build, lint & unit before running expensive e2e tests
+  test-unit:
     needs: [pre-check]
     if: ${{ needs.pre-check.outputs.should_skip != 'true' }}
-    name: Lint
+    name: "test build, lint & unit"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -43,11 +45,21 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - name: Build
         run: pnpm run --aggregate-output --reporter-hide-prefix build
-      - name: Run Lint
+      - name: Run lint
         run: pnpm run test:lint
+      - name: Run unit tests
+        run: pnpm run --aggregate-output --reporter-hide-prefix test:unit
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build
+          retention-days: 1
+          path: | # Workaround, see https://github.com/actions/upload-artifact/issues/174#issuecomment-2878874192
+            root-placeholder
+            packages/*/dist
 
-  test-desktop:
-    needs: [lint]
+  test-e2e-desktop:
+    needs: [test-unit]
     strategy:
       fail-fast: false
       matrix:
@@ -64,38 +76,38 @@ jobs:
           - os: windows-latest
             node-version: "20.x"
             test-level: "standard"
-            obsidian-versions: "latest/latest earliest/earliest"
+            obsidian-versions: "latest/latest/standard earliest/earliest/basic"
           - os: macos-latest # arm
             node-version: "22.x"
             test-level: "standard"
-            obsidian-versions: "latest/latest earliest/earliest"
+            obsidian-versions: "latest/latest/standard earliest/earliest/basic"
             # macos runners have less RAM and have issues with high parallelism
             max-instances: 2
             pnpm-args: "--sequential"
           - os: ubuntu-24.04-arm
             node-version: "24.x"
             test-level: "standard"
-            obsidian-versions: "latest/latest earliest/earliest"
-          # Window arm runner is really slow, so skip this test for now
+            obsidian-versions: "latest/latest/standard earliest/earliest/basic"
+          # Skip these to save time (window-arm is especially slow for some reason)
           # - os: windows-11-arm
           #   node-version: "22.x"
           #   test-level: "basic"
           #   obsidian-versions: "latest/latest latest/1.6.5"
-          - os: macos-13 # x86
-            node-version: "22.x"
-            test-level: "basic"
-            obsidian-versions: "latest/latest earliest/earliest"
-            max-instances: 2
-            pnpm-args: "--sequential"
+          # - os: macos-13 # x86
+          #   node-version: "22.x"
+          #   test-level: "basic"
+          #   obsidian-versions: "latest/latest earliest/earliest"
+          #   max-instances: 2
+          #   pnpm-args: "--sequential"
     runs-on: ${{ matrix.os }}
     timeout-minutes: 30
-    name: test (${{ matrix.os }}, node ${{ matrix.node-version }})
+    name: test e2e (${{ matrix.os }}, node ${{ matrix.node-version }})
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
         with:
           version: 10
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Use Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
@@ -108,9 +120,12 @@ jobs:
           key: obsidian-cache-${{ matrix.os }}-${{ matrix.obsidian-versions }}-${{ hashFiles('./obsidian-versions.json') }}
 
       - run: pnpm install --frozen-lockfile
-      - name: Build
-        run: pnpm run --aggregate-output --reporter-hide-prefix build
-      
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: build
+
+      # We already ran these, but we'll run in the matrix as well to test different node versions
       - name: Run unit tests
         run: pnpm run --aggregate-output --reporter-hide-prefix test:unit
 
@@ -149,30 +164,32 @@ jobs:
           OBSIDIAN_EMAIL: ${{ secrets.OBSIDIAN_EMAIL }}
           OBSIDIAN_PASSWORD: ${{ secrets.OBSIDIAN_PASSWORD }}
 
-  test-android:
-    needs: [lint]
+  test-e2e-android:
+    needs: [test-unit]
     env:
       AVD_ARGS: "-no-metrics -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none"
     strategy:
       fail-fast: false
       matrix:
         include:
-          - obsidian-version: latest
+          - obsidian-versions: "latest earliest"
             android-api-level: 36
             android-profile: pixel
             node-version: "18.x"
-          - obsidian-version: earliest
-            android-api-level: 36
-            android-profile: pixel
-            node-version: "24.x"
+          # Just using one matrix for now to save github minutes consumed
+          # Doing both versions in one runner also makes tests that the re-install logic is working
+          # - obsidian-versions: earliest
+          #   android-api-level: 36
+          #   android-profile: pixel
+          #   node-version: "24.x"
     runs-on: ubuntu-latest
-    name: test (android, api ${{ matrix.android-api-level }}, profile ${{ matrix.android-profile }}, obsidian ${{ matrix.obsidian-version }})
+    name: test e2e (android, api ${{ matrix.android-api-level }}, profile ${{ matrix.android-profile }}, obsidian ${{ matrix.obsidian-versions }})
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
         with:
           version: 10
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Use Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
@@ -182,11 +199,13 @@ jobs:
         uses: actions/cache@v4
         with:
           path: .obsidian-cache
-          key: obsidian-cache-android-${{ matrix.obsidian-version }}-${{ hashFiles('./obsidian-versions.json') }}
+          key: obsidian-cache-android-${{ matrix.obsidian-versions }}-${{ hashFiles('./obsidian-versions.json') }}
 
       - run: pnpm install --frozen-lockfile
-      - name: Build
-        run: pnpm run --aggregate-output --reporter-hide-prefix build
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: build
 
       - name: Enable KVM
         run: |
@@ -217,13 +236,13 @@ jobs:
           heap-size: 512M
           script: pnpm run --aggregate-output --reporter-hide-prefix test:android
         env:
-          OBSIDIAN_VERSIONS: ${{ matrix.obsidian-version }}
+          OBSIDIAN_VERSIONS: ${{ matrix.obsidian-versions }}
           OBSIDIAN_EMAIL: ${{ secrets.OBSIDIAN_EMAIL }}
           OBSIDIAN_PASSWORD: ${{ secrets.OBSIDIAN_PASSWORD }}
 
   post-check:
     if: always()
-    needs: [lint, test-desktop, test-android]
+    needs: [test-unit, test-e2e-desktop, test-e2e-android]
     runs-on: ubuntu-latest
     steps:
       - name: Check all tests passed
@@ -231,4 +250,3 @@ jobs:
         with:
           jobs: ${{ toJSON(needs) }}
           allowed-skips: ${{ toJSON(needs) }}
-
