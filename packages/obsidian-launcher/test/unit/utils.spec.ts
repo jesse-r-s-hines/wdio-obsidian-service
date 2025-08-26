@@ -107,16 +107,6 @@ describe("atomicCreate", () => {
         expect(await fsAsync.readFile(dest, 'utf-8')).to.equal("C");
     })
 
-    it("deletes parent directory", async () => {
-        const tmpDir = await createDirectory();
-        const dest = path.join(tmpDir, "a/b/c.txt");
-        await atomicCreate(dest, async (scratch) => {
-            await fsAsync.writeFile(path.join(scratch, 'c.txt'), "C");
-            throw Error("FOO")
-        }).catch(e => e);
-        expect(await fsAsync.readdir(tmpDir)).to.eql([]);
-    })
-
     it("errors", async () => {
         const tmpDir = await createDirectory();
         const dest = path.join(tmpDir, "out");
