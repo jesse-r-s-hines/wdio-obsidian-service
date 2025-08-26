@@ -9,10 +9,13 @@ import _ from "lodash"
 
 export async function fileExists(path: string) {
     try {
-        await fsAsync.access(path);
+        await fsAsync.stat(path);
         return true;
-    } catch {
-        return false;
+    } catch (e: any) {
+        if (e?.code == "ENOENT") {
+            return false
+        }
+        throw e
     }
 }
 
