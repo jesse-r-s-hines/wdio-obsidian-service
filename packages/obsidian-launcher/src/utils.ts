@@ -9,10 +9,13 @@ import _ from "lodash"
 
 export async function fileExists(path: string) {
     try {
-        await fsAsync.access(path);
+        await fsAsync.stat(path);
         return true;
-    } catch {
-        return false;
+    } catch (e: any) {
+        if (e?.code == "ENOENT") {
+            return false
+        }
+        throw e
     }
 }
 
@@ -38,8 +41,7 @@ export async function atomicCreate(
     opts: {preserveTmpDir?: boolean} = {},
 ): Promise<void> {
     dest = path.resolve(dest);
-    // mkdir returns first parent created, or undefined if none were created
-    const createdParentDir = await fsAsync.mkdir(path.dirname(dest), { recursive: true });
+    await fsAsync.mkdir(path.dirname(dest), { recursive: true });
     const tmpDir = await fsAsync.mkdtemp(path.join(path.dirname(dest), `.${path.basename(dest)}.tmp.`));
     let success = false;
     try {
@@ -59,7 +61,7 @@ export async function atomicCreate(
             await fsAsync.rm(tmpDir + ".old", { recursive: true, force: true });
             await fsAsync.rm(tmpDir, { recursive: true, force: true });
         } else if (!opts.preserveTmpDir) {
-            await fsAsync.rm(createdParentDir ?? tmpDir, { recursive: true, force: true });
+            await fsAsync.rm(tmpDir, { recursive: true, force: true });
         }
     }
 }
