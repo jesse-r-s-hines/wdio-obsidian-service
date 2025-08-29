@@ -121,9 +121,13 @@ export async function obsidianApiLogin(opts: {
         }
     }
 
+    type SigninResult = {token?: string, error?: string, license?: string};
+    function parseSignin(r: any): SigninResult {
+        return {token: r.token ? 'token' : undefined, error: r.error?.toString(), license: r.license}
+    }
+
     let needsMfa = false;
     let retries = 0;
-    type SigninResult = {token?: string, error?: string, license?: string};
     let signin: SigninResult|undefined = undefined;
     while (!signin?.token && retries < 3) {
         // exponential backoff with random offset. Always trigger in CI to avoid multiple jobs hitting the API at once
@@ -136,7 +140,7 @@ export async function obsidianApiLogin(opts: {
             mfa = readlineSync.question("Obsidian 2FA: ");
         }
 
-        signin = await fetch("https://api.obsidian.md/user/signin", {
+        const response = await fetch("https://api.obsidian.md/user/signin", {
             method: "post",
             headers: {
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.183 Safari/537.36',
@@ -144,7 +148,8 @@ export async function obsidianApiLogin(opts: {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({email, password, mfa})
-        }).then(r => r.json()) as SigninResult;
+        }).then(r => r.json());
+        signin = parseSignin(response);
 
         const error = signin.error?.toLowerCase();
         if (error?.includes("2fa") && !needsMfa) {
@@ -190,6 +195,9 @@ export async function obsidianApiLogin(opts: {
  * Fetch from the Obsidian API to download insider versions.
  */
 export async function fetchObsidianApi(url: string, opts: {token: string}) {
+    if (!opts.token) {
+        throw Error("Obsidian credentials required to download Obsidian beta release")
+    }
     url = createURL(url, "https://releases.obsidian.md");
     const response = await fetch(url, {
         headers: {
