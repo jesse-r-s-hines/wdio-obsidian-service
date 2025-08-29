@@ -22,11 +22,23 @@ describe("atomicCreate", () => {
         const tmpDir = await createDirectory();
         const dest = path.join(tmpDir, "out");
         await atomicCreate(dest, async (scratch) => {
-            await fsAsync.writeFile(path.join(scratch, 'a'), "a");
-            await fsAsync.writeFile(path.join(scratch, 'b'), "b");
+            await fsAsync.writeFile(path.join(scratch, 'a'), "A");
+            await fsAsync.writeFile(path.join(scratch, 'b'), "B");
             return path.join(scratch, 'b');
-        })
-        expect(await fsAsync.readFile(dest, 'utf-8')).to.equal("b");
+        }, {replace: false})
+        expect(await fsAsync.readFile(dest, 'utf-8')).to.equal("B");
+        expect(await fsAsync.readdir(tmpDir)).to.eql(["out"]);
+    })
+
+    it("basic keep", async () => {
+        const tmpDir = await createDirectory();
+        const dest = path.join(tmpDir, "out");
+        await atomicCreate(dest, async (scratch) => {
+            await fsAsync.writeFile(path.join(scratch, 'a'), "A");
+            await fsAsync.writeFile(path.join(scratch, 'b'), "B");
+            return path.join(scratch, 'b');
+        }, {replace: true})
+        expect(await fsAsync.readFile(dest, 'utf-8')).to.equal("B");
         expect(await fsAsync.readdir(tmpDir)).to.eql(["out"]);
     })
 
@@ -34,32 +46,32 @@ describe("atomicCreate", () => {
         const tmpDir = await createDirectory();
         const dest = path.join(tmpDir, "out");
         await atomicCreate(dest, async (scratch) => {
-            await fsAsync.writeFile(path.join(scratch, 'a'), "a");
+            await fsAsync.writeFile(path.join(scratch, 'a'), "A");
             return 'a';
         })
-        expect(await fsAsync.readFile(dest, 'utf-8')).to.equal("a");
+        expect(await fsAsync.readFile(dest, 'utf-8')).to.equal("A");
     })
 
-    it("with directory", async () => {
+    it("directory", async () => {
         const tmpDir = await createDirectory();
         const dest = path.join(tmpDir, "out");
         await atomicCreate(dest, async (scratch) => {
             await fsAsync.mkdir(path.join(scratch, 'a'));
-            await fsAsync.writeFile(path.join(scratch, 'a', 'b'), "b");
+            await fsAsync.writeFile(path.join(scratch, 'a', 'b'), "B");
             return path.join(scratch, 'a');
         })
-        expect(await fsAsync.readFile(path.join(dest, 'b'), 'utf-8')).to.equal("b");
+        expect(await fsAsync.readFile(path.join(dest, 'b'), 'utf-8')).to.equal("B");
         expect(await fsAsync.readdir(tmpDir)).to.eql(["out"]);
     })
 
-    it("return tmpDir", async () => {
+    it("return scratch", async () => {
         const tmpDir = await createDirectory();
         const dest = path.join(tmpDir, "out");
         await atomicCreate(dest, async (scratch) => {
-            await fsAsync.writeFile(path.join(scratch, 'a'), "b");
+            await fsAsync.writeFile(path.join(scratch, 'a'), "B");
             return scratch;
         })
-        expect(await fsAsync.readFile(path.join(dest, 'a'), 'utf-8')).to.equal("b");
+        expect(await fsAsync.readFile(path.join(dest, 'a'), 'utf-8')).to.equal("B");
         expect(await fsAsync.readdir(tmpDir)).to.eql(["out"]);
     })
 
@@ -67,33 +79,59 @@ describe("atomicCreate", () => {
         const tmpDir = await createDirectory();
         const dest = path.join(tmpDir, "out");
         await atomicCreate(dest, async (scratch) => {
-            await fsAsync.writeFile(path.join(scratch, 'a'), "b");
+            await fsAsync.writeFile(path.join(scratch, 'a'), "B");
         })
-        expect(await fsAsync.readFile(path.join(dest, 'a'), 'utf-8')).to.equal("b");
+        expect(await fsAsync.readFile(path.join(dest, 'a'), 'utf-8')).to.equal("B");
         expect(await fsAsync.readdir(tmpDir)).to.eql(["out"]);
     })
 
-    it("overwrite file", async () => {
-        const tmpDir = await createDirectory({"foo.txt": "bar"})
+    it("replace file", async () => {
+        const tmpDir = await createDirectory({"foo.txt": "FOO"})
         const dest = path.join(tmpDir, "foo.txt");
 
         await atomicCreate(dest, async (scratch) => {
-            await fsAsync.writeFile(path.join(scratch, 'foo.txt'), "baz");
+            await fsAsync.writeFile(path.join(scratch, 'foo.txt'), "BAR");
             return path.join(scratch, 'foo.txt');
-        })
-        expect(await fsAsync.readFile(dest, 'utf-8')).to.equal("baz");
+        }, {replace: true})
+        expect(await fsAsync.readFile(dest, 'utf-8')).to.equal("BAR");
         expect(await fsAsync.readdir(tmpDir)).to.eql(["foo.txt"]);
     })
 
-    it("overwrite folder", async () => {
-        const tmpDir = await createDirectory({"out/foo.txt": "bar"});
+    it("replace folder", async () => {
+        const tmpDir = await createDirectory({"out/foo.txt": "FOO"});
         const dest = path.join(tmpDir, "out");
 
         await atomicCreate(dest, async (scratch) => {
-            await fsAsync.writeFile(path.join(scratch, 'a'), "b");
+            await fsAsync.writeFile(path.join(scratch, 'a'), "BAR");
             return scratch;
-        })
+        }, {replace: true})
         expect(await fsAsync.readdir(dest)).to.eql(["a"]);
+        expect(await fsAsync.readFile(path.join(dest, 'a'), 'utf-8')).to.equal("BAR");
+        expect(await fsAsync.readdir(tmpDir)).to.eql(["out"]);
+    })
+
+    it("keep file", async () => {
+        const tmpDir = await createDirectory({"foo.txt": "FOO"})
+        const dest = path.join(tmpDir, "foo.txt");
+
+        await atomicCreate(dest, async (scratch) => {
+            await fsAsync.writeFile(path.join(scratch, 'foo.txt'), "BAR");
+            return path.join(scratch, 'foo.txt');
+        }, {replace: false})
+        expect(await fsAsync.readFile(dest, 'utf-8')).to.equal("FOO");
+        expect(await fsAsync.readdir(tmpDir)).to.eql(["foo.txt"]);
+    })
+
+    it("keep folder", async () => {
+        const tmpDir = await createDirectory({"out/foo.txt": "FOO"});
+        const dest = path.join(tmpDir, "out");
+
+        await atomicCreate(dest, async (scratch) => {
+            await fsAsync.writeFile(path.join(scratch, 'a'), "BAR");
+            return scratch;
+        }, {replace: false})
+        expect(await fsAsync.readdir(dest)).to.eql(["foo.txt"]);
+        expect(await fsAsync.readFile(path.join(dest, 'foo.txt'), 'utf-8')).to.equal("FOO");
         expect(await fsAsync.readdir(tmpDir)).to.eql(["out"]);
     })
 

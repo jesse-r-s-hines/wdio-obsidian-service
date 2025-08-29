@@ -54,9 +54,9 @@ export async function sevenZ(args: string[], options?: child_process.SpawnOption
  */
 export async function extractObsidianAppImage(appImage: string, dest: string) {
     // Could also use `--appimage-extract` instead.
-    await atomicCreate(dest, async (tmpDir) => {
-        await sevenZ(["x", "-o.", path.relative(tmpDir, appImage)], {cwd: tmpDir});
-        return tmpDir;
+    await atomicCreate(dest, async (scratch) => {
+        await sevenZ(["x", "-o.", path.relative(scratch, appImage)], {cwd: scratch});
+        return scratch;
     })
 }
 
@@ -65,10 +65,10 @@ export async function extractObsidianAppImage(appImage: string, dest: string) {
  * Extract the obsidian.tar.gz
  */
 export async function extractObsidianTar(tar: string, dest: string) {
-    await atomicCreate(dest, async (tmpDir) => {
-        await extractGz(tar, path.join(tmpDir, "inflated.tar"));
-        await sevenZ(["x", "-o.", "inflated.tar"], {cwd: tmpDir});
-        return (await fsAsync.readdir(tmpDir)).find(p => p.match("obsidian-"))!;
+    await atomicCreate(dest, async (scratch) => {
+        await extractGz(tar, path.join(scratch, "inflated.tar"));
+        await sevenZ(["x", "-o.", "inflated.tar"], {cwd: scratch});
+        return (await fsAsync.readdir(scratch)).find(p => p.match("obsidian-"))!;
     })
 }
 
@@ -89,9 +89,9 @@ export async function extractObsidianExe(exe: string, arch: NodeJS.Architecture,
     } else {
         throw Error(`No Obsidian installer found for ${process.platform} ${process.arch}`);
     }
-    await atomicCreate(dest, async (tmpDir) => {
-        await sevenZ(["x", "-oinstaller", path.relative(tmpDir, exe), subArchive], {cwd: tmpDir});
-        await sevenZ(["x", "-oobsidian", path.join("installer", subArchive)], {cwd: tmpDir});
+    await atomicCreate(dest, async (scratch) => {
+        await sevenZ(["x", "-oinstaller", path.relative(scratch, exe), subArchive], {cwd: scratch});
+        await sevenZ(["x", "-oobsidian", path.join("installer", subArchive)], {cwd: scratch});
         return "obsidian";
     })
 }
@@ -102,10 +102,10 @@ export async function extractObsidianExe(exe: string, arch: NodeJS.Architecture,
 export async function extractObsidianDmg(dmg: string, dest: string) {
     dest = path.resolve(dest);
 
-    await atomicCreate(dest, async (tmpDir) => {
+    await atomicCreate(dest, async (scratch) => {
         // Current mac dmg files just have `Obsidian.app`, but on older '-universal' ones it's nested another level.
-        await sevenZ(["x", "-o.", path.relative(tmpDir, dmg), "*/Obsidian.app", "Obsidian.app"], {cwd: tmpDir});
-        const files = await fsAsync.readdir(tmpDir);
+        await sevenZ(["x", "-o.", path.relative(scratch, dmg), "*/Obsidian.app", "Obsidian.app"], {cwd: scratch});
+        const files = await fsAsync.readdir(scratch);
         if (files.includes("Obsidian.app")) {
             return "Obsidian.app"
         } else {

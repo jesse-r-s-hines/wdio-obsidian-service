@@ -5,7 +5,7 @@ import serverHandler from "serve-handler";
 import http from "http";
 import { AddressInfo } from "net";
 import { after } from "mocha";
-import { fileExists, atomicCreate } from "../src/utils.js";
+import { atomicCreate } from "../src/utils.js";
 import { downloadResponse } from "../src/apis.js";
 import { linkOrCp } from "../src/utils.js";
 
@@ -33,12 +33,10 @@ export async function createDirectory(files: Record<string, string> = {}) {
 /** Downloads downloads url to dest dir if dest doesn't exist, returns the cached path. */
 export async function cachedDownload(url: string, cacheDir: string) {
     const dest = path.join(cacheDir, url.split("/").at(-1)!);
-    if (!(await fileExists(dest))) {
-        await atomicCreate(dest, async (tmpDir) => {
-            await downloadResponse(await fetch(url), path.join(tmpDir, "out"));
-            return path.join(tmpDir, "out");
-        })
-    }
+    await atomicCreate(dest, async (scratch) => {
+        await downloadResponse(await fetch(url), path.join(scratch, "out"));
+        return path.join(scratch, "out");
+    }, {replace: false})
     return dest;
 }
 

@@ -100,7 +100,7 @@ export class ObsidianLauncher {
             if (url.startsWith("file:")) {
                 data = JSON.parse(await fsAsync.readFile(fileURLToPath(url), 'utf-8'));
             }
-            // read from cache if its recent and valid
+            // read from cache if it's recent and valid
             if (!data && cacheMtime && new Date().getTime() - cacheMtime.getTime() < this.cacheDuration) {
                 const parsed = JSON.parse(await fsAsync.readFile(dest, 'utf-8'));
                 if (cacheValid(parsed)) {
@@ -117,10 +117,10 @@ export class ObsidianLauncher {
                     return d;
                 }));
                 if (response.success) {
-                    await atomicCreate(dest, async (tmpDir) => {
-                        await fsAsync.writeFile(path.join(tmpDir, 'download.json'), response.result);
-                        return path.join(tmpDir, 'download.json');
-                    });
+                    await atomicCreate(dest, async (scratch) => {
+                        await fsAsync.writeFile(path.join(scratch, 'download.json'), response.result);
+                        return path.join(scratch, 'download.json');
+                    }, {replace: true});
                     data = JSON.parse(response.result);
                 } else {
                     error = response.error;
@@ -353,34 +353,32 @@ export class ObsidianLauncher {
         const versionInfo = await this.getVersionInfo(installerVersion);
         installerVersion = versionInfo.version;
         const installerInfo = await this.getInstallerInfo(installerVersion, {platform, arch});
-        const cacheDir = path.join(this.cacheDir, `obsidian-installer/${platform}-${arch}/Obsidian-${installerVersion}`);
+        const installerDir = path.join(this.cacheDir, `obsidian-installer/${platform}-${arch}/Obsidian-${installerVersion}`);
 
         let binaryPath: string;
         let extractor: (installer: string, dest: string) => Promise<void>;
 
         if (platform == "linux") {
-            binaryPath = path.join(cacheDir, "obsidian");
+            binaryPath = path.join(installerDir, "obsidian");
             extractor = (installer, dest) => extractObsidianAppImage(installer, dest);
         } else if (platform == "win32") {
-            binaryPath = path.join(cacheDir, "Obsidian.exe")
+            binaryPath = path.join(installerDir, "Obsidian.exe")
             extractor = (installer, dest) => extractObsidianExe(installer, arch, dest);
         } else if (platform == "darwin") {
-            binaryPath = path.join(cacheDir, "Contents/MacOS/Obsidian");
+            binaryPath = path.join(installerDir, "Contents/MacOS/Obsidian");
             extractor = (installer, dest) => extractObsidianDmg(installer, dest);
         } else {
             throw Error(`Unsupported platform ${platform}`); // shouldn't happen
         }
 
-        if (!(await fileExists(binaryPath))) {
+        await atomicCreate(installerDir, async (scratch) => {
             console.log(`Downloading Obsidian installer v${installerVersion}...`)
-            await atomicCreate(cacheDir, async (tmpDir) => {
-                const installer = path.join(tmpDir, "installer");
-                await downloadResponse(await fetch(installerInfo.url), installer);
-                const extracted = path.join(tmpDir, "extracted");
-                await extractor(installer, extracted);
-                return extracted;
-            });
-        }
+            const installer = path.join(scratch, "installer");
+            await downloadResponse(await fetch(installerInfo.url), installer);
+            const extracted = path.join(scratch, "extracted");
+            await extractor(installer, extracted);
+            return extracted;
+        }, {replace: false});
 
         return binaryPath;
     }
@@ -401,30 +399,29 @@ export class ObsidianLauncher {
             throw Error(`No asar found for Obsidian version ${appVersion}`);
         }
         const appPath = path.join(this.cacheDir, 'obsidian-app', `obsidian-${versionInfo.version}.asar`);
-
-        if (!(await fileExists(appPath))) {
-            console.log(`Downloading Obsidian app v${versionInfo.version} ...`)
-            await atomicCreate(appPath, async (tmpDir) => {
-                const isInsiders = new URL(appUrl).hostname.endsWith('.obsidian.md');
-                let response: Response;
-                if (isInsiders) {
-                    if (!this.obsidianApiToken) {
-                        this.obsidianApiToken = await obsidianApiLogin({
-                            interactive: this.interactive,
-                            savePath: path.join(this.cacheDir, "obsidian-credentials.env"),
-                        });
-                    }
-                    response = await fetchObsidianApi(appUrl, {token: this.obsidianApiToken});
-                } else {
-                    response = await fetch(appUrl);
-                }
-                const archive = path.join(tmpDir, 'app.asar.gz');
-                const asar = path.join(tmpDir, 'app.asar')
-                await downloadResponse(response, archive);
-                await extractGz(archive, asar);
-                return asar;
-            })
+        const isInsiders = new URL(appUrl).hostname.endsWith('.obsidian.md');
+        if (isInsiders && !this.obsidianApiToken && !(await fileExists(appPath))) {
+            // do this here to avoid readline-sync blocking in the middle of atomicCreate
+            this.obsidianApiToken = await obsidianApiLogin({
+                interactive: this.interactive,
+                savePath: path.join(this.cacheDir, "obsidian-credentials.env"),
+            });
         }
+
+        await atomicCreate(appPath, async (scratch) => {
+            console.log(`Downloading Obsidian app v${versionInfo.version} ...`)
+            let response: Response;
+            if (isInsiders) {
+                response = await fetchObsidianApi(appUrl, {token: this.obsidianApiToken!});
+            } else {
+                response = await fetch(appUrl);
+            }
+            const archive = path.join(scratch, 'app.asar.gz');
+            const asar = path.join(scratch, 'app.asar')
+            await downloadResponse(response, archive);
+            await extractGz(archive, asar);
+            return asar;
+        }, {replace: false})
 
         return appPath;
     }
@@ -446,27 +443,25 @@ export class ObsidianLauncher {
     ): Promise<string> {
         const {platform, arch} = _.defaults({}, opts, currentPlatform);
         const installerInfo = await this.getInstallerInfo(installerVersion, {platform, arch});
-        const cacheDir = path.join(this.cacheDir, `electron-chromedriver/${platform}-${arch}/${installerInfo.electron}`);
+        const chromedriverDir = path.join(this.cacheDir, `electron-chromedriver/${platform}-${arch}/${installerInfo.electron}`);
         let chromedriverPath: string;
         if (process.platform == "win32") {
-            chromedriverPath = path.join(cacheDir, `chromedriver.exe`);
+            chromedriverPath = path.join(chromedriverDir, `chromedriver.exe`);
         } else {
-            chromedriverPath = path.join(cacheDir, `chromedriver`);
+            chromedriverPath = path.join(chromedriverDir, `chromedriver`);
         }
 
-        if (!(await fileExists(chromedriverPath))) {
+        await atomicCreate(chromedriverDir, async (scratch) => {
             console.log(`Downloading chromedriver for electron ${installerInfo.electron} ...`);
-            await atomicCreate(cacheDir, async (tmpDir) => {
-                const chromedriverZipPath = await downloadArtifact({
-                    version: installerInfo.electron,
-                    artifactName: 'chromedriver',
-                    cacheRoot: path.join(tmpDir, 'download'),
-                });
-                const extracted = path.join(tmpDir, "extracted");
-                await extractZip(chromedriverZipPath, { dir: extracted });
-                return extracted;
-            })
-        }
+            const chromedriverZipPath = await downloadArtifact({
+                version: installerInfo.electron,
+                artifactName: 'chromedriver',
+                cacheRoot: path.join(scratch, 'download'),
+            });
+            const extracted = path.join(scratch, "extracted");
+            await extractZip(chromedriverZipPath, { dir: extracted });
+            return extracted;
+        }, {replace: false})
         return chromedriverPath;
     }
 
@@ -484,14 +479,12 @@ export class ObsidianLauncher {
         }
         const apkPath = path.join(this.cacheDir, 'obsidian-apk', `obsidian-${versionInfo.version}.apk`);
 
-        if (!(await fileExists(apkPath))) {
+        await atomicCreate(apkPath, async (scratch) => {
             console.log(`Downloading Obsidian apk v${versionInfo.version} ...`)
-            await atomicCreate(apkPath, async (tmpDir) => {
-                const dest = path.join(tmpDir, 'obsidian.apk')
-                await downloadResponse(await fetch(apkUrl), dest);
-                return dest;
-            })
-        }
+            const dest = path.join(scratch, 'obsidian.apk')
+            await downloadResponse(await fetch(apkUrl), dest);
+            return dest;
+        }, {replace: false})
 
         return apkPath;
     }
@@ -522,23 +515,21 @@ export class ObsidianLauncher {
         version = semver.valid(version)!;
 
         const pluginDir = path.join(this.cacheDir, "obsidian-plugins", repo, version);
-        if (!(await fileExists(pluginDir))) {
-            await atomicCreate(pluginDir, async (tmpDir) => {
-                const assetsToDownload = {'manifest.json': true, 'main.js': true, 'styles.css': false};
-                await Promise.all(
-                    Object.entries(assetsToDownload).map(async ([file, required]) => {
-                        const url = `https://github.com/${repo}/releases/download/${version}/${file}`;
-                        const response = await fetch(url);
-                        if (response.ok) {
-                            await downloadResponse(response, path.join(tmpDir, file));
-                        } else if (required) {
-                            throw Error(`No ${file} found for ${repo} version ${version}`)
-                        }
-                    })
-                )
-                return tmpDir;
-            });
-        }
+        await atomicCreate(pluginDir, async (scratch) => {
+            const assetsToDownload = {'manifest.json': true, 'main.js': true, 'styles.css': false};
+            await Promise.all(
+                Object.entries(assetsToDownload).map(async ([file, required]) => {
+                    const url = `https://github.com/${repo}/releases/download/${version}/${file}`;
+                    const response = await fetch(url);
+                    if (response.ok) {
+                        await downloadResponse(response, path.join(scratch, file));
+                    } else if (required) {
+                        throw Error(`No ${file} found for ${repo} version ${version}`)
+                    }
+                })
+            )
+            return scratch;
+        }, {replace: false});
 
         return pluginDir;
     }
@@ -708,32 +699,29 @@ export class ObsidianLauncher {
         version = semver.valid(version)!;
         
         const themeDir = path.join(this.cacheDir, "obsidian-themes", repo, version);
-
-        if (!(await fileExists(themeDir))) {
-            await atomicCreate(themeDir, async (tmpDir) => {
-                // Obsidian themes can be downloaded from releases like plugins, but have fallback "legacy" behavior
-                // that just downloads from repo HEAD directly.
-                const assetsToDownload = ['manifest.json', 'theme.css'];
-                let baseUrl = `https://github.com/${repo}/releases/download/${version}`;
-                if (!(await fetch(`${baseUrl}/manifest.json`)).ok) {
-                    if (version != latest) {
-                        throw Error(`No theme version "${version}" found`);
-                    }
-                    baseUrl = `https://raw.githubusercontent.com/${repo}/HEAD`;
+        await atomicCreate(themeDir, async (scratch) => {
+            // Obsidian themes can be downloaded from releases like plugins, but have fallback "legacy" behavior
+            // that just downloads from repo HEAD directly.
+            const assetsToDownload = ['manifest.json', 'theme.css'];
+            let baseUrl = `https://github.com/${repo}/releases/download/${version}`;
+            if (!(await fetch(`${baseUrl}/manifest.json`)).ok) {
+                if (version != latest) {
+                    throw Error(`No theme version "${version}" found`);
                 }
-                await Promise.all(
-                    assetsToDownload.map(async (file) => {
-                        const url = `${baseUrl}/${file}`;
-                        const response = await fetch(url);
-                            if (response.ok) {
-                            await downloadResponse(response, path.join(tmpDir, file));
-                        } else {
-                            throw Error(`No ${file} found for ${repo}`);
-                        }
+                baseUrl = `https://raw.githubusercontent.com/${repo}/HEAD`;
+            }
+            await Promise.all(
+                assetsToDownload.map(async (file) => {
+                    const url = `${baseUrl}/${file}`;
+                    const response = await fetch(url);
+                        if (response.ok) {
+                        await downloadResponse(response, path.join(scratch, file));
+                    } else {
+                        throw Error(`No ${file} found for ${repo}`);
                     }
-                ))
-            });
-        }
+                }
+            ))
+        }, {replace: false});
 
         return themeDir;
     }
