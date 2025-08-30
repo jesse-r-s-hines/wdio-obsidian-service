@@ -29,40 +29,73 @@ export async function makeTmpDir(prefix?: string) {
 }
 
 /**
- * Handles creating a file or folder "atomically" by creating a tmpDir, then downloading or otherwise creating the file
- * under it, then renaming it to the final location when done.
+ * Handles creating a file or folder atomically.
+ * 
+ * It creates a scratch dir which `func` can use as scratch space to download/create the file or folder. Then it will
+ * rename the result to dest.
+ * 
+ * Atomicity guarantees/caveats:
+ * 
+ * This guarantees that the dest is either successfully created or not, it will never be corrupted by an error or
+ * interruption. There are some caveats when dest already exists however. `fs.rename` will atomically overwrite files,
+ * but throw if dest is a folder. So if dest already exists and is a directory there is a small chance of it getting
+ * interrupted during the replace. You'll still never end up with a "partial" dest, but it could remove the original
+ * dest without moving in the new one. If this happens, the original dest will be moved to `[tmpId].old` so you can
+ * still recover the original manually if needed.
+ * 
+ * If `replace` is false, this function is thread safe when dest is a folder. But if dest is a file, it is possible for
+ * `fs.rename` to silently overwite dest if two processes/threads create it at almost the  same time. If `replace` is
+ * true, this function is thread safe when dest is a file, but not when its a folder.
+ * 
  * @param dest Path the file or folder should end up at.
- * @param func Function takes path to a temporary directory it can use as scratch space. The path it returns will be
- *     moved to `dest`. If no path is returned, it will move the whole tmpDir to dest.
+ * @param func Function takes path to a temporary directory it can use as scratch space. The path it
+ *     returns will be moved to `dest`. If no path is returned, it will move the whole tmpDir to dest.
+ * @param opts.replace If true, overwrite dest if it exists. If false, skip func if dest exists. Default true.
  * @param opts.preserveTmpDir Don't delete tmpDir on failure. Default false.
  */
 export async function atomicCreate(
-    dest: string, func: (tmpDir: string) => Promise<string|void>,
-    opts: {preserveTmpDir?: boolean} = {},
+    dest: string, func: (scratch: string) => Promise<string|void>,
+    opts: {replace?: boolean, preserveTmpDir?: boolean} = {},
 ): Promise<void> {
+    const {replace = true, preserveTmpDir = false} = opts
     dest = path.resolve(dest);
-    await fsAsync.mkdir(path.dirname(dest), { recursive: true });
-    const tmpDir = await fsAsync.mkdtemp(path.join(path.dirname(dest), `.${path.basename(dest)}.tmp.`));
-    let success = false;
+    const parentDir = path.dirname(dest);
+
+    if (!replace && (await fileExists(dest))) return
+
+    await fsAsync.mkdir(parentDir, { recursive: true });
+    const scratch = await fsAsync.mkdtemp(path.join(parentDir, `.${path.basename(dest)}.tmp.`));
+
     try {
-        let result = await func(tmpDir) ?? tmpDir;
-        result = path.resolve(tmpDir, result);
-        if (!result.startsWith(tmpDir)) {
-            throw new Error(`Returned path ${result} not under tmpDir`)
+        let result = await func(scratch) ?? scratch;
+        result = path.resolve(scratch, result);
+        if (!result.startsWith(scratch)) {
+            throw new Error(`Returned path ${result} not under scratch`)
         }
-        // rename will overwrite files but not directories
-        if (await fileExists(dest) && (await fsAsync.stat(dest)).isDirectory()) {
-            await fsAsync.rename(dest, tmpDir + ".old")
+
+        if (replace) {
+            // rename will overwrite files but not directories
+            if ((await fsAsync.stat(dest).catch(() => null))?.isDirectory()) {
+                await fsAsync.rename(dest, `${scratch}.old`)
+            }
+            // Potential race condition here if a folder is immediately recreated
+            await fsAsync.rename(result, dest);
+        } else {
+            if (!(await fileExists(dest))) {
+                // Ignore error if folder already exists. However, because rename overwrites files, it
+                // is theoretically possible replace dest if it's a file...
+                await fsAsync.rename(result, dest)
+                    .catch(e => { if (e?.code != 'ENOTEMPTY') throw e });
+            }
         }
-        await fsAsync.rename(result, dest);
-        success = true;
-    } finally {
-        if (success) {
-            await fsAsync.rm(tmpDir + ".old", { recursive: true, force: true });
-            await fsAsync.rm(tmpDir, { recursive: true, force: true });
-        } else if (!opts.preserveTmpDir) {
-            await fsAsync.rm(tmpDir, { recursive: true, force: true });
+
+        await fsAsync.rm(scratch, { recursive: true, force: true });
+        await fsAsync.rm(`${scratch}.old`, { recursive: true, force: true });
+    } catch (e: any) {
+        if (!preserveTmpDir) {
+            await fsAsync.rm(scratch, { recursive: true, force: true });
         }
+        throw e
     }
 }
 
