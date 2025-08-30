@@ -32,7 +32,7 @@ Obsidian Desktop is distributed in two parts, the "installer" which is the execu
 `appVersion` can be set to one of:
 - a specific version string like "1.7.7"
 - "latest": run the latest non-beta Obsidian version
-- "latest-beta": run the latest beta Obsidian version (or latest is there is no current beta)
+- "latest-beta": run the latest beta Obsidian version (or latest if there is no current beta)
     - To download Obsidian beta versions you'll need to have an Obsidian Insiders account
 - "earliest": run the `minAppVersion` set in your plugin's `manifest.json`
 

@@ -156,7 +156,7 @@ Obsidian Desktop is distributed in two parts, the "installer" which is the execu
 To set the app version use `browserVersion` or `'wdio:obsidianOptions'.appVersion`. It can be set to one of:
 - a specific version string like "1.7.7"
 - "latest": run the latest non-beta Obsidian version
-- "latest-beta": run the latest beta Obsidian version (or latest is there is no current beta)
+- "latest-beta": run the latest beta Obsidian version (or latest if there is no current beta)
     - To download Obsidian beta versions you'll need to have an Obsidian Insiders account and either set the `OBSIDIAN_EMAIL` and `OBSIDIAN_PASSWORD` env vars (`.env` file is supported) or pre-download the Obsidian beta with  `npx obsidian-launcher download app -v latest-beta`.
 - "earliest": run the `minAppVersion` set in your plugin's `manifest.json`
 

@@ -25,7 +25,7 @@ export interface ObsidianCapabilityOptions {
      * 
      * Can be set to a specific version or one of:
      * - "latest": Run the latest non-beta Obsidian version
-     * - "latest-beta": Run the latest beta Obsidian version (or latest is there is no current beta)
+     * - "latest-beta": Run the latest beta Obsidian version (or latest if there is no current beta)
      *     - To download Obsidian beta versions you'll need to have an Obsidian Insiders account and either set the 
      *       `OBSIDIAN_EMAIL` and `OBSIDIAN_PASSWORD` env vars (`.env` file is supported) or pre-download the Obsidian 
      *       beta version with `npx obsidian-launcher download app -v latest-beta`
