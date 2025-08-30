@@ -75,3 +75,8 @@ You can choose from two approaches for testing your plugin on mobile. You can us
 
 ## 2.1.1
 - Fix octokit dependency breaking package on older moduleResolution modes
+
+## 2.1.2
+- Documentation fixes
+- Fix race-condition in .obsidian-cache downloads
+- More flexible parsing of plugin/theme versions in obsidian-launcher CLI
