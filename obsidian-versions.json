@@ -1,9 +1,9 @@
 {
     "metadata": {
         "schemaVersion": "2.0.0",
-        "commitDate": "2025-09-19T18:47:06Z",
-        "commitSha": "5373c95d5b14ed6fd142235ffa3e273a93df525e",
-        "timestamp": "2025-09-20T00:39:03.796Z"
+        "commitDate": "2025-09-25T20:34:41Z",
+        "commitSha": "555c9efa9094e1ef01fae1372fc4489b56897830",
+        "timestamp": "2025-09-26T00:39:01.263Z"
     },
     "versions": [
         {
@@ -7486,6 +7486,16 @@
             "isBeta": true,
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.9.13.asar.gz"
+            },
+            "installers": {}
+        },
+        {
+            "version": "1.9.14",
+            "minInstallerVersion": "1.1.9",
+            "maxInstallerVersion": "1.9.12",
+            "isBeta": true,
+            "downloads": {
+                "asar": "https://releases.obsidian.md/release/obsidian-1.9.14.asar.gz"
             },
             "installers": {}
         }
