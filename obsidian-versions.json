@@ -1,9 +1,9 @@
 {
     "metadata": {
         "schemaVersion": "2.0.0",
-        "commitDate": "2025-09-25T20:34:41Z",
-        "commitSha": "555c9efa9094e1ef01fae1372fc4489b56897830",
-        "timestamp": "2025-09-26T00:39:01.263Z"
+        "commitDate": "2025-10-01T19:19:49Z",
+        "commitSha": "0ea13bff83d4c07f91db2def41f4087ad9181913",
+        "timestamp": "2025-10-02T00:39:25.848Z"
     },
     "versions": [
         {
@@ -7492,10 +7492,82 @@
         {
             "version": "1.9.14",
             "minInstallerVersion": "1.1.9",
-            "maxInstallerVersion": "1.9.12",
+            "maxInstallerVersion": "1.9.14",
+            "isBeta": false,
+            "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.9.14",
+            "downloads": {
+                "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.9.14/obsidian-1.9.14.asar.gz",
+                "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.9.14/Obsidian-1.9.14.AppImage",
+                "appImageArm": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.9.14/Obsidian-1.9.14-arm64.AppImage",
+                "tar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.9.14/obsidian-1.9.14.tar.gz",
+                "tarArm": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.9.14/obsidian-1.9.14-arm64.tar.gz",
+                "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.9.14/Obsidian-1.9.14.dmg",
+                "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.9.14/Obsidian-1.9.14.exe",
+                "apk": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.9.14/Obsidian-1.9.14.apk"
+            },
+            "installers": {
+                "appImage": {
+                    "digest": "sha256:5f11569feeae8f65a27b0476b76cf428a78eee90682ff6f2d71794c7d404be96",
+                    "electron": "37.6.0",
+                    "chrome": "138.0.7204.251",
+                    "platforms": [
+                        "linux-x64"
+                    ]
+                },
+                "appImageArm": {
+                    "digest": "sha256:764ba0923e8427b031e2b4320b6c68f964a3ef2f3632ffd2af5240744d2a67bd",
+                    "electron": "37.6.0",
+                    "chrome": "138.0.7204.251",
+                    "platforms": [
+                        "linux-arm64"
+                    ]
+                },
+                "tar": {
+                    "digest": "sha256:bd2f0f0b3f1da4c16f2421751debb69be423f61976666c4d33403007a09b53cf",
+                    "electron": "37.6.0",
+                    "chrome": "138.0.7204.251",
+                    "platforms": [
+                        "linux-x64"
+                    ]
+                },
+                "tarArm": {
+                    "digest": "sha256:c0bb155e69d7c66d2b129cce465807c6296f15efbc4e52dea78e78ad46e87ab7",
+                    "electron": "37.6.0",
+                    "chrome": "138.0.7204.251",
+                    "platforms": [
+                        "linux-arm64"
+                    ]
+                },
+                "dmg": {
+                    "digest": "sha256:0bdb24d4dbf9630f8c3306a9aa7cd31db5bf2106ddd5f73c3d2a783c1ae7873a",
+                    "electron": "37.6.0",
+                    "chrome": "138.0.7204.251",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
+                },
+                "exe": {
+                    "digest": "sha256:e6b8f82ccfcda4553a35efdfd17a56935b08543e82078d5aa1404d282cecf9ac",
+                    "electron": "37.6.0",
+                    "chrome": "138.0.7204.251",
+                    "platforms": [
+                        "win32-arm64",
+                        "win32-ia32",
+                        "win32-x64"
+                    ]
+                }
+            },
+            "electronVersion": "37.6.0",
+            "chromeVersion": "138.0.7204.251"
+        },
+        {
+            "version": "1.10.0",
+            "minInstallerVersion": "1.1.9",
+            "maxInstallerVersion": "1.9.14",
             "isBeta": true,
             "downloads": {
-                "asar": "https://releases.obsidian.md/release/obsidian-1.9.14.asar.gz"
+                "asar": "https://releases.obsidian.md/release/obsidian-1.10.0.asar.gz"
             },
             "installers": {}
         }
