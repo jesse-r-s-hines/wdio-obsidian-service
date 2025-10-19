@@ -12,6 +12,24 @@ import { ObsidianServiceOptions } from "./types.js"
  * 
  * See also: https://webdriver.io/docs/setuptypes/#standalone-mode
  * 
+ * Example:
+ * ```ts
+ * const browser = await startWdioSession({
+ *     capabilities: {
+ *         browserName: "obsidian",
+ *         browserVersion: "latest",
+ *         'wdio:obsidianOptions': {
+ *             installerVersion: "latest",
+ *             vault: "./test/vaults/basic",
+ *         },
+ *     },
+ * });
+ * await browser.executeObsidian(({app}) => {
+ *     // extract some file metadata, edit the vault, etc...
+ * });
+ * await browser?.deleteSession();
+ * ```
+ * 
  * @category WDIO Helpers
  */
 export async function startWdioSession(
