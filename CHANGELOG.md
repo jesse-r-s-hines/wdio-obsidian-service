@@ -80,3 +80,6 @@ You can choose from two approaches for testing your plugin on mobile. You can us
 - Documentation fixes
 - Fix race-condition in .obsidian-cache downloads
 - More flexible parsing of plugin/theme versions in obsidian-launcher CLI
+
+## 2.1.3
+- Add documentation for MacOS workaround
