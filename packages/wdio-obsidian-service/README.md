@@ -199,6 +199,11 @@ it("test the thing", async function() {
 
 Testing on iOS is currently not supported.
 
+### MacOS
+MacOS security settings will sometimes block the downloaded Obsidian executables from running with errors like `Obsidian is damaged and can't be opened. You should move it to the Trash. This file was downloaded on an unknown date`. You can fix this by setting the executable as allowed in "Privacy & Security" settings. See this [comment on issue #46](https://github.com/jesse-r-s-hines/wdio-obsidian-service/issues/46#issuecomment-3419205737) for instructions.
+
+If anybody more Mac-savvy knows how to prevent triggering this security check, a PR would be much appreciated! 😅
+
 ### Mobile Emulation
 
 Testing your plugin with "mobile emulation" is very easy to set up. Just add a capability like this in your `wdio.conf.mts`:
@@ -288,18 +293,19 @@ See also: The [sample plugin](https://github.com/jesse-r-s-hines/wdio-obsidian-s
 
 WebdriverIO can run tests using [Mocha](https://mochajs.org), [Jasmine](https://jasmine.github.io), and [Cucumber](https://cucumber.io/). Mocha is the easiest to set up and is used in all the `wdio-obsidian-service` examples. Mocha can also run your unit tests, typically with the addition of an assertion library like [Chai](https://www.chaijs.com). You can't run WebdriverIO using [Jest](https://jestjs.io), but if you already have Jest unit tests (or just prefer Jest) you can easily continue using Jest for your unit tests and Mocha just for your e2e tests. The built-in WebdriverIO [expect](https://webdriver.io/docs/api/expect-webdriverio) is very similar to Jest matchers, so should be familiar to use.
 
-### API Docs
+## API Docs
 
 API docs, including all configuration options and helper functions, are available [here](https://jesse-r-s-hines.github.io/wdio-obsidian-service/wdio-obsidian-service/README.html).
 
 Some key bits:
 - See [ObsidianCapabilityOptions](https://jesse-r-s-hines.github.io/wdio-obsidian-service/wdio-obsidian-service/ObsidianCapabilityOptions.html) for all the options you can pass to `wdio:obsidianOptions` in your wdio.conf.mts
 - See [ObsidianBrowserCommands](https://jesse-r-s-hines.github.io/wdio-obsidian-service/wdio-obsidian-service/ObsidianBrowserCommands.html) and [ObsidianPage](https://jesse-r-s-hines.github.io/wdio-obsidian-service/wdio-obsidian-service/ObsidianPage.html) for various useful helper functions
+- See [startWdioSession](https://jesse-r-s-hines.github.io/wdio-obsidian-service/wdio-obsidian-service/startWdioSession.html) if you aren't making e2e tests but want to use WDIO for scripts that interact with Obsidian
 
 And of course, see also [WDIO's documentation](https://webdriver.io/docs/gettingstarted) and the [many browser commands it provides](https://webdriver.io/docs/api/browser).
 
-### GitHub CI Workflows
+## GitHub CI Workflows
 The sample plugin has workflows set up to release and test your plugin, which you can see [here](https://github.com/jesse-r-s-hines/wdio-obsidian-service-sample-plugin#github-workflows).
 
-### obsidian-launcher CLI
+## obsidian-launcher CLI
 `wdio-obsidian-service` depends on [obsidian-launcher](../../packages/obsidian-launcher/README.md) so the `obsidian-launcher` CLI is also available, with some commands for launching different Obsidian versions. CLI docs available [here](https://jesse-r-s-hines.github.io/wdio-obsidian-service/obsidian-launcher/README.html#cli).

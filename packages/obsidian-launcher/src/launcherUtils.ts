@@ -114,6 +114,88 @@ export async function extractObsidianDmg(dmg: string, dest: string) {
     })
 }
 
+/**
+ * Extract Electron and Chrome versions for an Obsidian version.
+ * Takes path to the installer (the whole folder, not just the entrypoint executable).
+ */
+export async function extractInstallerInfo(
+    installerKey: keyof ObsidianVersionInfo['installers'], url: string,
+): Promise<Omit<ObsidianInstallerInfo, "digest">> {
+    const installerName = url.split("/").at(-1)!;
+    console.log(`Extrating installer info for ${installerName}...`)
+    const tmpDir = await makeTmpDir("obsidian-launcher-");
+    try {
+        const installerPath = path.join(tmpDir, url.split("/").at(-1)!)
+        await downloadResponse(await fetch(url), installerPath);
+        const exractedPath = path.join(tmpDir, "Obsidian");
+        let platforms: string[] = [];
+
+        if (installerKey == "appImage" || installerKey == "appImageArm") {
+            await extractObsidianAppImage(installerPath, exractedPath);
+            platforms = ['linux-' + (installerKey == "appImage" ? 'x64' : 'arm64')];
+        } else if (installerKey == "tar" || installerKey == "tarArm") {
+            await extractObsidianTar(installerPath, exractedPath);
+            platforms = ['linux-' + (installerKey == "tar" ? 'x64' : 'arm64')];
+        } else if (installerKey == "exe") {
+            await extractObsidianExe(installerPath, "x64", exractedPath);
+            const {stdout} = await sevenZ(["l", '-ba', path.relative(tmpDir, installerPath)], {cwd: tmpDir});
+            const lines = stdout.trim().split("\n").map(l => l.trim());
+            const files = lines.map(l => l.split(/\s+/).at(-1)!.replace(/\\/g, "/"));
+
+            if (files.includes('$PLUGINSDIR/app-arm64.7z')) platforms.push("win32-arm64");
+            if (files.includes('$PLUGINSDIR/app-32.7z')) platforms.push("win32-ia32");
+            if (files.includes('$PLUGINSDIR/app-64.7z')) platforms.push("win32-x64");
+        } else if (installerKey == "dmg") {
+            await extractObsidianDmg(installerPath, exractedPath);
+            platforms = ['darwin-arm64', 'darwin-x64'];
+        } else {
+            throw new Error(`Unknown installer key ${installerKey}`)
+        }
+
+        // This is horrific but works...
+        // We grep the binary for the electron and chrome version strings. The proper way to do this would be to spin up
+        // Obsidian and use CDP protocol to extract `process.versions`. However, that requires running Obsidian, and we
+        // want to get the versions for all platforms and architectures. So we'd either have to set up some kind of
+        // GitHub job matrix to run this on all platform/arch combinations or we can just grep the binary.
+
+        const matches: string[] = [];
+        const installerFiles = await fsAsync.readdir(exractedPath, {recursive: true, withFileTypes: true});
+        for (const file of installerFiles) {
+            if (file.isFile() && !file.name.endsWith(".asar")) {
+                const stream = fs.createReadStream(path.join(file.parentPath, file.name), {encoding: "utf-8"});
+                let prev = "";
+                for await (let chunk of stream) {
+                    const regex = /Chrome\/\d+\.\d+\.\d+\.\d+|Electron\/\d+\.\d+\.\d+/g;
+                    chunk = prev + chunk; // include part of prev in case string gets split across chunks
+                    matches.push(...[...(prev + chunk).matchAll(regex)].map(m => m[0]))
+                    prev = chunk.slice(-64);
+                }
+            }
+        }
+
+        // get most recent versions
+        const versionSortKey = (v: string) => v.split(".").map(s => s.padStart(9, '0')).join(".");
+        const versions = _(matches)
+            .map(m => m.split("/"))
+            .groupBy(0)
+            .mapValues(ms => ms.map(m => m[1]))
+            .mapValues(ms => _.sortBy(ms, versionSortKey).at(-1)!)
+            .value();
+    
+        const electron = versions['Electron'];
+        const chrome = versions['Chrome'];
+
+        if (!electron || !chrome) {
+            throw new Error(`Failed to extract Electron and Chrome versions from binary ${installerPath}`);
+        }
+
+        console.log(`Extracted installer info for ${installerName}`)
+        return { electron, chrome, platforms };
+    } finally {
+        await fsAsync.rm(tmpDir, { recursive: true, force: true });
+    }
+}
+
 // Helpers for use in updateVersionList
 
 type CommitInfo = {commitDate: string, commitSha: string}
@@ -302,88 +384,6 @@ export function updateObsidianVersionList(args: {
     return Object.values(newVersions)
         .map(normalizeObsidianVersionInfo)
         .sort((a, b) => semver.compare(a.version, b.version));
-}
-
-/**
- * Extract Electron and Chrome versions for an Obsidian version.
- * Takes path to the installer (the whole folder, not just the entrypoint executable).
- */
-export async function extractInstallerInfo(
-    installerKey: keyof ObsidianVersionInfo['installers'], url: string,
-): Promise<Omit<ObsidianInstallerInfo, "digest">> {
-    const installerName = url.split("/").at(-1)!;
-    console.log(`Extrating installer info for ${installerName}...`)
-    const tmpDir = await makeTmpDir("obsidian-launcher-");
-    try {
-        const installerPath = path.join(tmpDir, url.split("/").at(-1)!)
-        await downloadResponse(await fetch(url), installerPath);
-        const exractedPath = path.join(tmpDir, "Obsidian");
-        let platforms: string[] = [];
-
-        if (installerKey == "appImage" || installerKey == "appImageArm") {
-            await extractObsidianAppImage(installerPath, exractedPath);
-            platforms = ['linux-' + (installerKey == "appImage" ? 'x64' : 'arm64')];
-        } else if (installerKey == "tar" || installerKey == "tarArm") {
-            await extractObsidianTar(installerPath, exractedPath);
-            platforms = ['linux-' + (installerKey == "tar" ? 'x64' : 'arm64')];
-        } else if (installerKey == "exe") {
-            await extractObsidianExe(installerPath, "x64", exractedPath);
-            const {stdout} = await sevenZ(["l", '-ba', path.relative(tmpDir, installerPath)], {cwd: tmpDir});
-            const lines = stdout.trim().split("\n").map(l => l.trim());
-            const files = lines.map(l => l.split(/\s+/).at(-1)!.replace(/\\/g, "/"));
-
-            if (files.includes('$PLUGINSDIR/app-arm64.7z')) platforms.push("win32-arm64");
-            if (files.includes('$PLUGINSDIR/app-32.7z')) platforms.push("win32-ia32");
-            if (files.includes('$PLUGINSDIR/app-64.7z')) platforms.push("win32-x64");
-        } else if (installerKey == "dmg") {
-            await extractObsidianDmg(installerPath, exractedPath);
-            platforms = ['darwin-arm64', 'darwin-x64'];
-        } else {
-            throw new Error(`Unknown installer key ${installerKey}`)
-        }
-
-        // This is horrific but works...
-        // We grep the binary for the electron and chrome version strings. The proper way to do this would be to spin up
-        // Obsidian and use CDP protocol to extract `process.versions`. However, that requires running Obsidian, and we
-        // want to get the versions for all platforms and architectures. So we'd either have to set up some kind of
-        // GitHub job matrix to run this on all platform/arch combinations or we can just grep the binary.
-
-        const matches: string[] = [];
-        const installerFiles = await fsAsync.readdir(exractedPath, {recursive: true, withFileTypes: true});
-        for (const file of installerFiles) {
-            if (file.isFile() && !file.name.endsWith(".asar")) {
-                const stream = fs.createReadStream(path.join(file.parentPath, file.name), {encoding: "utf-8"});
-                let prev = "";
-                for await (let chunk of stream) {
-                    const regex = /Chrome\/\d+\.\d+\.\d+\.\d+|Electron\/\d+\.\d+\.\d+/g;
-                    chunk = prev + chunk; // include part of prev in case string gets split across chunks
-                    matches.push(...[...(prev + chunk).matchAll(regex)].map(m => m[0]))
-                    prev = chunk.slice(-64);
-                }
-            }
-        }
-
-        // get most recent versions
-        const versionSortKey = (v: string) => v.split(".").map(s => s.padStart(9, '0')).join(".");
-        const versions = _(matches)
-            .map(m => m.split("/"))
-            .groupBy(0)
-            .mapValues(ms => ms.map(m => m[1]))
-            .mapValues(ms => _.sortBy(ms, versionSortKey).at(-1)!)
-            .value();
-    
-        const electron = versions['Electron'];
-        const chrome = versions['Chrome'];
-
-        if (!electron || !chrome) {
-            throw new Error(`Failed to extract Electron and Chrome versions from binary ${installerPath}`);
-        }
-
-        console.log(`Extracted installer info for ${installerName}`)
-        return { electron, chrome, platforms };
-    } finally {
-        await fsAsync.rm(tmpDir, { recursive: true, force: true });
-    }
 }
 
 
