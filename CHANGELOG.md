@@ -83,3 +83,6 @@ You can choose from two approaches for testing your plugin on mobile. You can us
 
 ## 2.1.3
 - Add documentation for MacOS workaround
+
+## 2.1.4
+- Fix MacOS security settings blocking the downloaded Obsidian executables
