@@ -1,6 +1,7 @@
 import fsAsync from "fs/promises"
 import fs from "fs"
 import path from "path"
+import { promisify } from "util";
 import child_process from "child_process"
 import semver from "semver"
 import _ from "lodash"
@@ -13,6 +14,7 @@ import { atomicCreate, makeTmpDir, normalizeObject, pool } from "./utils.js";
 import { downloadResponse, fetchGitHubAPIPaginated } from "./apis.js"
 import { ObsidianInstallerInfo, ObsidianVersionInfo } from "./types.js";
 import { ObsidianDesktopRelease } from "./obsidianTypes.js"
+const execFile = promisify(child_process.execFile);
 
 
 export function normalizeGitHubRepo(repo: string) {
@@ -103,15 +105,31 @@ export async function extractObsidianDmg(dmg: string, dest: string) {
     dest = path.resolve(dest);
 
     await atomicCreate(dest, async (scratch) => {
-        // Current mac dmg files just have `Obsidian.app`, but on older '-universal' ones it's nested another level.
-        await sevenZ(["x", "-o.", path.relative(scratch, dmg), "*/Obsidian.app", "Obsidian.app"], {cwd: scratch});
-        const files = await fsAsync.readdir(scratch);
-        if (files.includes("Obsidian.app")) {
-            return "Obsidian.app"
+        if (process.platform == "darwin") {
+            // Using 7zip to extract the dmg breaks the code signing and causes MacOS to block the Obsidian executable
+            // with "Obsidian is damaged and can't be opened. This file was downloaded on an unknown date". See issue
+            // #46. Using hdiutil to mount the dmg and copy regularly seems to avoid this issue.
+            const proc = await execFile('hdiutil', ['attach', '-nobrowse', '-readonly', dmg]);
+            const volume = proc.stdout.match(/\/Volumes\/.*$/m)![0];
+            // Current mac dmg files just have `Obsidian.app`, but on older '-universal' ones it's nested another level.
+            const files = await fsAsync.readdir(volume);
+            let obsidianApp = files.includes("Obsidian.app") ? "Obsidian.app" : path.join(files[0], "Obsidian.app");
+            obsidianApp = path.join(volume, obsidianApp);
+            try {
+                await fsAsync.cp(obsidianApp, scratch, {recursive: true, verbatimSymlinks: true, preserveTimestamps: true});
+            } finally {
+                await execFile('hdiutil', ['detach', volume]);
+            }
+            return scratch;
         } else {
-            return path.join(files[0], "Obsidian.app")
+            // we'll use 7zip if you aren't on MacOS so that we can still extract the executable on other platforms
+            // (needed for the update-obsidian-versions GitHub workflow)
+            await sevenZ(["x", "-o.", path.relative(scratch, dmg), "*/Obsidian.app", "Obsidian.app"], {cwd: scratch});
+            const files = await fsAsync.readdir(scratch);
+            const obsidianApp = files.includes("Obsidian.app") ? "Obsidian.app" : path.join(files[0], "Obsidian.app");
+            return path.join(scratch, obsidianApp);
         }
-    })
+    });
 }
 
 /**
