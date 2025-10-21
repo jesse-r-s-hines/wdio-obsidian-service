@@ -199,9 +199,6 @@ it("test the thing", async function() {
 
 Testing on iOS is currently not supported.
 
-### MacOS
-MacOS security settings will sometimes block the downloaded Obsidian executables from running with errors like `Obsidian is damaged and can't be opened. This file was downloaded on an unknown date`. You can work around this by setting the executable as allowed in "Privacy & Security" settings. See this [comment on issue #46](https://github.com/jesse-r-s-hines/wdio-obsidian-service/issues/46#issuecomment-3419205737) for instructions.
-
 ### Mobile Emulation
 
 Testing your plugin with "mobile emulation" is very easy to set up. Just add a capability like this in your `wdio.conf.mts`:

@@ -106,9 +106,6 @@ export async function extractObsidianDmg(dmg: string, dest: string) {
 
     await atomicCreate(dest, async (scratch) => {
         if (process.platform == "darwin") {
-            // Using 7zip to extract the dmg breaks the code signing and causes MacOS to block the Obsidian executable
-            // with "Obsidian is damaged and can't be opened. This file was downloaded on an unknown date". See issue
-            // #46. Using hdiutil to mount the dmg and copy regularly seems to avoid this issue.
             const proc = await execFile('hdiutil', ['attach', '-nobrowse', '-readonly', dmg]);
             const volume = proc.stdout.match(/\/Volumes\/.*$/m)![0];
             // Current mac dmg files just have `Obsidian.app`, but on older '-universal' ones it's nested another level.
@@ -120,6 +117,9 @@ export async function extractObsidianDmg(dmg: string, dest: string) {
             } finally {
                 await execFile('hdiutil', ['detach', volume]);
             }
+            // Clear the `com.apple.quarantine` bit to avoid MacOS bocking the downloaded Obsidian executable "Obsidian
+            // is damaged and can't be opened. This file was downloaded on an unknown date". See issue #46 and https://ss64.com/mac/xattr.html
+            await execFile('xattr', ['-cr', scratch]);
             return scratch;
         } else {
             // we'll use 7zip if you aren't on MacOS so that we can still extract the executable on other platforms
