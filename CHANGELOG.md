@@ -86,3 +86,6 @@ You can choose from two approaches for testing your plugin on mobile. You can us
 
 ## 2.1.4
 - Fix MacOS security settings blocking the downloaded Obsidian executables
+
+## 2.1.5
+- More fixes on MacOS, clear the `com.apple.quarantine` attribute on downloaded Obsidian executables
