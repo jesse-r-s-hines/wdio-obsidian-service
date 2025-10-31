@@ -16,7 +16,7 @@ If you want to get going quickly, you can use the [wdio-obsidian-service sample 
 
 See also: [WebdriverIO | Getting Started](https://webdriver.io/docs/gettingstarted).
 
-To set up `wdio-obsidian-service` run the WebdriverIO Starter Toolkit:
+To set up `wdio-obsidian-service` manually in an existing project, run the WebdriverIO Starter Toolkit:
 ```bash
 npm init wdio@latest .
 ```

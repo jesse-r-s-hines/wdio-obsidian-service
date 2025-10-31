@@ -14,11 +14,11 @@ For instructions on how to set up end-to-end tests using WDIO Obsidian Service s
 
 This project is split into several NPM packages:
 - [wdio-obsidian-service](./packages/wdio-obsidian-service/README.md): A WebdriverIO service to test Obsidian plugins
-- [obsidian-launcher](./packages/obsidian-launcher/README.md): Package for downloading and launching different versions of Obsidian
+- [obsidian-launcher](./packages/obsidian-launcher/README.md): A package for downloading and launching different versions of Obsidian
 - [wdio-obsidian-reporter](./packages/wdio-obsidian-reporter/README.md): Wrapper around [@wdio/spec-reporter](https://www.npmjs.com/package/@wdio/spec-reporter) that logs Obsidian version instead of Chromium version
 
 ## API Docs
-API docs for all the packages are available [here](https://jesse-r-s-hines.github.io/wdio-obsidian-service).
+API docs for all the packages are available [here](https://jesse-r-s-hines.github.io/wdio-obsidian-service/wdio-obsidian-service/README.html).
 
 ## Contributing
-PRs and issues welcome! See [CONTRIBUTING.md](./CONTRIBUTING.md) for instructions on how to setup local development.
+PRs and issues welcome! See [CONTRIBUTING.md](./CONTRIBUTING.md) for instructions on how to set up local development.
