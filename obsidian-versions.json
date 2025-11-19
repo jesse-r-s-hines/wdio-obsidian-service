@@ -1,9 +1,9 @@
 {
     "metadata": {
         "schemaVersion": "2.0.0",
-        "commitDate": "2025-11-11T16:31:00Z",
-        "commitSha": "ecce70ab01dbd721a748cc8ebe493c6943727900",
-        "timestamp": "2025-11-12T00:41:08.087Z"
+        "commitDate": "2025-11-18T17:17:55Z",
+        "commitSha": "e76cf50817d8a4e8c54c24db51cbcd8b6037b133",
+        "timestamp": "2025-11-19T00:40:49.260Z"
     },
     "versions": [
         {
@@ -7662,6 +7662,16 @@
             },
             "electronVersion": "37.9.0",
             "chromeVersion": "138.0.7204.251"
+        },
+        {
+            "version": "1.10.4",
+            "minInstallerVersion": "1.1.9",
+            "maxInstallerVersion": "1.10.3",
+            "isBeta": true,
+            "downloads": {
+                "asar": "https://releases.obsidian.md/release/obsidian-1.10.4.asar.gz"
+            },
+            "installers": {}
         }
     ]
 }
