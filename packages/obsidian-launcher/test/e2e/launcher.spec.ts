@@ -124,7 +124,7 @@ describe("ObsidianLauncher", function() {
         })
         const client = await CDP({port: port});
         const response = await client.Runtime.evaluate({ expression: "process.versions.electron" });
-        expect(response.result.value).to.match(/\d\.\d.\d/);
+        expect(response.result.value).to.match(/\d+\.\d+\.\d/);
         await client.close();
         proc.kill("SIGTERM");
         await procExit;
