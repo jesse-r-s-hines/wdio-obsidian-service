@@ -239,10 +239,10 @@ export class ObsidianLauncher {
             semver.lt(installerVersionInfo.version, appVersionInfo.minInstallerVersion) ||
             semver.gt(installerVersionInfo.version, appVersionInfo.maxInstallerVersion)
         ) {
-            throw Error(
-                `App and installer versions incompatible: app ${appVersionInfo.version} is compatible with installer ` +
-                `>=${appVersionInfo.minInstallerVersion} <=${appVersionInfo.maxInstallerVersion} but ` +
-                `${installerVersionInfo.version} specified`
+            console.warn(
+                `WARNING: App and installer versions are incompatible: app ${appVersionInfo.version} is compatible ` +
+                `with installer >=${appVersionInfo.minInstallerVersion} <=${appVersionInfo.maxInstallerVersion} but ` +
+                `${installerVersionInfo.version} specified.`
             )
         }
 
