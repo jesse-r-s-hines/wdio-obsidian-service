@@ -10,6 +10,7 @@ import zlib from "zlib"
 import { fileURLToPath } from "url"
 import { DeepPartial } from "ts-essentials";
 import type { RestEndpointMethodTypes } from "@octokit/rest";
+import { consola } from "consola";
 import { atomicCreate, makeTmpDir, normalizeObject, pool } from "./utils.js";
 import { downloadResponse, fetchGitHubAPIPaginated } from "./apis.js"
 import { ObsidianInstallerInfo, ObsidianVersionInfo } from "./types.js";
@@ -140,7 +141,7 @@ export async function extractInstallerInfo(
     installerKey: keyof ObsidianVersionInfo['installers'], url: string,
 ): Promise<Omit<ObsidianInstallerInfo, "digest">> {
     const installerName = url.split("/").at(-1)!;
-    console.log(`Extrating installer info for ${installerName}...`)
+    consola.log(`Extrating installer info for ${installerName}...`)
     const tmpDir = await makeTmpDir("obsidian-launcher-");
     try {
         const installerPath = path.join(tmpDir, url.split("/").at(-1)!)
@@ -207,7 +208,7 @@ export async function extractInstallerInfo(
             throw new Error(`Failed to extract Electron and Chrome versions from binary ${installerPath}`);
         }
 
-        console.log(`Extracted installer info for ${installerName}`)
+        consola.log(`Extracted installer info for ${installerName}`)
         return { electron, chrome, platforms };
     } finally {
         await fsAsync.rm(tmpDir, { recursive: true, force: true });

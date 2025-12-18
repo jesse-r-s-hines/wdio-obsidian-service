@@ -73,6 +73,7 @@
         "chrome-remote-interface": "^0.33.3",
         "classic-level": "^3.0.0",
         "commander": "^13.1.0",
+        "consola": "^3.4.2",
         "dotenv": "^17.2.1",
         "extract-zip": "^2.0.1",
         "lodash": "^4.17.21",

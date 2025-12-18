@@ -8,6 +8,7 @@ import semver from "semver"
 import { fileURLToPath } from "url";
 import _ from "lodash"
 import dotenv from "dotenv";
+import { consola } from "consola";
 import { fileExists, makeTmpDir, atomicCreate, linkOrCp, maybe, pool } from "./utils.js";
 import {
     ObsidianVersionInfo, ObsidianVersionList, ObsidianInstallerInfo, PluginEntry, DownloadedPluginEntry, ThemeEntry,
@@ -130,8 +131,8 @@ export class ObsidianLauncher {
             if (!data && (await fileExists(dest))) {
                 const parsed = JSON.parse(await fsAsync.readFile(dest, 'utf-8'));
                 if (cacheValid(parsed)) {
-                    console.warn(error)
-                    console.warn(`Unable to download ${url}, using cached file.`);
+                    consola.warn(error)
+                    consola.warn(`Unable to download ${url}, using cached file.`);
                     data = parsed;
                 }
             }
@@ -239,9 +240,9 @@ export class ObsidianLauncher {
             semver.lt(installerVersionInfo.version, appVersionInfo.minInstallerVersion) ||
             semver.gt(installerVersionInfo.version, appVersionInfo.maxInstallerVersion)
         ) {
-            console.warn(
-                `WARNING: App and installer versions are incompatible: app ${appVersionInfo.version} is compatible ` +
-                `with installer >=${appVersionInfo.minInstallerVersion} <=${appVersionInfo.maxInstallerVersion} but ` +
+            consola.warn(
+                `App and installer versions are incompatible: app ${appVersionInfo.version} is compatible with ` +
+                `installer >=${appVersionInfo.minInstallerVersion} <=${appVersionInfo.maxInstallerVersion} but ` +
                 `${installerVersionInfo.version} specified.`
             )
         }
@@ -372,7 +373,7 @@ export class ObsidianLauncher {
         }
 
         await atomicCreate(installerDir, async (scratch) => {
-            console.log(`Downloading Obsidian installer v${installerVersion}...`)
+            consola.log(`Downloading Obsidian installer v${installerVersion}...`)
             const installer = path.join(scratch, "installer");
             await downloadResponse(await fetch(installerInfo.url), installer);
             const extracted = path.join(scratch, "extracted");
@@ -409,7 +410,7 @@ export class ObsidianLauncher {
         }
 
         await atomicCreate(appPath, async (scratch) => {
-            console.log(`Downloading Obsidian app v${versionInfo.version} ...`)
+            consola.log(`Downloading Obsidian app v${versionInfo.version} ...`)
             let response: Response;
             if (isInsiders) {
                 response = await fetchObsidianApi(appUrl, {token: this.obsidianApiToken!});
@@ -452,7 +453,7 @@ export class ObsidianLauncher {
         }
 
         await atomicCreate(chromedriverDir, async (scratch) => {
-            console.log(`Downloading chromedriver for electron ${installerInfo.electron} ...`);
+            consola.log(`Downloading chromedriver for electron ${installerInfo.electron} ...`);
             const chromedriverZipPath = await downloadArtifact({
                 version: installerInfo.electron,
                 artifactName: 'chromedriver',
@@ -480,7 +481,7 @@ export class ObsidianLauncher {
         const apkPath = path.join(this.cacheDir, 'obsidian-apk', `obsidian-${versionInfo.version}.apk`);
 
         await atomicCreate(apkPath, async (scratch) => {
-            console.log(`Downloading Obsidian apk v${versionInfo.version} ...`)
+            consola.log(`Downloading Obsidian apk v${versionInfo.version} ...`)
             const dest = path.join(scratch, 'obsidian.apk')
             await downloadResponse(await fetch(apkUrl), dest);
             return dest;
