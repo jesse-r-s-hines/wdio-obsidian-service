@@ -7,6 +7,7 @@ import fsAsync from "fs/promises";
 import readlineSync from "readline-sync";
 import dotenv from "dotenv";
 import path from "path";
+import { consola } from "consola";
 import { env } from "process";
 import { sleep } from "./utils.js";
 
@@ -108,7 +109,7 @@ export async function obsidianApiLogin(opts: {
 
     if (!email || !password) {
         if (interactive) {
-            console.log("Obsidian Insiders account is required to download Obsidian beta versions.")
+            consola.log("Obsidian Insiders account is required to download Obsidian beta versions.")
             email = email || readlineSync.question("Obsidian email: ");
             password = password || readlineSync.question("Obsidian password: ", {hideEchoBack: true});
             promptedCredentials = true;
@@ -162,8 +163,8 @@ export async function obsidianApiLogin(opts: {
                 );
             }
         } else if (["please wait", "try again"].some(m => error?.includes(m))) {
-            console.warn(`Obsidian login failed: ${signin.error}`);
-            console.warn("Retrying obsidian login...")
+            consola.warn(`Obsidian login failed: ${signin.error}`);
+            consola.warn("Retrying obsidian login...")
             retries++; // continue to next loop
         } else if (!signin.token) { // fatal error
             throw Error(`Obsidian login failed: ${signin.error ?? 'unknown error'}`);
@@ -184,7 +185,7 @@ export async function obsidianApiLogin(opts: {
                 `OBSIDIAN_EMAIL='${email}'\n` +
                 `OBSIDIAN_PASSWORD='${password}'\n`
             );
-            console.log(`Saved Obsidian credentials to ${path.relative(process.cwd(), savePath)}`);
+            consola.log(`Saved Obsidian credentials to ${path.relative(process.cwd(), savePath)}`);
         }
     }
 
