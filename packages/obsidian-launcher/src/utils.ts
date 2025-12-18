@@ -2,6 +2,7 @@ import fsAsync from "fs/promises"
 import fs from "fs";
 import path from "path"
 import os from "os"
+import { consola } from "consola";
 import { PromisePool } from '@supercharge/promise-pool'
 import _ from "lodash"
 
@@ -26,6 +27,15 @@ export async function fileExists(path: string) {
  */
 export async function makeTmpDir(prefix?: string) {
     return fsAsync.mkdtemp(path.join(os.tmpdir(), prefix ?? 'tmp-'));
+}
+
+const logged = new Map<string, number>();
+export function warnOnce(key: string, message: string) {
+    const times = logged.get(key) ?? 0;
+    if (times <= 0) {
+        consola.warn({message});
+    }
+    logged.set(key, times + 1);
 }
 
 /**

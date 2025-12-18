@@ -9,7 +9,7 @@ import { fileURLToPath } from "url";
 import _ from "lodash"
 import dotenv from "dotenv";
 import { consola } from "consola";
-import { fileExists, makeTmpDir, atomicCreate, linkOrCp, maybe, pool } from "./utils.js";
+import { warnOnce, fileExists, makeTmpDir, atomicCreate, linkOrCp, maybe, pool } from "./utils.js";
 import {
     ObsidianVersionInfo, ObsidianVersionList, ObsidianInstallerInfo, PluginEntry, DownloadedPluginEntry, ThemeEntry,
     DownloadedThemeEntry, obsidianVersionsSchemaVersion,
@@ -240,7 +240,7 @@ export class ObsidianLauncher {
             semver.lt(installerVersionInfo.version, appVersionInfo.minInstallerVersion) ||
             semver.gt(installerVersionInfo.version, appVersionInfo.maxInstallerVersion)
         ) {
-            consola.warn(
+            warnOnce(`incompatible-versions-${appVersionInfo.version}-${installerVersionInfo.version}`,
                 `App and installer versions are incompatible: app ${appVersionInfo.version} is compatible with ` +
                 `installer >=${appVersionInfo.minInstallerVersion} <=${appVersionInfo.maxInstallerVersion} but ` +
                 `${installerVersionInfo.version} specified.`
