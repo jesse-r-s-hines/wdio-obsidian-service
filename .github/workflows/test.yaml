@@ -93,12 +93,6 @@ jobs:
           #   node-version: "22.x"
           #   test-level: "basic"
           #   obsidian-versions: "latest/latest latest/1.6.5"
-          # - os: macos-13 # x86
-          #   node-version: "22.x"
-          #   test-level: "basic"
-          #   obsidian-versions: "latest/latest earliest/earliest"
-          #   max-instances: 2
-          #   pnpm-args: "--sequential"
     runs-on: ${{ matrix.os }}
     timeout-minutes: 30
     name: test e2e (${{ matrix.os }}, node ${{ matrix.node-version }})
