@@ -1,6 +1,6 @@
 import { defineConfig } from "tsup";
 import fs from "fs";
-const packageJson = JSON.parse(await fs.readFileSync("./package.json", 'utf-8'))
+const packageJson = JSON.parse(fs.readFileSync("./package.json", 'utf-8'))
 
 export default defineConfig({
     entry: ["src/index.ts"],
