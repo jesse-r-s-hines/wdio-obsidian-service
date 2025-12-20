@@ -222,7 +222,9 @@ export class ObsidianLauncher {
             );
         } else if (installerVersion == "earliest") {
             installerVersionInfo = versions.find(v =>
-                semver.gte(v.version, appVersionInfo.minInstallerVersion!) && !!this.getInstallerKey(v, {platform, arch})
+                semver.gte(v.version, appVersionInfo.minInstallerVersion!) &&
+                semver.lte(v.version, appVersionInfo.version) &&
+                !!this.getInstallerKey(v, {platform, arch})
             );
         } else {
             installerVersion = semver.valid(installerVersion) ?? installerVersion; // normalize
@@ -230,7 +232,7 @@ export class ObsidianLauncher {
         }
         if (!installerVersionInfo) {
             if (["earliest", "latest"].includes(installerVersion)) {
-                throw Error(`No compatible installers available for Obsidian ${appVersion}`);
+                throw Error(`No compatible installers available for Obsidian ${appVersion} for ${platform}-${arch}`);
             } else {
                 throw Error(`No Obsidian installer ${installerVersion} found`);
             }
