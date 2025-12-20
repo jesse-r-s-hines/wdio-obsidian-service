@@ -898,6 +898,9 @@ export class ObsidianLauncher {
                     },
                 },
             });
+            if (semver.lt(appVersion, "0.10.0")) { // old versions of Obsidian used this instead of "open"
+                obsidianJson.last_open = vaultId;
+            }
         }
 
         await fsAsync.writeFile(path.join(configDir, 'obsidian.json'), JSON.stringify(obsidianJson));
