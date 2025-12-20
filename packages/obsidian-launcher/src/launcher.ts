@@ -30,6 +30,8 @@ const currentPlatform = {
 
 dotenv.config({path: [".env"], quiet: true});
 
+export const minSupportedObsidianVersion = "0.12.8";
+
 /**
  * The `ObsidianLauncher` class.
  * 
@@ -213,6 +215,12 @@ export class ObsidianLauncher {
         let installerVersionInfo: ObsidianVersionInfo|undefined;
         const { platform, arch } = process;
 
+        if (semver.lt(appVersion, minSupportedObsidianVersion)) {
+            warnOnce("unsupported-version",
+                `Obsidian versions before ${minSupportedObsidianVersion} are unsupported, some obsidian-launcher ` +
+                `features will not work.`
+            );
+        }
         if (!appVersionInfo.minInstallerVersion || !appVersionInfo.maxInstallerVersion) {
             throw Error(`No installers available for Obsidian ${appVersion}`);
         }

@@ -2,7 +2,7 @@
  * @module
  * @document ../README.md
  */
-import { ObsidianLauncher } from "./launcher.js"
+import { ObsidianLauncher, minSupportedObsidianVersion } from "./launcher.js"
 
 export default ObsidianLauncher;
 export type {
