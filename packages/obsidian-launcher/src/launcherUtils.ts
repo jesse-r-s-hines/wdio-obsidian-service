@@ -461,7 +461,7 @@ export function normalizeObsidianVersionInfo(versionInfo: DeepPartial<ObsidianVe
  */
 export async function getCdpSession(
     launcher: ObsidianLauncher, appVersion: string, installerVersion: string,
-): Promise<[CDP.Client, () => Promise<void>]> {
+) {
     const cleanup: (() => Promise<void>)[] = [];
     const doCleanup = async () => {
         for (const func of [...cleanup].reverse()) {
@@ -536,7 +536,12 @@ export async function getCdpSession(
             throw new Error("Timed out waiting for Obsidian to launch");
         }
 
-        return [client, doCleanup];
+        return {
+            client,
+            cleanup: doCleanup,
+            proc,
+
+        };
     } catch (e: any) {
         await doCleanup();
         throw e;
