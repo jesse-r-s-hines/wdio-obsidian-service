@@ -57,7 +57,6 @@ describe('launcherUtils', () => {
                     asar: "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.8.10/obsidian-1.8.10.asar.gz"
                 },
                 isBeta: false,
-                minInstallerVersion: "1.1.9",
                 version: "1.8.10",
             },
             beta: {
@@ -65,7 +64,6 @@ describe('launcherUtils', () => {
                     "asar": "https://releases.obsidian.md/release/obsidian-1.9.7.asar.gz"
                 },
                 isBeta: true,
-                minInstallerVersion: "1.1.9",
                 version: "1.9.7",
             },
         }], [{
@@ -87,7 +85,6 @@ describe('launcherUtils', () => {
                     asar: "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.8.10/obsidian-1.8.10.asar.gz",
                 },
                 isBeta: false,
-                minInstallerVersion: "1.1.9",
                 version: "1.8.10",
             },
         }], [{
@@ -102,7 +99,6 @@ describe('launcherUtils', () => {
                     asar: "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.5.0/obsidian-0.5.0.asar.gz"
                 },
                 isBeta: false,
-                minInstallerVersion: undefined,
                 version: "0.5.0",
             },
         }],
@@ -129,6 +125,7 @@ describe('launcherUtils', () => {
             destkopReleases: await readJson("new-desktop-releases"),
             gitHubReleases: await readJson("new-github-releases"),
             installerInfos: await readJson('new-installer-infos'),
+            compatibilityInfos: await readJson('new-compatibility-infos')
         });
         compareVersionLists(actual, sampleObsidianVersions.versions.concat(newObsidianVersions));
     })
@@ -145,7 +142,7 @@ describe('launcherUtils', () => {
             ...sampleObsidianVersions.versions,
             ...newObsidianVersions.map((v: any) => _.omit(
                 {...v, installers: _.mapValues(v.installers, i => ({digest: i!.digest}))},
-                ["electronVersion", "chromeVersion"],
+                ["electronVersion", "chromeVersion", "minInstallerVersion", "maxInstallerVersion"],
             )),
         ]);
     })
@@ -171,7 +168,7 @@ describe('launcherUtils', () => {
         const sampleObsidianVersions = await readJson("sample-obsidian-versions");
         sampleObsidianVersions.versions.push({
             version: "1.9.10",
-            minInstallerVersion: "1.1.9",
+            minInstallerVersion: "1.5.8",
             maxInstallerVersion: "1.8.7",
             isBeta: true,
             downloads: {
@@ -181,7 +178,7 @@ describe('launcherUtils', () => {
         })
         const newObsidianVersions = [{ // full release of previous beta
             version: "1.9.10",
-            minInstallerVersion: "1.1.9",
+            minInstallerVersion: "1.5.8",
             maxInstallerVersion: "1.9.10",
             isBeta: false,
             gitHubRelease: "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.9.10",
@@ -264,12 +261,18 @@ describe('launcherUtils', () => {
                 ]
             }
         }]
+        const newCompatibilityInfos = [{
+            version: "1.9.10",
+            minInstallerVersion: "1.5.8",
+            maxInstallerVersion: "1.9.10",
+        }]
 
         const actual = updateObsidianVersionList({
             original: sampleObsidianVersions.versions,
             destkopReleases: newDesktopReleases,
             gitHubReleases: newGitHubReleases,
             installerInfos: newInstallerInfos,
+            compatibilityInfos: newCompatibilityInfos,
         });
         compareVersionLists(actual, sampleObsidianVersions.versions.slice(0, -1).concat(newObsidianVersions));
     })

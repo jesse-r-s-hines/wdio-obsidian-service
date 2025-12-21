@@ -7,15 +7,17 @@ import semver from "semver"
 import _ from "lodash"
 import { pipeline } from "stream/promises";
 import zlib from "zlib"
-import { fileURLToPath } from "url"
+import { fileURLToPath, pathToFileURL } from "url"
 import { DeepPartial } from "ts-essentials";
 import type { RestEndpointMethodTypes } from "@octokit/rest";
 import { consola } from "consola";
 import CDP from "chrome-remote-interface";
-import type { ObsidianLauncher } from "./launcher.js";
+import { ObsidianLauncher } from "./launcher.js";
 import { atomicCreate, makeTmpDir, normalizeObject, pool, maybe, withTimeout, until } from "./utils.js";
 import { downloadResponse, fetchGitHubAPIPaginated } from "./apis.js"
-import { ObsidianInstallerInfo, ObsidianVersionInfo } from "./types.js";
+import {
+    ObsidianInstallerInfo, ObsidianVersionInfo, obsidianVersionsSchemaVersion, ObsidianVersionList,
+} from "./types.js";
 import { ObsidianDesktopRelease } from "./obsidianTypes.js"
 const execFile = promisify(child_process.execFile);
 
@@ -259,26 +261,14 @@ const BROKEN_ASSETS = [
     "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.16/obsidian-0.12.16.asar.gz",
     "https://releases.obsidian.md/release/obsidian-1.4.7.asar.gz",
     "https://releases.obsidian.md/release/obsidian-1.4.8.asar.gz",
+    "https://releases.obsidian.md/release/obsidian-1.0.1.asar.gz",
 ];
 
 export type ParsedDesktopRelease = {current: DeepPartial<ObsidianVersionInfo>, beta?: DeepPartial<ObsidianVersionInfo>}
 export function parseObsidianDesktopRelease(fileRelease: ObsidianDesktopRelease): ParsedDesktopRelease {
     const parse = (r: ObsidianDesktopRelease, isBeta: boolean): DeepPartial<ObsidianVersionInfo> => {
-        const version = r.latestVersion;
-        let minInstallerVersion: string|undefined = r.minimumVersion;
-        if (minInstallerVersion == "0.0.0") {
-            minInstallerVersion = undefined;
-        // there's some errors in the minInstaller versions listed that we need to correct manually
-        } else if (semver.satisfies(version, '>=1.3.0 <=1.3.4')) {
-            minInstallerVersion = "0.14.5"
-        // running Obsidian with installer older than 1.1.9 won't boot with errors about "ERR_BLOCKED_BY_CLIENT"
-        } else if (semver.gte(version, "1.5.3") && semver.lt(minInstallerVersion, "1.1.9")) {
-            minInstallerVersion = "1.1.9"
-        }
-
         return {
             version: r.latestVersion,
-            minInstallerVersion: minInstallerVersion,
             isBeta: isBeta,
             downloads: {
                 asar: BROKEN_ASSETS.includes(r.downloadUrl) ? undefined : r.downloadUrl,
@@ -338,6 +328,8 @@ type InstallerKey = keyof ObsidianVersionInfo['installers'];
 export const INSTALLER_KEYS: InstallerKey[] = [
     "appImage", "appImageArm", "tar", "tarArm", "dmg", "exe",
 ];
+type InstallerCompatibilityInfo = {version: string, minInstallerVersion: string, maxInstallerVersion: string};
+
 
 /**
  * Updates obsidian version information.
@@ -348,8 +340,11 @@ export function updateObsidianVersionList(args: {
     destkopReleases?: ObsidianDesktopRelease[],
     gitHubReleases?: GitHubRelease[],
     installerInfos?: {version: string, key: InstallerKey, installerInfo: Omit<ObsidianInstallerInfo, "digest">}[],
+    compatibilityInfos?: InstallerCompatibilityInfo[],
 }): ObsidianVersionInfo[] {
-    const {original = [], destkopReleases = [], gitHubReleases = [], installerInfos = []} = args;
+    const {
+        original = [], destkopReleases = [], gitHubReleases = [], installerInfos = [], compatibilityInfos = [],
+    } = args;
     const oldVersions = _.keyBy(original, v => v.version);
     const newVersions: _.Dictionary<DeepPartial<ObsidianVersionInfo>> = _.cloneDeep(oldVersions);
 
@@ -378,28 +373,17 @@ export function updateObsidianVersionList(args: {
         }
     }
 
-    // populate minInstallerVersion and maxInstallerVersion
-    let minInstallerVersion: string|undefined = undefined;
-    let maxInstallerVersion: string|undefined = undefined;
-    for (const version of Object.keys(newVersions).sort(semver.compare)) {
-        if (newVersions[version].downloads!.appImage) {
-            maxInstallerVersion = version;
-            if (!minInstallerVersion) {
-                minInstallerVersion = version;
-            }
-        }
-        newVersions[version] = _.merge(newVersions[version], {
-            minInstallerVersion: newVersions[version]?.minInstallerVersion ?? minInstallerVersion,
-            maxInstallerVersion, // override maxInstallerVersion if it was already set
-        });
-    }
-
     // merge in installerInfos
     for (const installerInfo of installerInfos) {
         newVersions[installerInfo.version] = _.merge(newVersions[installerInfo.version] ?? {}, {
             version: installerInfo.version,
             installers: {[installerInfo.key]: installerInfo.installerInfo},
         });
+    }
+
+    // merge in compatibility info
+    for (const compatInfo of compatibilityInfos) {
+        newVersions[compatInfo.version] = _.merge(newVersions[compatInfo.version] ?? {}, compatInfo);
     }
 
     return Object.values(newVersions)
@@ -500,7 +484,7 @@ export async function getCdpSession(
         const procExit = new Promise<number>((resolve) => proc.on('close', (code) => resolve(code ?? -1)));
         cleanup.push(async () => {
             proc.kill("SIGTERM");
-            const timeout = await maybe(withTimeout(procExit, 4 * 1000));
+            const timeout = await maybe(withTimeout(procExit, 5 * 1000));
             if (!timeout.success) {
                 consola.warn(`Stuck process ${proc.pid}, using SIGKILL`);
                 proc.kill("SIGKILL");
@@ -521,7 +505,7 @@ export async function getCdpSession(
                 }
             });
         });
-        const port = await maybe(withTimeout(portPromise, 10 * 1000));
+        const port = await maybe(withTimeout(portPromise, 20 * 1000));
         if (!port.success) {
             throw new Error("Timed out waiting for Chrome DevTools protocol port");
         }
@@ -553,4 +537,138 @@ export async function cdpEvaluate(client: CDP.Client, expression: string) {
         throw Error(response.exceptionDetails.text);
     }
     return response.result.value;
+}
+
+
+export async function checkIfAppAndInstallerAreCompatible(
+    launcher: ObsidianLauncher, appVersion: string, installerVersion: string,
+) {
+    [appVersion, installerVersion] = await launcher.resolveVersion(appVersion, installerVersion);
+    consola.log(`Checking if app ${appVersion} and installer ${installerVersion} are compatible...`)
+    // getCdpSession will download, but do it here first so we don't interpret network errors as launch failure
+    await launcher.downloadApp(appVersion);
+    await launcher.downloadInstaller(installerVersion);
+
+    const cdpResult = await maybe(getCdpSession(launcher, appVersion, installerVersion));
+    if (!cdpResult.success) {
+        consola.log(`app ${appVersion} with installer ${installerVersion} failed to launch: ${cdpResult.error}`);
+        return false;
+    }
+
+    const { client, output, cleanup } = cdpResult.result;
+    try {
+        if (output.toLowerCase().match(/minimmum version mismatch/)) {
+            consola.log(`app ${appVersion} and install ${installerVersion} are incompatible`);
+            return false;
+        }
+
+        let debugInfoResult = await maybe(cdpEvaluate(client,
+            `window.obsidianLauncher.app.commands.executeCommandById('app:show-debug-info')`
+        ));
+        // executeCommandById returns false if command is missing (i.e. Obsidian before 0.13.4)
+        if (debugInfoResult.result) {
+            const debugInfo: string = await until(
+                () => cdpEvaluate(client, 'document.querySelector(".debug-textarea").value?.trim()'),
+                5000,
+            );
+            if (debugInfo.toLowerCase().match(/installer version too low/)) {
+                consola.log(`app ${appVersion} and install ${installerVersion} are incompatible`);
+                return false;
+            }
+        }
+
+        consola.log(`app ${appVersion} and install ${installerVersion} are compatible`)
+        return true;
+    } finally {
+        await cleanup();
+    }
+}
+
+
+export async function populateMinInstallerVersion(
+    versions: ObsidianVersionInfo[],
+): Promise<InstallerCompatibilityInfo[]> {
+    const tmp = await makeTmpDir("obsidian-installer-compat-");
+    try {
+        // setup an obsidian-versions.json file with dummy minInstallerVersion values so we run ObsidianLauncher
+        const versionsFile: ObsidianVersionList = {
+            metadata: {
+                schemaVersion: obsidianVersionsSchemaVersion,
+                commitDate: "1970-01-01T00:00:00Z",
+                commitSha: "0000000000000000000000000000000000000000",
+                timestamp: "1970-01-01T00:00:00Z"
+            },
+            versions: versions.map(v => ({
+                ...v,
+                minInstallerVersion: v.minInstallerVersion ?? "0.0.0",
+                maxInstallerVersion: v.maxInstallerVersion ?? "999.9.9",
+            })),
+        }
+        await fsAsync.writeFile(path.join(tmp, 'obsidian-versions.json'), JSON.stringify(versionsFile));
+        const launcher = new ObsidianLauncher({
+            cacheDir: path.join(tmp, 'cache'),
+            versionsUrl: pathToFileURL(path.join(tmp, 'obsidian-versions.json')).toString(),
+        });
+
+        const versionArr = _(_.cloneDeep(versions))
+            .sort((a, b) => semver.compare(a.version, b.version))
+            .dropWhile(v => !v.downloads.appImage) // drop versions before first installer
+            .filter(v => !!v.downloads.asar) // drop versions without working asars
+            .value();
+
+        // populate maxInstallerVersion
+        let maxInstallerVersion: string|undefined = undefined;
+        for (const version of versionArr) {
+            if (version.downloads.appImage) {
+                maxInstallerVersion = version.version;
+            }
+            version.maxInstallerVersion = maxInstallerVersion;
+        }
+
+        // create array of only installer versions
+        const installerArr = versionArr.filter(v => !!v.downloads.appImage);
+        // map installer versions to their index
+        const installerIndexMap = _.fromPairs(installerArr.map((v, i) => [v.version, i]));
+
+        // populate minInstallerVersion
+        for (const [i, version] of versionArr.entries()) {
+            if (version.minInstallerVersion) {
+                continue;
+            }
+            // do a binary search of sorts to find the first "compatible" installer
+            const prev = i > 0 ? versionArr[i - 1] : undefined;
+            let start = prev ? installerIndexMap[prev.minInstallerVersion!] : 0;
+            let end = installerIndexMap[version.maxInstallerVersion!];
+
+            while (start <= end) {
+                let mid = Math.floor((start + end) / 2);
+                const compatible = await checkIfAppAndInstallerAreCompatible(launcher,
+                    version.version, installerArr[mid].version,
+                );
+                if (!compatible) {
+                    start = mid + 1;
+                } else {
+                    end = mid - 1;
+                }
+            }
+            if (start > installerIndexMap[version.maxInstallerVersion!]) {
+                throw Error(`${version.version} failed to launch for all installers`)
+            }
+            version.minInstallerVersion = installerArr[start].version;
+        }
+
+        // Return only new information
+        const origVersions = _(versions)
+            .map(v => _.pick(v, ["version", "minInstallerVersion", "maxInstallerVersion"]))
+            .keyBy(v => v.version)
+            .value();
+        return versionArr
+            .map(v => ({
+                version: v.version,
+                minInstallerVersion: v.minInstallerVersion!, maxInstallerVersion: v.maxInstallerVersion!,
+            }))
+            .filter(v => !_.isEqual(v, origVersions[v.version]));
+    } finally {
+        await fsAsync.rm(tmp, {recursive: true, force: true});
+    }
 }

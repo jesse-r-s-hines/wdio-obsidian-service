@@ -20,7 +20,7 @@ import ChromeLocalStorage from "./chromeLocalStorage.js";
 import {
     normalizeGitHubRepo, extractGz, extractObsidianAppImage, extractObsidianExe, extractObsidianDmg,
     extractInstallerInfo, fetchObsidianDesktopReleases, fetchObsidianGitHubReleases, updateObsidianVersionList,
-    INSTALLER_KEYS,
+    INSTALLER_KEYS, populateMinInstallerVersion,
 } from "./launcherUtils.js";
 
 const currentPlatform = {
@@ -1031,7 +1031,7 @@ export class ObsidianLauncher {
             destkopReleases, gitHubReleases,
         });
 
-        // extract installer info
+        // add installer info
         const newInstallers = newVersions
             .flatMap(v => INSTALLER_KEYS.map(k => [v, k] as const))
             .filter(([v, key]) => v.downloads?.[key] && !v.installers?.[key]?.chrome);
@@ -1039,9 +1039,11 @@ export class ObsidianLauncher {
             const installerInfo = await extractInstallerInfo(key, v.downloads[key]!);
             return {version: v.version, key, installerInfo};
         });
-
-        // update again with the installerInfo
         newVersions = updateObsidianVersionList({original: newVersions, installerInfos});
+
+        // add compatibility info
+        const compatibilityInfos = await populateMinInstallerVersion(newVersions);
+        newVersions = updateObsidianVersionList({original: newVersions, compatibilityInfos});
 
         const result: ObsidianVersionList = {
             metadata: {
