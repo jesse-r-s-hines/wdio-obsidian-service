@@ -166,6 +166,19 @@ export async function maybe<T>(promise: Promise<T>): Promise<Maybe<T>> {
         .catch(e => ({success: false, result: undefined, error: e} as const));
 }
 
+export async function until<T>(func: () => Promise<T>|T, timeout: number): Promise<T> {
+    let time = 0;
+    let result = await func();
+    while (!result && time < timeout) {
+        await sleep(100);
+        result = await func();
+        time += 100;
+    }
+    if (!result) {
+        throw new Error("Timed out waiting for condition");
+    }
+    return result;
+}
 
 /**
  * Watch a list of files and call func whenever they change.
