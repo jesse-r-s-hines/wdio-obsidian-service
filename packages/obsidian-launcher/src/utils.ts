@@ -168,14 +168,22 @@ export async function maybe<T>(promise: Promise<T>): Promise<Maybe<T>> {
 
 export async function until<T>(func: () => Promise<T>|T, timeout: number): Promise<T> {
     let time = 0;
-    let result = await func();
+    let result: any;
+    let error: any;
     while (!result && time < timeout) {
-        await sleep(100);
-        result = await func();
+        try {
+            result = await func();
+            error = undefined;
+        } catch (e: any) {
+            error = e
+        }
+        if (!result) {
+            await sleep(100);
+        }
         time += 100;
     }
     if (!result) {
-        throw new Error("Timed out waiting for condition");
+        throw new Error("Timed out waiting for condition" + (error ? `: ${error}` : ''));
     }
     return result;
 }
