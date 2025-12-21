@@ -221,15 +221,15 @@ export class ObsidianLauncher {
                 `features will not work.`
             );
         }
-        if (!appVersionInfo.minInstallerVersion || !appVersionInfo.maxInstallerVersion) {
-            throw Error(`No installers available for Obsidian ${appVersion}`);
-        }
+
         if (installerVersion == "latest") {
             installerVersionInfo = _.findLast(versions, v =>
-                semver.lte(v.version, appVersionInfo.version) && !!this.getInstallerKey(v, {platform, arch})
+                semver.lte(v.version, appVersionInfo.version) &&
+                !!this.getInstallerKey(v, {platform, arch})
             );
         } else if (installerVersion == "earliest") {
             installerVersionInfo = versions.find(v =>
+                appVersionInfo.minInstallerVersion &&
                 semver.gte(v.version, appVersionInfo.minInstallerVersion!) &&
                 semver.lte(v.version, appVersionInfo.version) &&
                 !!this.getInstallerKey(v, {platform, arch})
@@ -247,6 +247,7 @@ export class ObsidianLauncher {
         }
 
         if (
+            !appVersionInfo.minInstallerVersion || !appVersionInfo.maxInstallerVersion ||
             semver.lt(installerVersionInfo.version, appVersionInfo.minInstallerVersion) ||
             semver.gt(installerVersionInfo.version, appVersionInfo.maxInstallerVersion)
         ) {
