@@ -13,7 +13,7 @@ import type { RestEndpointMethodTypes } from "@octokit/rest";
 import { consola } from "consola";
 import CDP from "chrome-remote-interface";
 import type { ObsidianLauncher } from "./launcher.js";
-import { atomicCreate, makeTmpDir, normalizeObject, pool, maybe, withTimeout, sleep } from "./utils.js";
+import { atomicCreate, makeTmpDir, normalizeObject, pool, maybe, withTimeout, until } from "./utils.js";
 import { downloadResponse, fetchGitHubAPIPaginated } from "./apis.js"
 import { ObsidianInstallerInfo, ObsidianVersionInfo } from "./types.js";
 import { ObsidianDesktopRelease } from "./obsidianTypes.js"
@@ -462,6 +462,8 @@ export function normalizeObsidianVersionInfo(versionInfo: DeepPartial<ObsidianVe
 export async function getCdpSession(
     launcher: ObsidianLauncher, appVersion: string, installerVersion: string,
 ) {
+    [appVersion, installerVersion] = await launcher.resolveVersion(appVersion, installerVersion);
+
     const cleanup: (() => Promise<void>)[] = [];
     const doCleanup = async () => {
         for (const func of [...cleanup].reverse()) {
@@ -505,6 +507,9 @@ export async function getCdpSession(
             }
             await procExit;
         });
+        let output = "";
+        proc.stdout!.on('data', data => { output += data });
+        proc.stderr!.on('data', data => { output += data });
 
         // Wait for the logs showing that Obsidian is ready, and pull the chosen DevTool Protocol port from it
         const portPromise = new Promise<number>((resolve, reject) => {
@@ -524,23 +529,16 @@ export async function getCdpSession(
         const client = await CDP({port: port.result});
         cleanup.push(() => client.close());
 
-        let tries = 0;
-        let ready = false;
-        while (!ready && tries < 50) {
-            const response = await client.Runtime.evaluate({expression: "!!window.obsidianLauncher"});
-            ready = JSON.parse(response.result.value);
-            await sleep(100);
-            tries++;
-        }
-        if (!ready) {
-            throw new Error("Timed out waiting for Obsidian to launch");
-        }
+        const expr = semver.gte(appVersion, '0.12.8') ? "!!window.obsidianLauncher" : "!!window.app.workspace";
+        await until(
+            () => client.Runtime.evaluate({expression: expr}).then(r => r.result.value),
+            5000,
+        );
 
         return {
             client,
             cleanup: doCleanup,
-            proc,
-
+            proc, output,
         };
     } catch (e: any) {
         await doCleanup();
