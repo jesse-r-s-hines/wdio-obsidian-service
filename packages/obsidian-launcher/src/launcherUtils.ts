@@ -11,7 +11,9 @@ import { fileURLToPath } from "url"
 import { DeepPartial } from "ts-essentials";
 import type { RestEndpointMethodTypes } from "@octokit/rest";
 import { consola } from "consola";
-import { atomicCreate, makeTmpDir, normalizeObject, pool } from "./utils.js";
+import CDP from "chrome-remote-interface";
+import type { ObsidianLauncher } from "./launcher.js";
+import { atomicCreate, makeTmpDir, normalizeObject, pool, maybe, withTimeout, sleep } from "./utils.js";
 import { downloadResponse, fetchGitHubAPIPaginated } from "./apis.js"
 import { ObsidianInstallerInfo, ObsidianVersionInfo } from "./types.js";
 import { ObsidianDesktopRelease } from "./obsidianTypes.js"
@@ -449,3 +451,103 @@ export function normalizeObsidianVersionInfo(versionInfo: DeepPartial<ObsidianVe
     return normalizeObject(canonicalForm, versionInfo) as ObsidianVersionInfo;
 }
 
+
+/**
+ * Launches Obsidian. Returnsa CDP client connected to it and a function to cleanup the process and resources.
+ * Mostly used for testing, but also used in updateVersionList.
+ * 
+ * This logic is somewhat duplicated with wdio-obsidian-service's setup, but I don't want obsidian-launcher to depend
+ * on wdio or wdio-obsidian-service.
+ */
+export async function getCdpSession(
+    launcher: ObsidianLauncher, appVersion: string, installerVersion: string,
+): Promise<[CDP.Client, () => Promise<void>]> {
+    const cleanup: (() => Promise<void>)[] = [];
+    const doCleanup = async () => {
+        for (const func of [...cleanup].reverse()) {
+            await func()
+        }
+    }
+
+    const vault = await makeTmpDir("obsidian-vault-");
+    cleanup.push(() => fsAsync.rm(vault, {recursive: true, force: true}));
+    const pluginDir = path.join(vault, ".obsidian", "plugins", "obsidian-launcher");
+    await fsAsync.mkdir(pluginDir, {recursive: true});
+    await fsAsync.writeFile(path.join(pluginDir, "manifest.json"), JSON.stringify({
+        id: "obsidian-launcher", name: "Obsidian Launcher",
+        version: "1.0.0", minAppVersion: "0.0.1",
+        description: "", author: "obsidian-launcher", isDesktopOnly: false
+    }));
+    await fsAsync.writeFile(path.join(pluginDir, "main.js"), `
+        const obsidian = require('obsidian');
+        class ObsidianLauncherPlugin extends obsidian.Plugin {
+            async onload() { window.obsidianLauncher = {app: this.app, obsidian: obsidian}; };
+        }
+        module.exports = ObsidianLauncherPlugin;
+    `);
+    await fsAsync.writeFile(path.join(vault, ".obsidian", "community-plugins.json"), JSON.stringify([
+        "obsidian-launcher",
+    ]));
+
+    try {
+        const {proc, configDir} = await launcher.launch({
+            appVersion, installerVersion, vault, copy: false,
+            args: [`--remote-debugging-port=0`, '--test-type=webdriver'], // will choose a random available port
+        });
+        cleanup.push(() => fsAsync.rm(configDir, {recursive: true, force: true}));
+        const procExit = new Promise<number>((resolve) => proc.on('close', (code) => resolve(code ?? -1)));
+        cleanup.push(async () => {
+            proc.kill("SIGTERM");
+            const timeout = await maybe(withTimeout(procExit, 4 * 1000));
+            if (!timeout.success) {
+                consola.warn(`Stuck process ${proc.pid}, using SIGKILL`);
+                proc.kill("SIGKILL");
+            }
+            await procExit;
+        });
+
+        // Wait for the logs showing that Obsidian is ready, and pull the chosen DevTool Protocol port from it
+        const portPromise = new Promise<number>((resolve, reject) => {
+            void procExit.then(() => reject(Error("Processed ended without opening a port")));
+            proc.stderr!.on('data', data => {
+                const port = data.toString().match(/ws:\/\/[\w.]+?:(\d+)/)?.[1];
+                if (port) {
+                    resolve(Number(port));
+                }
+            });
+        });
+        const port = await maybe(withTimeout(portPromise, 10 * 1000));
+        if (!port.success) {
+            throw new Error("Timed out waiting for Chrome DevTools protocol port");
+        }
+
+        const client = await CDP({port: port.result});
+        cleanup.push(() => client.close());
+
+        let tries = 0;
+        let ready = false;
+        while (!ready && tries < 50) {
+            const response = await client.Runtime.evaluate({expression: "!!window.obsidianLauncher"});
+            ready = JSON.parse(response.result.value);
+            await sleep(100);
+            tries++;
+        }
+        if (!ready) {
+            throw new Error("Timed out waiting for Obsidian to launch");
+        }
+
+        return [client, doCleanup];
+    } catch (e: any) {
+        await doCleanup();
+        throw e;
+    }
+}
+
+
+export async function cdpEvaluate(client: CDP.Client, expression: string) {
+    const response = await client.Runtime.evaluate({ expression, returnByValue: true });
+    if (response.exceptionDetails) {
+        throw Error(response.exceptionDetails.text);
+    }
+    return response.result.value;
+}
