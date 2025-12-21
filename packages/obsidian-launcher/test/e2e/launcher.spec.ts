@@ -125,7 +125,7 @@ describe("ObsidianLauncher", function() {
 
     for (const [appVersion, installerVersion] of versions) {
         it(`test launch ${appVersion}/${installerVersion}`, async function() {
-            const [client, cleanup] = await getCdpSession(launcher, appVersion, installerVersion);
+            const {client, cleanup} = await getCdpSession(launcher, appVersion, installerVersion);
             after(() => cleanup());
 
             const actualVault = await cdpEvaluate(client, "obsidianLauncher.app.vault.adapter.getFullPath('')");
