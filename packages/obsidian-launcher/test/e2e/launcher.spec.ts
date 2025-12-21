@@ -3,11 +3,12 @@ import { expect } from "chai";
 import _ from "lodash";
 import os from "os";
 import fsAsync from "fs/promises";
+import fs from "fs";
 import path from "path";
 import { pathToFileURL } from "url";
-import CDP from 'chrome-remote-interface'
-import { ObsidianLauncher } from "../../src/launcher.js";
-import { extractInstallerInfo } from "../../src/launcherUtils.js";
+import semver from "semver"
+import { ObsidianLauncher, minSupportedObsidianVersion } from "../../src/launcher.js";
+import { extractInstallerInfo, getCdpSession, cdpEvaluate } from "../../src/launcherUtils.js";
 import { obsidianApiLogin } from "../../src/apis.js";
 import { fileExists, maybe } from "../../src/utils.js";
 import { ObsidianVersionList } from "../../src/types.js";
@@ -25,50 +26,60 @@ describe("ObsidianLauncher", function() {
     let launcher: ObsidianLauncher;
     const testData = path.resolve("../../.obsidian-cache/test-data");
     const obsidianVersionsPath = path.resolve("../../obsidian-versions.json");
-    const earliestApp = (process.platform == "win32" && process.arch == "arm64") ? "1.6.5" : "1.0.3";
-    let latest = "";
-    let earliestInstaller = "";
-    let latestInstaller = "";
+    const versionInfos: ObsidianVersionList = JSON.parse(fs.readFileSync(obsidianVersionsPath, 'utf-8'));
+    let versions = _(versionInfos.versions)
+        // remove betas and unsupported
+        .filter(v => !v.isBeta && !!v.minInstallerVersion && semver.gte(v.version, minSupportedObsidianVersion))
+        // only versions with compatible installer on current platform
+        .filter(v => _.values(v.installers).some(i => i.platforms.includes(`${process.platform}-${process.arch}`)))
+        .map(v => v.version)
+        .keyBy(v => v.split(".").slice(0, 2).join('.')) // key by minor version, keyBy keeps last
+        .values()
+        .map(v => [v, v] as const)
+        .value();
+    const latest = versions.at(-1)![0];
+    const latestMinInstaller = versionInfos.versions.find(v => v.version == latest)!.minInstallerVersion!;
+    if (process.env.TEST_LEVEL == "all") {
+        versions = [ // sample a range of versions
+            ..._.range(0, versions.length - 2, (versions.length - 2) / 3).map(i => versions[Math.trunc(i)]),
+            ...versions.slice(-1),
+            [latest, latestMinInstaller],
+        ];
+    } else {
+        versions = [versions[0], ...versions.slice(-2), [latest, latestMinInstaller]]
+    }
 
     before(async function() {
         this.timeout(10 * 60 * 1000);
         launcher = new ObsidianLauncher(obsidianLauncherOpts);
         await fsAsync.mkdir(testData, {recursive: true});
 
-        earliestInstaller = (await launcher.resolveVersion(earliestApp, "earliest"))[1];
-        latestInstaller = (await launcher.resolveVersion("latest", "latest"))[1];
-        latest = (await launcher.getVersionInfo("latest")).version;
         const {platform, arch} = process;
 
-        const earliestInstallerFile = await cachedDownload(
-            (await launcher.getInstallerInfo(earliestInstaller, {platform, arch})).url,
-            testData,
-        );
-        const latestInstallerFile = await cachedDownload(
-            (await launcher.getInstallerInfo(latest, {platform, arch})).url,
-            testData,
-        );
-        const latestAppFile = await cachedDownload(
-            (await launcher.getVersionInfo(latest)).downloads.asar!,
-            testData,
-        );
-        const obsidianVersions: ObsidianVersionList = JSON.parse(await fsAsync.readFile(obsidianVersionsPath, 'utf-8'));
-
         const server = await createServer();
+        for (const [appVersion, installerVersion] of versions) {
+            const downloadedApp = await cachedDownload(
+                (await launcher.getVersionInfo(appVersion)).downloads.asar!,
+                testData,
+            );
+            const downloadedInstaller = await cachedDownload(
+                (await launcher.getInstallerInfo(installerVersion, {platform, arch})).url,
+                testData,
+            );
+            await server.addEndpoints({
+                [path.basename(downloadedApp)]: {path: downloadedApp},
+                [path.basename(downloadedInstaller)]: {path: downloadedInstaller},
+            });
+        }
         await server.addEndpoints({
-            [path.basename(earliestInstallerFile)]: {path: earliestInstallerFile},
-            [path.basename(latestInstallerFile)]: {path: latestInstallerFile},
-            [path.basename(latestAppFile)]: {path: latestAppFile},
             "obsidian-versions.json": {content: JSON.stringify({
-                ...obsidianVersions,
-                versions: obsidianVersions.versions.map(v => ({
+                ...versionInfos,
+                versions: versionInfos.versions.map(v => ({
                     ...v,
-                    downloads: _.mapValues(v.downloads,
-                        v => `${server.url}/${v!.split("/").at(-1)!}`
-                    ),
+                    downloads: _.mapValues(v.downloads, v => `${server.url}/${v!.split("/").at(-1)!}`),
                 })),
             })},
-        })
+        });
 
         launcher = new ObsidianLauncher({
             ...obsidianLauncherOpts,
@@ -91,53 +102,42 @@ describe("ObsidianLauncher", function() {
         expect(await fileExists(path)).to.eql(true);
     })
 
-    it("test downloadInstaller earliest", async function() {
-        // test that it downloads and extracts properly
-        const path = await launcher.downloadInstaller(earliestInstaller);
-        expect(await fileExists(path)).to.eql(true);
-    })
-
     it("test downloadInstaller latest", async function() {
         // test that it downloads and extracts properly
         const path = await launcher.downloadInstaller(latest);
         expect(await fileExists(path)).to.eql(true);
     })
 
-    it("test launch latest", async function() {
-        const {proc, configDir} = await launcher.launch({
-            appVersion: latest, installerVersion: latest,
-            args: ["--remote-debugging-port=0"],
-        });
-        after(() => fsAsync.rm(configDir, { recursive: true, force: true }));
-    
-        const procExit = new Promise<number>((resolve) => proc.on('close', (code) => resolve(code ?? -1)));
-        // proc.stdout!.on('data', data => console.log(`obsidian: ${data}`));
-        // proc.stderr!.on('data', data => console.log(`obsidian: ${data}`));
-        const port = await new Promise<number>((resolve, reject) => {
-            void procExit.then(() => reject(Error("Process ended without opening a port")))
-            proc.stderr!.on('data', data => {
-                const port = data.toString().match(/ws:\/\/[\w.]+?:(\d+)/)?.[1];
-                if (port) {
-                    resolve(Number(port));
-                }
-            });
-        })
-        const client = await CDP({port: port});
-        const response = await client.Runtime.evaluate({ expression: "process.versions.electron" });
-        expect(response.result.value).to.match(/\d+\.\d+\.\d/);
-        await client.close();
-        proc.kill("SIGTERM");
-        await procExit;
+    it("test downloadInstaller earliest", async function() {
+        // test that it downloads and extracts properly
+        const path = await launcher.downloadInstaller(versions.at(0)![0]);
+        expect(await fileExists(path)).to.eql(true);
     })
 
     it("test extractInstallerInfo", async function() {
         if (process.env.TEST_LEVEL != "all") this.skip();
-        const versionInfo = await launcher.getVersionInfo(latestInstaller);
+        const versionInfo = await launcher.getVersionInfo(latest);
         const key = launcher['getInstallerKey'](versionInfo)!;
         const result = await extractInstallerInfo(key, versionInfo.downloads[key]!);
         expect(result.electron).match(/^.*\..*\..*$/)
         expect(result.chrome).match(/^.*\..*\..*\..*$/)
     })
+
+    for (const [appVersion, installerVersion] of versions) {
+        it(`test launch ${appVersion}/${installerVersion}`, async function() {
+            const [client, cleanup] = await getCdpSession(launcher, appVersion, installerVersion);
+            after(() => cleanup());
+
+            const actualVault = await cdpEvaluate(client, "obsidianLauncher.app.vault.adapter.getFullPath('')");
+            expect(actualVault).to.match(/obsidian-vault/)
+            
+            const actualAppVersion = await cdpEvaluate(client, "require('electron').ipcRenderer.sendSync('version')");
+            expect(actualAppVersion).to.eql(appVersion);
+
+            const actualInstallerVersion = await cdpEvaluate(client, "require('electron').remote.app.getVersion()")
+            expect(actualInstallerVersion).to.eql(installerVersion);
+        });
+    }
 })
 
 
