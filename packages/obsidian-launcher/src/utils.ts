@@ -166,7 +166,9 @@ export async function maybe<T>(promise: Promise<T>): Promise<Maybe<T>> {
         .catch(e => ({success: false, result: undefined, error: e} as const));
 }
 
-export async function until<T>(func: () => Promise<T>|T, timeout: number): Promise<T> {
+export type UntilOpts = {timeout: number, poll?: number};
+export async function until<T>(func: () => Promise<T>|T, opts: UntilOpts): Promise<T> {
+    const { timeout, poll = 100 } = opts;
     let time = 0;
     let result: any;
     let error: any;
@@ -178,9 +180,9 @@ export async function until<T>(func: () => Promise<T>|T, timeout: number): Promi
             error = e
         }
         if (!result) {
-            await sleep(100);
+            await sleep(poll);
         }
-        time += 100;
+        time += poll;
     }
     if (!result) {
         throw new Error("Timed out waiting for condition" + (error ? `: ${error}` : ''));
@@ -194,20 +196,20 @@ export type RetryOpts = {
     retryIf?: (error: any) => boolean,
 };
 /** Retries func on error */
-export async function retry<T>(func: () => Promise<T>|T, opts: RetryOpts = {}): Promise<T> {
-    const { retries = 3, backoff = 1, retryIf = () => true } = opts;
-    let tries = 0;
+export async function retry<T>(func: (attempt: number) => Promise<T>|T, opts: RetryOpts = {}): Promise<T> {
+    const { retries = 4, backoff = 1000, retryIf = () => true } = opts;
+    let attempt = 0;
     let error: any;
 
-    while (tries < retries) {
+    while (attempt < retries) {
         try {
-            return await func();
+            return await func(attempt);
         } catch (e: any) {
             error = e;
         }
-        const delay = backoff*Math.random() + backoff*Math.pow(2, tries);
-        tries += 1;
-        if (!retryIf(error) || tries >= retries) {
+        const delay = backoff*Math.random() + backoff*Math.pow(2, attempt);
+        attempt += 1;
+        if (!retryIf(error) || attempt >= retries) {
             throw error; // throw without sleeping
         }
         await sleep(delay);

@@ -516,7 +516,7 @@ export async function getCdpSession(
         const expr = semver.gte(appVersion, '0.12.8') ? "!!window.obsidianLauncher" : "!!window.app.workspace";
         await until(
             () => client.Runtime.evaluate({expression: expr}).then(r => r.result.value),
-            5000,
+            {timeout: 5000},
         );
 
         return {
@@ -569,7 +569,7 @@ export async function checkIfAppAndInstallerAreCompatible(
         if (debugInfoResult.result) {
             const debugInfo: string = await until(
                 () => cdpEvaluate(client, 'document.querySelector(".debug-textarea").value?.trim()'),
-                5000,
+                {timeout: 5000},
             );
             if (debugInfo.toLowerCase().match(/installer version too low/)) {
                 consola.log(`app ${appVersion} and install ${installerVersion} are incompatible`);
