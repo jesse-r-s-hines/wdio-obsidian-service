@@ -9,7 +9,7 @@ import dotenv from "dotenv";
 import path from "path";
 import { consola } from "consola";
 import { env } from "process";
-import { sleep } from "./utils.js";
+import { sleep, retry, RetryOpts } from "./utils.js";
 
 /**
  * GitHub API stores pagination information in the "Link" header. The header looks like this:
@@ -213,35 +213,20 @@ export async function fetchObsidianApi(url: string, opts: {token: string}) {
 /**
  * Downloads a url to disk. Retries on failure.
  */
-export async function downloadResponse(
-    func: () => Promise<Response>, dest: string,
-    opts: {retries?: number, backoff?: number} = {},
-) {
-    const { retries = 3, backoff = 1 } = opts;
-    let tries = 0;
-    let error: string|undefined;
-
-    while (tries < retries) {
+export async function downloadResponse(func: () => Promise<Response>, dest: string, opts: RetryOpts = {}) {
+    await retry(async () => {
         const response = await func();
-        if (response.ok) {
-            try {
-                const fileStream = fs.createWriteStream(dest, { flags: 'w' });
-                // not sure why I have to cast this
-                const fetchStream = Readable.fromWeb(response.body as ReadableStream);
-                await finished(fetchStream.pipe(fileStream));
-                return // success
-            } catch (e: any) {
-                error = `${response.url} download failed: ${e}`
-            }
-        } else {
-            error = `${response.url} failed with ${response.status}`;
-            if ([401, 403, 404].includes(response.status)) {
-                throw Error(error); // fail immediately
-            }
+        if (!response.ok) {
+            const error: any = Error(`${response.url} failed with ${response.status}`);
+            error.status = response.status;
+            throw error;
         }
-        tries += 1;
-        await sleep(1*Math.random() + backoff * Math.pow(2, tries));
-    }
-
-    throw Error(error);
+        const fileStream = fs.createWriteStream(dest, { flags: 'w' });
+        // not sure why I have to cast this
+        const fetchStream = Readable.fromWeb(response.body as ReadableStream);
+        await finished(fetchStream.pipe(fileStream));
+    }, {
+        retryIf: (e) => !e.status || !([401, 403, 404].includes(e.status)),
+        ...opts,
+    });
 }

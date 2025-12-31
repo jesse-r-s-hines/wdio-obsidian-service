@@ -188,6 +188,34 @@ export async function until<T>(func: () => Promise<T>|T, timeout: number): Promi
     return result;
 }
 
+export type RetryOpts = {
+    retries?: number,
+    backoff?: number,
+    retryIf?: (error: any) => boolean,
+};
+/** Retries func on error */
+export async function retry<T>(func: () => Promise<T>|T, opts: RetryOpts = {}): Promise<T> {
+    const { retries = 3, backoff = 1, retryIf = () => true } = opts;
+    let tries = 0;
+    let error: any;
+
+    while (tries < retries) {
+        try {
+            return await func();
+        } catch (e: any) {
+            error = e;
+        }
+        const delay = backoff*Math.random() + backoff*Math.pow(2, tries);
+        tries += 1;
+        if (!retryIf(error) || tries >= retries) {
+            throw error; // throw without sleeping
+        }
+        await sleep(delay);
+    }
+    throw error; // unreachable
+}
+
+
 /**
  * Watch a list of files and call func whenever they change.
  */
