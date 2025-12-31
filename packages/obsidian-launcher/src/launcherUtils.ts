@@ -147,7 +147,7 @@ export async function extractInstallerInfo(
     const tmpDir = await makeTmpDir("obsidian-launcher-");
     try {
         const installerPath = path.join(tmpDir, url.split("/").at(-1)!)
-        await downloadResponse(await fetch(url), installerPath);
+        await downloadResponse(() => fetch(url), installerPath);
         const exractedPath = path.join(tmpDir, "Obsidian");
         let platforms: string[] = [];
 

@@ -34,7 +34,7 @@ export async function createDirectory(files: Record<string, string> = {}) {
 export async function cachedDownload(url: string, cacheDir: string) {
     const dest = path.join(cacheDir, url.split("/").at(-1)!);
     await atomicCreate(dest, async (scratch) => {
-        await downloadResponse(await fetch(url), path.join(scratch, "out"));
+        await downloadResponse(() => fetch(url), path.join(scratch, "out"));
         return path.join(scratch, "out");
     }, {replace: false})
     return dest;

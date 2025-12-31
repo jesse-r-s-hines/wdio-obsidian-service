@@ -386,7 +386,7 @@ export class ObsidianLauncher {
         await atomicCreate(installerDir, async (scratch) => {
             consola.log(`Downloading Obsidian installer v${installerVersion}...`)
             const installer = path.join(scratch, "installer");
-            await downloadResponse(await fetch(installerInfo.url), installer);
+            await downloadResponse(() => fetch(installerInfo.url), installer);
             const extracted = path.join(scratch, "extracted");
             await extractor(installer, extracted);
             return extracted;
@@ -421,16 +421,14 @@ export class ObsidianLauncher {
         }
 
         await atomicCreate(appPath, async (scratch) => {
-            consola.log(`Downloading Obsidian app v${versionInfo.version} ...`)
-            let response: Response;
-            if (isInsiders) {
-                response = await fetchObsidianApi(appUrl, {token: this.obsidianApiToken!});
-            } else {
-                response = await fetch(appUrl);
-            }
+            consola.log(`Downloading Obsidian app v${versionInfo.version} ...`);
             const archive = path.join(scratch, 'app.asar.gz');
             const asar = path.join(scratch, 'app.asar')
-            await downloadResponse(response, archive);
+            if (isInsiders) {
+                await downloadResponse(() => fetchObsidianApi(appUrl, {token: this.obsidianApiToken!}), archive);
+            } else {
+                await downloadResponse(() => fetch(appUrl), archive);
+            }
             await extractGz(archive, asar);
             return asar;
         }, {replace: false})
@@ -494,7 +492,7 @@ export class ObsidianLauncher {
         await atomicCreate(apkPath, async (scratch) => {
             consola.log(`Downloading Obsidian apk v${versionInfo.version} ...`)
             const dest = path.join(scratch, 'obsidian.apk')
-            await downloadResponse(await fetch(apkUrl), dest);
+            await downloadResponse(() => fetch(apkUrl), dest);
             return dest;
         }, {replace: false})
 
@@ -532,11 +530,12 @@ export class ObsidianLauncher {
             await Promise.all(
                 Object.entries(assetsToDownload).map(async ([file, required]) => {
                     const url = `https://github.com/${repo}/releases/download/${version}/${file}`;
-                    const response = await fetch(url);
-                    if (response.ok) {
-                        await downloadResponse(response, path.join(scratch, file));
-                    } else if (required) {
-                        throw Error(`No ${file} found for ${repo} version ${version}`)
+                    try {
+                        await downloadResponse(() => fetch(url), path.join(scratch, file));
+                    } catch {
+                        if (required) {
+                            throw Error(`No ${file} found for ${repo} version ${version}`)
+                        }
                     }
                 })
             )
@@ -725,10 +724,9 @@ export class ObsidianLauncher {
             await Promise.all(
                 assetsToDownload.map(async (file) => {
                     const url = `${baseUrl}/${file}`;
-                    const response = await fetch(url);
-                        if (response.ok) {
-                        await downloadResponse(response, path.join(scratch, file));
-                    } else {
+                    try {
+                        await downloadResponse(() => fetch(url), path.join(scratch, file));
+                    } catch {
                         throw Error(`No ${file} found for ${repo}`);
                     }
                 }
