@@ -62,7 +62,7 @@ describe('ObsdianLauncher resolve versions', () => {
         )
     } else {
         resolveVersionTests.push(
-            [["latest", "earliest"], ["1.7.7", "1.1.9"]],
+            [["latest", "earliest"], ["1.7.7", "1.4.13"]],
             [["0.14.5", "latest"], ["0.14.5", "0.14.5"]],
         )
         if (process.platform == "linux" && process.arch == "arm64") {
@@ -125,7 +125,7 @@ describe('ObsdianLauncher resolve versions', () => {
         [" latest-beta/latest  latest-beta/latest ", [["1.8.0", "1.7.7"]]],
         [" latest-beta/latest  latest-beta/1.7.0 ", [["1.8.0", "1.7.7"], ["1.8.0", "1.7.0"]]],
         [",latest-beta/latest,latest-beta/1.7.0,", [["1.8.0", "1.7.7"], ["1.8.0", "1.7.0"]]],
-        ["latest", [["1.7.7", (process.platform == "win32" && process.arch == "arm64") ? "1.6.5" : "1.1.9"]]],
+        ["latest", [["1.7.7", (process.platform == "win32" && process.arch == "arm64") ? "1.6.5" : "1.4.13"]]],
         ["1.8.0/1.7.7", [["1.8.0", "1.7.7"]]],
     ];
     parseVersionsTests.forEach(([input, expected]) => {

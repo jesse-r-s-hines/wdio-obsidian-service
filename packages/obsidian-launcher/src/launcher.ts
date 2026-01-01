@@ -20,7 +20,7 @@ import ChromeLocalStorage from "./chromeLocalStorage.js";
 import {
     normalizeGitHubRepo, extractGz, extractObsidianAppImage, extractObsidianExe, extractObsidianDmg,
     extractInstallerInfo, fetchObsidianDesktopReleases, fetchObsidianGitHubReleases, updateObsidianVersionList,
-    INSTALLER_KEYS, populateMinInstallerVersion,
+    INSTALLER_KEYS, getCompatibilityInfos,
 } from "./launcherUtils.js";
 
 const currentPlatform = {
@@ -1042,7 +1042,7 @@ export class ObsidianLauncher {
         newVersions = updateObsidianVersionList({original: newVersions, installerInfos});
 
         // add compatibility info
-        const compatibilityInfos = await populateMinInstallerVersion(newVersions);
+        const compatibilityInfos = await getCompatibilityInfos(newVersions);
         newVersions = updateObsidianVersionList({original: newVersions, compatibilityInfos});
 
         const result: ObsidianVersionList = {
