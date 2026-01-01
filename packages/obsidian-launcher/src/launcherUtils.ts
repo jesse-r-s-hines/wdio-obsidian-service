@@ -13,7 +13,7 @@ import type { RestEndpointMethodTypes } from "@octokit/rest";
 import { consola } from "consola";
 import CDP from "chrome-remote-interface";
 import { ObsidianLauncher } from "./launcher.js";
-import { atomicCreate, makeTmpDir, normalizeObject, pool, maybe, withTimeout, until } from "./utils.js";
+import { atomicCreate, makeTmpDir, normalizeObject, pool, maybe, withTimeout, until, retry } from "./utils.js";
 import { downloadResponse, fetchGitHubAPIPaginated } from "./apis.js"
 import {
     ObsidianInstallerInfo, ObsidianVersionInfo, obsidianVersionsSchemaVersion, ObsidianVersionList,
@@ -549,7 +549,10 @@ export async function checkIfAppAndInstallerAreCompatible(
     await launcher.downloadApp(appVersion);
     await launcher.downloadInstaller(installerVersion);
 
-    const cdpResult = await maybe(getCdpSession(launcher, appVersion, installerVersion));
+    const cdpResult = await maybe(retry(
+        () => getCdpSession(launcher, appVersion, installerVersion),
+        {retries: 3, backoff: 4000},
+    ));
     if (!cdpResult.success) {
         consola.log(`app ${appVersion} with installer ${installerVersion} failed to launch: ${cdpResult.error}`);
         return false;
