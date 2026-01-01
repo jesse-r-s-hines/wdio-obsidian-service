@@ -221,7 +221,7 @@ export async function extractInstallerInfo(
 
 // Helpers for use in updateVersionList
 
-type CommitInfo = {commitDate: string, commitSha: string}
+export type CommitInfo = {commitDate: string, commitSha: string}
 /**
  * Fetch all versions of obsidianmd/obsidian-releases desktop-releases.json since sinceDate and sinceSha
  */
@@ -324,7 +324,7 @@ export function parseObsidianGithubRelease(gitHubRelease: any): DeepPartial<Obsi
     }
 }
 
-type InstallerKey = keyof ObsidianVersionInfo['installers'];
+export type InstallerKey = keyof ObsidianVersionInfo['installers'];
 export const INSTALLER_KEYS: InstallerKey[] = [
     "appImage", "appImageArm", "tar", "tarArm", "dmg", "exe",
 ];
