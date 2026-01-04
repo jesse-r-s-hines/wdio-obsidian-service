@@ -8,7 +8,7 @@ import path from "path";
 import { pathToFileURL } from "url";
 import semver from "semver"
 import { ObsidianLauncher, minSupportedObsidianVersion } from "../../src/launcher.js";
-import { extractInstallerInfo, getCdpSession, cdpEvaluate } from "../../src/launcherUtils.js";
+import { extractInstallerInfo, getCdpSession, cdpEvaluate, checkCompatibility } from "../../src/launcherUtils.js";
 import { obsidianApiLogin } from "../../src/apis.js";
 import { fileExists, maybe } from "../../src/utils.js";
 import { ObsidianVersionList } from "../../src/types.js";
@@ -110,7 +110,7 @@ describe("ObsidianLauncher", function() {
 
     it("test downloadInstaller earliest", async function() {
         // test that it downloads and extracts properly
-        const path = await launcher.downloadInstaller(versions.at(0)![0]);
+        const path = await launcher.downloadInstaller(versions[0][0]);
         expect(await fileExists(path)).to.eql(true);
     })
 
@@ -121,6 +121,19 @@ describe("ObsidianLauncher", function() {
         const result = await extractInstallerInfo(key, versionInfo.downloads[key]!);
         expect(result.electron).match(/^.*\..*\..*$/)
         expect(result.chrome).match(/^.*\..*\..*\..*$/)
+    })
+
+    it("test checkCompatibility compatible", async function() {
+        if (process.env.TEST_LEVEL != "all") this.skip();
+        expect(await checkCompatibility(launcher, latest, latestMinInstaller)).to.equal(true);
+        expect(await checkCompatibility(launcher, ...versions[0])).to.equal(true);
+    })
+
+    it("test checkCompatibility incompatible", async function() {
+        if (process.env.TEST_LEVEL != "all") this.skip();
+        const installers = versions.map(v => v[1]).sort(semver.compare);
+        const incompatibleInstaller = _.findLast(installers, v => semver.lt(v, latestMinInstaller))!;
+        expect(await checkCompatibility(launcher, latest, incompatibleInstaller)).to.equal(false);
     })
 
     for (const [appVersion, installerVersion] of versions) {
