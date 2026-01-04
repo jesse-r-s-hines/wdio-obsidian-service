@@ -9,7 +9,7 @@ import { fileURLToPath } from "url";
 import _ from "lodash"
 import dotenv from "dotenv";
 import { consola } from "consola";
-import { warnOnce, fileExists, makeTmpDir, atomicCreate, linkOrCp, maybe, pool } from "./utils.js";
+import { warnOnce, fileExists, makeTmpDir, atomicCreate, linkOrCp, maybe } from "./utils.js";
 import {
     ObsidianVersionInfo, ObsidianVersionList, ObsidianInstallerInfo, PluginEntry, DownloadedPluginEntry, ThemeEntry,
     DownloadedThemeEntry, obsidianVersionsSchemaVersion,
@@ -230,7 +230,7 @@ export class ObsidianLauncher {
         } else if (installerVersion == "earliest") {
             installerVersionInfo = versions.find(v =>
                 appVersionInfo.minInstallerVersion &&
-                semver.gte(v.version, appVersionInfo.minInstallerVersion!) &&
+                semver.gte(v.version, appVersionInfo.minInstallerVersion) &&
                 semver.lte(v.version, appVersionInfo.version) &&
                 !!this.getInstallerKey(v, {platform, arch})
             );

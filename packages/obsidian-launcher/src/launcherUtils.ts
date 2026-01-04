@@ -487,7 +487,7 @@ export async function checkCompatibility(
             return false;
         }
 
-        let debugInfoResult = await maybe(cdpEvaluate(client,
+        const debugInfoResult = await maybe(cdpEvaluate(client,
             `window.obsidianLauncher.app.commands.executeCommandById('app:show-debug-info')`
         ));
         // executeCommandById returns false if command is missing (i.e. Obsidian before 0.13.4)
@@ -566,7 +566,7 @@ export async function getCompatibilityInfos(
             let end = installerIndexMap[version.maxInstallerVersion!];
 
             while (start <= end) {
-                let mid = Math.floor((start + end) / 2);
+                const mid = Math.floor((start + end) / 2);
                 const compatible = await checkCompatibility(launcher,
                     version.version, installerArr[mid].version,
                 );
