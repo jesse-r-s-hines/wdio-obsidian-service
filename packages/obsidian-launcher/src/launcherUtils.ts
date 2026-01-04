@@ -438,6 +438,25 @@ export async function extractInstallerInfo(
     }
 }
 
+export type InstallerInfoWithVersion = {
+    version: string,
+    key: InstallerKey,
+    installerInfo: Omit<ObsidianInstallerInfo, "digest">,
+}
+export async function extractInstallerInfos(
+    versions: ObsidianVersionInfo[], opts: { maxInstances: number },
+): Promise<InstallerInfoWithVersion[]> {
+    const { maxInstances } = opts;
+    const newInstallers = versions
+        .flatMap(v => INSTALLER_KEYS.map(k => [v, k] as const))
+        .filter(([v, key]) => v.downloads?.[key] && !v.installers?.[key]?.chrome);
+    const installerInfos = await pool(maxInstances, newInstallers, async ([v, key]) => {
+        const installerInfo = await extractInstallerInfo(key, v.downloads[key]!);
+        return {version: v.version, key, installerInfo};
+    });
+    return installerInfos;
+}
+
 export type InstallerCompatibilityInfo = {version: string, minInstallerVersion: string, maxInstallerVersion: string};
 /**
  * Checks if an Obsidian app and installer version are compatible.
@@ -630,7 +649,7 @@ export function updateObsidianVersionList(args: {
     original?: ObsidianVersionInfo[],
     destkopReleases?: ObsidianDesktopRelease[],
     gitHubReleases?: GitHubRelease[],
-    installerInfos?: {version: string, key: InstallerKey, installerInfo: Omit<ObsidianInstallerInfo, "digest">}[],
+    installerInfos?: InstallerInfoWithVersion[],
     compatibilityInfos?: InstallerCompatibilityInfo[],
 }): ObsidianVersionInfo[] {
     const {
