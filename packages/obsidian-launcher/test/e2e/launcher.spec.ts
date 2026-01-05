@@ -12,7 +12,7 @@ import { extractInstallerInfo, getCdpSession, cdpEvaluate, checkCompatibility } 
 import { obsidianApiLogin } from "../../src/apis.js";
 import { fileExists, maybe } from "../../src/utils.js";
 import { ObsidianVersionList } from "../../src/types.js";
-import { cachedDownload, createServer } from "../helpers.js";
+import { createServer } from "../helpers.js";
 
 const obsidianLauncherOpts = {
     cacheDir: path.resolve("../../.obsidian-cache"),
@@ -27,6 +27,7 @@ describe("ObsidianLauncher", function() {
     const testData = path.resolve("../../.obsidian-cache/test-data");
     const obsidianVersionsPath = path.resolve("../../obsidian-versions.json");
     const versionInfos: ObsidianVersionList = JSON.parse(fs.readFileSync(obsidianVersionsPath, 'utf-8'));
+
     let versions = _(versionInfos.versions)
         // remove betas and unsupported
         .filter(v => !v.isBeta && !!v.minInstallerVersion && semver.gte(v.version, minSupportedObsidianVersion))
@@ -52,34 +53,21 @@ describe("ObsidianLauncher", function() {
     before(async function() {
         this.timeout(10 * 60 * 1000);
         launcher = new ObsidianLauncher(obsidianLauncherOpts);
-        await fsAsync.mkdir(testData, {recursive: true});
 
-        const {platform, arch} = process;
-
-        const server = await createServer();
-        for (const [appVersion, installerVersion] of versions) {
-            const downloadedApp = await cachedDownload(
-                (await launcher.getVersionInfo(appVersion)).downloads.asar!,
-                testData,
-            );
-            const downloadedInstaller = await cachedDownload(
-                (await launcher.getInstallerInfo(installerVersion, {platform, arch})).url,
-                testData,
-            );
-            await server.addEndpoints({
-                [path.basename(downloadedApp)]: {path: downloadedApp},
-                [path.basename(downloadedInstaller)]: {path: downloadedInstaller},
-            });
-        }
+        // mock server that caches requests to Obsidian assets
+        const server = await createServer(testData, Object.fromEntries(versionInfos.versions
+            .flatMap(v => Object.values(v.downloads))
+            .map(url => [url.replace(/^https?:\/\//, ''), {url}] as const)
+        ));
         await server.addEndpoints({
-            "obsidian-versions.json": {content: JSON.stringify({
+            'obsidian-versions.json': {content: JSON.stringify({
                 ...versionInfos,
                 versions: versionInfos.versions.map(v => ({
                     ...v,
-                    downloads: _.mapValues(v.downloads, v => `${server.url}/${v!.split("/").at(-1)!}`),
+                    downloads: _.mapValues(v.downloads, u => u ? `${server.url}/${u.replace(/^https?:\/\//, '')}` : u),
                 })),
             })},
-        });
+        })
 
         launcher = new ObsidianLauncher({
             ...obsidianLauncherOpts,
