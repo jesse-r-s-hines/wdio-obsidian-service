@@ -106,7 +106,7 @@ describe("ObsidianLauncher", function() {
         if (process.env.TEST_LEVEL != "all") this.skip();
         const versionInfo = await launcher.getVersionInfo(latest);
         const key = launcher['getInstallerKey'](versionInfo)!;
-        const result = await extractInstallerInfo(key, versionInfo.downloads[key]!);
+        const result = await extractInstallerInfo(latest, key, versionInfo.downloads[key]!);
         expect(result.electron).match(/^.*\..*\..*$/)
         expect(result.chrome).match(/^.*\..*\..*\..*$/)
     })

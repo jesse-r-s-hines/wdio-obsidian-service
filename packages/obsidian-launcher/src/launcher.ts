@@ -19,8 +19,7 @@ import { obsidianApiLogin, fetchObsidianApi, downloadResponse } from "./apis.js"
 import ChromeLocalStorage from "./chromeLocalStorage.js";
 import {
     normalizeGitHubRepo, extractGz, extractObsidianAppImage, extractObsidianExe, extractObsidianDmg,
-    extractInstallerInfos, fetchObsidianDesktopReleases, fetchObsidianGitHubReleases, updateObsidianVersionList,
-    getCompatibilityInfos,
+    updateObsidianVersionList,
 } from "./launcherUtils.js";
 
 const currentPlatform = {
@@ -1020,43 +1019,7 @@ export class ObsidianLauncher {
     async updateVersionList(
         original?: ObsidianVersionList, opts: { maxInstances?: number } = {},
     ): Promise<ObsidianVersionList> {
-        const { maxInstances = 1 } = opts;
-
-        const [destkopReleases, commitInfo] = await fetchObsidianDesktopReleases(
-            original?.metadata.commitDate, original?.metadata.commitSha,
-        );
-        const gitHubReleases = await fetchObsidianGitHubReleases();
-        let newVersions = updateObsidianVersionList({
-            original: original?.versions,
-            destkopReleases, gitHubReleases,
-        });
-
-        const installerInfos = await extractInstallerInfos(newVersions, {maxInstances});
-        newVersions = updateObsidianVersionList({original: newVersions, installerInfos});
-
-        const compatibilityInfos = await getCompatibilityInfos(newVersions);
-        newVersions = updateObsidianVersionList({original: newVersions, compatibilityInfos});
-
-        const result: ObsidianVersionList = {
-            metadata: {
-                schemaVersion: obsidianVersionsSchemaVersion,
-                commitDate: commitInfo.commitDate,
-                commitSha: commitInfo.commitSha,
-                timestamp: original?.metadata.timestamp ?? "", // set down below
-            },
-            versions: newVersions,
-        }
-
-        // Update timestamp if anything has changed. Also, GitHub will cancel scheduled workflows if the repository is
-        // "inactive" for 60 days. So we'll update the timestamp every once in a while even if there are no Obsidian
-        // updates to make sure there's commit activity in the repo.
-        const dayMs = 24 * 60 * 60 * 1000;
-        const timeSinceLastUpdate = new Date().getTime() - new Date(original?.metadata.timestamp ?? 0).getTime();
-        if (!_.isEqual(original, result) || timeSinceLastUpdate > 29 * dayMs) {
-            result.metadata.timestamp = new Date().toISOString();
-        }
-
-        return result;
+        return updateObsidianVersionList(original, {maxInstances: opts.maxInstances});
     }
 
     /**

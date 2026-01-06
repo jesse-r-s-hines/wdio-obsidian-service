@@ -1,0 +1,87 @@
+[
+    {
+        "html_url": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.5.3",
+        "id": 135070514,
+        "tag_name": "v1.5.3",
+        "name": "1.5.3",
+        "draft": false,
+        "prerelease": false,
+        "updated_at": "2023-12-26T02:02:16Z",
+        "published_at": "2023-12-26T02:02:16Z",
+        "assets": [
+            {
+                "id": 142431119,
+                "name": "Obsidian.1.5.3.exe",
+                "digest": null,
+                "browser_download_url": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.5.3/Obsidian.1.5.3.exe"
+            },
+            {
+                "id": 142431130,
+                "name": "Obsidian.1.5.3-32.exe",
+                "digest": null,
+                "browser_download_url": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.5.3/Obsidian.1.5.3-32.exe"
+            },
+            {
+                "id": 142431138,
+                "name": "Obsidian.1.5.3-allusers.exe",
+                "digest": null,
+                "browser_download_url": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.5.3/Obsidian.1.5.3-allusers.exe"
+            },
+            {
+                "id": 142431153,
+                "name": "Obsidian.1.5.3-arm64.exe",
+                "digest": null,
+                "browser_download_url": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.5.3/Obsidian.1.5.3-arm64.exe"
+            },
+            {
+                "id": 142431843,
+                "name": "obsidian-1.5.3.tar.gz",
+                "digest": null,
+                "browser_download_url": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.5.3/obsidian-1.5.3.tar.gz"
+            },
+            {
+                "id": 142431862,
+                "name": "Obsidian-1.5.3-arm64.AppImage",
+                "digest": null,
+                "browser_download_url": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.5.3/Obsidian-1.5.3-arm64.AppImage"
+            },
+            {
+                "id": 142431874,
+                "name": "obsidian-1.5.3-arm64.tar.gz",
+                "digest": null,
+                "browser_download_url": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.5.3/obsidian-1.5.3-arm64.tar.gz"
+            },
+            {
+                "id": 142431895,
+                "name": "obsidian_1.5.3_amd64.deb",
+                "digest": null,
+                "browser_download_url": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.5.3/obsidian_1.5.3_amd64.deb"
+            },
+            {
+                "id": 142431908,
+                "name": "obsidian_1.5.3_amd64.snap",
+                "digest": null,
+                "browser_download_url": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.5.3/obsidian_1.5.3_amd64.snap"
+            },
+            {
+                "id": 142431947,
+                "name": "Obsidian-1.5.3.AppImage",
+                "digest": null,
+                "browser_download_url": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.5.3/Obsidian-1.5.3.AppImage"
+            },
+            {
+                "id": 142432036,
+                "name": "obsidian-1.5.3.asar.gz",
+                "digest": null,
+                "browser_download_url": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.5.3/obsidian-1.5.3.asar.gz"
+            },
+            {
+                "id": 142432375,
+                "name": "Obsidian-1.5.3-universal.dmg",
+                "digest": null,
+                "browser_download_url": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.5.3/Obsidian-1.5.3-universal.dmg"
+            }
+        ],
+        "body": "https://obsidian.md/changelog/2023-12-26-desktop-v1.5.3/"
+    }
+]

@@ -275,11 +275,27 @@ export async function fetchObsidianDesktopReleases(
     return [fileHistory, {commitDate, commitSha}]
 }
 
-export type GitHubRelease = RestEndpointMethodTypes["repos"]["listReleases"]['response']['data'][number];
+/**
+ * Subset of fields from the GitHub releases api.
+ * I'm just using a subset instead of the full type from octokit so I can create tests without having to fill out all
+ * the irrelevant fields.
+ */
+export type GitHubRelease = {
+    id: number, html_url: string,
+    tag_name: string, name: string|null,
+    draft: boolean, prerelease: boolean,
+    body?: string|null,
+    assets: {
+        id: number, name: string, digest?: string|null,
+        browser_download_url: string,
+    }[],
+}
 /** Fetches all GitHub release information from obsidianmd/obsidian-releases */
 export async function fetchObsidianGitHubReleases(): Promise<GitHubRelease[]> {
-    const gitHubReleases = await fetchGitHubAPIPaginated(`repos/obsidianmd/obsidian-releases/releases`);
-    return gitHubReleases.reverse(); // sort oldest first
+    // verify that the full GitHub type is assignable to GitHubRelease
+    type FullGitHubRelease = RestEndpointMethodTypes["repos"]["listReleases"]['response']['data'][number];
+    const releases: FullGitHubRelease[] = await fetchGitHubAPIPaginated(`repos/obsidianmd/obsidian-releases/releases`);
+    return releases.reverse(); // sort oldest first
 }
 
 /** Obsidian assets that have broken download links */
@@ -310,8 +326,8 @@ export function parseObsidianDesktopRelease(fileRelease: ObsidianDesktopRelease)
     return result;
 }
 
-export function parseObsidianGithubRelease(gitHubRelease: any): DeepPartial<ObsidianVersionInfo> {
-    const version = gitHubRelease.name;
+export function parseObsidianGithubRelease(gitHubRelease: GitHubRelease): DeepPartial<ObsidianVersionInfo> {
+    const version = gitHubRelease.name!;
     let assets: {url: string, digest: string}[] = gitHubRelease.assets.map((a: any) => ({
         url: a.browser_download_url,
         digest: a.digest ?? `id:${a.id}`,
@@ -361,7 +377,7 @@ export const INSTALLER_KEYS: InstallerKey[] = [
  * Takes path to the installer (the whole folder, not just the entrypoint executable).
  */
 export async function extractInstallerInfo(
-    installerKey: InstallerKey, url: string,
+    version: string, installerKey: InstallerKey, url: string,
 ): Promise<Omit<ObsidianInstallerInfo, "digest">> {
     const installerName = url.split("/").at(-1)!;
     consola.log(`Extrating installer info for ${installerName}...`)
@@ -438,26 +454,6 @@ export async function extractInstallerInfo(
     }
 }
 
-export type InstallerInfoWithVersion = {
-    version: string,
-    key: InstallerKey,
-    installerInfo: Omit<ObsidianInstallerInfo, "digest">,
-}
-export async function extractInstallerInfos(
-    versions: ObsidianVersionInfo[], opts: { maxInstances: number },
-): Promise<InstallerInfoWithVersion[]> {
-    const { maxInstances } = opts;
-    const newInstallers = versions
-        .flatMap(v => INSTALLER_KEYS.map(k => [v, k] as const))
-        .filter(([v, key]) => v.downloads?.[key] && !v.installers?.[key]?.chrome);
-    const installerInfos = await pool(maxInstances, newInstallers, async ([v, key]) => {
-        const installerInfo = await extractInstallerInfo(key, v.downloads[key]!);
-        return {version: v.version, key, installerInfo};
-    });
-    return installerInfos;
-}
-
-export type InstallerCompatibilityInfo = {version: string, minInstallerVersion: string, maxInstallerVersion: string};
 /**
  * Checks if an Obsidian app and installer version are compatible.
  */
@@ -512,7 +508,8 @@ export async function checkCompatibility(
 /** Get min and max installer for each version. */
 export async function getCompatibilityInfos(
     versions: ObsidianVersionInfo[],
-): Promise<InstallerCompatibilityInfo[]> {
+    {_checkCompatibility = checkCompatibility} = {},
+): Promise<DeepPartial<ObsidianVersionInfo>[]> {
     const tmp = await makeTmpDir("obsidian-installer-compat-");
     try {
         // setup an obsidian-versions.json file with dummy minInstallerVersion values so we run ObsidianLauncher
@@ -567,7 +564,7 @@ export async function getCompatibilityInfos(
 
             while (start <= end) {
                 const mid = Math.floor((start + end) / 2);
-                const compatible = await checkCompatibility(launcher,
+                const compatible = await _checkCompatibility(launcher,
                     version.version, installerArr[mid].version,
                 );
                 if (!compatible) {
@@ -643,21 +640,22 @@ export function normalizeObsidianVersionInfo(versionInfo: DeepPartial<ObsidianVe
 
 /**
  * Updates obsidian version information.
- * Does NOT call add installer electron/chromium information, but does remove any out-of-date installer info.
+ * @param maxInstances Number of parallel instances to use for the promise pool
+ * @param opts Other options are for overriding internals in our tests
  */
-export function updateObsidianVersionList(args: {
-    original?: ObsidianVersionInfo[],
-    destkopReleases?: ObsidianDesktopRelease[],
-    gitHubReleases?: GitHubRelease[],
-    installerInfos?: InstallerInfoWithVersion[],
-    compatibilityInfos?: InstallerCompatibilityInfo[],
-}): ObsidianVersionInfo[] {
-    const {
-        original = [], destkopReleases = [], gitHubReleases = [], installerInfos = [], compatibilityInfos = [],
-    } = args;
-    const oldVersions = _.keyBy(original, v => v.version);
+export async function updateObsidianVersionList(original?: ObsidianVersionList, {
+    maxInstances = 1,
+    _fetchObsidianDesktopReleases = fetchObsidianDesktopReleases,
+    _fetchObsidianGitHubReleases = fetchObsidianGitHubReleases,
+    _extractInstallerInfo = extractInstallerInfo,
+    _checkCompatibility = checkCompatibility,
+} = {}): Promise<ObsidianVersionList> {
+    const oldVersions = _.keyBy(original?.versions ?? [], v => v.version);
     const newVersions: _.Dictionary<DeepPartial<ObsidianVersionInfo>> = _.cloneDeep(oldVersions);
 
+    const [destkopReleases, commitInfo] = await _fetchObsidianDesktopReleases(
+        original?.metadata.commitDate, original?.metadata.commitSha,
+    );
     for (const destkopRelease of destkopReleases) {
         const {current, beta} = parseObsidianDesktopRelease(destkopRelease);
         if (beta) {
@@ -666,6 +664,7 @@ export function updateObsidianVersionList(args: {
         newVersions[current.version!] = _.merge(newVersions[current.version!] ?? {}, current);
     }
 
+    const gitHubReleases = await _fetchObsidianGitHubReleases();
     for (const githubRelease of gitHubReleases) {
         // Skip some special "preleases"
         if (semver.valid(githubRelease.name) && !semver.prerelease(githubRelease.name!)) {
@@ -683,21 +682,45 @@ export function updateObsidianVersionList(args: {
         }
     }
 
-    // merge in installerInfos
+    const newInstallers = Object.values(newVersions)
+        .flatMap(v => INSTALLER_KEYS.map(k => [v, k] as const))
+        .filter(([v, key]) => v.downloads?.[key] && !v.installers?.[key]?.chrome);
+    const installerInfos = await pool(maxInstances, newInstallers, async ([v, key]) => {
+        const installerInfo = await _extractInstallerInfo(v.version!, key, v.downloads![key]!);
+        return {version: v.version, installers: {[key]: installerInfo}} as DeepPartial<ObsidianVersionInfo>;
+    });
     for (const installerInfo of installerInfos) {
-        newVersions[installerInfo.version] = _.merge(newVersions[installerInfo.version] ?? {}, {
-            version: installerInfo.version,
-            installers: {[installerInfo.key]: installerInfo.installerInfo},
-        });
+        newVersions[installerInfo.version!] = _.merge(newVersions[installerInfo.version!] ?? {}, installerInfo);
     }
 
-    // merge in compatibility info
-    for (const compatInfo of compatibilityInfos) {
-        newVersions[compatInfo.version] = _.merge(newVersions[compatInfo.version] ?? {}, compatInfo);
+    const compatInfos = await getCompatibilityInfos(
+        Object.values(newVersions) as ObsidianVersionInfo[],
+        {_checkCompatibility: _checkCompatibility},
+    );
+    for (const compatInfo of compatInfos) {
+        newVersions[compatInfo.version!] = _.merge(newVersions[compatInfo.version!] ?? {}, compatInfo);
     }
 
-    return Object.values(newVersions)
-        .map(normalizeObsidianVersionInfo)
-        .sort((a, b) => semver.compare(a.version, b.version));
+    const result: ObsidianVersionList = {
+        metadata: {
+            schemaVersion: obsidianVersionsSchemaVersion,
+            commitDate: commitInfo.commitDate,
+            commitSha: commitInfo.commitSha,
+            timestamp: original?.metadata.timestamp ?? "", // set down below
+        },
+        versions: Object.values(newVersions)
+            .map(normalizeObsidianVersionInfo)
+            .sort((a, b) => semver.compare(a.version, b.version)),
+    }
+
+    // Update timestamp if anything has changed. Also, GitHub will cancel scheduled workflows if the repository is
+    // "inactive" for 60 days. So we'll update the timestamp every once in a while even if there are no Obsidian
+    // updates to make sure there's commit activity in the repo.
+    const dayMs = 24 * 60 * 60 * 1000;
+    const timeSinceLastUpdate = new Date().getTime() - new Date(original?.metadata.timestamp ?? 0).getTime();
+    if (!_.isEqual(original, result) || timeSinceLastUpdate > 29 * dayMs) {
+        result.metadata.timestamp = new Date().toISOString();
+    }
+
+    return result;
 }
-
