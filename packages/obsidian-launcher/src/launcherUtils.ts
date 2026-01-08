@@ -298,13 +298,11 @@ export async function fetchObsidianGitHubReleases(): Promise<GitHubRelease[]> {
     return releases.reverse(); // sort oldest first
 }
 
-/** Obsidian assets that have broken download links */
-const BROKEN_ASSETS = [
-    "https://releases.obsidian.md/release/obsidian-0.12.16.asar.gz",
-    "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.16/obsidian-0.12.16.asar.gz",
-    "https://releases.obsidian.md/release/obsidian-1.4.7.asar.gz",
-    "https://releases.obsidian.md/release/obsidian-1.4.8.asar.gz",
-    "https://releases.obsidian.md/release/obsidian-1.0.1.asar.gz",
+const BROKEN_VERSIONS = [
+    "0.12.16", // broken download link
+    "1.4.7", // broken download link
+    "1.4.8", // broken download link
+    "1.0.1",  // won't launch
 ];
 
 export type ParsedDesktopRelease = {current: DeepPartial<ObsidianVersionInfo>, beta?: DeepPartial<ObsidianVersionInfo>}
@@ -314,7 +312,7 @@ export function parseObsidianDesktopRelease(fileRelease: ObsidianDesktopRelease)
             version: r.latestVersion,
             isBeta: isBeta,
             downloads: {
-                asar: BROKEN_ASSETS.includes(r.downloadUrl) ? undefined : r.downloadUrl,
+                asar: r.downloadUrl,
             },
         };
     };
@@ -332,7 +330,6 @@ export function parseObsidianGithubRelease(gitHubRelease: GitHubRelease): DeepPa
         url: a.browser_download_url,
         digest: a.digest ?? `id:${a.id}`,
     }));
-    assets = assets.filter(a => !BROKEN_ASSETS.includes(a.url));
 
     const asar = assets.find(a => a.url.match(`${version}.asar.gz$`));
     const appImage = assets.find(a => a.url.match(`${version}.AppImage$`));
@@ -651,7 +648,7 @@ export async function updateObsidianVersionList(original?: ObsidianVersionList, 
     _checkCompatibility = checkCompatibility,
 } = {}): Promise<ObsidianVersionList> {
     const oldVersions = _.keyBy(original?.versions ?? [], v => v.version);
-    const newVersions: _.Dictionary<DeepPartial<ObsidianVersionInfo>> = _.cloneDeep(oldVersions);
+    let newVersions: _.Dictionary<DeepPartial<ObsidianVersionInfo>> = _.cloneDeep(oldVersions);
 
     const [destkopReleases, commitInfo] = await _fetchObsidianDesktopReleases(
         original?.metadata.commitDate, original?.metadata.commitSha,
@@ -681,6 +678,8 @@ export async function updateObsidianVersionList(original?: ObsidianVersionList, 
             newVersions[parsed.version!] = newVersion;
         }
     }
+
+    newVersions = _.omitBy(newVersions, v => BROKEN_VERSIONS.includes(v.version!));
 
     const newInstallers = Object.values(newVersions)
         .flatMap(v => INSTALLER_KEYS.map(k => [v, k] as const))
