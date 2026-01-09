@@ -13,7 +13,9 @@ import type { RestEndpointMethodTypes } from "@octokit/rest";
 import { consola } from "consola";
 import CDP from "chrome-remote-interface";
 import { ObsidianLauncher } from "./launcher.js";
-import { atomicCreate, makeTmpDir, normalizeObject, pool, maybe, withTimeout, until, retry } from "./utils.js";
+import {
+    atomicCreate, makeTmpDir, normalizeObject, pool, maybe, withTimeout, until, retry, UntilOpts,
+ } from "./utils.js";
 import { downloadResponse, fetchGitHubAPIPaginated } from "./apis.js"
 import {
     ObsidianInstallerInfo, ObsidianVersionInfo, obsidianVersionsSchemaVersion, ObsidianVersionList,
@@ -198,9 +200,6 @@ export async function getCdpSession(
             }
             await procExit;
         });
-        let output = "";
-        proc.stdout!.on('data', data => { output += data });
-        proc.stderr!.on('data', data => { output += data });
 
         // Wait for the logs showing that Obsidian is ready, and pull the chosen DevTool Protocol port from it
         const portPromise = new Promise<number>((resolve, reject) => {
@@ -229,7 +228,7 @@ export async function getCdpSession(
         return {
             client,
             cleanup: doCleanup,
-            proc, output,
+            proc,
         };
     } catch (e: any) {
         await doCleanup();
@@ -245,6 +244,9 @@ export async function cdpEvaluate(client: CDP.Client, expression: string) {
     return response.result.value;
 }
 
+export async function cdpEvaluateUntil(client: CDP.Client, expression: string, opts: UntilOpts) {
+    return await until(() => cdpEvaluate(client, expression), opts);
+}
 
 //// updateVersionList helpers ////
 
@@ -473,33 +475,48 @@ export async function checkCompatibility(
         return false;
     }
 
-    const { client, output, cleanup } = cdpResult.result;
+    const { client, cleanup } = cdpResult.result;
+    let result = true;
     try {
-        if (output.toLowerCase().match(/minimmum version mismatch/)) {
-            consola.log(`app ${appVersion} and install ${installerVersion} are incompatible`);
-            return false;
-        }
-
-        const debugInfoResult = await maybe(cdpEvaluate(client,
-            `window.obsidianLauncher.app.commands.executeCommandById('app:show-debug-info')`
-        ));
-        // executeCommandById returns false if command is missing (i.e. Obsidian before 0.13.4)
-        if (debugInfoResult.result) {
-            const debugInfo: string = await until(
-                () => cdpEvaluate(client, 'document.querySelector(".debug-textarea").value?.trim()'),
+        if (semver.lt(appVersion, "0.7.4")) {
+            // versions <0.7.4 show incompatibility warnings even for the installer of the same version. Something
+            // must be broken with the installers listed in the release? Just setting these manually.
+            result = semver.gte(installerVersion, '0.6.4');
+        } else if (semver.lt(appVersion, "0.13.4")) {
+            // the debug command was added in 0.13.4, so check the about page before then
+            await cdpEvaluate(client, `window.app.commands.executeCommandById('app:open-settings')`);
+            await until(() => cdpEvaluate(client, `
+                document.evaluate(
+                    "//*[contains(@class, 'vertical-tab-nav-item') and contains(text(),'About')]",
+                    document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null
+                ).singleNodeValue.click() ?? true;
+            `), {timeout: 5000});
+            const aboutText = await until(() => cdpEvaluate(client, `
+                document.evaluate(
+                    "//*[contains(@class, 'setting-item-name') and contains(text(),'Current version:')]",
+                    document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null
+                ).singleNodeValue.parentNode.innerText;
+            `), {timeout: 5000});
+            if (['manual installation', "manually install"].some(t => aboutText.includes(t))) {
+                result = false;
+            }
+        } else {
+            // check the debug info for installer incompatibility warning
+            await cdpEvaluate(client, `window.obsidianLauncher.app.commands.executeCommandById('app:show-debug-info')`);
+            const debugInfo: string = await cdpEvaluateUntil(client,
+                `document.querySelector(".debug-textarea").value.trim()`,
                 {timeout: 5000},
             );
             if (debugInfo.toLowerCase().match(/installer version too low/)) {
-                consola.log(`app ${appVersion} and install ${installerVersion} are incompatible`);
-                return false;
+                result = false;
             }
         }
-
-        consola.log(`app ${appVersion} and install ${installerVersion} are compatible`)
-        return true;
     } finally {
         await cleanup();
     }
+
+    consola.log(`app ${appVersion} and installer ${installerVersion} are ${!result ? 'in' : ''}compatible`);
+    return result;
 }
 
 /** Get min and max installer for each version. */
