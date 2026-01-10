@@ -107,17 +107,22 @@ export async function obsidianApiLogin(opts: {
     let password = env.OBSIDIAN_PASSWORD ?? cached.OBSIDIAN_PASSWORD;
     let promptedCredentials = false;
 
+    // we'll only show this when not in CI to avoid confusion
+    const predownloadMessage = "pre-download the Obsidian beta with:\n" +
+                               "    npx obsidian-launcher download app -v <version>"
+
     if (!email || !password) {
         if (interactive) {
             consola.log("Obsidian Insiders account is required to download Obsidian beta versions.")
+            consola.log("You can set OBSIDIAN_EMAIL and OBSIDIAN_PASSWORD environment variables (.env file is supported) to avoid this prompt.")
             email = email || readlineSync.question("Obsidian email: ");
             password = password || readlineSync.question("Obsidian password: ", {hideEchoBack: true});
             promptedCredentials = true;
         } else  {
             throw Error(
-                "Obsidian Insiders account is required to download Obsidian beta versions. Either set the " +
-                "OBSIDIAN_EMAIL and OBSIDIAN_PASSWORD env vars (.env file is supported) or pre-download the " +
-                "Obsidian beta with `npx obsidian-launcher download app -v <version>`"
+                "Obsidian Insiders account is required to download Obsidian beta versions. Set the OBSIDIAN_EMAIL " +
+                "and OBSIDIAN_PASSWORD environment variables (.env file is supported)" +
+                (env.CI ? "." : ` or ${predownloadMessage}`)
             )
         }
     }
@@ -157,9 +162,8 @@ export async function obsidianApiLogin(opts: {
             needsMfa = true; // when interactive, continue to next loop
             if (!interactive) {
                 throw Error(
-                    "Can't login with 2FA in a non-interactive session. To download Obsidian beta versions, either " +
-                    "disable 2FA on your account or pre-download the Obsidian beta with " +
-                    "`npx obsidian-launcher download app -v <version>`"
+                    "Can't login with 2FA in a non-interactive session. To download Obsidian beta versions disable " +
+                    "2FA on your account" + (env.CI ? "." : ` or ${predownloadMessage}`)
                 );
             }
         } else if (["please wait", "try again"].some(m => error?.includes(m))) {
