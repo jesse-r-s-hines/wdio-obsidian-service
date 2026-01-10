@@ -1,7 +1,7 @@
 import { browser, expect } from '@wdio/globals'
 import fsAsync from "fs/promises";
-import crypo from "crypto";
 import { TFile } from 'obsidian';
+import { hash } from '../helpers.js';
 import { obsidianPage } from 'wdio-obsidian-service';
 
 
@@ -48,10 +48,16 @@ describe("file manipulation", () => {
         await obsidianPage.delete(".foo");
     })
 
-    // These tests can run without reloading between
-    describe("create files and folders", function() {
+    describe("tests in basic vault", function() {
         before(async () => {
             await browser.reloadObsidian({vault: "./test/vaults/basic"});
+        })
+
+        it("read", async () => {
+            const actual = await obsidianPage.read("Welcome.md");
+            const expected = await fsAsync.readFile('test/vaults/basic/Goodbye.md', 'utf-8');
+
+            expect(actual).toEqual(expected);
         })
 
         it("mkdir", async () => {
@@ -97,6 +103,10 @@ describe("file manipulation", () => {
             await obsidianPage.write(".new.md", "stuff");
             const content = await browser.executeObsidian(({app}) => app.vault.adapter.read(".new.md"));
             expect(content).toEqual("stuff");
+
+            // also test read hidden here
+            const readResult = await obsidianPage.read(".new.md");
+            expect(readResult).toEqual("stuff");
         })
 
         it("write modify hidden", async () => {
@@ -120,19 +130,49 @@ describe("file manipulation", () => {
             expect(content).toEqual("stuff");
         })
 
-        it("write binary", async () => {
-            const expectedContent = new Uint8Array(await fsAsync.readFile('test/vaults/fileTypes/image.png'));
-            const expectedHash = crypo.createHash("SHA256").update(expectedContent).digest("hex");
+        it("write create binary", async () => {
+            const expected = await fsAsync.readFile('test/vaults/fileTypes/logo.png');
 
-            await obsidianPage.write("newImage.png", expectedContent.buffer);
+            await obsidianPage.write("newImage.png", expected.buffer);
 
-            const actualContent = new Uint8Array(await browser.executeObsidian(async ({app}) => {
+            // not using read so we can test the b64 encoding separately
+            const actual = new Uint8Array(await browser.executeObsidian(async ({app}) => {
                 const content = await app.vault.adapter.readBinary("newImage.png");
                 return [...new Uint8Array(content)]
             }));
-            const actualHash = crypo.createHash("SHA256").update(actualContent).digest("hex");
 
-            expect(expectedHash).toEqual(actualHash);
+            expect(hash(actual)).toEqual(hash(expected));
+
+            // also test read binary here
+            const readResult = await obsidianPage.readBinary("newImage.png");
+            expect(hash(readResult)).toEqual(hash(expected));
+        })
+
+        it("write modify binary", async () => {
+            const logo = await fsAsync.readFile('test/vaults/fileTypes/logo.png');
+            await obsidianPage.write("logo.png", logo.buffer);
+
+            const expected = await fsAsync.readFile('test/vaults/fileTypes/example.png');
+            await obsidianPage.write("logo.png", expected.buffer);
+
+            const actual = new Uint8Array(await browser.executeObsidian(async ({app}) => {
+                const content = await app.vault.adapter.readBinary("logo.png");
+                return [...new Uint8Array(content)]
+            }));
+
+            expect(hash(actual)).toEqual(hash(expected));
+        })
+
+        it("write create binary hidden", async () => {
+            const expected = await fsAsync.readFile('test/vaults/fileTypes/logo.png');
+            await obsidianPage.write(".newImage.png", expected.buffer);
+
+            const actual = new Uint8Array(await browser.executeObsidian(async ({app}) => {
+                const content = await app.vault.adapter.readBinary(".newImage.png");
+                return [...new Uint8Array(content)]
+            }));
+
+            expect(hash(actual)).toEqual(hash(expected));
         })
 
         it("write empty", async () => {

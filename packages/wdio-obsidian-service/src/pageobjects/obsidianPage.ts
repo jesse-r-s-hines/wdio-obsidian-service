@@ -183,6 +183,37 @@ class ObsidianPage extends BasePage {
     }
 
     /**
+     * Return contents of a file in the vault.
+     */
+    async read(file: string): Promise<string> {
+        return await this.browser.executeObsidian(async ({app, obsidian}, file) => {
+            file = obsidian.normalizePath(file);
+            return await app.vault.adapter.read(file);
+        }, file);
+    }
+
+    /**
+     * Return contents of a binary file in the vault.
+     */
+    async readBinary(file: string): Promise<ArrayBuffer> {
+        const b64Contents = await this.browser.executeObsidian(async ({app, obsidian}, file) => {
+            function toB64(buffer: ArrayBuffer) {
+                let binary = ''
+                const bytes = new Uint8Array(buffer)
+                const len = bytes.byteLength
+                for (let i = 0; i < len; i++) {
+                    binary += String.fromCharCode(bytes[i])
+                }
+                return btoa(binary)
+            }
+
+            file = obsidian.normalizePath(file);
+            return toB64(await app.vault.adapter.readBinary(file));
+        }, file);
+        return Buffer.from(b64Contents, 'base64').buffer;
+    }
+
+    /**
      * Deletes a file or folder in the vault.
      * @param file path of inside vault, e.g. "/books/leviathan-wakes.md"
      */
@@ -210,7 +241,7 @@ class ObsidianPage extends BasePage {
      * @param file path of inside vault, e.g. "/books/leviathan-wakes.md"
      * @param content content to write to the file
     */
-    async write(file: string, content: string|ArrayBuffer) {
+    async write(file: string, content: string|ArrayBufferLike|ArrayBuffer) {
         let strContent: string|undefined, binContent: string|undefined;
         if (typeof content == "string") {
             strContent = content;
@@ -310,7 +341,7 @@ class ObsidianPage extends BasePage {
      * })
      * ```
      */
-    async resetVault(...vaults: (string|Record<string, string|ArrayBuffer>)[]) {
+    async resetVault(...vaults: (string|Record<string, string|ArrayBufferLike|ArrayBuffer>)[]) {
         const obsidianOptions = this.getObsidianCapabilities();
         if (!obsidianOptions.vault) {
             // open an empty vault if there's no vault open
@@ -321,7 +352,11 @@ class ObsidianPage extends BasePage {
         vaults = vaults.length == 0 ? [obsidianOptions.vault!] : vaults;
 
         // list all files in the new vault
-        type NewFileInfo = {type: "file"|"folder", sourceContent?: string|ArrayBuffer, sourceFile?: string};
+        type NewFileInfo = {
+            type: "file"|"folder",
+            sourceContent?: string|ArrayBufferLike|ArrayBuffer,
+            sourceFile?: string,
+        };
         const newVault: Map<string, NewFileInfo> = new Map();
         for (let vault of vaults) {
             if (typeof vault == "string") {
