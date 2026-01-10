@@ -27,7 +27,7 @@ import { ObsidianServiceOptions } from "./types.js"
  * await browser.executeObsidian(({app}) => {
  *     // extract some file metadata, edit the vault, etc...
  * });
- * await browser?.deleteSession();
+ * await browser.deleteSession();
  * ```
  * 
  * @category WDIO Helpers

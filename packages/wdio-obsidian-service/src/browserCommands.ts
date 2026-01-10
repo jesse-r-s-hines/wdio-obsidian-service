@@ -13,20 +13,19 @@ export const browserCommands = {
      * - require: The customized require function Obsidian makes available to plugins. This is also available globally,
      *            so you can just use `require` directly instead of from {@link ExecuteObsidianArg} if you prefer.
      * 
-     * Like `brower.execute`, you can pass other extra arguments to the function.
+     * The same caveats as `browser.execute` apply. The function will be stringified and then run inside Obsidian, so
+     * you can't capture any local variables. Instead, pass inputs as extra arguments to the function.
      * 
      * See also: https://webdriver.io/docs/api/browser/execute
      * 
-     * Example usage
+     * Example usage:
      * ```ts
-     * const file = browser.executeObsidian(({app, obsidian}, path) => {
-     *      return app.vault.getMarkdownFiles().find(f => f.path == path);
-     * })
+     * const stats = await browser.executeObsidian(({app}, path) => {
+     *     return app.vault.getMarkdownFiles().find(f => f.path == path)!.stat;
+     * }, "Welcome.md");
      * ```
      * 
-     * Note: The same caveats as `browser.execute` apply. The function will be stringified and then run inside Obsidian,
-     * so you can't capture any local variables. E.g.
-     * 
+     * Make sure not to capture Obsidian types, instead use the provided obsidian module object. E.g. 
      * This *won't* work:
      * ```ts
      * import { FileView } from "obsidian"
