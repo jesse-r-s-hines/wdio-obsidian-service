@@ -242,7 +242,7 @@ describe("updateObsidianVersionList", function() {
         const asset = githubReleases.at(-1)!.assets.find(a => a.name.match(/-arm64.AppImage$/))!;
 
         asset.digest = "sha256:012345678";
-        let actual = await updateObsidianVersionListMocked(original, {
+        const actual = await updateObsidianVersionListMocked(original, {
             destkopReleases: [],
             githubReleases: githubReleases,
             _extractInstallerInfo: async () => ({

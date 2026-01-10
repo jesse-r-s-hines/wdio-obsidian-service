@@ -328,7 +328,7 @@ export function parseObsidianDesktopRelease(fileRelease: ObsidianDesktopRelease)
 
 export function parseObsidianGithubRelease(gitHubRelease: GitHubRelease): DeepPartial<ObsidianVersionInfo> {
     const version = gitHubRelease.name!;
-    let assets: {url: string, digest: string}[] = gitHubRelease.assets.map((a: any) => ({
+    const assets: {url: string, digest: string}[] = gitHubRelease.assets.map((a: any) => ({
         url: a.browser_download_url,
         digest: a.digest ?? `id:${a.id}`,
     }));
