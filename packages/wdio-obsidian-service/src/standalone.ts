@@ -1,7 +1,6 @@
 import { remote } from 'webdriverio'
 import type { Capabilities, Options } from '@wdio/types'
 import { ObsidianLauncherService, ObsidianWorkerService } from "./service.js"
-import { ObsidianBrowserCommands } from './browserCommands.js'
 import { ObsidianServiceOptions } from "./types.js"
 
 /**
