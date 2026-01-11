@@ -5,7 +5,7 @@ import path from "path"
 import { createDirectory } from "../helpers.js";
 import {
     fileExists, atomicCreate, linkOrCp, sleep, withTimeout, pool, maybe, normalizeObject,
-    CanonicalForm,
+    CanonicalForm, until, retry,
 } from "../../src/utils.js";
 
 
@@ -285,4 +285,50 @@ describe("normalizeObject", () => {
             expect(JSON.stringify(actual)).to.eql(JSON.stringify(expected));
         });
     })
+})
+
+describe("until", () => {
+    it("success", async () => {
+        const result = await until(() => "HELLO", {timeout: 100, poll: 10})
+        expect(result).to.equal("HELLO");
+    });
+
+    it("Timeout", async () => {
+        const result = await until(() => false, {timeout: 100, poll: 10}).catch(r => r);
+        expect(result).to.be.instanceOf(Error);
+    })
+
+    it("Timeout error", async () => {
+        const result = await until(() => { throw Error("foo") }, {timeout: 100, poll: 10}).catch(r => r);
+        expect(result).to.be.instanceOf(Error);
+        expect(result.toString()).to.match(/foo/);
+    })
+})
+
+describe("retry", () => {
+    it("basic success", async () => {
+        const result = await retry(() => "HELLO");
+        expect(result).to.equal("HELLO");
+    });
+
+    it("retry failure", async () => {
+        const result = await retry(
+            (attempt) => { throw Error(`attempt: ${attempt}`) },
+            {backoff: 0.1, retries: 3},
+        ).catch(e => e);
+        expect(result).to.be.instanceOf(Error);
+        expect(result.toString()).to.match(/attempt: 2/);
+    })
+
+    it("instant failure", async () => {
+        const result = await retry((attempt) => {
+            throw Error(attempt == 1 ? "unrecoverable" : "recoverable");
+        }, {
+            retries: 5,
+            backoff: 0.1,
+            retryIf: e => !e.toString().includes("unrecoverable"),
+        }).catch(r => r);
+        expect(result).to.be.instanceOf(Error);
+        expect(result.toString()).to.match(/unrecoverable/);
+    });
 })

@@ -1,0 +1,3488 @@
+[
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.5.0",
+        "downloadUrl": "",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf"
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.5.0",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.5.0/obsidian-0.5.0.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf"
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.5.0",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.5.0/obsidian-0.5.0.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf"
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.5.1",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.5.1/obsidian-0.5.1.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf"
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.5.2",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.5.2/obsidian-0.5.2.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf"
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.5.3",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.5.3/obsidian-0.5.3.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf"
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.6.0",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.6.0/obsidian-0.6.0.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf"
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.6.1",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.6.1/obsidian-0.6.1.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf"
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.6.2",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.6.2/obsidian-0.6.2.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf"
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.6.3",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.6.3/obsidian-0.6.3.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf"
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.6.3",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.6.3/obsidian-0.6.3.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.6.5",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.6.4/obsidian-0.6.4.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.6.4",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.6.4/obsidian-0.6.4.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.6.4",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.6.4/obsidian-0.6.4.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.6.4",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.6.4/obsidian-0.6.4.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.6.5",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.6.5/obsidian-0.6.5.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.6.5",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.6.5/obsidian-0.6.5.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.6.5",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.6.5/obsidian-0.6.5.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.6.5",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.6.5/obsidian-0.6.5.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.6.6",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.6.6/obsidian-0.6.6.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.6.5",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.6.5/obsidian-0.6.5.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.6.7",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.6.7/obsidian-0.6.7.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.6.7",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.6.7/obsidian-0.6.7.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.6.7",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.6.7/obsidian-0.6.7.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.6.7",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.6.7/obsidian-0.6.7.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.7.0",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.7.0/obsidian-0.7.0.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.6.7",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.6.7/obsidian-0.6.7.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.7.1",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.7.1/obsidian-0.7.1.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.6.7",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.6.7/obsidian-0.6.7.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.7.2",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.7.2/obsidian-0.7.2.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.7.3",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.7.3/obsidian-0.7.3.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.7.3",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.7.3/obsidian-0.7.3.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.7.3",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.7.3/obsidian-0.7.3.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.7.4",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.7.4/obsidian-0.7.4.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.7.3",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.7.3/obsidian-0.7.3.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.7.5",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.7.5/obsidian-0.7.5.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.7.4",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.7.4/obsidian-0.7.4.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.7.5",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.7.5/obsidian-0.7.5.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.7.4",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.7.4/obsidian-0.7.4.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.7.6",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.7.6/obsidian-0.7.6.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.7.6",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.7.6/obsidian-0.7.6.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.7.6",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.7.6/obsidian-0.7.6.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.7.6",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.7.6/obsidian-0.7.6.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.8.0",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.0/obsidian-0.8.0.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.8.0",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.0/obsidian-0.8.0.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.8.0",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.0/obsidian-0.8.0.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.8.0",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.0/obsidian-0.8.0.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.8.1",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.1/obsidian-0.8.1.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.8.1",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.1/obsidian-0.8.1.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.8.2",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.2/obsidian-0.8.2.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.8.2",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.2/obsidian-0.8.2.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.8.2",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.2/obsidian-0.8.2.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.8.2",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.2/obsidian-0.8.2.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.8.3",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.3/obsidian-0.8.3.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.8.2",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.2/obsidian-0.8.2.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.8.4",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.4/obsidian-0.8.4.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.8.4",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.4/obsidian-0.8.4.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.8.4",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.4/obsidian-0.8.4.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.8.4",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.4/obsidian-0.8.4.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.8.5",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.5/obsidian-0.8.5.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.8.4",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.4/obsidian-0.8.4.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.8.6",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.6/obsidian-0.8.6.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.8.4",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.4/obsidian-0.8.4.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.8.7",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.7/obsidian-0.8.7.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.8.4",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.4/obsidian-0.8.4.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.8.8",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.8/obsidian-0.8.8.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.8.9",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.9/obsidian-0.8.9.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.8.10",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.10/obsidian-0.8.10.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.8.9",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.9/obsidian-0.8.9.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.8.11",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.11/obsidian-0.8.11.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.8.12",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.12/obsidian-0.8.12.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.8.13",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.13/obsidian-0.8.13.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.8.12",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.12/obsidian-0.8.12.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.8.14",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.14/obsidian-0.8.14.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.8.14",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.14/obsidian-0.8.14.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.8.15",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.15/obsidian-0.8.15.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.8.15",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.15/obsidian-0.8.15.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.9.0",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.0/obsidian-0.9.0.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.8.15",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.15/obsidian-0.8.15.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.9.1",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.1/obsidian-0.9.1.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.9.1",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.1/obsidian-0.9.1.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.9.1",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.1/obsidian-0.9.1.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.9.1",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.1/obsidian-0.9.1.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.9.2",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.2/obsidian-0.9.2.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.9.2",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.2/obsidian-0.9.2.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.9.3",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.3/obsidian-0.9.3.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.9.3",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.3/obsidian-0.9.3.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.9.3",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.3/obsidian-0.9.3.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.9.3",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.3/obsidian-0.9.3.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.9.4",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.4/obsidian-0.9.4.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.9.4",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.4/obsidian-0.9.4.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.9.5",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.5/obsidian-0.9.5.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.9.4",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.4/obsidian-0.9.4.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.9.6",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.6/obsidian-0.9.6.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.9.6",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.6/obsidian-0.9.6.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.9.7",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.7/obsidian-0.9.7.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.9.6",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.6/obsidian-0.9.6.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.9.8",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.8/obsidian-0.9.8.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.9.6",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.6/obsidian-0.9.6.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.9.9",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.9/obsidian-0.9.9.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.9.6",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.6/obsidian-0.9.6.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.9.10",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.10/obsidian-0.9.10.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.9.10",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.10/obsidian-0.9.10.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.9.11",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.11/obsidian-0.9.11.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.9.11",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.11/obsidian-0.9.11.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.9.12",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.12/obsidian-0.9.12.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.9.11",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.11/obsidian-0.9.11.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.9.13",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.13/obsidian-0.9.13.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.9.11",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.11/obsidian-0.9.11.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.9.14",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.14/obsidian-0.9.14.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.9.11",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.11/obsidian-0.9.11.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.9.15",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.15/obsidian-0.9.15.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.9.15",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.15/obsidian-0.9.15.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.9.15",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.15/obsidian-0.9.15.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.9.15",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.15/obsidian-0.9.15.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.9.16",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.16/obsidian-0.9.16.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.9.15",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.15/obsidian-0.9.15.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.9.17",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.17/obsidian-0.9.17.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.9.17",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.17/obsidian-0.9.17.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.9.18",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.18/obsidian-0.9.18.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.9.17",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.17/obsidian-0.9.17.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.9.19",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.19/obsidian-0.9.19.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.9.17",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.17/obsidian-0.9.17.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.9.20",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.20/obsidian-0.9.20.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.9.20",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.20/obsidian-0.9.20.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.9.20",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.20/obsidian-0.9.20.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.9.20",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.20/obsidian-0.9.20.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.9.21",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.21/obsidian-0.9.21.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.9.20",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.20/obsidian-0.9.20.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.9.22",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.22/obsidian-0.9.22.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.9.22",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.22/obsidian-0.9.22.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.10.0",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.0/obsidian-0.10.0.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.9.22",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.22/obsidian-0.9.22.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.10.1",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.1/obsidian-0.10.1.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.10.1",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.1/obsidian-0.10.1.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.10.2",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.2/obsidian-0.10.2.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.10.1",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.1/obsidian-0.10.1.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.10.3",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.3/obsidian-0.10.3.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.10.1",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.1/obsidian-0.10.1.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.10.4",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.4/obsidian-0.10.4.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.10.1",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.1/obsidian-0.10.1.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.10.5",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.5/obsidian-0.10.5.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.10.6",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.6/obsidian-0.10.6.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.10.6",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.6/obsidian-0.10.6.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.10.6",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.6/obsidian-0.10.6.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.10.7",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.7/obsidian-0.10.7.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.10.7",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.7/obsidian-0.10.7.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.10.8",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.8/obsidian-0.10.8.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.10.8",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.8/obsidian-0.10.8.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.10.9",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.9/obsidian-0.10.9.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.10.9",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.9/obsidian-0.10.9.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.10.10",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.10/obsidian-0.10.10.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.10.11",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.11/obsidian-0.10.11.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.10.11",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.11/obsidian-0.10.11.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.10.11",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.11/obsidian-0.10.11.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.10.12",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.12/obsidian-0.10.12.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.10.11",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.11/obsidian-0.10.11.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.10.13",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.13/obsidian-0.10.13.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.10.13",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.13/obsidian-0.10.13.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.10.13",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.13/obsidian-0.10.13.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.10.13",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.13/obsidian-0.10.13.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.11.0",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.0/obsidian-0.11.0.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.11.0",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.0/obsidian-0.11.0.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.11.1",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.1/obsidian-0.11.1.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.11.0",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.0/obsidian-0.11.0.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.11.2",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.2/obsidian-0.11.2.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.11.0",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.0/obsidian-0.11.0.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.11.3",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.3/obsidian-0.11.3.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.11.0",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.0/obsidian-0.11.0.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.11.4",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.4/obsidian-0.11.4.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.11.3",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.3/obsidian-0.11.3.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.11.4",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.4/obsidian-0.11.4.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.11.3",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.3/obsidian-0.11.3.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.11.5",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.5/obsidian-0.11.5.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.11.3",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.3/obsidian-0.11.3.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.11.6",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.6/obsidian-0.11.6.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.11.5",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.5/obsidian-0.11.5.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.11.6",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.6/obsidian-0.11.6.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.11.5",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.5/obsidian-0.11.5.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.11.7",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.7/obsidian-0.11.7.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.11.5",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.5/obsidian-0.11.5.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.11.8",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.8/obsidian-0.11.8.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.11.5",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.5/obsidian-0.11.5.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.11.9",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.9/obsidian-0.11.9.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.11.9",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.9/obsidian-0.11.9.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.11.10",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.10/obsidian-0.11.10.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.11.9",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.9/obsidian-0.11.9.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.11.11",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.11/obsidian-0.11.11.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.11.9",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.9/obsidian-0.11.9.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.11.12",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.12/obsidian-0.11.12.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.11.9",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.9/obsidian-0.11.9.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.11.13",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.13/obsidian-0.11.13.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.11.13",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.13/obsidian-0.11.13.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.11.13",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.13/obsidian-0.11.13.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.11.13",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.13/obsidian-0.11.13.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.12.0",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.0/obsidian-0.12.0.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.11.13",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.13/obsidian-0.11.13.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.12.1",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.1/obsidian-0.12.1.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.11.13",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.13/obsidian-0.11.13.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.12.2",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.2/obsidian-0.12.2.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.12.3",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.3/obsidian-0.12.3.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.12.3",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.3/obsidian-0.12.3.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.12.3",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.3/obsidian-0.12.3.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.12.4",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.4/obsidian-0.12.4.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.12.4",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.4/obsidian-0.12.4.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.12.5",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.5/obsidian-0.12.5.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.12.5",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.5/obsidian-0.12.5.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.12.6",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.6/obsidian-0.12.6.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.12.5",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.5/obsidian-0.12.5.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.12.7",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.7/obsidian-0.12.7.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.12.5",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.5/obsidian-0.12.5.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.12.8",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.8/obsidian-0.12.8.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.12.5",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.5/obsidian-0.12.5.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.12.9",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.9/obsidian-0.12.9.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.12.5",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.5/obsidian-0.12.5.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.12.10",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.10/obsidian-0.12.10.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.12.10",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.10/obsidian-0.12.10.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.12.10",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.10/obsidian-0.12.10.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.12.10",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.10/obsidian-0.12.10.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.12.11",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.11/obsidian-0.12.11.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.12.10",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.10/obsidian-0.12.10.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.12.12",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.12/obsidian-0.12.12.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.12.12",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.12/obsidian-0.12.12.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.12.13",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.13/obsidian-0.12.13.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.12.12",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.12/obsidian-0.12.12.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.12.14",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.14/obsidian-0.12.14.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.12.12",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.12/obsidian-0.12.12.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.12.15",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.15/obsidian-0.12.15.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.12.15",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.15/obsidian-0.12.15.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.12.15",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.15/obsidian-0.12.15.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.12.15",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.15/obsidian-0.12.15.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.12.16",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.16/obsidian-0.12.16.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.12.15",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.15/obsidian-0.12.15.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.12.16",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-0.12.16.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.12.15",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.15/obsidian-0.12.15.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.12.17",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-0.12.17.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.12.15",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.15/obsidian-0.12.15.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.12.18",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-0.12.18.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.12.15",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.15/obsidian-0.12.15.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.12.19",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-0.12.19.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.12.19",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.19/obsidian-0.12.19.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.12.19",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-0.12.19.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.12.19",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.19/obsidian-0.12.19.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.13.0",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-0.13.0.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.12.19",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.19/obsidian-0.12.19.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.13.1",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-0.13.1.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.12.19",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.19/obsidian-0.12.19.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.13.2",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-0.13.2.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.12.19",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.19/obsidian-0.12.19.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.13.3",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-0.13.3.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.12.19",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.19/obsidian-0.12.19.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.13.4",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-0.13.4.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.12.19",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.19/obsidian-0.12.19.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.13.5",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-0.13.5.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.12.19",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.19/obsidian-0.12.19.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.13.6",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-0.13.6.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.12.19",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.19/obsidian-0.12.19.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.13.7",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-0.13.7.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.12.19",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.19/obsidian-0.12.19.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.13.8",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-0.13.8.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.12.19",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.19/obsidian-0.12.19.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.13.9",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-0.13.9.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.12.19",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.19/obsidian-0.12.19.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.13.10",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-0.13.10.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.12.19",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.19/obsidian-0.12.19.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.13.11",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-0.13.11.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.12.19",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.19/obsidian-0.12.19.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.13.12",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-0.13.12.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.12.19",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.19/obsidian-0.12.19.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.13.13",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-0.13.13.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.13.14",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.13.14/obsidian-0.13.14.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.13.14",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.13.14/obsidian-0.13.14.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.13.14",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.13.14/obsidian-0.13.14.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.13.15",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-0.13.15.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.13.14",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.13.14/obsidian-0.13.14.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.13.16",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-0.13.16.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.13.14",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.13.14/obsidian-0.13.14.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.13.17",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-0.13.17.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.13.14",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.13.14/obsidian-0.13.14.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.13.18",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-0.13.18.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.13.19",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.13.19/obsidian-0.13.19.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.13.19",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.13.19/obsidian-0.13.19.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.13.19",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.13.19/obsidian-0.13.19.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.13.20",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-0.13.20.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.13.19",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.13.19/obsidian-0.13.19.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.13.21",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-0.13.21.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.13.19",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.13.19/obsidian-0.13.19.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.13.22",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-0.13.22.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.13.23",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.13.23/obsidian-0.13.23.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.13.23",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.13.23/obsidian-0.13.23.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.13.23",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.13.23/obsidian-0.13.23.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.13.24",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.13.24/obsidian-0.13.24.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.13.23",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.13.23/obsidian-0.13.23.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.13.25",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-0.13.25.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.13.23",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.13.23/obsidian-0.13.23.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.13.26",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-0.13.26.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.13.23",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.13.23/obsidian-0.13.23.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.13.27",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-0.13.27.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.13.23",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.13.23/obsidian-0.13.23.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.13.28",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-0.13.28.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.13.23",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.13.23/obsidian-0.13.23.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.13.29",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-0.13.29.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.13.30",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.13.30/obsidian-0.13.30.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.13.30",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.13.30/obsidian-0.13.30.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.13.31",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.13.31/obsidian-0.13.31.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.13.31",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.13.31/obsidian-0.13.31.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.13.31",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.13.31/obsidian-0.13.31.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.13.32",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-0.13.32.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.13.31",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.13.31/obsidian-0.13.31.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.13.33",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-0.13.33.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.13.33",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.13.33/obsidian-0.13.33.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.13.33",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.13.33/obsidian-0.13.33.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.13.33",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.13.33/obsidian-0.13.33.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.14.0",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-0.14.0.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.13.33",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.13.33/obsidian-0.13.33.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.14.1",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-0.14.1.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.0.0",
+        "latestVersion": "0.13.33",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.13.33/obsidian-0.13.33.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.0.0",
+            "latestVersion": "0.14.2",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-0.14.2.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.11.0",
+        "latestVersion": "0.14.2",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.14.2/obsidian-0.14.2.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.11.0",
+            "latestVersion": "0.14.3",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-0.14.3.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.11.0",
+        "latestVersion": "0.14.2",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.14.2/obsidian-0.14.2.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.11.0",
+            "latestVersion": "0.14.4",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-0.14.4.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.11.0",
+        "latestVersion": "0.14.2",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.14.2/obsidian-0.14.2.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.11.0",
+            "latestVersion": "0.14.5",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-0.14.5.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.11.0",
+        "latestVersion": "0.14.5",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.14.5/obsidian-0.14.5.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.11.0",
+            "latestVersion": "0.14.6",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-0.14.6.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.11.0",
+        "latestVersion": "0.14.6",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.14.6/obsidian-0.14.6.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.11.0",
+            "latestVersion": "0.14.6",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.14.6/obsidian-0.14.6.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.11.0",
+        "latestVersion": "0.14.6",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.14.6/obsidian-0.14.6.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.11.0",
+            "latestVersion": "0.14.7",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-0.14.7.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.11.0",
+        "latestVersion": "0.14.6",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.14.6/obsidian-0.14.6.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.11.0",
+            "latestVersion": "0.14.8",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-0.14.8.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.11.0",
+        "latestVersion": "0.14.6",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.14.6/obsidian-0.14.6.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.11.0",
+            "latestVersion": "0.14.9",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-0.14.9.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.11.0",
+        "latestVersion": "0.14.6",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.14.6/obsidian-0.14.6.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.11.0",
+            "latestVersion": "0.14.10",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-0.14.10.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.11.0",
+        "latestVersion": "0.14.6",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.14.6/obsidian-0.14.6.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.11.0",
+            "latestVersion": "0.14.11",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-0.14.11.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.11.0",
+        "latestVersion": "0.14.6",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.14.6/obsidian-0.14.6.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.11.0",
+            "latestVersion": "0.14.12",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-0.14.12.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.11.0",
+        "latestVersion": "0.14.6",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.14.6/obsidian-0.14.6.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.11.0",
+            "latestVersion": "0.14.13",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-0.14.13.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.11.0",
+        "latestVersion": "0.14.6",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.14.6/obsidian-0.14.6.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.11.0",
+            "latestVersion": "0.14.14",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-0.14.14.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.11.0",
+        "latestVersion": "0.14.6",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.14.6/obsidian-0.14.6.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.11.0",
+            "latestVersion": "0.14.15",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-0.14.15.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.11.0",
+        "latestVersion": "0.14.15",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.14.15/obsidian-0.14.15.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.11.0",
+            "latestVersion": "0.14.15",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.14.15/obsidian-0.14.15.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.11.0",
+        "latestVersion": "0.14.15",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.14.15/obsidian-0.14.15.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.11.0",
+            "latestVersion": "0.15.0",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-0.15.0.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.11.0",
+        "latestVersion": "0.14.15",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.14.15/obsidian-0.14.15.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.11.0",
+            "latestVersion": "0.15.1",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-0.15.1.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.11.0",
+        "latestVersion": "0.14.15",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.14.15/obsidian-0.14.15.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.11.0",
+            "latestVersion": "0.15.2",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-0.15.2.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.11.0",
+        "latestVersion": "0.14.15",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.14.15/obsidian-0.14.15.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.11.0",
+            "latestVersion": "0.15.3",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-0.15.3.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.11.0",
+        "latestVersion": "0.14.15",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.14.15/obsidian-0.14.15.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.11.0",
+            "latestVersion": "0.15.4",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-0.15.4.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.11.0",
+        "latestVersion": "0.14.15",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.14.15/obsidian-0.14.15.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.11.0",
+            "latestVersion": "0.15.5",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-0.15.5.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.11.0",
+        "latestVersion": "0.15.6",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.15.6/obsidian-0.15.6.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.11.0",
+            "latestVersion": "0.15.6",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.15.6/obsidian-0.15.6.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.11.0",
+        "latestVersion": "0.15.6",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.15.6/obsidian-0.15.6.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.11.0",
+            "latestVersion": "0.15.7",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-0.15.7.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.11.0",
+        "latestVersion": "0.15.8",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.15.8/obsidian-0.15.8.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.11.0",
+            "latestVersion": "0.15.8",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.15.8/obsidian-0.15.8.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.11.0",
+        "latestVersion": "0.15.9",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.15.9/obsidian-0.15.9.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.11.0",
+            "latestVersion": "0.15.9",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.15.9/obsidian-0.15.9.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.11.0",
+        "latestVersion": "0.15.9",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.15.9/obsidian-0.15.9.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.11.0",
+            "latestVersion": "0.16.0",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-0.16.0.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.11.0",
+        "latestVersion": "0.15.9",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.15.9/obsidian-0.15.9.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.11.0",
+            "latestVersion": "0.16.1",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-0.16.1.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.11.0",
+        "latestVersion": "0.15.9",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.15.9/obsidian-0.15.9.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.11.0",
+            "latestVersion": "0.16.2",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-0.16.2.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.11.0",
+        "latestVersion": "0.15.9",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.15.9/obsidian-0.15.9.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.11.0",
+            "latestVersion": "0.16.3",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-0.16.3.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.11.0",
+        "latestVersion": "0.15.9",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.15.9/obsidian-0.15.9.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.11.0",
+            "latestVersion": "0.16.4",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-0.16.4.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.11.0",
+        "latestVersion": "0.15.9",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.15.9/obsidian-0.15.9.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.11.0",
+            "latestVersion": "0.16.5",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-0.16.5.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.11.0",
+        "latestVersion": "1.0.0",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.0.0/obsidian-1.0.0.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.11.0",
+            "latestVersion": "1.0.0",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.0.0/obsidian-1.0.0.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.11.0",
+        "latestVersion": "1.0.0",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.0.0/obsidian-1.0.0.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.11.0",
+            "latestVersion": "1.0.1",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-1.0.1.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.11.0",
+        "latestVersion": "1.0.0",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.0.0/obsidian-1.0.0.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.11.0",
+            "latestVersion": "1.0.2",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-1.0.2.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.11.0",
+        "latestVersion": "1.0.3",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.0.3/obsidian-1.0.3.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.11.0",
+            "latestVersion": "1.0.3",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.0.3/obsidian-1.0.3.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.11.0",
+        "latestVersion": "1.0.3",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.0.3/obsidian-1.0.3.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.11.0",
+            "latestVersion": "1.1.0",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-1.1.0.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.11.0",
+        "latestVersion": "1.0.3",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.0.3/obsidian-1.0.3.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.11.0",
+            "latestVersion": "1.1.1",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-1.1.1.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.11.0",
+        "latestVersion": "1.0.3",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.0.3/obsidian-1.0.3.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.11.0",
+            "latestVersion": "1.1.2",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-1.1.2.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.11.0",
+        "latestVersion": "1.0.3",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.0.3/obsidian-1.0.3.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.11.0",
+            "latestVersion": "1.1.3",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-1.1.3.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.11.0",
+        "latestVersion": "1.0.3",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.0.3/obsidian-1.0.3.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.11.0",
+            "latestVersion": "1.1.4",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-1.1.4.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.11.0",
+        "latestVersion": "1.0.3",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.0.3/obsidian-1.0.3.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.11.0",
+            "latestVersion": "1.1.5",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-1.1.5.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.11.0",
+        "latestVersion": "1.0.3",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.0.3/obsidian-1.0.3.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.11.0",
+            "latestVersion": "1.1.6",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-1.1.6.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.11.0",
+        "latestVersion": "1.0.3",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.0.3/obsidian-1.0.3.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.11.0",
+            "latestVersion": "1.1.7",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-1.1.7.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.11.0",
+        "latestVersion": "1.1.8",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.1.8/obsidian-1.1.8.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.11.0",
+            "latestVersion": "1.1.8",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.1.8/obsidian-1.1.8.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.11.0",
+        "latestVersion": "1.1.9",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.1.9/obsidian-1.1.9.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.11.0",
+            "latestVersion": "1.1.9",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.1.9/obsidian-1.1.9.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.11.0",
+        "latestVersion": "1.1.9",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.1.9/obsidian-1.1.9.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.11.0",
+            "latestVersion": "1.1.10",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-1.1.10.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.11.0",
+        "latestVersion": "1.1.9",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.1.9/obsidian-1.1.9.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.11.0",
+            "latestVersion": "1.1.11",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-1.1.11.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.11.0",
+        "latestVersion": "1.1.9",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.1.9/obsidian-1.1.9.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.11.0",
+            "latestVersion": "1.1.12",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-1.1.12.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.11.0",
+        "latestVersion": "1.1.9",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.1.9/obsidian-1.1.9.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.11.0",
+            "latestVersion": "1.1.13",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-1.1.13.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.11.0",
+        "latestVersion": "1.1.9",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.1.9/obsidian-1.1.9.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.11.0",
+            "latestVersion": "1.1.14",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-1.1.14.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.11.0",
+        "latestVersion": "1.1.15",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.1.15/obsidian-1.1.15.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.11.0",
+            "latestVersion": "1.1.15",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.1.15/obsidian-1.1.15.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.11.0",
+        "latestVersion": "1.1.16",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.1.16/obsidian-1.1.16.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.11.0",
+            "latestVersion": "1.1.16",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.1.16/obsidian-1.1.16.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.11.0",
+        "latestVersion": "1.1.16",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.1.16/obsidian-1.1.16.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.11.0",
+            "latestVersion": "1.2.0",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-1.2.0.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.11.0",
+        "latestVersion": "1.1.16",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.1.16/obsidian-1.1.16.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.11.0",
+            "latestVersion": "1.2.1",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-1.2.1.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.11.0",
+        "latestVersion": "1.1.16",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.1.16/obsidian-1.1.16.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.11.0",
+            "latestVersion": "1.2.2",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-1.2.2.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.11.0",
+        "latestVersion": "1.1.16",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.1.16/obsidian-1.1.16.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.11.0",
+            "latestVersion": "1.2.3",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-1.2.3.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.11.0",
+        "latestVersion": "1.1.16",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.1.16/obsidian-1.1.16.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.11.0",
+            "latestVersion": "1.2.4",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-1.2.4.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.11.0",
+        "latestVersion": "1.1.16",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.1.16/obsidian-1.1.16.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.11.0",
+            "latestVersion": "1.2.5",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-1.2.5.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.11.0",
+        "latestVersion": "1.1.16",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.1.16/obsidian-1.1.16.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.11.0",
+            "latestVersion": "1.2.6",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-1.2.6.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.11.0",
+        "latestVersion": "1.2.7",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.2.7/obsidian-1.2.7.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.11.0",
+            "latestVersion": "1.2.7",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.2.7/obsidian-1.2.7.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.11.0",
+        "latestVersion": "1.2.7",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.2.7/obsidian-1.2.7.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.11.0",
+            "latestVersion": "1.2.8",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-1.2.8.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.11.0",
+        "latestVersion": "1.2.8",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.2.8/obsidian-1.2.8.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.11.0",
+            "latestVersion": "1.2.8",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.2.8/obsidian-1.2.8.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.11.0",
+        "latestVersion": "1.2.8",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.2.8/obsidian-1.2.8.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.11.0",
+            "latestVersion": "1.3.0",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-1.3.0.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.11.0",
+        "latestVersion": "1.2.8",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.2.8/obsidian-1.2.8.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.11.0",
+            "latestVersion": "1.3.1",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-1.3.1.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.11.0",
+        "latestVersion": "1.2.8",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.2.8/obsidian-1.2.8.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.11.0",
+            "latestVersion": "1.3.2",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-1.3.2.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.11.0",
+        "latestVersion": "1.3.3",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.3.3/obsidian-1.3.3.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.11.0",
+            "latestVersion": "1.3.3",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.3.3/obsidian-1.3.3.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.11.0",
+        "latestVersion": "1.3.4",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.3.4/obsidian-1.3.4.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.11.0",
+            "latestVersion": "1.3.4",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.3.4/obsidian-1.3.4.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.14.5",
+        "latestVersion": "1.3.5",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.3.5/obsidian-1.3.5.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.14.5",
+            "latestVersion": "1.3.5",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.3.5/obsidian-1.3.5.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.14.5",
+        "latestVersion": "1.3.5",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.3.5/obsidian-1.3.5.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.14.5",
+            "latestVersion": "1.3.6",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-1.3.6.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.14.5",
+        "latestVersion": "1.3.5",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.3.5/obsidian-1.3.5.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.14.5",
+            "latestVersion": "1.3.7",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-1.3.7.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.14.5",
+        "latestVersion": "1.3.5",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.3.5/obsidian-1.3.5.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.14.5",
+            "latestVersion": "1.4.0",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-1.4.0.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.14.5",
+        "latestVersion": "1.3.5",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.3.5/obsidian-1.3.5.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.14.5",
+            "latestVersion": "1.4.1",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-1.4.1.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.14.5",
+        "latestVersion": "1.3.7",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.3.7/obsidian-1.3.7.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.14.5",
+            "latestVersion": "1.4.2",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-1.4.2.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.14.5",
+        "latestVersion": "1.3.7",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.3.7/obsidian-1.3.7.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.14.5",
+            "latestVersion": "1.4.3",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-1.4.3.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.14.5",
+        "latestVersion": "1.3.7",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.3.7/obsidian-1.3.7.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.14.5",
+            "latestVersion": "1.4.4",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-1.4.4.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.14.5",
+        "latestVersion": "1.3.7",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.3.7/obsidian-1.3.7.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.14.5",
+            "latestVersion": "1.4.5",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-1.4.5.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.14.5",
+        "latestVersion": "1.4.5",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.4.5/obsidian-1.4.5.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.14.5",
+            "latestVersion": "1.4.5",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.4.5/obsidian-1.4.5.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.14.5",
+        "latestVersion": "1.4.5",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.4.5/obsidian-1.4.5.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.14.5",
+            "latestVersion": "1.4.6",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-1.4.6.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.14.5",
+        "latestVersion": "1.4.5",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.4.5/obsidian-1.4.5.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.14.5",
+            "latestVersion": "1.4.7",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-1.4.7.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.14.5",
+        "latestVersion": "1.4.5",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.4.5/obsidian-1.4.5.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.14.5",
+            "latestVersion": "1.4.6",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-1.4.6.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.14.5",
+        "latestVersion": "1.4.5",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.4.5/obsidian-1.4.5.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.14.5",
+            "latestVersion": "1.4.8",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-1.4.8.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.14.5",
+        "latestVersion": "1.4.5",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.4.5/obsidian-1.4.5.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.14.5",
+            "latestVersion": "1.4.9",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-1.4.9.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.14.5",
+        "latestVersion": "1.4.10",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.4.10/obsidian-1.4.10.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.14.5",
+            "latestVersion": "1.4.10",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.4.10/obsidian-1.4.10.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.14.5",
+        "latestVersion": "1.4.11",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.4.11/obsidian-1.4.11.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.14.5",
+            "latestVersion": "1.4.11",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-1.4.11.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.14.5",
+        "latestVersion": "1.4.12",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.4.12/obsidian-1.4.12.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.14.5",
+            "latestVersion": "1.4.12",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.4.12/obsidian-1.4.12.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.14.5",
+        "latestVersion": "1.4.13",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.4.13/obsidian-1.4.13.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.14.5",
+            "latestVersion": "1.4.13",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.4.13/obsidian-1.4.13.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.14.5",
+        "latestVersion": "1.4.13",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.4.13/obsidian-1.4.13.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.14.5",
+            "latestVersion": "1.4.14",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-1.4.14.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.14.5",
+        "latestVersion": "1.4.14",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.4.14/obsidian-1.4.14.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.14.5",
+            "latestVersion": "1.4.14",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.4.14/obsidian-1.4.14.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.14.5",
+        "latestVersion": "1.4.14",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.4.14/obsidian-1.4.14.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.14.5",
+            "latestVersion": "1.4.15",
+            "downloadUrl": "https://releases.obsidian.md/release/obsidian-1.4.15.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    },
+    {
+        "minimumVersion": "0.14.5",
+        "latestVersion": "1.4.16",
+        "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.4.16/obsidian-1.4.16.asar.gz",
+        "hash": "deadbeaf",
+        "signature": "deadbeaf",
+        "beta": {
+            "minimumVersion": "0.14.5",
+            "latestVersion": "1.4.16",
+            "downloadUrl": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.4.16/obsidian-1.4.16.asar.gz",
+            "hash": "deadbeaf",
+            "signature": "deadbeaf"
+        }
+    }
+]

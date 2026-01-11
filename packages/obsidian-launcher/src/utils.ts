@@ -2,8 +2,17 @@ import fsAsync from "fs/promises"
 import fs from "fs";
 import path from "path"
 import os from "os"
+import { createConsola } from "consola";
 import { PromisePool } from '@supercharge/promise-pool'
 import _ from "lodash"
+
+/// Logging ///
+export const consola = createConsola({
+    throttle: -1, // disable throttle
+    formatOptions: {
+        date: false,
+    },
+})
 
 /// Files ///
 
@@ -26,6 +35,15 @@ export async function fileExists(path: string) {
  */
 export async function makeTmpDir(prefix?: string) {
     return fsAsync.mkdtemp(path.join(os.tmpdir(), prefix ?? 'tmp-'));
+}
+
+const logged = new Map<string, number>();
+export function warnOnce(key: string, message: string) {
+    const times = logged.get(key) ?? 0;
+    if (times <= 0) {
+        consola.warn({message});
+    }
+    logged.set(key, times + 1);
 }
 
 /**
@@ -154,6 +172,57 @@ export async function maybe<T>(promise: Promise<T>): Promise<Maybe<T>> {
     return promise
         .then(r => ({success: true, result: r, error: undefined} as const))
         .catch(e => ({success: false, result: undefined, error: e} as const));
+}
+
+export type UntilOpts = {timeout: number, poll?: number};
+export async function until<T>(func: () => Promise<T>|T, opts: UntilOpts): Promise<T> {
+    const { timeout, poll = 100 } = opts;
+    let time = 0;
+    let result: any;
+    let error: any;
+    while (!result && time < timeout) {
+        try {
+            result = await func();
+            error = undefined;
+        } catch (e: any) {
+            error = e
+        }
+        if (!result) {
+            await sleep(poll);
+        }
+        time += poll;
+    }
+    if (!result) {
+        throw new Error("Timed out waiting for condition" + (error ? `: ${error}` : ''));
+    }
+    return result;
+}
+
+export type RetryOpts = {
+    retries?: number,
+    backoff?: number,
+    retryIf?: (error: any) => boolean,
+};
+/** Retries func on error */
+export async function retry<T>(func: (attempt: number) => Promise<T>|T, opts: RetryOpts = {}): Promise<T> {
+    const { retries = 4, backoff = 1000, retryIf = () => true } = opts;
+    let attempt = 0;
+    let error: any;
+
+    while (attempt < retries) {
+        try {
+            return await func(attempt);
+        } catch (e: any) {
+            error = e;
+        }
+        const delay = backoff*Math.random() + backoff*Math.pow(2, attempt);
+        attempt += 1;
+        if (!retryIf(error) || attempt >= retries) {
+            throw error; // throw without sleeping
+        }
+        await sleep(delay);
+    }
+    throw error; // unreachable
 }
 
 

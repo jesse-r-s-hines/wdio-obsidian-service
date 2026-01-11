@@ -27,9 +27,15 @@ import { ObsidianServiceOptions } from "./types.js"
  * await browser.executeObsidian(({app}) => {
  *     // extract some file metadata, edit the vault, etc...
  * });
- * await browser?.deleteSession();
+ * await browser.deleteSession();
  * ```
  * 
+ * Note that in standalone mode, the global `obsidianPage` instance won't work, you have to use
+ * {@link ObsidianBrowserCommands.getObsidianPage | getObsidianPage} to get the page object, e.g.:
+ * ```js
+ * const obsidianPage = browser.getObsidianPage()
+ * ```
+ * instead of the 
  * @category WDIO Helpers
  */
 export async function startWdioSession(

@@ -157,7 +157,7 @@ To set the app version use `browserVersion` or `'wdio:obsidianOptions'.appVersio
 - a specific version string like "1.7.7"
 - "latest": run the latest non-beta Obsidian version
 - "latest-beta": run the latest beta Obsidian version (or latest if there is no current beta)
-    - To download Obsidian beta versions you'll need to have an Obsidian Insiders account and either set the `OBSIDIAN_EMAIL` and `OBSIDIAN_PASSWORD` env vars (`.env` file is supported) or pre-download the Obsidian beta with  `npx obsidian-launcher download app -v latest-beta`.
+    - To download Obsidian beta versions you'll need to have an Obsidian Insiders account (see [below](#obsidian-beta-versions))
 - "earliest": run the `minAppVersion` set in your plugin's `manifest.json`
 
 To set the installer version use `'wdio:obsidianOptions'.installerVersion`. It can be set to one of:
@@ -166,6 +166,16 @@ To set the installer version use `'wdio:obsidianOptions'.installerVersion`. It c
 - "earliest": run the oldest Obsidian installer compatible with `appVersion`
 
 You can see more configuration options for the capabilities [here](https://jesse-r-s-hines.github.io/wdio-obsidian-service/wdio-obsidian-service/ObsidianCapabilityOptions.html).
+
+### Obsidian Beta Versions
+
+To download and test against Obsidian beta versions you'll need an Obsidian Insiders account. Set the `OBSIDIAN_EMAIL` and `OBSIDIAN_PASSWORD` environment variables or create a `.env` file with those variables set. 2FA needs to be disabled.
+
+If you don't want to disable 2FA on your primary Obsidian account, it can be convenient to set up a second Catalyst account just for use in tests and the CI. You can also pre-download the beta versions manually using
+```bash
+npx obsidian-launcher download app -v latest-beta
+```
+which will prompt for password and 2FA. Though you'll have to rerun this each time a new beta comes out and it won't work in CI workflows.
 
 ### Opening and Switching between Vaults
 

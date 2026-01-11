@@ -72,7 +72,7 @@ export async function appiumUploadFiles(browser: WebdriverIO.Browser, opts: {
     let bufferSize = 0;
     let i = 0;
     for await (const chunk of stream) {
-        if (bufferSize + chunk.length > chunkSize) {
+        if (bufferSize + chunk.length > chunkSize && bufferSize > 0) {
             const data = Buffer.concat(buffers).toString('base64');
             await browser.pushFile(`${tmpDir}/${slug}-${String(i).padStart(6, '0')}.tar`, data);
             i++;

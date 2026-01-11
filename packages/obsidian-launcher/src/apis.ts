@@ -8,7 +8,7 @@ import readlineSync from "readline-sync";
 import dotenv from "dotenv";
 import path from "path";
 import { env } from "process";
-import { sleep } from "./utils.js";
+import { consola, sleep, retry, RetryOpts } from "./utils.js";
 
 /**
  * GitHub API stores pagination information in the "Link" header. The header looks like this:
@@ -106,17 +106,22 @@ export async function obsidianApiLogin(opts: {
     let password = env.OBSIDIAN_PASSWORD ?? cached.OBSIDIAN_PASSWORD;
     let promptedCredentials = false;
 
+    // we'll only show this when not in CI to avoid confusion
+    const predownloadMessage = "pre-download the Obsidian beta with:\n" +
+                               "    npx obsidian-launcher download app -v <version>"
+
     if (!email || !password) {
         if (interactive) {
-            console.log("Obsidian Insiders account is required to download Obsidian beta versions.")
+            consola.log("Obsidian Insiders account is required to download Obsidian beta versions.")
+            consola.log("You can set OBSIDIAN_EMAIL and OBSIDIAN_PASSWORD environment variables (.env file is supported) to avoid this prompt.")
             email = email || readlineSync.question("Obsidian email: ");
             password = password || readlineSync.question("Obsidian password: ", {hideEchoBack: true});
             promptedCredentials = true;
         } else  {
             throw Error(
-                "Obsidian Insiders account is required to download Obsidian beta versions. Either set the " +
-                "OBSIDIAN_EMAIL and OBSIDIAN_PASSWORD env vars (.env file is supported) or pre-download the " +
-                "Obsidian beta with `npx obsidian-launcher download app -v <version>`"
+                "Obsidian Insiders account is required to download Obsidian beta versions. Set the OBSIDIAN_EMAIL " +
+                "and OBSIDIAN_PASSWORD environment variables (.env file is supported)" +
+                (env.CI ? "." : ` or ${predownloadMessage}`)
             )
         }
     }
@@ -156,14 +161,13 @@ export async function obsidianApiLogin(opts: {
             needsMfa = true; // when interactive, continue to next loop
             if (!interactive) {
                 throw Error(
-                    "Can't login with 2FA in a non-interactive session. To download Obsidian beta versions, either " +
-                    "disable 2FA on your account or pre-download the Obsidian beta with " +
-                    "`npx obsidian-launcher download app -v <version>`"
+                    "Can't login with 2FA in a non-interactive session. To download Obsidian beta versions disable " +
+                    "2FA on your account" + (env.CI ? "." : ` or ${predownloadMessage}`)
                 );
             }
         } else if (["please wait", "try again"].some(m => error?.includes(m))) {
-            console.warn(`Obsidian login failed: ${signin.error}`);
-            console.warn("Retrying obsidian login...")
+            consola.warn(`Obsidian login failed: ${signin.error}`);
+            consola.warn("Retrying obsidian login...")
             retries++; // continue to next loop
         } else if (!signin.token) { // fatal error
             throw Error(`Obsidian login failed: ${signin.error ?? 'unknown error'}`);
@@ -184,7 +188,7 @@ export async function obsidianApiLogin(opts: {
                 `OBSIDIAN_EMAIL='${email}'\n` +
                 `OBSIDIAN_PASSWORD='${password}'\n`
             );
-            console.log(`Saved Obsidian credentials to ${path.relative(process.cwd(), savePath)}`);
+            consola.log(`Saved Obsidian credentials to ${path.relative(process.cwd(), savePath)}`);
         }
     }
 
@@ -210,14 +214,22 @@ export async function fetchObsidianApi(url: string, opts: {token: string}) {
 }
 
 /**
- * Downloads a url to disk.
+ * Downloads a url to disk. Retries on failure.
  */
-export async function downloadResponse(response: Response, dest: string) {
-    if (!response.ok) {
-        throw Error(`${response.url} failed with ${response.status}`);
-    }
-    const fileStream = fs.createWriteStream(dest, { flags: 'w' });
-    // not sure why I have to cast this
-    const fetchStream = Readable.fromWeb(response.body as ReadableStream);
-    await finished(fetchStream.pipe(fileStream));
+export async function downloadResponse(func: () => Promise<Response>, dest: string, opts: RetryOpts = {}) {
+    await retry(async () => {
+        const response = await func();
+        if (!response.ok) {
+            const error: any = Error(`${response.url} failed with ${response.status}`);
+            error.status = response.status;
+            throw error;
+        }
+        const fileStream = fs.createWriteStream(dest, { flags: 'w' });
+        // not sure why I have to cast this
+        const fetchStream = Readable.fromWeb(response.body as ReadableStream);
+        await finished(fetchStream.pipe(fileStream));
+    }, {
+        retryIf: (e) => !e.status || !([401, 403, 404].includes(e.status)),
+        ...opts,
+    });
 }

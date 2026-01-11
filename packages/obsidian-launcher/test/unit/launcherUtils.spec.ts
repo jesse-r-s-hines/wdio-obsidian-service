@@ -2,16 +2,18 @@ import { describe, it } from "mocha";
 import { expect } from "chai";
 import path from "path";
 import {
-    normalizeGitHubRepo, ParsedDesktopRelease, parseObsidianDesktopRelease, updateObsidianVersionList,
+    normalizeGitHubRepo, ParsedDesktopRelease, parseObsidianDesktopRelease, updateObsidianVersionList, GitHubRelease,
+    extractInstallerInfo, checkCompatibility,
 } from "../../src/launcherUtils.js";
+import fs from "fs";
 import fsAsync from "fs/promises";
+import semver from "semver"
 import _ from "lodash";
-import { DeepPartial } from "ts-essentials";
-import { ObsidianVersionInfo } from "../../src/types.js";
+import { ObsidianVersionInfo, ObsidianVersionList } from "../../src/types.js";
 import { ObsidianDesktopRelease } from "../../src/obsidianTypes.js";
 
 
-function compareVersionLists(actual: DeepPartial<ObsidianVersionInfo>[], expected: DeepPartial<ObsidianVersionInfo>[]) {
+function compareVersionLists(actual: ObsidianVersionInfo[], expected: ObsidianVersionInfo[]) {
     expect(actual.map(v => v.version)).to.eql(expected.map(v => v.version));
     for (let i = 0; i < actual.length; i++) {
         expect(actual[i]).to.eql(expected[i]);
@@ -22,7 +24,6 @@ function compareVersionLists(actual: DeepPartial<ObsidianVersionInfo>[], expecte
 async function readJson(name: string) {
     const filePath = path.resolve("./test/data", name) + ".json";
     return JSON.parse(await fsAsync.readFile(filePath, 'utf-8'));
-
 }
 
 describe('launcherUtils', () => {
@@ -57,7 +58,6 @@ describe('launcherUtils', () => {
                     asar: "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.8.10/obsidian-1.8.10.asar.gz"
                 },
                 isBeta: false,
-                minInstallerVersion: "1.1.9",
                 version: "1.8.10",
             },
             beta: {
@@ -65,7 +65,6 @@ describe('launcherUtils', () => {
                     "asar": "https://releases.obsidian.md/release/obsidian-1.9.7.asar.gz"
                 },
                 isBeta: true,
-                minInstallerVersion: "1.1.9",
                 version: "1.9.7",
             },
         }], [{
@@ -87,7 +86,6 @@ describe('launcherUtils', () => {
                     asar: "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.8.10/obsidian-1.8.10.asar.gz",
                 },
                 isBeta: false,
-                minInstallerVersion: "1.1.9",
                 version: "1.8.10",
             },
         }], [{
@@ -102,7 +100,6 @@ describe('launcherUtils', () => {
                     asar: "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.5.0/obsidian-0.5.0.asar.gz"
                 },
                 isBeta: false,
-                minInstallerVersion: undefined,
                 version: "0.5.0",
             },
         }],
@@ -112,165 +109,156 @@ describe('launcherUtils', () => {
             expect(parseObsidianDesktopRelease(input)).to.eql(expected);
         })
     })
+})
 
-    it("updateObsidianVersionList no change", async function () {
-        const sampleObsidianVersions = await readJson("sample-obsidian-versions");
-        const actual = updateObsidianVersionList({
-            original: sampleObsidianVersions.versions,
-        });
-        compareVersionLists(actual, sampleObsidianVersions.versions);
-    })
+describe("updateObsidianVersionList", function() {
+    const obsidianVersionsPath = path.resolve("../../obsidian-versions.json");
+    const fullVersionList: ObsidianVersionList = JSON.parse(fs.readFileSync(obsidianVersionsPath, 'utf-8'));
+    const fullVersionsMap = _.keyBy(fullVersionList.versions, v => v.version);
+    const timestamp = new Date(new Date().getTime() - 24 * 60 * 60 * 1000).toISOString(); // 1 day ago
 
-    it("updateObsidianVersionList new versions", async function () {
-        const sampleObsidianVersions = await readJson("sample-obsidian-versions");
-        const newObsidianVersions = await readJson("new-obsidian-versions");
-        const actual = updateObsidianVersionList({
-            original: sampleObsidianVersions.versions,
-            destkopReleases: await readJson("new-desktop-releases"),
-            gitHubReleases: await readJson("new-github-releases"),
-            installerInfos: await readJson('new-installer-infos'),
-        });
-        compareVersionLists(actual, sampleObsidianVersions.versions.concat(newObsidianVersions));
-    })
-
-    it("updateObsidianVersionList no installer infos", async function () {
-        const sampleObsidianVersions = await readJson("sample-obsidian-versions");
-        const newObsidianVersions = await readJson("new-obsidian-versions");
-        const actual = updateObsidianVersionList({
-            original: sampleObsidianVersions.versions,
-            destkopReleases: await readJson("new-desktop-releases"),
-            gitHubReleases: await readJson("new-github-releases"),
-        });
-        compareVersionLists(actual, [
-            ...sampleObsidianVersions.versions,
-            ...newObsidianVersions.map((v: any) => _.omit(
-                {...v, installers: _.mapValues(v.installers, i => ({digest: i!.digest}))},
-                ["electronVersion", "chromeVersion"],
-            )),
-        ]);
-    })
-
-    it("updateObsidianVersionList change installer info", async function () {
-        const sampleObsidianVersions = await readJson("sample-obsidian-versions");
-        const newObsidianVersions = await readJson("new-obsidian-versions");
-        const newGithubReleases = await readJson("new-github-releases");
-        const asset = newGithubReleases.at(-1).assets.find((a: any) => a.name == "Obsidian-1.8.9-arm64.AppImage")!
-        asset.digest = 'sha256:deadbeaf';
-        const actual = updateObsidianVersionList({
-            original: sampleObsidianVersions.versions.concat(newObsidianVersions),
-            destkopReleases: [],
-            gitHubReleases: newGithubReleases,
-        });
-        const expected: DeepPartial<ObsidianVersionInfo>[] = sampleObsidianVersions.versions.concat(newObsidianVersions);
-        const version = expected.find(v => v.version == "1.8.9")!;
-        version.installers!.appImageArm = {digest: 'sha256:deadbeaf'}
-        compareVersionLists(actual, expected);
-    })
-
-    it("updateObsidianVersionList release beta", async function () {
-        const sampleObsidianVersions = await readJson("sample-obsidian-versions");
-        sampleObsidianVersions.versions.push({
-            version: "1.9.10",
-            minInstallerVersion: "1.1.9",
-            maxInstallerVersion: "1.8.7",
-            isBeta: true,
-            downloads: {
-                asar: "https://releases.obsidian.md/release/obsidian-1.9.9.asar.gz"
+    async function updateObsidianVersionListMocked(
+        original: ObsidianVersionInfo[]|undefined,
+        opts: {
+            destkopReleases: ObsidianDesktopRelease[],
+            githubReleases: GitHubRelease[],
+            _extractInstallerInfo?: typeof extractInstallerInfo,
+            _checkCompatibility?: typeof checkCompatibility,
+        },
+    ) {
+        const { destkopReleases, githubReleases, _extractInstallerInfo, _checkCompatibility } = opts;
+        const metadata = { // dummy metadata
+            schemaVersion: "2.0.0",
+            commitDate: "1970-01-01T00:00:00Z",
+            commitSha: "0000000000000000000000000000000000000000",
+            timestamp: timestamp,
+        }
+        return await updateObsidianVersionList(
+            original ? {metadata, versions: original} : undefined,
+            {
+                maxInstances: 1,
+                _fetchObsidianDesktopReleases: async () => [destkopReleases, {
+                    commitDate: "1970-01-01T00:00:00Z",
+                    commitSha: "0000000000000000000000000000000000000000",
+                }],
+                _fetchObsidianGitHubReleases: async () => githubReleases,
+                // these are tested individually elsewhere, we'll mock them in these tests so we can run them quickly
+                // without downloading or launching obsidian.
+                _extractInstallerInfo: _extractInstallerInfo ?? (async (version, key) => {
+                    const installerInfo = fullVersionsMap[version].installers[key];
+                    if (!installerInfo) {
+                        throw Error(`No installer info for ${version} found`);
+                    }
+                    return installerInfo;
+                }),
+                _checkCompatibility: _checkCompatibility ?? (async (_, appVersion, installerVersion) => {
+                    if (!fullVersionsMap[appVersion].minInstallerVersion) {
+                        throw Error(`No minInstallerVersion for ${appVersion}`);
+                    }
+                    return semver.gte(installerVersion, fullVersionsMap[appVersion].minInstallerVersion);
+                }),
             },
-            installers: {},
-        })
-        const newObsidianVersions = [{ // full release of previous beta
-            version: "1.9.10",
-            minInstallerVersion: "1.1.9",
-            maxInstallerVersion: "1.9.10",
-            isBeta: false,
-            gitHubRelease: "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.9.10",
-            downloads: {
-                asar: "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.9.10/obsidian-1.9.10.asar.gz",
-                appImage: "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.9.10/Obsidian-1.9.10.AppImage",
-            },
-            installers: {
-                appImage: {
-                    digest: "sha256:24471d25ed4d7d797a20a8ddf7b81ec43ae337f9ce495514dfdbb893307472b7",
-                    electron: "37.3.0",
-                    chrome: "138.0.7204.224",
-                    platforms: [
-                        "linux-x64"
-                    ]
-                },
-            },
-            electronVersion: "37.3.0",
-            chromeVersion: "138.0.7204.224"
-        }];
+        );
+    }
 
-        const newDesktopReleases = [{
-            minimumVersion: "0.14.5",
-            latestVersion: "1.9.10",
-            downloadUrl: "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.9.10/obsidian-1.9.10.asar.gz",
-            hash: "deadbeaf",
-            signature: "deadbeaf",
-            beta: {
+    it("basic", async function() {
+        // regression test, make sure that updateVersionList matches up with our obsidian-versions.json
+        const expected = fullVersionList.versions.filter(v => semver.lte(v.version, '1.4.16'));
+        const actual = await updateObsidianVersionListMocked(undefined, {
+            destkopReleases: await readJson("desktop-releases-1"),
+            githubReleases: await readJson("github-releases-1"),
+        });
+        compareVersionLists(actual.versions, expected);
+    });
+
+    it("update existing", async function() {
+        const original = fullVersionList.versions.filter(v => semver.lte(v.version, '1.4.16'));
+        const expected = fullVersionList.versions.filter(v => semver.lte(v.version, '1.5.3'));
+        const actual = await updateObsidianVersionListMocked(original, {
+            destkopReleases: await readJson("desktop-releases-2"),
+            githubReleases: [...await readJson("github-releases-1"), ...await readJson("github-releases-2")],
+        });
+        compareVersionLists(actual.versions, expected);
+        expect(new Date(actual.metadata.timestamp)).to.be.gt(new Date(timestamp));
+    });
+
+    it("release beta", async function() {
+        const original = fullVersionList.versions.filter(v => semver.lte(v.version, '1.4.16'));
+        original[original.length - 1] = {
+            "version": "1.4.16",
+            "minInstallerVersion": "1.4.13",
+            "maxInstallerVersion": "1.4.14",
+            "isBeta": true,
+            "downloads": {
+                "asar": "https://releases.obsidian.md/release/obsidian-1.4.16.asar.gz"
+            },
+            "installers": {}
+        };
+        const expected = fullVersionList.versions.filter(v => semver.lte(v.version, '1.4.16'));
+        const actual = await updateObsidianVersionListMocked(original, {
+            destkopReleases: [{
                 minimumVersion: "0.14.5",
-                latestVersion: "1.9.10",
-                downloadUrl: "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.9.10/obsidian-1.9.10.asar.gz",
+                latestVersion: "1.4.16",
+                downloadUrl: "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.4.16/obsidian-1.4.16.asar.gz",
                 hash: "deadbeaf",
                 signature: "deadbeaf",
-            }
-        }]
-        const newGitHubReleases: any[] = [{
-            url: "https://api.github.com/repos/obsidianmd/obsidian-releases/releases/200308233",
-            assets_url: "https://api.github.com/repos/obsidianmd/obsidian-releases/releases/200308233/assets",
-            upload_url: "https://uploads.github.com/repos/obsidianmd/obsidian-releases/releases/200308233/assets{?name,label}",
-            html_url: "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.9.10",
-            id: 200308233,
-            node_id: "RE_kwDOD6MHws4L8HYJ",
-            tag_name: "v1.9.10",
-            target_commitish: "master",
-            name: "1.9.10",
-            draft: false,
-            immutable: false,
-            prerelease: false,
-            created_at: "2025-02-18T14:37:52Z",
-            published_at: "2025-02-18T14:38:01Z",
-            assets: [
-                {
-                    url: "https://api.github.com/repos/obsidianmd/obsidian-releases/releases/assets/229042038",
-                    id: 229042038,
-                    node_id: "RA_kwDOD6MHws4Npud2",
-                    name: "Obsidian-1.9.10.AppImage",
-                    label: null,
-                    content_type: "application/octet-stream",
-                    state: "uploaded",
-                    size: 116579987,
-                    digest: "sha256:24471d25ed4d7d797a20a8ddf7b81ec43ae337f9ce495514dfdbb893307472b7",
-                    download_count: 29223,
-                    created_at: "2025-02-14T04:07:45Z",
-                    updated_at: "2025-02-14T04:07:48Z",
-                    browser_download_url: "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.9.10/Obsidian-1.9.10.AppImage"
-                },
-            ],
-            tarball_url: "https://api.github.com/repos/obsidianmd/obsidian-releases/tarball/v1.9.10",
-            zipball_url: "https://api.github.com/repos/obsidianmd/obsidian-releases/zipball/v1.9.10",
-            body: "https://obsidian.md/changelog/2025-02-18-desktop-v1.9.10/"
-        }]
-        const newInstallerInfos = [{
-            version: "1.9.10",
-            key: "appImage" as const,
-            installerInfo: {
-                electron: "37.3.0",
-                chrome: "138.0.7204.224",
-                platforms: [
-                    "linux-x64"
-                ]
-            }
-        }]
-
-        const actual = updateObsidianVersionList({
-            original: sampleObsidianVersions.versions,
-            destkopReleases: newDesktopReleases,
-            gitHubReleases: newGitHubReleases,
-            installerInfos: newInstallerInfos,
+                beta: {
+                    minimumVersion: "0.14.5",
+                    latestVersion: "1.4.16",
+                    downloadUrl: "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.4.16/obsidian-1.4.16.asar.gz",
+                    hash: "deadbeaf",
+                    signature: "deadbeaf"
+                }
+            }],
+            githubReleases: await readJson("github-releases-1"),
         });
-        compareVersionLists(actual, sampleObsidianVersions.versions.slice(0, -1).concat(newObsidianVersions));
-    })
+        compareVersionLists(actual.versions, expected);
+        expect(new Date(actual.metadata.timestamp)).to.be.gt(new Date(timestamp));
+    });
+
+    it("no change", async function() {
+        const original = fullVersionList.versions.filter(v => semver.lte(v.version, '1.4.16'));
+        const actual = await updateObsidianVersionListMocked(original, {
+            destkopReleases: await readJson("desktop-releases-1"),
+            githubReleases: await readJson("github-releases-1"),
+        });
+        compareVersionLists(actual.versions, original);
+        expect(actual.metadata.timestamp).to.eql(timestamp);
+    });
+
+    it("no change 2", async function() {
+        const original = fullVersionList.versions.filter(v => semver.lte(v.version, '1.4.16'));
+        const actual = await updateObsidianVersionListMocked(original, {
+            destkopReleases: [],
+            githubReleases: [],
+        });
+        compareVersionLists(actual.versions, original);
+        expect(actual.metadata.timestamp).to.eql(timestamp);
+    });
+
+    it("changed installer", async function() {
+        const original = fullVersionList.versions.filter(v => semver.lte(v.version, '1.4.16'));
+        const githubReleases: GitHubRelease[] = await readJson("github-releases-1");
+        const asset = githubReleases.at(-1)!.assets.find(a => a.name.match(/-arm64.AppImage$/))!;
+
+        asset.digest = "sha256:012345678";
+        const actual = await updateObsidianVersionListMocked(original, {
+            destkopReleases: [],
+            githubReleases: githubReleases,
+            _extractInstallerInfo: async () => ({
+                electron: "999.0.0", chrome: "999.0.0.0",
+                platforms: ["linux-arm64"],
+            })
+        });
+        const expected = _.cloneDeep(original);
+        expected.at(-1)!.installers.appImageArm = {
+            digest: "sha256:012345678",
+            electron: "999.0.0", chrome: "999.0.0.0",
+            platforms: ["linux-arm64"],
+        };
+
+        // should update the installer with the changed digest. Should only call extractInstallerInfo once.
+        compareVersionLists(actual.versions, expected);
+        expect(new Date(actual.metadata.timestamp)).to.be.gt(new Date(timestamp));
+    });
 });

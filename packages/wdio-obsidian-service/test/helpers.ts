@@ -2,6 +2,7 @@ import { browser } from '@wdio/globals'
 import fsAsync from "fs/promises"
 import path from "path";
 import os from "os";
+import crypto from "crypto";
 
 type FileInfo = {content?: string, mtime?: number, type?: 'file'|'folder'}
 export async function getAllFiles(opts: {
@@ -59,4 +60,9 @@ export async function createDirectory(files: Record<string, string> = {}) {
     }
 
     return tmpDir;
+}
+
+/** To make comparing binaries easier and with less log spam */
+export function hash(buffer: ArrayBuffer|Buffer|Uint8Array) {
+    return crypto.createHash("SHA256").update(new Uint8Array(buffer)).digest("hex");
 }

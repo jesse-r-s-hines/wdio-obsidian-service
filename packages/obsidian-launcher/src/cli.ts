@@ -2,7 +2,7 @@
 import { Command } from 'commander';
 import _ from "lodash";
 import { ObsidianLauncher } from "./launcher.js"
-import { watchFiles } from './utils.js';
+import { consola, watchFiles } from './utils.js';
 import { ObsidianVersionList, PluginEntry, ThemeEntry } from "./types.js";
 import path from "path"
 import fsAsync from "fs/promises";
@@ -111,7 +111,7 @@ program
             }
         })
         proc.unref() // Allow node to exit and leave proc running
-        console.log(`Launched obsidian ${opts.version}`)
+        consola.log(`Launched obsidian ${opts.version}`)
     })
 
 program
@@ -155,10 +155,10 @@ program
             }
         })
         if (copy) {
-            console.log(`Vault copied to ${vaultCopy}`);
+            consola.log(`Vault copied to ${vaultCopy}`);
         }
-        proc.stdout!.on('data', data => console.log(`obsidian: ${data}`));
-        proc.stderr!.on('data', data => console.log(`obsidian: ${data}`));
+        proc.stdout!.on('data', data => consola.log(`obsidian: ${data}`));
+        proc.stderr!.on('data', data => consola.log(`obsidian: ${data}`));
         const procExit = new Promise<number>((resolve) => proc.on('exit', (code) => resolve(code ?? -1)));
 
         for (const plugin of plugins) {
@@ -166,11 +166,11 @@ program
                 watchFiles(
                     ["manifest.json", "main.js", "styles.css", "data.json"].map(f => path.join(plugin.path, f)),
                     async () => {
-                        console.log(`Detected change to "${plugin.id}"`);
+                        consola.log(`Detected change to "${plugin.id}"`);
                         try {
                             await launcher.installPlugins(vaultCopy!, [plugin]);
                         } catch (e) {
-                            console.error(`Failed to update plugin "${plugin.id}": ${e}`)
+                            consola.error(`Failed to update plugin "${plugin.id}": ${e}`)
                         }
                     },
                     {interval: 500, persistent: false, debounce: 1000},
@@ -182,11 +182,11 @@ program
                 watchFiles(
                     ["manifest.json", "theme.css"].map(f => path.join(theme.path, f)),
                     async () => {
-                        console.log(`Detected change to "${theme.name}"`);
+                        consola.log(`Detected change to "${theme.name}"`);
                         try {
                             await launcher.installThemes(vaultCopy!, [theme]);
                         } catch (e) {
-                            console.error(`Failed to update theme "${theme.name}": ${e}`)
+                            consola.error(`Failed to update theme "${theme.name}": ${e}`)
                         }
                     },
                     {interval: 500, persistent: false, debounce: 1000},
@@ -203,7 +203,7 @@ program
         process.on('SIGINT', cleanup);
         process.on('exit', cleanup);
 
-        console.log("Watching for changes to plugins and themes...")
+        consola.log("Watching for changes to plugins and themes...")
         await procExit;
     })
 
@@ -220,7 +220,7 @@ program
         const themes = parseThemes(opts.theme);
         await launcher.installPlugins(vault, plugins);
         await launcher.installThemes(vault, themes);
-        console.log(`Installed plugins/themes into vault.`)
+        consola.log(`Installed plugins/themes into vault.`)
     })
 
 program
@@ -251,20 +251,20 @@ program
             const installerPath = await launcher.downloadInstaller(installerVersion, {
                 platform: opts.platform, arch: opts.arch,
             });
-            console.log(`Downloaded Obsidian installer to ${installerPath}`)
+            consola.log(`Downloaded Obsidian installer to ${installerPath}`)
             const appPath = await launcher.downloadApp(appVersion);
-            console.log(`Downloaded Obsidian app to ${appPath}`)
+            consola.log(`Downloaded Obsidian app to ${appPath}`)
         } else if (asset == "app") {
             const appPath = await launcher.downloadApp(opts.version ?? "latest");
-            console.log(`Downloaded Obsidian app to ${appPath}`)
+            consola.log(`Downloaded Obsidian app to ${appPath}`)
         } else if (asset == "installer") {
             const installerPath = await launcher.downloadInstaller(opts.installer ?? opts.version ?? "latest", {
                 platform: opts.platform, arch: opts.arch,
             });
-            console.log(`Downloaded Obsidian installer to ${installerPath}`)
+            consola.log(`Downloaded Obsidian installer to ${installerPath}`)
         } else if (asset == "apk") {
             const apkPath = await launcher.downloadAndroid(opts.version ?? "latest");
-            console.log(`Downloaded Obsidian apk to ${apkPath}`)
+            consola.log(`Downloaded Obsidian apk to ${apkPath}`)
         } else {
             throw Error(`Invalid asset type ${asset}`)
         }
@@ -300,12 +300,12 @@ program
         const launcher = getLauncher(opts);
         versionInfos = await launcher.updateVersionList(versionInfos, { maxInstances });
         await fsAsync.writeFile(dest, JSON.stringify(versionInfos, undefined, 4) + "\n");
-        console.log(`Wrote updated version information to ${dest}`)
+        consola.log(`Wrote updated version information to ${dest}`)
     })
 
 program
     .parseAsync()
     .catch((err) => {
-        console.log(err?.message ?? err.toString())
+        consola.error(err?.message ?? err.toString())
         process.exit(1);
     });

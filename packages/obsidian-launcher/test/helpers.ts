@@ -30,36 +30,12 @@ export async function createDirectory(files: Record<string, string> = {}) {
 }
 
 
-/** Downloads downloads url to dest dir if dest doesn't exist, returns the cached path. */
-export async function cachedDownload(url: string, cacheDir: string) {
-    const dest = path.join(cacheDir, url.split("/").at(-1)!);
-    await atomicCreate(dest, async (scratch) => {
-        await downloadResponse(await fetch(url), path.join(scratch, "out"));
-        return path.join(scratch, "out");
-    }, {replace: false})
-    return dest;
-}
-
-
-type Endpoint = {path?: string, content?: string};
+type Endpoint = {path?: string, content?: string, url?: string};
 export interface MockServer {
     url: string,
     addEndpoints(endpoints: Record<string, Endpoint>): Promise<void>,
 }
 
-async function addEndpoints(serverDir: string, endpoints: Record<string, Endpoint>) {
-    for (const [servedPath, src] of Object.entries(endpoints)) {
-        const dest = path.join(serverDir, servedPath);
-        await fsAsync.mkdir(path.dirname(dest), {recursive: true});
-        if (src.path) {
-            await linkOrCp(src.path, dest);
-        } else if (src.content) {
-            await fsAsync.writeFile(dest, src.content);
-        } else {
-            throw Error("Must specify one of path or content");
-        }
-    }
-}
 
 /**
  * Creates a mock http file server.
@@ -70,12 +46,47 @@ async function addEndpoints(serverDir: string, endpoints: Record<string, Endpoin
  * Returns an object containing the url to the server, e.g. "http://localhost:8080" and a method to add more files
  * later.
  */
-export async function createServer(endpoints: Record<string, Endpoint> = {}): Promise<MockServer> {
+export async function createServer(cacheDir: string, endpoints: Record<string, Endpoint> = {}): Promise<MockServer> {
     const serverDir = await createDirectory();
+    const cachedUrls: Map<string, string> = new Map();
+
+    async function addEndpoints(serverDir: string, endpoints: Record<string, Endpoint>) {
+        for (const [servedPath, src] of Object.entries(endpoints)) {
+            const dest = path.join(serverDir, servedPath);
+            await fsAsync.mkdir(path.dirname(dest), {recursive: true});
+            if (src.path) {
+                await linkOrCp(src.path, dest);
+            } else if (src.content) {
+                await fsAsync.writeFile(dest, src.content);
+            } else if (src.url) {
+                cachedUrls.set(servedPath, src.url);
+            } else {
+                throw Error("Must specify one of path, content or url");
+            }
+        }
+    }
+
     await addEndpoints(serverDir, endpoints);
-    const server = http.createServer((request, response) => {
-        return serverHandler(request, response, {public: serverDir});
+
+    const server = http.createServer(async (request, response) => {
+        try {
+            const requestPath = request.url!.replace(/^\//, '');
+            if (cachedUrls.has(requestPath)) {
+                const url = new URL(cachedUrls.get(requestPath)!);
+                await atomicCreate(path.join(cacheDir, requestPath), async (scratch) => {
+                    await downloadResponse(() => fetch(url), path.join(scratch, "out"));
+                    return path.join(scratch, "out");
+                }, {replace: false});
+                return serverHandler(request, response, {public: cacheDir});
+            } else {
+                return serverHandler(request, response, {public: serverDir});
+            }
+        } catch (e: any) {
+            console.error(e);
+            throw e;
+        }
     });
+
     await new Promise<void>(resolve => server!.listen({port: 0}, resolve));
     const port = (server.address() as AddressInfo).port;
 
