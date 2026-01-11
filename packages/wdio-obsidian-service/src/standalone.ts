@@ -1,6 +1,7 @@
 import { remote } from 'webdriverio'
 import type { Capabilities, Options } from '@wdio/types'
 import { ObsidianLauncherService, ObsidianWorkerService } from "./service.js"
+import { ObsidianBrowserCommands } from './browserCommands.js'
 import { ObsidianServiceOptions } from "./types.js"
 
 /**
@@ -30,6 +31,12 @@ import { ObsidianServiceOptions } from "./types.js"
  * await browser.deleteSession();
  * ```
  * 
+ * Note that in standalone mode, the global `obsidianPage` instance won't work, you have to use
+ * {@link ObsidianBrowserCommands.getObsidianPage | getObsidianPage} to get the page object, e.g.:
+ * ```js
+ * const obsidianPage = browser.getObsidianPage()
+ * ```
+ * instead of the 
  * @category WDIO Helpers
  */
 export async function startWdioSession(
