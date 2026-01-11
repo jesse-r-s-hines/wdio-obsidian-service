@@ -7,9 +7,8 @@ import fsAsync from "fs/promises";
 import readlineSync from "readline-sync";
 import dotenv from "dotenv";
 import path from "path";
-import { consola } from "consola";
 import { env } from "process";
-import { sleep, retry, RetryOpts } from "./utils.js";
+import { consola, sleep, retry, RetryOpts } from "./utils.js";
 
 /**
  * GitHub API stores pagination information in the "Link" header. The header looks like this:

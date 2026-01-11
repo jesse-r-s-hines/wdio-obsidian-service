@@ -8,8 +8,7 @@ import semver from "semver"
 import { fileURLToPath } from "url";
 import _ from "lodash"
 import dotenv from "dotenv";
-import { consola } from "consola";
-import { warnOnce, fileExists, makeTmpDir, atomicCreate, linkOrCp, maybe } from "./utils.js";
+import { consola, warnOnce, fileExists, makeTmpDir, atomicCreate, linkOrCp, maybe } from "./utils.js";
 import {
     ObsidianVersionInfo, ObsidianVersionList, ObsidianInstallerInfo, PluginEntry, DownloadedPluginEntry, ThemeEntry,
     DownloadedThemeEntry, obsidianVersionsSchemaVersion,

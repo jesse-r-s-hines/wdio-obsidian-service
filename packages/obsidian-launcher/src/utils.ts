@@ -2,9 +2,17 @@ import fsAsync from "fs/promises"
 import fs from "fs";
 import path from "path"
 import os from "os"
-import { consola } from "consola";
+import { createConsola } from "consola";
 import { PromisePool } from '@supercharge/promise-pool'
 import _ from "lodash"
+
+/// Logging ///
+export const consola = createConsola({
+    throttle: -1, // disable throttle
+    formatOptions: {
+        date: false,
+    },
+})
 
 /// Files ///
 

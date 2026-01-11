@@ -10,12 +10,11 @@ import zlib from "zlib"
 import { fileURLToPath, pathToFileURL } from "url"
 import { DeepPartial } from "ts-essentials";
 import type { RestEndpointMethodTypes } from "@octokit/rest";
-import { consola } from "consola";
 import CDP from "chrome-remote-interface";
 import { ObsidianLauncher } from "./launcher.js";
 import {
-    atomicCreate, makeTmpDir, normalizeObject, pool, maybe, withTimeout, until, retry, UntilOpts,
- } from "./utils.js";
+    consola, atomicCreate, makeTmpDir, normalizeObject, pool, maybe, withTimeout, until, retry, UntilOpts,
+} from "./utils.js";
 import { downloadResponse, fetchGitHubAPIPaginated } from "./apis.js"
 import {
     ObsidianInstallerInfo, ObsidianVersionInfo, obsidianVersionsSchemaVersion, ObsidianVersionList,
