@@ -350,6 +350,21 @@ export class ObsidianLauncher {
     }
 
     /**
+     * Log into the Obsidian api using your Insider's account so you can download beta versions.
+     *
+     * login will be called automatically when using downloadApp on an Obsidian beta version so you usually won't need
+     * to call this directly.
+     */
+    async login() {
+        if (!this.obsidianApiToken) {
+            this.obsidianApiToken = await obsidianApiLogin({
+                interactive: this.interactive,
+                savePath: path.join(this.cacheDir, "obsidian-credentials.env"),
+            });
+        }
+    }
+
+    /**
      * Downloads the Obsidian installer for the given version and platform/arch (defaults to host platform/arch).
      * Returns the file path.
      * @param installerVersion Obsidian installer version to download
@@ -411,12 +426,9 @@ export class ObsidianLauncher {
         }
         const appPath = path.join(this.cacheDir, 'obsidian-app', `obsidian-${versionInfo.version}.asar`);
         const isInsiders = new URL(appUrl).hostname.endsWith('.obsidian.md');
-        if (isInsiders && !this.obsidianApiToken && !(await fileExists(appPath))) {
+        if (isInsiders && !(await fileExists(appPath))) {
             // do this here to avoid readline-sync blocking in the middle of atomicCreate
-            this.obsidianApiToken = await obsidianApiLogin({
-                interactive: this.interactive,
-                savePath: path.join(this.cacheDir, "obsidian-credentials.env"),
-            });
+            await this.login();
         }
 
         await atomicCreate(appPath, async (scratch) => {
@@ -1053,7 +1065,8 @@ export class ObsidianLauncher {
         }
 
         if (new URL(versionInfo.downloads.asar).hostname.endsWith('.obsidian.md')) {
-            const hasCreds = !!(process.env['OBSIDIAN_EMAIL'] && process.env['OBSIDIAN_PASSWORD']);
+            const hasCreds = !!(process.env['OBSIDIAN_EMAIL'] && process.env['OBSIDIAN_PASSWORD']) ||
+                             await fileExists(path.join(this.cacheDir, "obsidian-credentials.env"));
             const inCache = await this.isInCache('app', versionInfo.version);
             return (hasCreds || inCache);
         } else {
