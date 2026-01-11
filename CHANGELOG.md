@@ -92,3 +92,11 @@ You can choose from two approaches for testing your plugin on mobile. You can us
 
 ## 2.1.6
 - Minor documentation updates
+
+## 2.2.0
+- Allow running "incompatible" app and installer versions with just a warning
+- Fix vault not being opened on old Obsidian versions
+- Fix incorrect minInstallerVersion
+    - When using "earliest" installer settings, it would pick installers that were too old for the specified Obsidian app version. Now it checks for installer compatibility correctly
+- Add ObsidianPage.read and ObsidianPage.readBinary helper methods
+- Add ObsidianLauncher.login method
