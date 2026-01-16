@@ -84,6 +84,8 @@ jobs:
           npx obsidian-launcher update-version-list --max-instances 4 ../../obsidian-versions.json
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OBSIDIAN_EMAIL: ${{ secrets.OBSIDIAN_EMAIL }}
+          OBSIDIAN_PASSWORD: ${{ secrets.OBSIDIAN_PASSWORD }}
       - if: ${{ steps.check.outputs.result == 'true' }}
         name: Commit
         run: |
