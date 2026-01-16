@@ -76,6 +76,12 @@ jobs:
           node-version: 18
           cache: 'pnpm'
       - if: ${{ steps.check.outputs.result == 'true' }}
+        name: "Setup virtual graphics"
+        run: |
+            export DISPLAY=:99
+            echo "DISPLAY=$DISPLAY" >> "$GITHUB_ENV"
+            Xvfb $DISPLAY -screen 0 1280x1024x24 +extension GLX -noreset &
+      - if: ${{ steps.check.outputs.result == 'true' }}
         name: "Update obsidian-versions.json"
         run: |
           pnpm install --frozen-lockfile
