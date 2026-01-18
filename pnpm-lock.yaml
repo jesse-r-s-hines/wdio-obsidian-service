@@ -94,7 +94,7 @@ importers:
         specifier: ~10.0.10
         version: 10.0.10
       '@types/node':
-        specifier: ^18.15.3
+        specifier: ^18.17.0
         version: 18.19.130
       '@types/readline-sync':
         specifier: ~1.4.8
@@ -143,7 +143,7 @@ importers:
         version: 9.18.0
     devDependencies:
       '@types/node':
-        specifier: ^18.15.3
+        specifier: ^18.17.0
         version: 18.19.130
       '@wdio/types':
         specifier: ^9.16.2
@@ -195,7 +195,7 @@ importers:
         specifier: ~10.0.10
         version: 10.0.10
       '@types/node':
-        specifier: ^18.15.3
+        specifier: ^18.17.0
         version: 18.19.130
       '@types/semver':
         specifier: ~7.7.1
