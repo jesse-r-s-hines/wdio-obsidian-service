@@ -52,7 +52,7 @@
         "@types/cross-spawn": "~6.0.6",
         "@types/lodash": "~4.17.23",
         "@types/mocha": "~10.0.10",
-        "@types/node": "^18.15.3",
+        "@types/node": "^18.19.130",
         "@types/readline-sync": "~1.4.8",
         "@types/semver": "~7.7.1",
         "@types/serve-handler": "~6.1.4",
@@ -81,6 +81,6 @@
         "semver": "~7.7.3"
     },
     "engines": {
-        "node": ">=18"
+        "node": ">=18.20.0"
     }
 }
