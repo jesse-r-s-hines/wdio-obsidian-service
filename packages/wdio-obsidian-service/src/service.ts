@@ -177,6 +177,9 @@ export class ObsidianLauncherService implements Services.ServiceInstance {
                     cap['appium:app'] = apk;
                     cap['appium:chromedriverExecutableDir'] = chromedriverDir;
                     cap["wdio:enforceWebDriverClassic"] = true; // BiDi doesn't seem to work on Obsidian mobile
+                    // appium-service expects these to not be set
+                    delete cap.browserName;
+                    delete cap.browserVersion;
                     if (!getAppiumOptions(cap)['noReset']) {
                         console.warn("Note: For best performance set noReset to true, wdio-obsidian-service will handle resetting Obsidian between tests.")
                     }

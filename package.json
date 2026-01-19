@@ -19,17 +19,17 @@
         "preview-doc": "pnpm run build && typedoc && cd generated-docs && serve"
     },
     "devDependencies": {
-        "@eslint/js": "^9.32.0",
-        "appium": "^2.19.0",
-        "appium-uiautomator2-driver": "^4.2.7",
-        "eslint": "^9.32.0",
-        "serve": "^14.2.4",
-        "tsx": "^4.20.3",
-        "typedoc": "^0.28.9",
-        "typescript": "^5.9.2",
-        "typescript-eslint": "^8.39.0"
+        "@eslint/js": "~9.39.2",
+        "appium": ">=2.19.0",
+        "appium-uiautomator2-driver": ">=4.2.7",
+        "eslint": "~9.39.2",
+        "serve": "~14.2.5",
+        "tsx": "~4.21.0",
+        "typedoc": "~0.28.16",
+        "typescript": "~5.9.3",
+        "typescript-eslint": "~8.53.0"
     },
     "engines": {
-        "node": ">=18"
+        "node": ">=18.20.0"
     }
 }
