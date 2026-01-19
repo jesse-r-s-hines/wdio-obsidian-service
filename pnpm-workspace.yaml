@@ -4,6 +4,7 @@ packages:
   - packages/wdio-obsidian-service
 
 linkWorkspacePackages: true
+resolutionMode: 'lowest-direct'
 
 onlyBuiltDependencies:
   - appium

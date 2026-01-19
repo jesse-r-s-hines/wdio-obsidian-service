@@ -11,6 +11,10 @@ permissions:
   actions: write
   contents: read
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
   pre-check: # Check and avoid running tests on the same code (e.g. after pr merge)
     runs-on: ubuntu-latest
@@ -88,6 +92,7 @@ jobs:
             node-version: "24.x"
             test-level: "standard"
             obsidian-versions: "latest/latest/standard earliest/earliest/basic"
+            package_resolution: highest
           # Skip these to save time (window-arm is especially slow for some reason)
           # - os: windows-11-arm
           #   node-version: "22.x"
@@ -113,7 +118,13 @@ jobs:
           path: .obsidian-cache
           key: obsidian-cache-${{ matrix.os }}-${{ matrix.obsidian-versions }}-${{ hashFiles('./obsidian-versions.json') }}
 
-      - run: pnpm install --frozen-lockfile
+      - run: |
+          if [[ '${{ matrix.package_resolution }}' == 'highest' ]]; then
+            npm_config_resolution_mode=highest pnpm install --no-lockfile
+          else
+            pnpm install --frozen-lockfile # Default resolution mode is set to lowest
+          fi
+
       - name: Download build artifact
         uses: actions/download-artifact@v4
         with:
@@ -166,16 +177,16 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          # Test two versions at once to test that reinstalling works
           - obsidian-versions: "latest earliest"
             android-api-level: 36
             android-profile: pixel
             node-version: "18.x"
-          # Just using one matrix for now to save github minutes consumed
-          # Doing both versions in one runner also makes tests that the re-install logic is working
-          # - obsidian-versions: earliest
-          #   android-api-level: 36
-          #   android-profile: pixel
-          #   node-version: "24.x"
+          - obsidian-versions: "latest"
+            android-api-level: 36
+            android-profile: pixel
+            node-version: "24.x"
+            package-resolution: highest
     runs-on: ubuntu-latest
     name: test e2e (android, api ${{ matrix.android-api-level }}, profile ${{ matrix.android-profile }}, obsidian ${{ matrix.obsidian-versions }})
     steps:
@@ -195,7 +206,12 @@ jobs:
           path: .obsidian-cache
           key: obsidian-cache-android-${{ matrix.obsidian-versions }}-${{ hashFiles('./obsidian-versions.json') }}
 
-      - run: pnpm install --frozen-lockfile
+      - run: |
+          if [[ '${{ matrix.package-resolution }}' == 'highest' ]]; then
+            npm_config_resolution_mode=highest pnpm install --no-lockfile
+          else
+            pnpm install --frozen-lockfile # Default resolution mode is set to lowest
+          fi
       - name: Download build artifact
         uses: actions/download-artifact@v4
         with:
