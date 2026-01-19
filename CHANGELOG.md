@@ -100,3 +100,15 @@ You can choose from two approaches for testing your plugin on mobile. You can us
     - When using "earliest" installer settings, it would pick installers that were too old for the specified Obsidian app version. Now it checks for installer compatibility correctly
 - Add ObsidianPage.read and ObsidianPage.readBinary helper methods
 - Add ObsidianLauncher.login method
+
+## 2.2.1
+Fix incompatibility with appium 3
+
+Note, to use appium 3 you'll need to update your wdio.mobile.conf.ts appium service config to
+```js
+["appium", {
+    args: { allowInsecure: "*:chromedriver_autodownload,*:adb_shell" },
+}],
+```
+If you encounter errors, try wiping and recreating package-lock.json to make sure you have the latest versions of
+wdio, appium, and the appium drivers.

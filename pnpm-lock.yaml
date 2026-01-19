@@ -176,7 +176,7 @@ importers:
         specifier: ^1.8.7
         version: 1.8.7(@codemirror/state@6.5.4)(@codemirror/view@6.39.11)
       obsidian-launcher:
-        specifier: 2.2.1-beta.2
+        specifier: 2.2.1
         version: link:../obsidian-launcher
       semver:
         specifier: ~7.7.3
@@ -249,7 +249,7 @@ importers:
         specifier: ~5.9.3
         version: 5.9.3
       wdio-obsidian-reporter:
-        specifier: 2.2.1-beta.2
+        specifier: 2.2.1
         version: link:../wdio-obsidian-reporter
 
 packages:
