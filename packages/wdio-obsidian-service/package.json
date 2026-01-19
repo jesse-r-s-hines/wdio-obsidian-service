@@ -83,6 +83,14 @@
         "obsidian": "^1.8.7",
         "webdriverio": "^9.18.1"
     },
+    "peerDependenciesMeta": {
+        "appium": {
+            "optional": true
+        },
+        "appium-uiautomator2-driver": {
+            "optional": true
+        }
+    },
     "engines": {
         "node": ">=18.20.0"
     }
