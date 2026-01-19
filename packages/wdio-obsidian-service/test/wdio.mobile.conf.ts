@@ -92,7 +92,7 @@ export const config: WebdriverIO.Config = {
     services: [
         ["obsidian", obsidianServiceOptions],
         ["appium", {
-            args: { allowInsecure: "chromedriver_autodownload,adb_shell" },
+            args: { allowInsecure: "*:chromedriver_autodownload,*:adb_shell" },
         }],
     ],
 
