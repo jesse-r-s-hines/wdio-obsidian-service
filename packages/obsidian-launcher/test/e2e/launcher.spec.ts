@@ -127,16 +127,18 @@ describe("ObsidianLauncher", function() {
     for (const [appVersion, installerVersion] of versions) {
         it(`test launch ${appVersion}/${installerVersion}`, async function() {
             const {client, cleanup} = await getCdpSession(launcher, appVersion, installerVersion);
-            after(() => cleanup());
+            try {
+                const actualVault = await cdpEvaluate(client, "obsidianLauncher.app.vault.adapter.getFullPath('')");
+                expect(actualVault).to.match(/obsidian-vault/)
 
-            const actualVault = await cdpEvaluate(client, "obsidianLauncher.app.vault.adapter.getFullPath('')");
-            expect(actualVault).to.match(/obsidian-vault/)
-            
-            const actualAppVersion = await cdpEvaluate(client, "require('electron').ipcRenderer.sendSync('version')");
-            expect(actualAppVersion).to.eql(appVersion);
+                const actualAppVersion = await cdpEvaluate(client, "require('electron').ipcRenderer.sendSync('version')");
+                expect(actualAppVersion).to.eql(appVersion);
 
-            const actualInstallerVersion = await cdpEvaluate(client, "require('electron').remote.app.getVersion()")
-            expect(actualInstallerVersion).to.eql(installerVersion);
+                const actualInstallerVersion = await cdpEvaluate(client, "require('electron').remote.app.getVersion()")
+                expect(actualInstallerVersion).to.eql(installerVersion);
+            } finally {
+                await cleanup();
+            }
         });
     }
 })
