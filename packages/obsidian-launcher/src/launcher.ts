@@ -897,7 +897,11 @@ export class ObsidianLauncher {
         }
         const chromePreferences = _.merge(
             // disables the "allow pasting" bit in the dev tools console
-            {"electron": {"devtools": {"preferences": {"disable-self-xss-warning": "true"}}}},
+            {"electron": {"devtools": {"preferences": {
+                // chrome switched between using kebab-case and CamelCase sometime between 114.0.5735.289 and 120.0.6099.283
+                "disable-self-xss-warning": "true",
+                "disableSelfXssWarning": "true",
+            }}}},
             params.chromePreferences ?? {},
         )
         const obsidianJson: any = {
