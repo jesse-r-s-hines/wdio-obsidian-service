@@ -1,9 +1,9 @@
 {
     "metadata": {
         "schemaVersion": "2.0.0",
-        "commitDate": "2026-01-28T15:27:12Z",
-        "commitSha": "ab57a977717e27f3874b507bc70df6e1dc60b1d8",
-        "timestamp": "2026-01-29T00:50:57.779Z"
+        "commitDate": "2026-02-05T19:07:50Z",
+        "commitSha": "5d7219bf134a5b6b6551c6648c66722e395d7f66",
+        "timestamp": "2026-02-06T00:50:32.141Z"
     },
     "versions": [
         {
@@ -7917,12 +7917,74 @@
         {
             "version": "1.11.7",
             "minInstallerVersion": "1.5.8",
-            "maxInstallerVersion": "1.11.5",
-            "isBeta": true,
+            "maxInstallerVersion": "1.11.7",
+            "isBeta": false,
+            "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.11.7",
             "downloads": {
-                "asar": "https://releases.obsidian.md/release/obsidian-1.11.7.asar.gz"
+                "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.11.7/obsidian-1.11.7.asar.gz",
+                "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.11.7/Obsidian-1.11.7.AppImage",
+                "appImageArm": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.11.7/Obsidian-1.11.7-arm64.AppImage",
+                "tar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.11.7/obsidian-1.11.7.tar.gz",
+                "tarArm": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.11.7/obsidian-1.11.7-arm64.tar.gz",
+                "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.11.7/Obsidian-1.11.7.dmg",
+                "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.11.7/Obsidian-1.11.7.exe",
+                "apk": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.11.7/Obsidian-1.11.7.apk"
             },
-            "installers": {}
+            "installers": {
+                "appImage": {
+                    "digest": "sha256:cabb130eb8fb7fc92c0f1b2357a17a351691edd10d0d718d27ac4fe216772ad4",
+                    "electron": "39.5.1",
+                    "chrome": "142.0.7444.265",
+                    "platforms": [
+                        "linux-x64"
+                    ]
+                },
+                "appImageArm": {
+                    "digest": "sha256:65a37a65ca3a06d1cdfbe6c6cdabae0adc36109f995d8f0d95c3909a3a59f165",
+                    "electron": "39.5.1",
+                    "chrome": "142.0.7444.265",
+                    "platforms": [
+                        "linux-arm64"
+                    ]
+                },
+                "tar": {
+                    "digest": "sha256:1eba9e149d82e6e670d0806d0fdcbad3b57ad34edf3b09c0d0a9c0f377305a38",
+                    "electron": "39.5.1",
+                    "chrome": "142.0.7444.265",
+                    "platforms": [
+                        "linux-x64"
+                    ]
+                },
+                "tarArm": {
+                    "digest": "sha256:41bfe126ac0ca55fc1019aa4f663a155586347e90917e96b257fc726a4e90c20",
+                    "electron": "39.5.1",
+                    "chrome": "142.0.7444.265",
+                    "platforms": [
+                        "linux-arm64"
+                    ]
+                },
+                "dmg": {
+                    "digest": "sha256:4d113dca636da5ca7b8046eeb927c9c6f6035cb0d5373fa8e3e4523721d98261",
+                    "electron": "39.5.1",
+                    "chrome": "142.0.7444.265",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
+                },
+                "exe": {
+                    "digest": "sha256:b29fd8812282bc44e8782f3ed00c13bc54ef8a4039c1d86b2d3559311e77b895",
+                    "electron": "39.5.1",
+                    "chrome": "142.0.7444.265",
+                    "platforms": [
+                        "win32-arm64",
+                        "win32-ia32",
+                        "win32-x64"
+                    ]
+                }
+            },
+            "electronVersion": "39.5.1",
+            "chromeVersion": "142.0.7444.265"
         }
     ]
 }
