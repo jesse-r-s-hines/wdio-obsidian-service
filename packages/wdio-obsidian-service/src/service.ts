@@ -415,6 +415,9 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
             localStorage.setItem('mobile-selected-vault', androidVault);
             // appId on mobile is just the full vault path
             localStorage.setItem(`enable-plugin-${androidVault}`, 'true');
+            // reload is not immediate, so delete wdioObsidianService to make sure that when we waitUntil in prepareApp
+            // its the from *after* the reload.
+            delete (window as any).wdioObsidianService;
             window.location.reload();
         }, androidVault);
     }
@@ -427,6 +430,8 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
         await browser.execute(async () => {
             if (localStorage.length > 0) { // skip if we're already on the vault switcher
                 localStorage.clear();
+                // remove to avoid race conditions, like in appiumOpenVault
+                delete (window as any).wdioObsidianService;
                 location.reload();
             }
         });
@@ -502,6 +507,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
 
                     // hack to disable the Obsidian app and make sure it doesn't write to the vault while we modify it
                     await this.execute(() => {
+                        delete (window as any).wdioObsidianService;
                         window.location.replace('http://localhost/_capacitor_file_/not-a-file');
                     });
 
