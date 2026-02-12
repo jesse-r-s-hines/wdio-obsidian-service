@@ -376,7 +376,10 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
 
         // switch to the webview context
         const context = "WEBVIEW_md.obsidian";
-        await browser.waitUntil(async () => (await browser.getContexts() as string[]).includes(context));
+        await browser.waitUntil(
+            async () => (await browser.getContexts() as string[]).includes(context),
+            {timeout: 30_000, interval: 100},
+        );
         await browser.switchContext(context);
 
         // Clear app state
@@ -412,6 +415,9 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
             localStorage.setItem('mobile-selected-vault', androidVault);
             // appId on mobile is just the full vault path
             localStorage.setItem(`enable-plugin-${androidVault}`, 'true');
+            // reload is not immediate, so delete wdioObsidianService to make sure that when we waitUntil in prepareApp
+            // its the from *after* the reload.
+            delete (window as any).wdioObsidianService;
             window.location.reload();
         }, androidVault);
     }
@@ -424,6 +430,8 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
         await browser.execute(async () => {
             if (localStorage.length > 0) { // skip if we're already on the vault switcher
                 localStorage.clear();
+                // remove to avoid race conditions, like in appiumOpenVault
+                delete (window as any).wdioObsidianService;
                 location.reload();
             }
         });
@@ -442,7 +450,10 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
             // to manually debug a paused test. The normal ways to set window size don't work on Obsidian. Obsidian
             // doesn't respect the `--window-size` argument, and wdio setViewport and setWindowSize don't work without
             // BiDi. This resizes the window directly using electron APIs.
-            await browser.waitUntil(() => browser.execute(() => !!(window as any).electron));
+            await browser.waitUntil(
+                () => browser.execute(() => !!(window as any).electron),
+                {timeout: 10_000, interval: 100},
+            );
             const [width, height] = await browser.execute(() => [window.innerWidth, window.innerHeight]);
             await browser.execute(async (width, height) => {
                 await (window as any).electron.remote.getCurrentWindow().setSize(width, height);
@@ -453,7 +464,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
         if (obsidianOptions.vault) {
             await browser.waitUntil( // wait until the helper plugin is loaded
                 () => browser.execute(() => !!(window as any).wdioObsidianService),
-                {timeout: 30 * 1000, interval: 100},
+                {timeout: 60_000, interval: 100},
             );
             await browser.executeObsidian(async ({app}) => {
                 await new Promise<void>((resolve) => app.workspace.onLayoutReady(resolve));
@@ -496,6 +507,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
 
                     // hack to disable the Obsidian app and make sure it doesn't write to the vault while we modify it
                     await this.execute(() => {
+                        delete (window as any).wdioObsidianService;
                         window.location.replace('http://localhost/_capacitor_file_/not-a-file');
                     });
 
