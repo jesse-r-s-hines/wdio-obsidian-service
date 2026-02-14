@@ -246,7 +246,7 @@ program
         if (asset == "desktop") {
             const [appVersion, installerVersion] = await launcher.resolveVersion(
                 opts.version ?? "latest",
-                opts.installerVersion ?? "earliest",
+                opts.installer ?? "earliest",
             );
             const installerPath = await launcher.downloadInstaller(installerVersion, {
                 platform: opts.platform, arch: opts.arch,
