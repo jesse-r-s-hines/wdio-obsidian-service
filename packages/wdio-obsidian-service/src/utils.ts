@@ -107,6 +107,19 @@ export async function appiumReaddir(browser: WebdriverIO.Browser, dir: string) {
     return stdout.split("\n").filter(f => f).map(f => path.join(dir, f)).sort();
 }
 
+/**
+ * Reload/replace the page and then wait for the current page to unloaded. Does NOT wait for the new page to be ready.
+ * Example:
+ * ```ts
+ * await navigateAndWait(browser, () => location.reload());
+ * ```
+ */
+export async function navigateAndWait(browser: WebdriverIO.Browser, func: () => void) {
+    await browser.execute(() => { (window as any)._waitingForNavigation = true });
+    await browser.execute(func);
+    await browser.waitUntil(() => browser.execute(() => !('_waitingForNavigation' in window)));
+}
+
 /** SHA256 hash */
 export async function hash(content: string|ArrayBufferLike) {
     return crypto.createHash("SHA256")
