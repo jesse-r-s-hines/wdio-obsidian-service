@@ -60,7 +60,7 @@ const installerOptionArgs = [
 ] as const
 const cacheOptionArgs = [
     '-c, --cache <cache>',
-    'Directory to use as the download cache. (default: OBSIDIAN_CACHE env var or ".obsidian-cache")',
+    'Directory to use as the download cache. (default: OBSIDIAN_CACHE env var or ~/.obsidian-cache)',
 ] as const
 const pluginOptionArgs = [
     '-p, --plugin <plugin>',
