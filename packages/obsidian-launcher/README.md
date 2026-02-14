@@ -82,7 +82,7 @@ Options:
 - `-p, --plugin <plugin>`: Plugin(s) to install
 - `-t, --theme <plugin>`: Theme(s) to install
 - `--copy`: Copy the vault first
-- `-c, --cache <cache>`: Directory to use as the download cache (default: OBSIDIAN_CACHE env var or ".obsidian-cache")
+- `-c, --cache <cache>`: Directory to use as the download cache (default: OBSIDIAN_CACHE env var or ~/.obsidian-cache)
 
 ### watch
 Downloads Obsidian and opens a vault, then watches for changes to plugins and themes.
@@ -98,7 +98,7 @@ Options:
 - `-p, --plugin <plugin>`: Plugin(s) to install
 - `-t, --theme <plugin>`: Theme to install
 - `--copy`: Copy the vault first
-- `-c, --cache <cache>`: Directory to use as the download cache (default: OBSIDIAN_CACHE env var or ".obsidian-cache")
+- `-c, --cache <cache>`: Directory to use as the download cache (default: OBSIDIAN_CACHE env var or ~/.obsidian-cache)
 
 ### install
 Install plugins and themes into an Obsidian vault.
@@ -109,7 +109,7 @@ Arguments:
 Options:
 - `-p, --plugin <plugin>`: Plugin(s) to install
 - `-t, --theme <plugin>`: Theme(s) to install.
-- `-c, --cache <cache>`: Directory to use as the download cache (default: OBSIDIAN_CACHE env var or ".obsidian-cache")
+- `-c, --cache <cache>`: Directory to use as the download cache (default: OBSIDIAN_CACHE env var or ~/.obsidian-cache)
 
 ### download
 Download Obsidian to the cache.
@@ -128,5 +128,5 @@ Options:
 - `-i, --installer <version>`: Obsidian installer version (default: "earliest")
 - `--platform <platform>`: Platform of the installer, one of linux, win32, darwin. (default: system platform)
 - `--arch <arch>`: Architecture of the installer, one of arm64, ia32, x64. (default: system arch)
-- `-c, --cache <cache>`: Directory to use as the download cache (default: OBSIDIAN_CACHE env var or ".obsidian-cache")
+- `-c, --cache <cache>`: Directory to use as the download cache (default: OBSIDIAN_CACHE env var or ~/.obsidian-cache)
 
