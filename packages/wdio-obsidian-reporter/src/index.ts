@@ -21,15 +21,13 @@ class ObsidianReporter extends SpecReporter {
             const {appVersion, installerVersion, emulateMobile} = obsidianOptions;
             const automationName = cap['appium:options']?.automationName ?? cap['appium:automationName']
             const isAppium = automationName?.toLocaleLowerCase() == 'uiautomator2'
-            let platform: string
             if (isAppium) {
-                platform = "android";
+                combo = `obsidian v${appVersion} (platform: android)`;
             } else if (emulateMobile) {
-                platform = "emulate-mobile";
+                combo = `obsidian v${appVersion} (installer: v${installerVersion}, platform: emulate-mobile)`;
             } else {
-                platform = process.platform;
+                combo = `obsidian v${appVersion} (installer: v${installerVersion}, platform: ${process.platform})`;
             }
-            combo = `obsidian v${appVersion} (installer: v${installerVersion}, platform: ${platform})`;
         } else { // fall back to SpecReporter behavior
             combo = this.getEnviromentCombo(runner.capabilities, undefined, runner.isMultiremote).trim()
         }
