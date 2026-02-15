@@ -61,12 +61,17 @@ describe("Test page object", () => {
         const platform = await obsidianPage.getPlatform();
         const isEmulateMobile = browser.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].emulateMobile;
         const isAndroid = isAppium(browser.requestedCapabilities);
+
         expect(platform.isMobile).toEqual(isEmulateMobile || isAndroid);
         expect(platform.isDesktop).toEqual(!isEmulateMobile && !isAndroid);
         expect(platform.isPhone).toEqual(isEmulateMobile || isAndroid);
 
         expect(platform.isMobileApp).toEqual(isAndroid);
         expect(platform.isDesktopApp).toEqual(!isAndroid);
+
+        expect(platform.isMacOS).toEqual(!isAndroid && process.platform == 'darwin');
+        expect(platform.isWin).toEqual(!isAndroid && process.platform == 'win32');
+        expect(platform.isLinux).toEqual(isAndroid || process.platform == 'linux');
     })
 
     it('enable/disable plugin', async () => {
