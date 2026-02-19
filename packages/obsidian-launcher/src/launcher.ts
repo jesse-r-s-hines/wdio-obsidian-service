@@ -911,6 +911,7 @@ export class ObsidianLauncher {
         )
         const obsidianJson: any = {
             updateDisabled: true, // prevents Obsidian trying to auto-update on boot.
+            cli: true, // enable the CLI
         }
 
         if (params.vault !== undefined) {
