@@ -2,6 +2,7 @@ import { browser, expect } from '@wdio/globals'
 import fsAsync from "fs/promises";
 import path from "path";
 import { obsidianPage } from 'wdio-obsidian-service';
+import semver from "semver"
 import { OBSIDIAN_CAPABILITY_KEY } from '../../src/types.js';
 import { isAppium } from '../../src/utils.js';
 
@@ -123,5 +124,30 @@ describe("Test page object", () => {
         expect(await getOpenFiles()).toEqual([]);
         await obsidianPage.loadWorkspaceLayout(workspace);
         expect(await getOpenFiles()).toEqual(["Goodbye.md", "Welcome.md"]);
+    })
+
+    it("obsidian CLI", async function() {
+        const appVersion = browser.getObsidianVersion();
+        const installerVersion = browser.getObsidianInstallerVersion();
+        const isMobileApp = (await obsidianPage.getPlatform()).isMobileApp;
+        if (semver.lt(appVersion, "1.12.0") || semver.lt(installerVersion, "1.11.7") || isMobileApp) {
+            this.skip()
+        }
+
+        const result = await obsidianPage.runObsidianCli(['vault']);
+        expect(result.stdout).toMatch(obsidianPage.getVaultPath());
+    })
+
+    it("obsidian CLI throws on old versions", async function() {
+        const appVersion = browser.getObsidianVersion();
+        const installerVersion = browser.getObsidianInstallerVersion();
+        const isMobileApp = (await obsidianPage.getPlatform()).isMobileApp;
+        if (semver.gte(appVersion, "1.12.0") && semver.gte(installerVersion, "1.11.7") && !isMobileApp) {
+            this.skip()
+        }
+
+        const result = await obsidianPage.runObsidianCli(['vault']).catch(e => e);
+        expect(result).toBeInstanceOf(Error);
+        expect(result.toString()).toMatch(/only works/)
     })
 })
