@@ -80,18 +80,18 @@ jobs:
           - os: windows-latest
             node-version: "20.x"
             test-level: "standard"
-            obsidian-versions: "latest/latest/standard earliest/earliest/basic"
+            obsidian-versions: "latest-beta/latest/standard earliest/earliest/basic"
           - os: macos-latest # arm
             node-version: "22.x"
             test-level: "standard"
-            obsidian-versions: "latest/latest/standard earliest/earliest/basic"
+            obsidian-versions: "latest-beta/latest/standard earliest/earliest/basic"
             # macos runners have less RAM and have issues with high parallelism
             max-instances: 2
             pnpm-args: "--sequential"
           - os: ubuntu-24.04-arm
             node-version: "24.x"
             test-level: "standard"
-            obsidian-versions: "latest/latest/standard earliest/earliest/basic"
+            obsidian-versions: "latest-beta/latest/standard earliest/earliest/basic"
             package-resolution: highest
           # Skip these to save time (window-arm is especially slow for some reason)
           # - os: windows-11-arm
