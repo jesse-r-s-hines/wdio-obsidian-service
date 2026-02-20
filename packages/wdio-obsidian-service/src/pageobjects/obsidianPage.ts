@@ -1,14 +1,17 @@
 import * as path from "path"
 import * as fsAsync from "fs/promises"
 import * as crypto from "crypto";
+import { promisify } from "util";
+import child_process from "child_process";
+import * as semver from "semver";
 import { fileURLToPath } from "url";
 import { TFile } from "obsidian";
 import _ from "lodash";
 import { OBSIDIAN_CAPABILITY_KEY, NormalizedObsidianCapabilityOptions } from "../types.js";
 import { BasePage } from "./basePage.js";
 import { isAppium, normalizePath, isHidden, isText } from "../utils.js";
-import { AppInternal } from "../obsidianTypes.js";
-
+import { AppInternal, PlatformInternal } from "../obsidianTypes.js";
+const execFile = promisify(child_process.execFile);
 
 /**
  * Class with various helper methods for writing Obsidian tests using the
@@ -44,6 +47,25 @@ class ObsidianPage extends BasePage {
         return obsidianOptions.uploadedVault ?? obsidianOptions.vaultCopy;
     }
 
+    /** 
+     * Run a command against the Obsidian CLI
+     * 
+     * Only works on Obsidian >=1.12.0 with installer >=1.11.7
+     * See https://help.obsidian.md/cli
+     */
+    async runObsidianCli(args: string[]): Promise<{stdout: string, stderr: string}> {
+        const {appVersion, installerVersion, binaryPath} = this.getObsidianCapabilities();
+        if (semver.lt(appVersion, "1.12.0") || semver.lt(installerVersion, "1.11.7")) {
+            throw Error(`Obsidian CLI only works on app >=1.12.0 and installer >=1.11.7`)
+        }
+        if (isAppium(this.browser.requestedCapabilities)) {
+            throw Error(`Obsidian CLI only works on desktop`)
+        }
+        const chromeArgs: string[] = this.browser.requestedCapabilities['goog:chromeOptions'].args;
+        const cliBinary = binaryPath!.replace(/.exe$/, '.com'); // Windows uses the .com wrapper
+        return await execFile(cliBinary, [...args, ...chromeArgs]);
+    }
+
     /**
      * Return the Obsidian config dir (just ".obsidian" unless you changed the config dir name in settings).
      */
@@ -57,13 +79,30 @@ class ObsidianPage extends BasePage {
      */
     async getPlatform(): Promise<Platform> {
         const obsidianOptions = this.getObsidianCapabilities();
+        const appium = isAppium(this.browser.requestedCapabilities);
+        const emulateMobile = obsidianOptions.emulateMobile;
+
+        // To allow calling getPlatform before opening a vault, we'll compute the values ourselves when a vault isn't
+        // open. We'll pull obsidian Platform if there is a vault, as technically you can change the screen size and
+        // emulation mode during tests. Also, on very old versions of Obsidian, not all these fields are exist.
+        const platform = {
+            isDesktop: !(appium || emulateMobile),
+            isMobile: appium || emulateMobile,
+            isDesktopApp: !appium,
+            isMobileApp: appium,
+            isIosApp: false, // iOS is not supported
+            isAndroidApp: appium,
+            isMacOS: !appium && process.platform == 'darwin',
+            isWin: !appium && process.platform == 'win32',
+            isLinux: appium || process.platform == 'linux',
+            isSafari: false, // iOS is not supported
+        };
+
         if (obsidianOptions.vault !== undefined) {
-            return await this.browser.executeObsidian(({obsidian}) => {
-                const p = obsidian.Platform;
+            const obsidianPlatform = await this.browser.executeObsidian(({obsidian}) => {
+                // The types for this in old versions of obsidian types are incomplete, so any cast here
+                const p = obsidian.Platform as PlatformInternal;
                 return {
-                    isDesktop: p.isDesktop,
-                    isMobile: p.isMobile,
-                    isDesktopApp: p.isDesktopApp,
                     isMobileApp: p.isMobileApp,
                     isIosApp: p.isIosApp,
                     isAndroidApp: p.isAndroidApp,
@@ -74,13 +113,9 @@ class ObsidianPage extends BasePage {
                     isLinux: p.isLinux,
                     isSafari: p.isSafari,
                 };
-            });
+            })
+            Object.assign(platform, _.pickBy(obsidianPlatform, x => x != null));
         } else {
-            // hack to allow calling getPlatform before opening a vault. This is needed so you can use getPlatform to
-            // skip a test before wasting time opening the vault. we don't use this method the rest of the time as you
-            // can technically change the size or switch emulation mode during tests
-            const appium = isAppium(this.browser.requestedCapabilities);
-            const emulateMobile = obsidianOptions.emulateMobile;
             const [width, height] = await this.browser.execute(() => [window.innerWidth, window.innerHeight]);
 
             let isTablet = false;
@@ -91,21 +126,10 @@ class ObsidianPage extends BasePage {
                 isPhone = !isTablet;
             }
 
-            return {
-                isDesktop: !(appium || emulateMobile),
-                isMobile: appium || emulateMobile,
-                isDesktopApp: !appium,
-                isMobileApp: appium,
-                isIosApp: false, // iOS is not supported
-                isAndroidApp: appium,
-                isPhone: isPhone,
-                isTablet: isTablet,
-                isMacOS: !appium && process.platform == 'darwin',
-                isWin: !appium && process.platform == 'win32',
-                isLinux: !appium && process.platform == 'linux',
-                isSafari: false, // iOS is not supported
-            };
+            Object.assign(platform, {isTablet, isPhone});
         }
+
+        return platform as Platform;
     }
 
     /**

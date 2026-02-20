@@ -80,19 +80,19 @@ jobs:
           - os: windows-latest
             node-version: "20.x"
             test-level: "standard"
-            obsidian-versions: "latest/latest/standard earliest/earliest/basic"
+            obsidian-versions: "latest-beta/latest/standard earliest/earliest/basic"
           - os: macos-latest # arm
             node-version: "22.x"
             test-level: "standard"
-            obsidian-versions: "latest/latest/standard earliest/earliest/basic"
+            obsidian-versions: "latest-beta/latest/standard earliest/earliest/basic"
             # macos runners have less RAM and have issues with high parallelism
             max-instances: 2
             pnpm-args: "--sequential"
           - os: ubuntu-24.04-arm
             node-version: "24.x"
             test-level: "standard"
-            obsidian-versions: "latest/latest/standard earliest/earliest/basic"
-            package_resolution: highest
+            obsidian-versions: "latest-beta/latest/standard earliest/earliest/basic"
+            package-resolution: highest
           # Skip these to save time (window-arm is especially slow for some reason)
           # - os: windows-11-arm
           #   node-version: "22.x"
@@ -100,7 +100,7 @@ jobs:
           #   obsidian-versions: "latest/latest latest/1.6.5"
     runs-on: ${{ matrix.os }}
     timeout-minutes: 30
-    name: test e2e (${{ matrix.os }}, node ${{ matrix.node-version }})
+    name: "test e2e (${{ matrix.os }}, node ${{ matrix.node-version }} obsidian: ${{ matrix.obsidian-versions }}, package-resolution: ${{ matrix.package-resolution }})"
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -119,7 +119,7 @@ jobs:
           key: obsidian-cache-${{ matrix.os }}-${{ matrix.obsidian-versions }}-${{ hashFiles('./obsidian-versions.json') }}
 
       - run: |
-          if [[ '${{ matrix.package_resolution }}' == 'highest' ]]; then
+          if [[ '${{ matrix.package-resolution }}' == 'highest' ]]; then
             npm_config_resolution_mode=highest pnpm install --no-lockfile
           else
             pnpm install --frozen-lockfile # Default resolution mode is set to lowest
@@ -188,7 +188,7 @@ jobs:
             node-version: "24.x"
             package-resolution: highest
     runs-on: ubuntu-latest
-    name: test e2e (android, api ${{ matrix.android-api-level }}, profile ${{ matrix.android-profile }}, obsidian ${{ matrix.obsidian-versions }})
+    name: "test e2e (android, api ${{ matrix.android-api-level }}, profile ${{ matrix.android-profile }}, obsidian ${{ matrix.obsidian-versions }}, package-resolution: ${{ matrix.package-resolution }})"
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4

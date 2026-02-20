@@ -60,7 +60,7 @@ const installerOptionArgs = [
 ] as const
 const cacheOptionArgs = [
     '-c, --cache <cache>',
-    'Directory to use as the download cache. (default: OBSIDIAN_CACHE env var or ".obsidian-cache")',
+    'Directory to use as the download cache. (default: OBSIDIAN_CACHE env var or ~/.obsidian-cache)',
 ] as const
 const pluginOptionArgs = [
     '-p, --plugin <plugin>',
@@ -246,7 +246,7 @@ program
         if (asset == "desktop") {
             const [appVersion, installerVersion] = await launcher.resolveVersion(
                 opts.version ?? "latest",
-                opts.installerVersion ?? "earliest",
+                opts.installer ?? "earliest",
             );
             const installerPath = await launcher.downloadInstaller(installerVersion, {
                 platform: opts.platform, arch: opts.arch,

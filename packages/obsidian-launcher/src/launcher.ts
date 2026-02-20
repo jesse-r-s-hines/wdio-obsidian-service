@@ -3,7 +3,8 @@ import path from "path"
 import crypto from "crypto";
 import extractZip from "extract-zip"
 import { downloadArtifact } from '@electron/get';
-import child_process from "child_process"
+import child_process from "child_process";
+import os from "os";
 import semver from "semver"
 import { fileURLToPath } from "url";
 import _ from "lodash"
@@ -52,7 +53,7 @@ export class ObsidianLauncher {
 
     /**
      * Construct an ObsidianLauncher.
-     * @param opts.cacheDir Path to the cache directory. Defaults to "OBSIDIAN_CACHE" env var or ".obsidian-cache".
+     * @param opts.cacheDir Path to the cache directory. Defaults to "OBSIDIAN_CACHE" env var or ~/.obsidian-cache.
      * @param opts.versionsUrl Custom `obsidian-versions.json` url. Can be a file URL.
      * @param opts.communityPluginsUrl Custom `community-plugins.json` url. Can be a file URL.
      * @param opts.communityThemesUrl Custom `community-css-themes.json` url. Can be a file URL.
@@ -67,7 +68,11 @@ export class ObsidianLauncher {
         cacheDuration?: number,
         interactive?: boolean,
     } = {}) {
-        this.cacheDir = path.resolve(opts.cacheDir ?? process.env.OBSIDIAN_CACHE ?? "./.obsidian-cache");
+        this.cacheDir = path.resolve(
+            opts.cacheDir ??
+            process.env.OBSIDIAN_CACHE ??
+            path.join(os.homedir(), '.obsidian-cache')
+        );
         
         const defaultVersionsUrl =  'https://raw.githubusercontent.com/jesse-r-s-hines/wdio-obsidian-service/HEAD/obsidian-versions.json'
         this.versionsUrl = opts.versionsUrl ?? defaultVersionsUrl;
@@ -906,6 +911,7 @@ export class ObsidianLauncher {
         )
         const obsidianJson: any = {
             updateDisabled: true, // prevents Obsidian trying to auto-update on boot.
+            cli: true, // enable the CLI
         }
 
         if (params.vault !== undefined) {

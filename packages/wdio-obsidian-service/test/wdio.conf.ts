@@ -65,9 +65,10 @@ if (process.env.OBSIDIAN_VERSIONS == "all") {
     versionsToTest = [versionsToTest[0], ...versionsToTest.slice(Math.max(versionsToTest.length - 2, 1))];
     if (await obsidianBetaAvailable(cacheDir)) {
         versionsToTest.push(["latest-beta", "earliest"]);
+        versionsToTest.push(["latest-beta", "latest"]);
     } else {
-        // test latest/earliest combination to make sure that minInstallerVersion is correct
         versionsToTest.push(["latest", "earliest"]);
+        versionsToTest.push(["latest", "latest"]);
     }
 } else if (process.env.OBSIDIAN_VERSIONS) {
     // Space separated list of appVersion/installerVersion, e.g. "1.7.7/latest latest/earliest"
