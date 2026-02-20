@@ -4,7 +4,7 @@ import fsAsync from "fs/promises";
 import path from "path"
 import { createDirectory } from "../helpers.js";
 import {
-    fileExists, atomicCreate, linkOrCp, sleep, withTimeout, pool, maybe, normalizeObject,
+    fileExists, atomicCreate, linkOrCp, pathIsUnder, sleep, withTimeout, pool, maybe, normalizeObject,
     CanonicalForm, until, retry,
 } from "../../src/utils.js";
 
@@ -180,6 +180,38 @@ describe("linkOrCp", () => {
         await linkOrCp(path.join(tmpDir, "a.txt"), path.join(tmpDir, "b.txt"))
         expect(await fsAsync.readFile(path.join(tmpDir, "b.txt"), 'utf-8')).to.eql("A")
     });
+});
+
+describe("pathIsUnder", () => {
+    const tests: [string, string, boolean][] = [
+        ["", "", false],
+        ["a/b/c/d", "hello/world", false],
+        ["a/b", "a/b/c", true],
+        ["a/b", "a/b", false],
+        ["a", "a/..b", true],
+        ["a/b", "b/..b", false],
+    ];
+    if (process.platform == "win32") {
+        tests.push(
+            ["/", "/", false],
+            ["/a", "/a", false],
+            ["/a", "/a/b", true],
+            ["/a", "/a/b/c", true],
+        )
+    } else {
+        tests.push(
+            ['C:/', 'D:/', false],
+            ['C:/', 'D:/a', false],
+            ['C:/', 'C:/a/b/c', true],
+            ['C:/x', 'C:/a/b/c', false],
+        )
+    }
+    
+    tests.forEach(([parent, child, expected]) => {
+        it(`pathIsUnder ${parent} ${child}`, () => {
+            expect(pathIsUnder(parent, child)).to.eql(expected);
+        });
+    })
 });
 
 describe("pool", () => {
