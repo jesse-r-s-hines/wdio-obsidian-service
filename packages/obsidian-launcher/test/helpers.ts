@@ -7,7 +7,7 @@ import { AddressInfo } from "net";
 import { after } from "mocha";
 import { atomicCreate } from "../src/utils.js";
 import { downloadResponse } from "../src/apis.js";
-import { linkOrCp } from "../src/utils.js";
+import { linkOrCp, fileExists } from "../src/utils.js";
 
 /**
  * Creates a temporary directory with the given files and contents. Cleans up the directory after the tests.
@@ -30,7 +30,7 @@ export async function createDirectory(files: Record<string, string> = {}) {
 }
 
 
-type Endpoint = {path?: string, content?: string, url?: string};
+type Endpoint = {path?: string, content?: string, fetch?: () => Promise<Response>};
 export interface MockServer {
     url: string,
     addEndpoints(endpoints: Record<string, Endpoint>): Promise<void>,
@@ -48,55 +48,54 @@ export interface MockServer {
  */
 export async function createServer(cacheDir: string, endpoints: Record<string, Endpoint> = {}): Promise<MockServer> {
     const serverDir = await createDirectory();
-    const cachedUrls: Map<string, string> = new Map();
-
-    async function addEndpoints(serverDir: string, endpoints: Record<string, Endpoint>) {
-        for (const [servedPath, src] of Object.entries(endpoints)) {
-            const dest = path.join(serverDir, servedPath);
-            await fsAsync.mkdir(path.dirname(dest), {recursive: true});
-            if (src.path) {
-                await linkOrCp(src.path, dest);
-            } else if (src.content) {
-                await fsAsync.writeFile(dest, src.content);
-            } else if (src.url) {
-                cachedUrls.set(servedPath, src.url);
-            } else {
-                throw Error("Must specify one of path, content or url");
-            }
+    const endpointsMap = new Map<string, Endpoint>()
+    async function addEndpoints(endpoints: Record<string, Endpoint>) {
+        for (const [servedPath, endpoint] of Object.entries(endpoints)) {
+            endpointsMap.set(servedPath, endpoint);
         }
     }
-
-    await addEndpoints(serverDir, endpoints);
+    await addEndpoints(endpoints);
 
     const server = http.createServer(async (request, response) => {
         try {
-            const requestPath = request.url!.replace(/^\//, '');
-            if (cachedUrls.has(requestPath)) {
-                const url = new URL(cachedUrls.get(requestPath)!);
-                await atomicCreate(path.join(cacheDir, requestPath), async (scratch) => {
-                    await downloadResponse(() => fetch(url), path.join(scratch, "out"));
-                    return path.join(scratch, "out");
-                }, {replace: false});
-                return serverHandler(request, response, {public: cacheDir});
-            } else {
-                return serverHandler(request, response, {public: serverDir});
+            const requestPath = path.posix.normalize(request.url!).replace(/^\//, '');
+            const endpoint = endpointsMap.get(requestPath);
+            const dest = path.join(serverDir, requestPath);
+
+            if (endpoint && !(await fileExists(dest))) {
+                await fsAsync.mkdir(path.dirname(dest), {recursive: true});
+                if (endpoint.fetch) {
+                    const cacheDest = path.join(cacheDir, requestPath);
+                    await atomicCreate(cacheDest, async (scratch) => {
+                        await downloadResponse(endpoint.fetch!, path.join(scratch, "out"));
+                        return path.join(scratch, "out");
+                    }, {replace: false});
+                    await linkOrCp(cacheDest, dest);
+                } else if (endpoint.content) {
+                    await fsAsync.writeFile(dest, endpoint.content);
+                } else if (endpoint.path) {
+                    await linkOrCp(endpoint?.path, dest);
+                } else {
+                    throw Error(`Endpoint ${requestPath} must set one of path, content, or fetch`);
+                }
             }
+            return serverHandler(request, response, {public: serverDir});
         } catch (e: any) {
             console.error(e);
             throw e;
         }
     });
 
-    await new Promise<void>(resolve => server!.listen({port: 0}, resolve));
+    await new Promise<void>(resolve => server.listen({port: 0}, resolve));
     const port = (server.address() as AddressInfo).port;
 
     after(async function() {
-        server?.closeAllConnections();
-        server?.close();
+        server.closeAllConnections();
+        server.close();
     });
 
     return {
         url: `http://localhost:${port}`,
-        addEndpoints: (endpoints) => addEndpoints(serverDir, endpoints),
+        addEndpoints,
     };
 }

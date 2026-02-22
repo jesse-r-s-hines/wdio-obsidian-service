@@ -9,7 +9,7 @@ import { pathToFileURL } from "url";
 import semver from "semver"
 import { ObsidianLauncher, minSupportedObsidianVersion } from "../../src/launcher.js";
 import { extractInstallerInfo, getCdpSession, cdpEvaluate, checkCompatibility } from "../../src/launcherUtils.js";
-import { obsidianApiLogin } from "../../src/apis.js";
+import { obsidianApiLogin, fetchObsidianApi } from "../../src/apis.js";
 import { fileExists, maybe } from "../../src/utils.js";
 import { ObsidianVersionList } from "../../src/types.js";
 import { createServer } from "../helpers.js";
@@ -40,24 +40,32 @@ describe("ObsidianLauncher", function() {
         .value();
     const latest = versions.at(-1)![0];
     const latestMinInstaller = versionInfos.versions.find(v => v.version == latest)!.minInstallerVersion!;
+    const latestBeta = versionInfos.versions.at(-1)!.version;
+    const latestInstaller = versionInfos.versions.at(-1)!.maxInstallerVersion!;
     if (process.env.TEST_LEVEL == "all") {
         versions = [ // sample a range of versions
             ..._.range(0, versions.length - 2, (versions.length - 2) / 3).map(i => versions[Math.trunc(i)]),
             ...versions.slice(-1),
             [latest, latestMinInstaller],
+            [latestBeta, latestInstaller],
         ];
     } else {
-        versions = [versions[0], ...versions.slice(-2), [latest, latestMinInstaller]]
+        versions = [versions[0], ...versions.slice(-2), [latest, latestMinInstaller], [latestBeta, latestInstaller]]
     }
 
     before(async function() {
         this.timeout(10 * 60 * 1000);
-        launcher = new ObsidianLauncher(obsidianLauncherOpts);
 
         // mock server that caches requests to Obsidian assets
         const server = await createServer(testData, Object.fromEntries(versionInfos.versions
             .flatMap(v => Object.values(v.downloads))
-            .map(url => [url.replace(/^https?:\/\//, ''), {url}] as const)
+            .map(url => [url.replace(/^https?:\/\//, ''), {async fetch() {
+                if (new URL(url).hostname.endsWith('.obsidian.md')) {
+                    return await fetchObsidianApi(url, {token: 'token'});
+                } else {
+                    return await fetch(url)
+                }
+            }}])
         ));
         await server.addEndpoints({
             'obsidian-versions.json': {content: JSON.stringify({
