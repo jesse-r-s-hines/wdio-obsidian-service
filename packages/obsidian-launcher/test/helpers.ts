@@ -99,3 +99,14 @@ export async function createServer(cacheDir: string, endpoints: Record<string, E
         addEndpoints,
     };
 }
+
+
+export async function withCwd(dir: string, func: () => Promise<void>) {
+    const prev = process.cwd();
+    try {
+        process.chdir(dir);
+        return await func();
+    } finally {
+        process.chdir(prev);
+    }
+}
