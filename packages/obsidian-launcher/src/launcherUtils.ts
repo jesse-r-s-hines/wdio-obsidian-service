@@ -13,7 +13,8 @@ import type { RestEndpointMethodTypes } from "@octokit/rest";
 import CDP from "chrome-remote-interface";
 import { ObsidianLauncher } from "./launcher.js";
 import {
-    consola, atomicCreate, makeTmpDir, normalizeObject, pool, maybe, withTimeout, until, retry, UntilOpts,
+    consola, atomicCreate, makeTmpDir, normalizeObject, pool, maybe, withTimeout, until, retry, UntilOpts, pathIsUnder,
+    fileExists,
 } from "./utils.js";
 import { downloadResponse, fetchGitHubAPIPaginated } from "./apis.js"
 import {
@@ -145,16 +146,19 @@ export async function extractObsidianDmg(dmg: string, dest: string) {
 //// CDP ////
 
 /**
- * Launches Obsidian. Returnsa CDP client connected to it and a function to cleanup the process and resources.
+ * Launches Obsidian. Returns a CDP client connected to it and a function to cleanup the process and resources.
  * Mostly used for testing, but also used in updateVersionList.
  * 
  * This logic is somewhat duplicated with wdio-obsidian-service's setup, but I don't want obsidian-launcher to depend
  * on wdio or wdio-obsidian-service.
  */
 export async function getCdpSession(
-    launcher: ObsidianLauncher, appVersion: string, installerVersion: string,
+    launcher: ObsidianLauncher, params: Parameters<ObsidianLauncher['launch']>[0] & {vault: string},
 ) {
-    [appVersion, installerVersion] = await launcher.resolveVersion(appVersion, installerVersion);
+    const [appVersion, installerVersion] = await launcher.resolveVersion(
+        params.appVersion ?? "latest",
+        params.installerVersion ?? "latest",
+    );
 
     const cleanup: (() => Promise<void>)[] = [];
     const doCleanup = async () => {
@@ -163,9 +167,7 @@ export async function getCdpSession(
         }
     }
 
-    const vault = await makeTmpDir("obsidian-vault-");
-    cleanup.push(() => fsAsync.rm(vault, {recursive: true, force: true}));
-    const pluginDir = path.join(vault, ".obsidian", "plugins", "obsidian-launcher");
+    const pluginDir = path.join(params.vault, ".obsidian", "plugins", "obsidian-launcher");
     await fsAsync.mkdir(pluginDir, {recursive: true});
     await fsAsync.writeFile(path.join(pluginDir, "manifest.json"), JSON.stringify({
         id: "obsidian-launcher", name: "Obsidian Launcher",
@@ -179,16 +181,24 @@ export async function getCdpSession(
         }
         module.exports = ObsidianLauncherPlugin;
     `);
-    await fsAsync.writeFile(path.join(vault, ".obsidian", "community-plugins.json"), JSON.stringify([
-        "obsidian-launcher",
-    ]));
+    const communityPluginsPath = path.join(params.vault, ".obsidian", "community-plugins.json"); 
+    let communityPlugins = ["obsidian-launcher"]
+    if (await fileExists(communityPluginsPath)) {
+        communityPlugins = [...JSON.parse(await fsAsync.readFile(communityPluginsPath, 'utf-8')), ...communityPlugins];
+    }
+    await fsAsync.writeFile(communityPluginsPath, JSON.stringify(communityPlugins));
 
     try {
-        const {proc, configDir} = await launcher.launch({
-            appVersion, installerVersion, vault, copy: false,
-            args: [`--remote-debugging-port=0`, '--test-type=webdriver'], // will choose a random available port
+        const launchResult = await launcher.launch({
+            ...params,
+            // will choose a random available port
+            args: [`--remote-debugging-port=0`, '--test-type=webdriver', ...(params.args ?? [])],
         });
-        cleanup.push(() => fsAsync.rm(configDir, {recursive: true, force: true}));
+        if (params.copy) {
+            cleanup.push(() => fsAsync.rm(launchResult.vault!, {recursive: true, force: true}));
+        }
+        const {proc} = launchResult;
+        cleanup.push(() => fsAsync.rm(launchResult.configDir, {recursive: true, force: true}));
         const procExit = new Promise<number>((resolve) => proc.on('close', (code) => resolve(code ?? -1)));
         cleanup.push(async () => {
             proc.kill("SIGTERM");
@@ -225,9 +235,10 @@ export async function getCdpSession(
         );
 
         return {
+            ...launchResult,
             client,
             cleanup: doCleanup,
-            proc,
+            vault: launchResult.vault!,
         };
     } catch (e: any) {
         await doCleanup();
@@ -464,9 +475,10 @@ export async function checkCompatibility(
     await launcher.downloadApp(appVersion);
     await launcher.downloadInstaller(installerVersion);
 
+    const vault = await makeTmpDir("obsidian-launcher-");
     // retry cdp result on errors, but interpret consistent errors as an incompatibility
     const cdpResult = await maybe(retry(
-        () => getCdpSession(launcher, appVersion, installerVersion),
+        () => getCdpSession(launcher, {appVersion, installerVersion, vault}),
         {retries: 3, backoff: 4000},
     ));
     if (!cdpResult.success) {
@@ -512,6 +524,7 @@ export async function checkCompatibility(
         }
     } finally {
         await cleanup();
+        await fsAsync.rm(vault, {recursive: true, force: true});
     }
 
     consola.log(`app ${appVersion} and installer ${installerVersion} are ${!result ? 'in' : ''}compatible`);

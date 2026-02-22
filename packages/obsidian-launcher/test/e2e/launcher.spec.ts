@@ -12,7 +12,7 @@ import { extractInstallerInfo, getCdpSession, cdpEvaluate, checkCompatibility } 
 import { obsidianApiLogin, fetchObsidianApi } from "../../src/apis.js";
 import { fileExists, maybe } from "../../src/utils.js";
 import { ObsidianVersionList } from "../../src/types.js";
-import { createServer } from "../helpers.js";
+import { createServer, createDirectory } from "../helpers.js";
 
 const obsidianLauncherOpts = {
     cacheDir: path.resolve("../../.obsidian-cache"),
@@ -134,10 +134,11 @@ describe("ObsidianLauncher", function() {
 
     for (const [appVersion, installerVersion] of versions) {
         it(`test launch ${appVersion}/${installerVersion}`, async function() {
-            const {client, cleanup} = await getCdpSession(launcher, appVersion, installerVersion);
+            const vault = path.join(await createDirectory({"my-vault/A.md": "A"}), 'my-vault');
+            const {client, cleanup} = await getCdpSession(launcher, {appVersion, installerVersion, vault});
             try {
                 const actualVault = await cdpEvaluate(client, "obsidianLauncher.app.vault.adapter.getFullPath('')");
-                expect(actualVault).to.match(/obsidian-vault/)
+                expect(actualVault).to.match(/my-vault/)
 
                 const actualAppVersion = await cdpEvaluate(client, "require('electron').ipcRenderer.sendSync('version')");
                 expect(actualAppVersion).to.eql(appVersion);
