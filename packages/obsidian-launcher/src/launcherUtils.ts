@@ -319,17 +319,18 @@ export async function getObsidianCli(args: string[]): Promise<[string, string[]]
         // Match on the obsidian-launcher-config- prefix to avoid potential issues if os.tempdir() contains spaces
         // You could craft a convoluted path that would break this matching logic though... I don't see a way to prevent
         // that without having to keep some complex manual state tracking.
-        const match = proc.command.match(/(.*?) --user-data-dir=(.*?obsidian-launcher-config-.+?)( |$)/)!;
-        const [_, exe, configDir] = match.map(clean);
-        const obsidianJson = JSON.parse(await fsAsync.readFile(path.join(configDir, "obsidian.json"), 'utf-8'));
-        // There could potentially be multiple vaults in a single instance if the user creates extra vaults manually.
-        for (const [vaultId, vaultInfo] of Object.entries<any>(obsidianJson.vaults)) {
-            obsidianInstances.push({
-                pid: proc.pid, exe,
-                configDir, vaultId,
-                // realpath so that cwd comparison works with symlinks (mac /var is a symlink)
-                vaultPath: await fsAsync.realpath(vaultInfo.path),
-            })
+        try {
+            const match = proc.command.match(/(.*?) --user-data-dir=(.*?obsidian-launcher-config-.+?)( |$)/)!;
+            const [_, exe, configDir] = match.map(clean);
+            const obsidianJson = JSON.parse(await fsAsync.readFile(path.join(configDir, "obsidian.json"), 'utf-8'));
+            // There could be multiple vaults in a single instance if the user creates extra vaults manually
+            for (const [vaultId, vaultInfo] of Object.entries<any>(obsidianJson.vaults)) {
+                // realpath so that cwd comparison works on mac (/var is a symlink)
+                const vaultPath = await fsAsync.realpath(vaultInfo.path);
+                obsidianInstances.push({pid: proc.pid, exe, configDir, vaultId, vaultPath});
+            }
+        } catch (e) {
+            console.warn(`Failed to connect to obsidian-launcher instance ${proc.pid}: ${e}`)
         }
     }
     obsidianInstances = obsidianInstances.reverse(); // newest instances first.
@@ -359,7 +360,7 @@ export async function getObsidianCli(args: string[]): Promise<[string, string[]]
         newArgs = args.slice(1); // remove the vault= arg
     }
     if (!match) {
-        const cwd = process.cwd();
+        const cwd = await fsAsync.realpath(process.cwd()).catch(() => process.cwd());
         match = obsidianInstances.find(i => cwd == i.vaultPath || pathIsUnder(i.vaultPath, cwd));
     }
     if (!match) {
