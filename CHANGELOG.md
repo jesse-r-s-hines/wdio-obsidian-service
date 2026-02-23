@@ -112,3 +112,15 @@ Note, to use appium 3 you'll need to update your wdio.mobile.conf.ts appium serv
 ```
 If you encounter errors, try wiping and recreating package-lock.json to make sure you have the latest versions of
 wdio, appium, and the appium drivers.
+
+## 2.3.0
+Support Obsidian CLI in wdio tests!
+
+## Changes
+- Add `ObsidianPage.runObsidianCli` to run the Obsidian CLI during WDIO tests
+- Add `obsidian-launcher cli` command and `ObsidianLauncher.getObsidianCli` on sandboxed Obsidian instances launched via `obsidian-launcher`
+
+## Bug Fixes
+- fix some intermittent errors on Android
+- fix obsidian-launcher download command ignoring installer arg
+- fix ObsidianPage.getPlatform result on old Obsidian versions
