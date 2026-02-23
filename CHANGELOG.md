@@ -124,3 +124,6 @@ Support Obsidian CLI in wdio tests!
 - fix some intermittent errors on Android
 - fix obsidian-launcher download command ignoring installer arg
 - fix ObsidianPage.getPlatform result on old Obsidian versions
+
+## 2.3.1
+- Fix changelog and release tag
