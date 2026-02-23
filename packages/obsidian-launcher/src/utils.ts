@@ -129,6 +129,14 @@ export async function linkOrCp(src: string, dest: string) {
     }
 }
 
+/**
+ * Returns true if child is under parent. returns false if parent == child or child is outside of parent.
+ */
+export function pathIsUnder(parent: string, child: string): boolean {
+    const rel = path.relative(path.resolve(parent), path.resolve(child));
+    return rel != '' && rel.split(path.sep)[0] != ".." && !path.isAbsolute(rel)
+}
+
 
 /// Promises ///
 

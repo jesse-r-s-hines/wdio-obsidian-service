@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import child_process from "child_process";
 import { Command } from 'commander';
 import _ from "lodash";
 import { ObsidianLauncher } from "./launcher.js"
@@ -44,7 +45,7 @@ function parseThemes(themes: string[] = []): ThemeEntry[] {
 
 const collectOpt = (curr: string, prev?: string[]) => [...(prev ?? []), curr];
 
-function getLauncher(opts: {cache: string}) {
+function getLauncher(opts: {cache?: string}) {
     return new ObsidianLauncher({cacheDir: opts.cache, interactive: !!process.stdin.isTTY});
 }
 
@@ -60,7 +61,7 @@ const installerOptionArgs = [
 ] as const
 const cacheOptionArgs = [
     '-c, --cache <cache>',
-    'Directory to use as the download cache. (default: OBSIDIAN_CACHE env var or ".obsidian-cache")',
+    'Directory to use as the download cache. (default: OBSIDIAN_CACHE env var or ~/.obsidian-cache)',
 ] as const
 const pluginOptionArgs = [
     '-p, --plugin <plugin>',
@@ -246,7 +247,7 @@ program
         if (asset == "desktop") {
             const [appVersion, installerVersion] = await launcher.resolveVersion(
                 opts.version ?? "latest",
-                opts.installerVersion ?? "earliest",
+                opts.installer ?? "earliest",
             );
             const installerPath = await launcher.downloadInstaller(installerVersion, {
                 platform: opts.platform, arch: opts.arch,
@@ -268,6 +269,36 @@ program
         } else {
             throw Error(`Invalid asset type ${asset}`)
         }
+    })
+
+program
+    .command("cli")
+    .summary("Run an Obsidian CLI command")
+    .description(
+        "Run an Obsidian CLI command.\n" +
+        "\n" +
+        "As obsidian-launcher sandboxes the config dir for each obsidian instance, the Obsidian CLI won't connect to " +
+        "the launched instances by default. This command handles connecting the CLI to the sandboxed Obsidian " +
+        "instances.\n" +
+        "\n" +
+        "Like the the regular Obsidian CLI, it will connect to the instance matching the `vault=` argument if " +
+        "present, or the cwd.\n" +
+        "\n" +
+        "The Obsidian CLI only works on Obsidian >=1.12.0 with installer >=1.11.7\n" +
+        "See https://help.obsidian.md/cli\n" +
+        "\n" +
+        "Example:\n" +
+        "    npx obsidian-launcher cli file file=Dashboard"
+    )
+    .argument('[obsidian-args...]', 'Arguments to pass to Obsidian')
+    .action(async (args: string[]) => {
+        const launcher = getLauncher({});
+        const proc = child_process.spawn(...await launcher.getObsidianCli(args), {
+            stdio: "inherit",
+        })
+        proc.on('close', (code) => {
+            process.exit(code ?? 1);
+        });
     })
 
 program

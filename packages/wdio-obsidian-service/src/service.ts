@@ -13,7 +13,7 @@ import {
     ObsidianServiceOptions, NormalizedObsidianCapabilityOptions, OBSIDIAN_CAPABILITY_KEY,
 } from "./types.js"
 import {
-    isAppium, appiumUploadFiles, appiumDownloadFile, getAppiumOptions, fileExists,
+    isAppium, appiumUploadFiles, appiumDownloadFile, getAppiumOptions, fileExists, navigateAndWait,
 } from "./utils.js";
 import semver from "semver"
 import _ from "lodash"
@@ -388,7 +388,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
                 window.location.replace('http://localhost/');
             }
         })
-        if (!obsidianOptions.vault) { // skip if vault is set, as we'll clear stat when we open the new vault
+        if (!obsidianOptions.vault) { // skip if vault is set, as we'll clear state when we open the new vault
             await this.appiumCloseVault();
         }
     }
@@ -415,11 +415,8 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
             localStorage.setItem('mobile-selected-vault', androidVault);
             // appId on mobile is just the full vault path
             localStorage.setItem(`enable-plugin-${androidVault}`, 'true');
-            // reload is not immediate, so delete wdioObsidianService to make sure that when we waitUntil in prepareApp
-            // its the from *after* the reload.
-            delete (window as any).wdioObsidianService;
-            window.location.reload();
         }, androidVault);
+        await navigateAndWait(browser, () => location.reload());
     }
 
     /**
@@ -427,14 +424,11 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
      */
     private async appiumCloseVault() {
         const browser = this.browser!;
-        await browser.execute(async () => {
-            if (localStorage.length > 0) { // skip if we're already on the vault switcher
-                localStorage.clear();
-                // remove to avoid race conditions, like in appiumOpenVault
-                delete (window as any).wdioObsidianService;
-                location.reload();
-            }
-        });
+        // skip if we're already on the vault switcher
+        if (await browser.execute(() => localStorage.length > 0)) {
+            await browser.execute(() => localStorage.clear());
+            await navigateAndWait(browser, () => location.reload());
+        }
     }
 
     /**
@@ -506,10 +500,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
                     // reload without resetting app state or triggering appium:fullReset
 
                     // hack to disable the Obsidian app and make sure it doesn't write to the vault while we modify it
-                    await this.execute(() => {
-                        delete (window as any).wdioObsidianService;
-                        window.location.replace('http://localhost/_capacitor_file_/not-a-file');
-                    });
+                    await navigateAndWait(this, () => location.replace('http://localhost/_capacitor_file_/not-a-file'));
 
                     // while Obsidian is down, modify the vault files to setup plugins and themes
                     const local = path.join(oldObsidianOptions.vaultCopy!, ".obsidian");
@@ -530,9 +521,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
                     await appiumUploadFiles(this, {src: local, dest: remote, files});
 
                     // switch the app back
-                    await this.execute(() => {
-                        window.location.replace('http://localhost/');
-                    })
+                    await navigateAndWait(this, () => location.replace('http://localhost/'));
                 }
             } else {
                 // if browserName is set, reloadSession tries to restart the driver entirely, so unset those

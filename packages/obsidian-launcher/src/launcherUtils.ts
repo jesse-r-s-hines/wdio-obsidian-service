@@ -1,5 +1,6 @@
 import fsAsync from "fs/promises"
 import fs from "fs"
+import os from "os"
 import path from "path"
 import { promisify } from "util";
 import child_process from "child_process"
@@ -13,7 +14,8 @@ import type { RestEndpointMethodTypes } from "@octokit/rest";
 import CDP from "chrome-remote-interface";
 import { ObsidianLauncher } from "./launcher.js";
 import {
-    consola, atomicCreate, makeTmpDir, normalizeObject, pool, maybe, withTimeout, until, retry, UntilOpts,
+    consola, atomicCreate, makeTmpDir, normalizeObject, pool, maybe, withTimeout, until, retry, UntilOpts, pathIsUnder,
+    fileExists,
 } from "./utils.js";
 import { downloadResponse, fetchGitHubAPIPaginated } from "./apis.js"
 import {
@@ -145,16 +147,19 @@ export async function extractObsidianDmg(dmg: string, dest: string) {
 //// CDP ////
 
 /**
- * Launches Obsidian. Returnsa CDP client connected to it and a function to cleanup the process and resources.
+ * Launches Obsidian. Returns a CDP client connected to it and a function to cleanup the process and resources.
  * Mostly used for testing, but also used in updateVersionList.
  * 
  * This logic is somewhat duplicated with wdio-obsidian-service's setup, but I don't want obsidian-launcher to depend
  * on wdio or wdio-obsidian-service.
  */
 export async function getCdpSession(
-    launcher: ObsidianLauncher, appVersion: string, installerVersion: string,
+    launcher: ObsidianLauncher, params: Parameters<ObsidianLauncher['launch']>[0] & {vault: string},
 ) {
-    [appVersion, installerVersion] = await launcher.resolveVersion(appVersion, installerVersion);
+    const [appVersion, installerVersion] = await launcher.resolveVersion(
+        params.appVersion ?? "latest",
+        params.installerVersion ?? "latest",
+    );
 
     const cleanup: (() => Promise<void>)[] = [];
     const doCleanup = async () => {
@@ -163,9 +168,7 @@ export async function getCdpSession(
         }
     }
 
-    const vault = await makeTmpDir("obsidian-vault-");
-    cleanup.push(() => fsAsync.rm(vault, {recursive: true, force: true}));
-    const pluginDir = path.join(vault, ".obsidian", "plugins", "obsidian-launcher");
+    const pluginDir = path.join(params.vault, ".obsidian", "plugins", "obsidian-launcher");
     await fsAsync.mkdir(pluginDir, {recursive: true});
     await fsAsync.writeFile(path.join(pluginDir, "manifest.json"), JSON.stringify({
         id: "obsidian-launcher", name: "Obsidian Launcher",
@@ -179,16 +182,24 @@ export async function getCdpSession(
         }
         module.exports = ObsidianLauncherPlugin;
     `);
-    await fsAsync.writeFile(path.join(vault, ".obsidian", "community-plugins.json"), JSON.stringify([
-        "obsidian-launcher",
-    ]));
+    const communityPluginsPath = path.join(params.vault, ".obsidian", "community-plugins.json"); 
+    let communityPlugins = ["obsidian-launcher"]
+    if (await fileExists(communityPluginsPath)) {
+        communityPlugins = [...JSON.parse(await fsAsync.readFile(communityPluginsPath, 'utf-8')), ...communityPlugins];
+    }
+    await fsAsync.writeFile(communityPluginsPath, JSON.stringify(communityPlugins));
 
     try {
-        const {proc, configDir} = await launcher.launch({
-            appVersion, installerVersion, vault, copy: false,
-            args: [`--remote-debugging-port=0`, '--test-type=webdriver'], // will choose a random available port
+        const launchResult = await launcher.launch({
+            ...params,
+            // will choose a random available port
+            args: [`--remote-debugging-port=0`, '--test-type=webdriver', ...(params.args ?? [])],
         });
-        cleanup.push(() => fsAsync.rm(configDir, {recursive: true, force: true}));
+        if (params.copy) {
+            cleanup.push(() => fsAsync.rm(launchResult.vault!, {recursive: true, force: true}));
+        }
+        const {proc} = launchResult;
+        cleanup.push(() => fsAsync.rm(launchResult.configDir, {recursive: true, force: true}));
         const procExit = new Promise<number>((resolve) => proc.on('close', (code) => resolve(code ?? -1)));
         cleanup.push(async () => {
             proc.kill("SIGTERM");
@@ -225,9 +236,10 @@ export async function getCdpSession(
         );
 
         return {
+            ...launchResult,
             client,
             cleanup: doCleanup,
-            proc,
+            vault: launchResult.vault!,
         };
     } catch (e: any) {
         await doCleanup();
@@ -246,6 +258,129 @@ export async function cdpEvaluate(client: CDP.Client, expression: string) {
 export async function cdpEvaluateUntil(client: CDP.Client, expression: string, opts: UntilOpts) {
     return await until(() => cdpEvaluate(client, expression), opts);
 }
+
+
+//// Obsidian CLI ////
+
+/** Cross platform function to get running processes */
+export async function getProcesses(): Promise<{pid: number, command: string}[]> {
+    if (process.platform === 'win32') {
+        const {stdout} = await execFile('powershell.exe', [
+            '-NoProfile', '-ExecutionPolicy', 'Bypass',
+            '-Command', 'Get-CimInstance Win32_Process | Sort-Object -Property CreationDate | Select-Object ProcessId,CommandLine | ConvertTo-Json',
+        ]);
+        const data = JSON.parse(stdout);
+        const list = Array.isArray(data) ? data : [data]; // PowerShell returns single element as object
+        return list.map(p => ({pid: p.ProcessId, command: p.CommandLine || ''}));
+    } else {
+        const {stdout} = await execFile('ps', ['-xww', '-o', 'lstart=,pid=,command=']);
+        const processes = stdout
+            .split('\n')
+            .map(l => l.trim())
+            .filter(line => line)
+            .map(line => {
+                const [_, startTime, pid, command] = line.match(/^(\w+ \w+ \d+ \d\d:\d\d:\d\d \d\d\d\d)\s+(\d+)\s+(.*)$/)!;
+                return {
+                    pid: Number(pid),
+                    startTime: new Date(startTime).getTime(),
+                    command,
+                };
+            });
+        return _.sortBy(processes, i => i.startTime).map((i) => _.omit(i, 'startTime'));
+    }
+}
+
+type ObsidianInstance = {
+    pid: number, exe: string, configDir: string,
+    vaultId: string, vaultPath: string
+}
+
+/**
+ * Returns the command line necessary to run the Obsidian CLI.
+ * 
+ * As obsidian-launcher sandboxes the user data dir for each obsidian instance, the regular Obsidian CLI can't connect
+ * to the launched instances. This handles finding the correct Obsidian instance and linking the command to the
+ * configDir.
+ * 
+ * Returns [executable, args] tuple to use launch the CLI. Just pass the result to to exec or spawn.
+ */
+export async function getObsidianCli(args: string[]): Promise<[string, string[]]> {
+    // I'm dynamically scanning the process list to find the right Obsidian instance.
+    // This keeps things stateless, but maybe it would be cleaner to keep a record of what's running in obsidian-cache?
+    const clean = (s: string) => { // trim spaces, remove surrounding quotes
+        return s.trim().match(/^["']?(.*?)["']?$/)![1]
+    }
+
+    let processes = await getProcesses();
+    processes = processes.filter(p => p.command.includes("--tag=obsidian-launcher"));
+
+    let obsidianInstances: ObsidianInstance[] = [];
+    for (const proc of processes) {
+        // Match on the obsidian-launcher-config- prefix to avoid potential issues if os.tempdir() contains spaces
+        // You could craft a convoluted path that would break this matching logic though... I don't see a way to prevent
+        // that without having to keep some complex manual state tracking.
+        try {
+            const match = proc.command.match(/(.*?) --user-data-dir=(.*?obsidian-launcher-config-.+?)( |$)/)!;
+            const [_, exe, configDir] = match.map(clean);
+            const obsidianJson = JSON.parse(await fsAsync.readFile(path.join(configDir, "obsidian.json"), 'utf-8'));
+            // There could be multiple vaults in a single instance if the user creates extra vaults manually
+            for (const [vaultId, vaultInfo] of Object.entries<any>(obsidianJson.vaults)) {
+                // realpath so that cwd comparison works on mac (/var is a symlink)
+                const vaultPath = await fsAsync.realpath(vaultInfo.path);
+                obsidianInstances.push({pid: proc.pid, exe, configDir, vaultId, vaultPath});
+            }
+        } catch (e) {
+            console.warn(`Failed to connect to obsidian-launcher instance ${proc.pid}: ${e}`)
+        }
+    }
+    obsidianInstances = obsidianInstances.reverse(); // newest instances first.
+
+    // to match Obsidian logic
+    //   if vault= is passed, match on vaultId or vault basename
+    //   else match if cwd is inside a vault
+    //   else use most recent
+
+    let match: ObsidianInstance|undefined;
+    let newArgs = [...args];
+    if (args.length > 0 && args[0].startsWith("vault=")) {
+        const vault = args[0].slice(6);
+        match = obsidianInstances.find(i => (
+            i.vaultId == vault || path.basename(i.vaultPath).toUpperCase() == vault.toUpperCase()
+        ));
+        if (!match) { // check if its a temporary vault copy
+            const systemTmpDir = await fsAsync.realpath(os.tmpdir());
+            match = obsidianInstances.find(i => (
+                pathIsUnder(systemTmpDir, i.vaultPath) &&
+                path.basename(i.vaultPath).toUpperCase().match(/(.*)-.{6}/)?.[1] == vault.toUpperCase()
+            ))
+        }
+        if (!match) {
+            throw Error(`No running Obsidian instance for ${vault}`);
+        }
+        newArgs = args.slice(1); // remove the vault= arg
+    }
+    if (!match) {
+        const cwd = await fsAsync.realpath(process.cwd()).catch(() => process.cwd());
+        match = obsidianInstances.find(i => cwd == i.vaultPath || pathIsUnder(i.vaultPath, cwd));
+    }
+    if (!match) {
+        match = obsidianInstances.at(0);
+    }
+    if (!match) {
+        throw Error(`No running Obsidian instance`);
+    }
+
+    const exe = match.exe.replace(/.exe$/, '.com'); // Windows uses the .com wrapper
+    newArgs = [
+        `vault=${match.vaultId}`,
+        ...newArgs,
+        `--user-data-dir=${match.configDir}`,
+        ...(process.platform == 'linux' ? ["--no-sandbox"] : []),
+    ]
+
+    return [exe, newArgs];
+}
+
 
 //// updateVersionList helpers ////
 
@@ -464,9 +599,10 @@ export async function checkCompatibility(
     await launcher.downloadApp(appVersion);
     await launcher.downloadInstaller(installerVersion);
 
+    const vault = await makeTmpDir("obsidian-launcher-");
     // retry cdp result on errors, but interpret consistent errors as an incompatibility
     const cdpResult = await maybe(retry(
-        () => getCdpSession(launcher, appVersion, installerVersion),
+        () => getCdpSession(launcher, {appVersion, installerVersion, vault}),
         {retries: 3, backoff: 4000},
     ));
     if (!cdpResult.success) {
@@ -512,6 +648,7 @@ export async function checkCompatibility(
         }
     } finally {
         await cleanup();
+        await fsAsync.rm(vault, {recursive: true, force: true});
     }
 
     consola.log(`app ${appVersion} and installer ${installerVersion} are ${!result ? 'in' : ''}compatible`);

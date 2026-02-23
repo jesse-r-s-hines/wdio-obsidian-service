@@ -1,3 +1,5 @@
+import child_process from "child_process";
+import { promisify } from "util";
 import { describe, it } from "mocha";
 import { expect } from "chai";
 import _ from "lodash";
@@ -9,10 +11,11 @@ import { pathToFileURL } from "url";
 import semver from "semver"
 import { ObsidianLauncher, minSupportedObsidianVersion } from "../../src/launcher.js";
 import { extractInstallerInfo, getCdpSession, cdpEvaluate, checkCompatibility } from "../../src/launcherUtils.js";
-import { obsidianApiLogin } from "../../src/apis.js";
+import { obsidianApiLogin, fetchObsidianApi } from "../../src/apis.js";
 import { fileExists, maybe } from "../../src/utils.js";
 import { ObsidianVersionList } from "../../src/types.js";
-import { createServer } from "../helpers.js";
+import { createServer, createDirectory, withCwd } from "../helpers.js";
+const execFile = promisify(child_process.execFile);
 
 const obsidianLauncherOpts = {
     cacheDir: path.resolve("../../.obsidian-cache"),
@@ -40,24 +43,32 @@ describe("ObsidianLauncher", function() {
         .value();
     const latest = versions.at(-1)![0];
     const latestMinInstaller = versionInfos.versions.find(v => v.version == latest)!.minInstallerVersion!;
+    const latestBeta = versionInfos.versions.at(-1)!.version;
+    const latestInstaller = versionInfos.versions.at(-1)!.maxInstallerVersion!;
     if (process.env.TEST_LEVEL == "all") {
         versions = [ // sample a range of versions
             ..._.range(0, versions.length - 2, (versions.length - 2) / 3).map(i => versions[Math.trunc(i)]),
             ...versions.slice(-1),
             [latest, latestMinInstaller],
+            [latestBeta, latestInstaller],
         ];
     } else {
-        versions = [versions[0], ...versions.slice(-2), [latest, latestMinInstaller]]
+        versions = [versions[0], ...versions.slice(-2), [latest, latestMinInstaller], [latestBeta, latestInstaller]]
     }
 
     before(async function() {
         this.timeout(10 * 60 * 1000);
-        launcher = new ObsidianLauncher(obsidianLauncherOpts);
 
         // mock server that caches requests to Obsidian assets
         const server = await createServer(testData, Object.fromEntries(versionInfos.versions
             .flatMap(v => Object.values(v.downloads))
-            .map(url => [url.replace(/^https?:\/\//, ''), {url}] as const)
+            .map(url => [url.replace(/^https?:\/\//, ''), {async fetch() {
+                if (new URL(url).hostname.endsWith('.obsidian.md')) {
+                    return await fetchObsidianApi(url, {token: 'token'});
+                } else {
+                    return await fetch(url)
+                }
+            }}])
         ));
         await server.addEndpoints({
             'obsidian-versions.json': {content: JSON.stringify({
@@ -126,10 +137,11 @@ describe("ObsidianLauncher", function() {
 
     for (const [appVersion, installerVersion] of versions) {
         it(`test launch ${appVersion}/${installerVersion}`, async function() {
-            const {client, cleanup} = await getCdpSession(launcher, appVersion, installerVersion);
+            const vault = path.join(await createDirectory({"my-vault/A.md": "A"}), 'my-vault');
+            const {client, cleanup} = await getCdpSession(launcher, {appVersion, installerVersion, vault});
             try {
                 const actualVault = await cdpEvaluate(client, "obsidianLauncher.app.vault.adapter.getFullPath('')");
-                expect(actualVault).to.match(/obsidian-vault/)
+                expect(actualVault).to.match(/my-vault/)
 
                 const actualAppVersion = await cdpEvaluate(client, "require('electron').ipcRenderer.sendSync('version')");
                 expect(actualAppVersion).to.eql(appVersion);
@@ -140,6 +152,99 @@ describe("ObsidianLauncher", function() {
                 await cleanup();
             }
         });
+    }
+
+    const cliVersions = versions.filter(([appVersion, installerVersion]) =>
+        semver.gte(appVersion, "1.12.0") && semver.gte(installerVersion, "1.11.7")
+    );
+    async function runObsidianCli(args: string[]) {
+        return await execFile(...await launcher.getObsidianCli(args));
+    }
+    for (const [appVersion, installerVersion] of cliVersions) {
+        describe(`Obsidian CLI ${appVersion}/${installerVersion}`, function() {
+            let vaultA: string|undefined;
+            let vaultB: string|undefined;
+            let vaultBCopy: string|undefined;
+            const cleanup: (() => Promise<void>)[] = []
+
+            before(async function() {
+                vaultA = path.join(await createDirectory({"notes-a/foo/A.md": "A"}), "notes-a");
+                vaultB = path.join(await createDirectory({"notes-b/B.md": "B"}), 'notes-b');
+
+                const launchResultA = await getCdpSession(launcher, {
+                    appVersion, installerVersion,
+                    vault: vaultA, copy: false,
+                });
+                cleanup.push(launchResultA.cleanup);
+
+                const launchResultB = await getCdpSession(launcher, {
+                    appVersion, installerVersion, vault: vaultB, copy: true,
+                });
+                cleanup.push(launchResultB.cleanup);
+                vaultBCopy = launchResultB.vault;
+            });
+
+            after(async function() {
+                for (const f of cleanup) {
+                    await f();
+                }
+            });
+
+            it('test no vault specified', async function() {
+                const {stdout} = await runObsidianCli(['vault']);
+                expect(stdout).to.match(/^path.*notes-b-.+$/m); // picks latest launched instance
+            })
+
+            it('select uncopied vault', async function () {
+                const {stdout} = await runObsidianCli(['vault=notes-a', 'vault']);
+                expect(stdout).to.match(/^path.*notes-a\s*$/m);
+            })
+
+            it('select copied vault by original name', async function () {
+                const {stdout} = await runObsidianCli(['vault=notes-b', 'vault']);
+                expect(stdout).to.match(/^path.*notes-b-.+$/m);
+            })
+
+            it('select copied vault by new name', async function () {
+                const {stdout} = await runObsidianCli([`vault=${path.basename(vaultBCopy!)}`, 'vault']);
+                expect(stdout).to.match(/^path.*notes-b-.+$/m);
+            })
+
+            it('select vault by id', async function () {
+                let {stdout: vaultId} = await runObsidianCli(['vault=notes-a', 'eval', 'code=app.appId']);
+                vaultId = vaultId.trim().replace(/^=>/, '').trim();
+
+                const {stdout} = await runObsidianCli([`vault=${vaultId}`, 'vault']);
+                expect(stdout).to.match(/^path.*notes-a\s*$/m);
+            })
+
+            it('select vault by cwd A', async function () {
+                await withCwd(vaultA!, async () => {
+                    const {stdout} = await runObsidianCli(['vault']);
+                    expect(stdout).to.match(/^path.*notes-a\s*$/m);
+                });
+            })
+
+            it('select vault by cwd subdir', async function () {
+                await withCwd(path.join(vaultA!, 'foo'), async () => {
+                    const {stdout} = await runObsidianCli(['vault']);
+                    expect(stdout).to.match(/^path.*notes-a\s*$/m);
+                })
+            })
+
+            it('select vault by cwd B', async function () {
+                await withCwd(vaultBCopy!, async () => {
+                    const {stdout} = await runObsidianCli(['vault']);
+                    expect(stdout).to.match(/^path.*notes-b-.+$/m);
+                })
+            })
+
+            it('no vault throws', async function () {
+                const result = await launcher.getObsidianCli(['vault=not-a-vault', 'vault']).catch(e => e);
+                expect(result).to.be.instanceOf(Error);
+                expect(result.toString()).includes("No running Obsidian instance for");
+            })
+        })
     }
 })
 

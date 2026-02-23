@@ -3,7 +3,8 @@ import path from "path"
 import crypto from "crypto";
 import extractZip from "extract-zip"
 import { downloadArtifact } from '@electron/get';
-import child_process from "child_process"
+import child_process from "child_process";
+import os from "os";
 import semver from "semver"
 import { fileURLToPath } from "url";
 import _ from "lodash"
@@ -18,7 +19,7 @@ import { obsidianApiLogin, fetchObsidianApi, downloadResponse } from "./apis.js"
 import ChromeLocalStorage from "./chromeLocalStorage.js";
 import {
     normalizeGitHubRepo, extractGz, extractObsidianAppImage, extractObsidianExe, extractObsidianDmg,
-    updateObsidianVersionList,
+    updateObsidianVersionList, getObsidianCli,
 } from "./launcherUtils.js";
 
 const currentPlatform = {
@@ -52,7 +53,7 @@ export class ObsidianLauncher {
 
     /**
      * Construct an ObsidianLauncher.
-     * @param opts.cacheDir Path to the cache directory. Defaults to "OBSIDIAN_CACHE" env var or ".obsidian-cache".
+     * @param opts.cacheDir Path to the cache directory. Defaults to "OBSIDIAN_CACHE" env var or ~/.obsidian-cache.
      * @param opts.versionsUrl Custom `obsidian-versions.json` url. Can be a file URL.
      * @param opts.communityPluginsUrl Custom `community-plugins.json` url. Can be a file URL.
      * @param opts.communityThemesUrl Custom `community-css-themes.json` url. Can be a file URL.
@@ -67,7 +68,11 @@ export class ObsidianLauncher {
         cacheDuration?: number,
         interactive?: boolean,
     } = {}) {
-        this.cacheDir = path.resolve(opts.cacheDir ?? process.env.OBSIDIAN_CACHE ?? "./.obsidian-cache");
+        this.cacheDir = path.resolve(
+            opts.cacheDir ??
+            process.env.OBSIDIAN_CACHE ??
+            path.join(os.homedir(), '.obsidian-cache')
+        );
         
         const defaultVersionsUrl =  'https://raw.githubusercontent.com/jesse-r-s-hines/wdio-obsidian-service/HEAD/obsidian-versions.json'
         this.versionsUrl = opts.versionsUrl ?? defaultVersionsUrl;
@@ -906,6 +911,7 @@ export class ObsidianLauncher {
         )
         const obsidianJson: any = {
             updateDisabled: true, // prevents Obsidian trying to auto-update on boot.
+            cli: true, // enable the CLI
         }
 
         if (params.vault !== undefined) {
@@ -1019,6 +1025,7 @@ export class ObsidianLauncher {
             // Workaround for SUID issue on linux. See https://github.com/electron/electron/issues/42510
             ...(process.platform == 'linux' ? ["--no-sandbox"] : []),
             ...(params.args ?? []),
+            '--tag=obsidian-launcher', // hack so we can identify obsidian-launcher processes when connecting the CLI
         ], {
             ...params.spawnOptions,
         });
@@ -1075,5 +1082,35 @@ export class ObsidianLauncher {
         } else {
             return true;
         }
+    }
+
+    /**
+     * Return the command needed to run the Obsidian CLI.
+     * 
+     * As obsidian-launcher sandboxes the config dir for each Obsidian instance, the Obsidian CLI won't connect to the
+     * launched instances by default. This method takes Obsidian CLI args, and then returns an [executable, args] tuple
+     * that can be used to launch the Obsidian CLI against the sandboxed instances.
+     * 
+     * Like the the regular Obsidian CLI, it will connect to the instance matching the `vault=` argument if present, or
+     * the cwd.
+     * 
+     * Just pass the result to child_process.spawn or child_process.execFile to run the command.
+     * 
+     * Example:
+     * ```js
+     * import child_process from "child_process";
+     * import util from "util";
+     * const execFile = util.promisify(child_process.execFile);
+     * const [executable, args] = await launcher.getObsidianCli(["file", "file=Dashboard"]);
+     * const {stdout, stderr} = await execFile(executable, args);
+     * ```
+     * 
+     * The Obsidian CLI only works on Obsidian >=1.12.0 with installer >=1.11.7.
+     * See https://help.obsidian.md/cli
+     * 
+     * @returns [executable, args] tuple
+     */
+    async getObsidianCli(args: string[]): Promise<[string, string[]]> {
+        return await getObsidianCli(args);
     }
 }
