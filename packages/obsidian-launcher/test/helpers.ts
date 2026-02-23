@@ -60,12 +60,17 @@ export async function createServer(cacheDir: string, endpoints: Record<string, E
         try {
             const requestPath = path.posix.normalize(request.url!).replace(/^\//, '');
             const endpoint = endpointsMap.get(requestPath);
-            const dest = path.join(serverDir, requestPath);
+            const dest = path.resolve(serverDir, requestPath);
+            // Ensure the resolved destination stays within the server directory
+            if (!dest.startsWith(serverDir + path.sep)) { // Make GitHub code scanning happy
+                response.statusCode = 403;
+                return;
+            }
 
             if (endpoint && !(await fileExists(dest))) {
                 await fsAsync.mkdir(path.dirname(dest), {recursive: true});
                 if (endpoint.fetch) {
-                    const cacheDest = path.join(cacheDir, requestPath);
+                    const cacheDest = path.join(cacheDir, path.relative(serverDir, dest));
                     await atomicCreate(cacheDest, async (scratch) => {
                         await downloadResponse(endpoint.fetch!, path.join(scratch, "out"));
                         return path.join(scratch, "out");
