@@ -127,3 +127,6 @@ Support Obsidian CLI in wdio tests!
 
 ## 2.3.1
 - Fix changelog and release tag
+
+## 2.3.2
+- Documentation updates
