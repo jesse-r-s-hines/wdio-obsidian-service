@@ -1091,7 +1091,7 @@ export class ObsidianLauncher {
      * launched instances by default. This method takes Obsidian CLI args, and then returns an [executable, args] tuple
      * that can be used to launch the Obsidian CLI against the sandboxed instances.
      * 
-     * Like the the regular Obsidian CLI, it will connect to the instance matching the `vault=` argument if present, or
+     * Like the regular Obsidian CLI, it will connect to the instance matching the `vault=` argument if present, or
      * the cwd.
      * 
      * Just pass the result to child_process.spawn or child_process.execFile to run the command.

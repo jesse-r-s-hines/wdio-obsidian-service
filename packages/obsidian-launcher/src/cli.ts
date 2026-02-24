@@ -281,7 +281,7 @@ program
         "the launched instances by default. This command handles connecting the CLI to the sandboxed Obsidian " +
         "instances.\n" +
         "\n" +
-        "Like the the regular Obsidian CLI, it will connect to the instance matching the `vault=` argument if " +
+        "Like the regular Obsidian CLI, it will connect to the instance matching the `vault=` argument if " +
         "present, or the cwd.\n" +
         "\n" +
         "The Obsidian CLI only works on Obsidian >=1.12.0 with installer >=1.11.7\n" +
