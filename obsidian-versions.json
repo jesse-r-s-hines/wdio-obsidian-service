@@ -3,7 +3,7 @@
         "schemaVersion": "2.0.0",
         "commitDate": "2026-02-27T16:04:57Z",
         "commitSha": "3462a23eabf23e3c134f9672d48b0604458184f5",
-        "timestamp": "2026-02-28T08:35:33.277Z"
+        "timestamp": "2026-02-28T16:35:15.140Z"
     },
     "versions": [
         {
@@ -8085,8 +8085,8 @@
                     ]
                 },
                 "exe": {
-                    "digest": "sha256:df6f1dbf0aeef88a1af0cf4b037d4b3da7f107bbd85c42f188dd297deeb772bb",
-                    "electron": "39.7.0",
+                    "digest": "sha256:1f9e6a63a511456920db8191112a446494ab907d2834f1b779840a60ea6445df",
+                    "electron": "39.6.0",
                     "chrome": "142.0.7444.265",
                     "platforms": [
                         "win32-arm64",
