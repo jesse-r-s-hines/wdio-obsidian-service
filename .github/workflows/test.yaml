@@ -120,7 +120,8 @@ jobs:
 
       - run: |
           if [[ '${{ matrix.package-resolution }}' == 'highest' ]]; then
-            npm_config_resolution_mode=highest pnpm install --no-lockfile
+            rm -rf pnpm-lock.yaml node_modules/ **/node_modules
+            pnpm install --config.resolutionMode=highest --no-frozen-lockfile
           else
             pnpm install --frozen-lockfile # Default resolution mode is set to lowest
           fi
@@ -208,7 +209,8 @@ jobs:
 
       - run: |
           if [[ '${{ matrix.package-resolution }}' == 'highest' ]]; then
-            npm_config_resolution_mode=highest pnpm install --no-lockfile
+            rm -rf pnpm-lock.yaml node_modules/ **/node_modules
+            pnpm install --config.resolutionMode=highest --no-frozen-lockfile
           else
             pnpm install --frozen-lockfile # Default resolution mode is set to lowest
           fi
