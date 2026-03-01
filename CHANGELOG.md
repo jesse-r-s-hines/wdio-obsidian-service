@@ -130,3 +130,7 @@ Support Obsidian CLI in wdio tests!
 
 ## 2.3.2
 - Documentation updates
+
+## 2.3.3
+- Fix `obsidian-launcher cli` command and `runObsidianCli` on Windows
+    - The TUI still doesn't work properly on Windows via `obsidian-launcher cli` but running commands directly does.
