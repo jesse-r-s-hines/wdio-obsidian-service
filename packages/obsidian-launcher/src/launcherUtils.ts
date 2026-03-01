@@ -279,7 +279,7 @@ export async function getProcesses(): Promise<{pid: number, command: string}[]> 
             .map(l => l.trim())
             .filter(line => line)
             .map(line => {
-                const [_, startTime, pid, command] = line.match(/^(\w+ \w+ \d+ \d\d:\d\d:\d\d \d\d\d\d)\s+(\d+)\s+(.*)$/)!;
+                const [_, startTime, pid, command] = line.match(/^(\w+\s+\w+\s+\d+\s+\d\d:\d\d:\d\d\s+\d\d\d\d)\s+(\d+)\s+(.*)$/)!;
                 return {
                     pid: Number(pid),
                     startTime: new Date(startTime).getTime(),
