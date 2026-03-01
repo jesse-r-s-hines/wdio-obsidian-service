@@ -50,10 +50,12 @@ describe("ObsidianLauncher", function() {
             ..._.range(0, versions.length - 2, (versions.length - 2) / 3).map(i => versions[Math.trunc(i)]),
             ...versions.slice(-1),
             [latest, latestMinInstaller],
-            [latestBeta, latestInstaller],
         ];
+        if (latestBeta != latest) {
+            versions.push([latestBeta, latestInstaller]);
+        }
     } else {
-        versions = [versions[0], ...versions.slice(-2), [latest, latestMinInstaller], [latestBeta, latestInstaller]]
+        versions = [versions[0], ...versions.slice(-2), [latest, latestMinInstaller]]
     }
 
     before(async function() {

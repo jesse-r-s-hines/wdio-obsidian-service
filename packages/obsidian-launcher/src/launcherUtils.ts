@@ -279,7 +279,7 @@ export async function getProcesses(): Promise<{pid: number, command: string}[]> 
             .map(l => l.trim())
             .filter(line => line)
             .map(line => {
-                const [_, startTime, pid, command] = line.match(/^(\w+ \w+ \d+ \d\d:\d\d:\d\d \d\d\d\d)\s+(\d+)\s+(.*)$/)!;
+                const [_, startTime, pid, command] = line.match(/^(\w+\s+\w+\s+\d+\s+\d\d:\d\d:\d\d\s+\d\d\d\d)\s+(\d+)\s+(.*)$/)!;
                 return {
                     pid: Number(pid),
                     startTime: new Date(startTime).getTime(),
@@ -370,7 +370,9 @@ export async function getObsidianCli(args: string[]): Promise<[string, string[]]
         throw Error(`No running Obsidian instance`);
     }
 
-    const exe = match.exe.replace(/.exe$/, '.com'); // Windows uses the .com wrapper
+    // The .com wrapper doesn't pass through --user-data-dir. The .exe directly does work for most commands,
+    // but messes up stdin in the TUI
+    // const exe = match.exe.replace(/.exe$/, '.com');
     newArgs = [
         `vault=${match.vaultId}`,
         ...newArgs,
@@ -378,7 +380,7 @@ export async function getObsidianCli(args: string[]): Promise<[string, string[]]
         ...(process.platform == 'linux' ? ["--no-sandbox"] : []),
     ]
 
-    return [exe, newArgs];
+    return [match.exe, newArgs];
 }
 
 

@@ -62,8 +62,9 @@ class ObsidianPage extends BasePage {
             throw Error(`Obsidian CLI only works on desktop`)
         }
         const chromeArgs: string[] = this.browser.requestedCapabilities['goog:chromeOptions'].args;
-        const cliBinary = binaryPath!.replace(/.exe$/, '.com'); // Windows uses the .com wrapper
-        return await execFile(cliBinary, [...args, ...chromeArgs]);
+        // The Windows .com wrapper is losing --user-data-dir args
+        // const cliBinary = binaryPath!.replace(/.exe$/, '.com');
+        return await execFile(binaryPath!, [...args, ...chromeArgs]);
     }
 
     /**
