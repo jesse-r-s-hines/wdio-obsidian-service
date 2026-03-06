@@ -374,10 +374,10 @@ export async function getObsidianCli(args: string[]): Promise<[string, string[]]
     // but messes up stdin in the TUI
     // const exe = match.exe.replace(/.exe$/, '.com');
     newArgs = [
-        `vault=${match.vaultId}`,
-        ...newArgs,
         `--user-data-dir=${match.configDir}`,
         ...(process.platform == 'linux' ? ["--no-sandbox"] : []),
+        `vault=${match.vaultId}`,
+        ...newArgs,
     ]
 
     return [match.exe, newArgs];
