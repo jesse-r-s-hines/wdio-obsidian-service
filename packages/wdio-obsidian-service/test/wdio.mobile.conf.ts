@@ -109,6 +109,9 @@ export const config: WebdriverIO.Config = {
         timeout: 300 * 1000,
         bail: 3,
     },
+    // TODO: Temporary workaround for flaky appium timeouts
+    specFileRetries: 3,
+    specFileRetriesDelay: 10,
 
     logLevel: "warn",
 

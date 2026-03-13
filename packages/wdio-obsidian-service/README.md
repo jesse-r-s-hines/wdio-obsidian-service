@@ -80,7 +80,7 @@ export const config: WebdriverIO.Config = {
     mochaOpts: {
         ui: 'bdd',
         timeout: 60000,
-        // You can set mocha settings like "retry" and "bail"
+        // You can set mocha settings like "retries" and "bail"
     },
     logLevel: "warn",
 }
