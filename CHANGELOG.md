@@ -134,3 +134,8 @@ Support Obsidian CLI in wdio tests!
 ## 2.3.3
 - Fix `obsidian-launcher cli` command and `runObsidianCli` on Windows
     - The TUI still doesn't work properly on Windows via `obsidian-launcher cli` but running commands directly does.
+
+## 2.4.0
+- Fix hang when installing via PNPM (see https://github.com/pnpm/pnpm/issues/10718#issuecomment-4054773598)
+- Fix `ObsidianPage.runObsidianCli` on `1.12.5`
+    - There's still issues using the `obsidian-launcher cli` command on 1.12.5, but `ObsidianPage.runObsidianCli` will work in wdio tests
