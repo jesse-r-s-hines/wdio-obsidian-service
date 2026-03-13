@@ -32,6 +32,7 @@ describe("standalone mode test", function() {
         }, obsidianServiceOptions)
     });
     after(async function() {
+        this.timeout("10s");
         await browser?.deleteSession();
     });
     this.timeout("30s");

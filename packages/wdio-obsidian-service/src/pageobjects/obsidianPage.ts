@@ -1,8 +1,6 @@
 import * as path from "path"
 import * as fsAsync from "fs/promises"
 import * as crypto from "crypto";
-import { promisify } from "util";
-import child_process from "child_process";
 import * as semver from "semver";
 import { fileURLToPath } from "url";
 import { TFile } from "obsidian";
@@ -11,7 +9,6 @@ import { OBSIDIAN_CAPABILITY_KEY, NormalizedObsidianCapabilityOptions } from "..
 import { BasePage } from "./basePage.js";
 import { isAppium, normalizePath, isHidden, isText } from "../utils.js";
 import { AppInternal, PlatformInternal } from "../obsidianTypes.js";
-const execFile = promisify(child_process.execFile);
 
 /**
  * Class with various helper methods for writing Obsidian tests using the
@@ -54,17 +51,23 @@ class ObsidianPage extends BasePage {
      * See https://help.obsidian.md/cli
      */
     async runObsidianCli(args: string[]): Promise<{stdout: string, stderr: string}> {
-        const {appVersion, installerVersion, binaryPath} = this.getObsidianCapabilities();
+        const {appVersion, installerVersion} = this.getObsidianCapabilities();
         if (semver.lt(appVersion, "1.12.0") || semver.lt(installerVersion, "1.11.7")) {
             throw Error(`Obsidian CLI only works on app >=1.12.0 and installer >=1.11.7`)
         }
         if (isAppium(this.browser.requestedCapabilities)) {
             throw Error(`Obsidian CLI only works on desktop`)
         }
-        const chromeArgs: string[] = this.browser.requestedCapabilities['goog:chromeOptions'].args;
+        const stdout = await this.browser.execute((args) => (window as any).handleCli(args), args);
+        return {stdout, stderr: ""};
+        // TODO: I'd prefer to run this with the actual binary instead of using the internal API here, but as of 1.12.5,
+        // the communication socket Obsidian uses has a constant name, e.g. `/run/user/1000/obsidian-cli.sock`,
+        //  so parallel Obsidian instances interfere with each other. 
+
+        // const chromeArgs: string[] = this.browser.requestedCapabilities['goog:chromeOptions'].args;
         // The Windows .com wrapper is losing --user-data-dir args
         // const cliBinary = binaryPath!.replace(/.exe$/, '.com');
-        return await execFile(binaryPath!, [...args, ...chromeArgs]);
+        // return await execFile(binaryPath!, [...args, ...chromeArgs]);
     }
 
     /**
