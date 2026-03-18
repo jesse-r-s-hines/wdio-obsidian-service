@@ -170,6 +170,7 @@ export class ObsidianLauncherService implements Services.ServiceInstance {
                     const normalizedObsidianOptions: NormalizedObsidianCapabilityOptions = {
                         ...obsidianOptions,
                         plugins, themes, vault: vault,
+                        copy: obsidianOptions.copy ?? true,
                         appVersion, installerVersion: appVersion,
                         emulateMobile: false,
                     }
@@ -211,6 +212,7 @@ export class ObsidianLauncherService implements Services.ServiceInstance {
                     const normalizedObsidianOptions: NormalizedObsidianCapabilityOptions = {
                         ...obsidianOptions,
                         plugins, themes, vault,
+                        copy: obsidianOptions.copy ?? true,
                         binaryPath: installerPath, appPath: appPath,
                         appVersion, installerVersion,
                         emulateMobile: obsidianOptions.emulateMobile ?? false,
@@ -277,20 +279,23 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
     }
 
     /**
-     * Creates a copy of the vault with plugins and themes installed
+     * Sets up the vault with plugins and themes installed, optionally copying it first.
      */
     private async setupVault(cap: WebdriverIO.Capabilities) {
         const obsidianOptions = getNormalizedObsidianOptions(cap);
         let vaultCopy: string|undefined;
         if (obsidianOptions.vault != undefined) {
-            log.info(`Opening vault ${obsidianOptions.vault}`);
+            const shouldCopy = obsidianOptions.copy !== false;
+            log.info(`Opening vault ${obsidianOptions.vault}${shouldCopy ? ' (copy)' : ' (in-place)'}`);
             vaultCopy = await this.obsidianLauncher.setupVault({
                 vault: obsidianOptions.vault,
-                copy: true,
+                copy: shouldCopy,
                 plugins: obsidianOptions.plugins,
                 themes: obsidianOptions.themes,
             });
-            this.tmpDirs.push(vaultCopy);
+            if (shouldCopy) {
+                this.tmpDirs.push(vaultCopy);
+            }
         } else {
             log.info(`Opening Obsidian without a vault`)
         }
