@@ -94,11 +94,10 @@ export interface ObsidianCapabilityOptions {
      * Whether to copy the vault to a temporary directory before running tests.
      *
      * When `true` (the default), the vault is copied so that tests don't modify the original. When `false`, the
-     * vault is used in-place — useful for interactive/debug sessions or read-only tests on large vaults where
-     * copying is expensive.
+     * vault is used in-place, useful for debugging or read-only tests on large vaults.
      *
-     * **Warning:** With `copy: false`, any changes made by tests (or by Obsidian itself) will persist in the
-     * original vault.
+     * Note that, even with "read-only" tests `copy: false` will persist changes made by Obsidian and
+     * wdio-obsidian-service such as installed plugins and other files under `.obsidian`.
      *
      * Defaults to `true`.
      */

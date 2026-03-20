@@ -481,7 +481,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
         const service = this; // eslint-disable-line @typescript-eslint/no-this-alias
         const reloadObsidian: WebdriverIO.Browser['reloadObsidian'] = async function(
             this: WebdriverIO.Browser,
-            {vault, plugins, theme} = {},
+            {vault, copy = false, plugins, theme} = {},
         ) {
             const oldObsidianOptions = getNormalizedObsidianOptions(this.requestedCapabilities);
             const selectedPlugins = selectPlugins(oldObsidianOptions.plugins, plugins);
@@ -493,6 +493,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
                 ...oldObsidianOptions,
                 // Resolve relative to PWD instead of root dir during tests
                 vault: vault ? path.resolve(vault) : oldObsidianOptions.vault,
+                copy,
                 plugins: selectedPlugins, themes: selectedThemes,
             };
 
