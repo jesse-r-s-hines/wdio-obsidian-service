@@ -82,12 +82,26 @@ export interface ObsidianCapabilityOptions {
 
     /**
      * The path to the vault to open.
-     * 
-     * The vault will be copied, so any changes made in your tests won't affect the original. If omitted, no vault will
-     * be opened and you'll need to call {@link ObsidianBrowserCommands.reloadObsidian|browser.reloadObsidian} to open a
-     * vault during your tests. Path is relative to your `wdio.conf.mts`.
+     *
+     * By default the vault will be copied to a temporary directory, so any changes made in your tests won't affect
+     * the original. Set {@link copy} to `false` to use the vault in-place. If omitted, no vault will be opened and
+     * you'll need to call {@link ObsidianBrowserCommands.reloadObsidian|browser.reloadObsidian} to open a vault
+     * during your tests. Path is relative to your `wdio.conf.mts`.
      */
     vault?: string,
+
+    /**
+     * Whether to copy the vault to a temporary directory before running tests.
+     *
+     * When `true` (the default), the vault is copied so that tests don't modify the original. When `false`, the
+     * vault is used in-place, useful for debugging or read-only tests on large vaults.
+     *
+     * Note that, even with "read-only" tests `copy: false` will persist changes made by Obsidian and
+     * wdio-obsidian-service such as installed plugins and other files under `.obsidian`.
+     *
+     * Defaults to `true`.
+     */
+    copy?: boolean,
 
     /**
      * Set to true to emulate mobile on the Electron desktop app. This uses Obsidian `app.emulateMobile()` to switch
@@ -124,6 +138,7 @@ export interface NormalizedObsidianCapabilityOptions {
     plugins: DownloadedPluginEntry[],
     themes: DownloadedThemeEntry[],
     vault?: string,
+    copy: boolean,
     vaultCopy?: string,
     /** Path of the vault on the appium device */
     uploadedVault?: string,

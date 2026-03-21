@@ -42,3 +42,38 @@ describe("standalone mode test", function() {
         expect(path.basename(vaultPath)).to.match(/^basic-/);
     });
 })
+
+describe("standalone mode no-copy vault test", function() {
+    let browser: WebdriverIO.Browser|undefined;
+    before(async function() {
+        this.timeout("10m");
+        browser = await startWdioSession({
+            capabilities: {
+                browserName: "obsidian",
+                browserVersion: "latest",
+                'wdio:obsidianOptions': {
+                    installerVersion: "latest",
+                    plugins: [
+                        "./test/plugins/basic-plugin",
+                    ],
+                    vault: "./test/vaults/basic",
+                    copy: false,
+                },
+            },
+            cacheDir: cacheDir,
+            logLevel: "warn",
+        }, obsidianServiceOptions)
+    });
+    after(async function() {
+        this.timeout("10s");
+        await browser?.deleteSession();
+    });
+    this.timeout("30s");
+
+    it("uses vault in-place when copy is false", async function() {
+        const vaultPath = await browser!.executeObsidian(({app}) => (app.vault.adapter as any).getFullPath(""));
+        // With copy: false, the vault should be used in-place, so the path should end with the original vault name
+        // (not a temp copy with a random suffix like "basic-xxxxx")
+        expect(vaultPath).to.match(/\/basic\/?$/);
+    });
+})
