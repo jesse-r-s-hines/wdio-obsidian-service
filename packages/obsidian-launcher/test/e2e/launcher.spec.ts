@@ -253,7 +253,7 @@ describe("ObsidianLauncher login", function() {
     this.timeout("120s");
 
     before(async function() {
-        if (process.env.TEST_LEVEL != "all") this.skip();
+        if (process.env.TEST_LEVEL != "all" || !process.env.OBSIDIAN_PASSWORD) this.skip();
     })
 
     it("test login", async function() {
