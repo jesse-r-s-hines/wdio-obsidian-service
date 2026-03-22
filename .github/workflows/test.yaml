@@ -235,7 +235,7 @@ jobs:
           key: avd-${{ matrix.android-api-level }}-${{ matrix.android-profile }}
 
       - name: run android tests
-        uses: reactivecircus/android-emulator-runner@v2
+        uses: reactivecircus/android-emulator-runner@v2.35.0
         with:
           force-avd-creation: false
           avd-name: obsidian_test
