@@ -139,7 +139,8 @@ export interface NormalizedObsidianCapabilityOptions {
     themes: DownloadedThemeEntry[],
     vault?: string,
     copy: boolean,
-    vaultCopy?: string,
+    /** The actually open vault (a copy of vault unless copy is false) */
+    openVault?: string,
     /** Path of the vault on the appium device */
     uploadedVault?: string,
     emulateMobile: boolean,

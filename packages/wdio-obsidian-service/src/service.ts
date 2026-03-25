@@ -283,23 +283,23 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
      */
     private async setupVault(cap: WebdriverIO.Capabilities) {
         const obsidianOptions = getNormalizedObsidianOptions(cap);
-        let vaultCopy: string|undefined;
+        let openVault: string|undefined;
         if (obsidianOptions.vault != undefined) {
-            const shouldCopy = obsidianOptions.copy !== false;
-            log.info(`Opening vault ${obsidianOptions.vault}${shouldCopy ? ' (copy)' : ' (in-place)'}`);
-            vaultCopy = await this.obsidianLauncher.setupVault({
+            const shouldCopy = obsidianOptions.copy;
+            log.info(`Opening vault ${obsidianOptions.vault}${obsidianOptions.copy ? ' (copy)' : ' (in-place)'}`);
+            openVault = await this.obsidianLauncher.setupVault({
                 vault: obsidianOptions.vault,
                 copy: shouldCopy,
                 plugins: obsidianOptions.plugins,
                 themes: obsidianOptions.themes,
             });
             if (shouldCopy) {
-                this.tmpDirs.push(vaultCopy);
+                this.tmpDirs.push(openVault);
             }
         } else {
             log.info(`Opening Obsidian without a vault`)
         }
-        obsidianOptions.vaultCopy = vaultCopy; // for use in getVaultPath() and the other service hooks
+        obsidianOptions.openVault = openVault; // for use in getVaultPath() and the other service hooks
     }
 
     /**
@@ -310,7 +310,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
         const configDir = await this.obsidianLauncher.setupConfigDir({
             appVersion: obsidianOptions.appVersion, installerVersion: obsidianOptions.installerVersion,
             appPath: obsidianOptions.appPath,
-            vault: obsidianOptions.vaultCopy,
+            vault: obsidianOptions.openVault,
             // `app.emulateMobile` just sets this localStorage variable. Setting it ourselves here instead of calling
             // the function simplifies the boot/plugin load sequence and makes sure plugins load in mobile mode.
             localStorage: obsidianOptions.emulateMobile ? {"EmulateMobile": "1"} : {},
@@ -404,11 +404,11 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
     private async appiumOpenVault() {
         const browser = this.browser!;
         const obsidianOptions = getNormalizedObsidianOptions(browser.requestedCapabilities);
-        const androidVault = `${this.androidVaultDir}/${path.basename(obsidianOptions.vaultCopy!)}`;
-        // TODO: Capabilities is not really the right place to be storing state like vaultCopy and uploadVault
+        const androidVault = `${this.androidVaultDir}/${path.basename(obsidianOptions.openVault!)}`;
+        // TODO: Capabilities is not really the right place to be storing state like openVault and uploadVault
         obsidianOptions.uploadedVault = androidVault;
         // transfer the vault to the device
-        await appiumUploadFiles(browser, {src: obsidianOptions.vaultCopy!, dest: androidVault});
+        await appiumUploadFiles(browser, {src: obsidianOptions.openVault!, dest: androidVault});
 
         // open vault by setting the localStorage keys and relaunching Obsidian
         // on appium restarting the app with appium:fullReset is *really* slow. And, unlike electron we can actually
@@ -486,7 +486,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
             const oldObsidianOptions = getNormalizedObsidianOptions(this.requestedCapabilities);
             const selectedPlugins = selectPlugins(oldObsidianOptions.plugins, plugins);
             const selectedThemes = selectThemes(oldObsidianOptions.themes, theme);
-            if (!vault && oldObsidianOptions.vaultCopy == undefined) {
+            if (!vault && oldObsidianOptions.openVault == undefined) {
                 throw Error(`No vault is open, pass a vault path to reloadObsidian`);
             }
             const newObsidianOptions: NormalizedObsidianCapabilityOptions = {
@@ -509,7 +509,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
                     await navigateAndWait(this, () => location.replace('http://localhost/_capacitor_file_/not-a-file'));
 
                     // while Obsidian is down, modify the vault files to setup plugins and themes
-                    const local = path.join(oldObsidianOptions.vaultCopy!, ".obsidian");
+                    const local = path.join(oldObsidianOptions.openVault!, ".obsidian");
                     const localCommunityPlugins = path.join(local, "community-plugins.json");
                     const localAppearance = path.join(local, "appearance.json");
                     const remote = `${oldObsidianOptions.uploadedVault!}/.obsidian`;
@@ -519,7 +519,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
                     await appiumDownloadFile(this, remoteCommunityPlugins, localCommunityPlugins).catch(() => {});
                     await appiumDownloadFile(this, remoteAppearance, localAppearance).catch(() => {});
                     await service.obsidianLauncher.setupVault({
-                        vault: oldObsidianOptions.vaultCopy!, copy: false,
+                        vault: oldObsidianOptions.openVault!, copy: false,
                         plugins: selectedPlugins, themes: selectedThemes,
                     });
                     let files = [localCommunityPlugins, localAppearance];
@@ -551,7 +551,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
                     await this.deleteSession({shutdownDriver: false});
                     // while Obsidian is down, modify the vault files to setup plugins and themes
                     await service.obsidianLauncher.setupVault({
-                        vault: oldObsidianOptions.vaultCopy!, copy: false,
+                        vault: oldObsidianOptions.openVault!, copy: false,
                         plugins: selectedPlugins, themes: selectedThemes,
                     });
                     await this.reloadSession(newCap);
