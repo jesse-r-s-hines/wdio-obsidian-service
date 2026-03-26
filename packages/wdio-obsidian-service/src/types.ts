@@ -145,11 +145,9 @@ export interface NormalizedObsidianCapabilityOptions {
     /** Path of the vault on the appium device */
     androidVault?: string,
     /**
-     * Path to upload vaults.
-     * Unique per test run so that we can reuse copy: false vaults between test specs, but not cause issues if files
-     * were left over from last test run
+     * Unique ID per test run. We use this for handling Appium vault uploads.
      */
-    androidTestRunVaultsDir?: string
+    testRunId: string
     emulateMobile: boolean,
     binaryPath?: string,
     appPath?: string,
