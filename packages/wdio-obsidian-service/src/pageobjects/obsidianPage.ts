@@ -41,7 +41,7 @@ class ObsidianPage extends BasePage {
         if (obsidianOptions.openVault === undefined) {
             throw Error("No vault open, set vault in wdio.conf.mts or use reloadObsidian to open a vault dynamically.")
         }
-        return obsidianOptions.uploadedVault ?? obsidianOptions.openVault;
+        return obsidianOptions.androidVault ?? obsidianOptions.openVault;
     }
 
     /** 

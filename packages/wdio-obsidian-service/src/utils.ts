@@ -107,6 +107,13 @@ export async function appiumReaddir(browser: WebdriverIO.Browser, dir: string) {
     return stdout.split("\n").filter(f => f).map(f => path.join(dir, f)).sort();
 }
 
+export async function appiumExists(browser: WebdriverIO.Browser, file: string) {
+    const stdout: string = await browser.execute("mobile: shell", {command: "sh", args: ["-c",
+        quote(`[ -e ${quote(file)} ] && echo "true" || echo "false"`)],
+    });
+    return stdout.trim() == "true" ? true : false;
+}
+
 /**
  * Reload/replace the page and then wait for the current page to unloaded. Does NOT wait for the new page to be ready.
  * Example:
