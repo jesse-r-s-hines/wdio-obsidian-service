@@ -121,7 +121,7 @@ export class ObsidianLauncherService implements Services.ServiceInstance {
     async onPrepare(config: Options.Testrunner, capabilities: Capabilities.TestrunnerCapabilities) {
         try {
             // Create an ID that is unique per test run, but the same between sessions.
-            const runId = crypto.randomUUID().replace(/-/g, '').slice(20);
+            const runId = crypto.randomUUID().replace(/-/g, '').slice(16);
 
             if (!Array.isArray(capabilities)) {
                 capabilities = Object.values(capabilities).map(
@@ -180,10 +180,7 @@ export class ObsidianLauncherService implements Services.ServiceInstance {
                         copy: obsidianOptions.copy ?? true,
                         appVersion, installerVersion: appVersion,
                         emulateMobile: false,
-                        // Use a directory per test run, so that when copy: false, we can reuse vaults between sessions
-                        // but guarantee a fresh upload at the beginning of tests even if androidVaultsDir wasn't
-                        // cleaned up properly last run
-                        androidTestRunVaultsDir: `${androidVaultsDir}/${runId}`,
+                        testRunId: runId,
                     }
                     cap[OBSIDIAN_CAPABILITY_KEY] = normalizedObsidianOptions;
                     cap['appium:app'] = apk;
@@ -227,6 +224,7 @@ export class ObsidianLauncherService implements Services.ServiceInstance {
                         binaryPath: installerPath, appPath: appPath,
                         appVersion, installerVersion,
                         emulateMobile: obsidianOptions.emulateMobile ?? false,
+                        testRunId: runId,
                     }
 
                     cap.browserName = "chrome";
@@ -417,9 +415,13 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
         // create a path based on the openVault.
         // if copy: true, openVault path is randomized so the has hash will also be unique
         // if copy: false, openVault is same as vault, so we'll reuse an already uploaded vault
-        const hash = crypto.createHash("SHA256").update(obsidianOptions.openVault!).digest("hex").slice(16);
+        // We include the runId and if its a copy so we can know what to clean up at the end of the tests
+        // We want to make sure that nocopy vaults are still uploaded ONCE at the beginning of tests, even if the last
+        // test run didn't clean up androidVaultsDir properly.
+        const runId = obsidianOptions.testRunId;
+        const pathHash = crypto.createHash("SHA256").update(obsidianOptions.openVault!).digest("hex").slice(16);
         const basename = path.basename(obsidianOptions.vault!);
-        let androidVault = `${obsidianOptions.androidTestRunVaultsDir!}/${basename}-${hash}-${obsidianOptions.copy ? '' : 'no'}copy`;
+        let androidVault = `${androidVaultsDir}/${basename}-${pathHash}-${runId}-${obsidianOptions.copy ? '' : 'no'}copy`;
         obsidianOptions.androidVault = androidVault;
 
         // transfer the vault to the device
@@ -637,12 +639,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
             await this.appiumCloseVault();
 
             for (const file of await appiumReaddir(browser, androidVaultsDir)) {
-                if (file != obsidianOptions.androidTestRunVaultsDir) {
-                    await browser.execute("mobile: shell", {command: "rm", args: ["-rf", file]});
-                }
-            }
-            for (const file of await appiumReaddir(browser, obsidianOptions.androidTestRunVaultsDir!)) {
-                if (file.endsWith("-copy")) {
+                if (!file.includes(obsidianOptions.testRunId) || file.endsWith("-copy")) {
                     await browser.execute("mobile: shell", {command: "rm", args: ["-rf", file]});
                 }
             }
