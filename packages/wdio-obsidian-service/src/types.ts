@@ -137,12 +137,19 @@ export interface NormalizedObsidianCapabilityOptions {
     installerVersion: string,
     plugins: DownloadedPluginEntry[],
     themes: DownloadedThemeEntry[],
-    vault?: string,
     copy: boolean,
+    /** The original vault path passed by the user */
+    vault?: string,
     /** The actually open vault (a copy of vault unless copy is false) */
     openVault?: string,
     /** Path of the vault on the appium device */
-    uploadedVault?: string,
+    androidVault?: string,
+    /**
+     * Path to upload vaults.
+     * Unique per test run so that we can reuse copy: false vaults between test specs, but not cause issues if files
+     * were left over from last test run
+     */
+    androidTestRunVaultsDir?: string
     emulateMobile: boolean,
     binaryPath?: string,
     appPath?: string,
