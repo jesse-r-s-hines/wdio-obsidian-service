@@ -1,5 +1,7 @@
 import _ from "lodash";
 import path from "path"
+import crypto from "crypto"
+import os from "os"
 import fsAsync from "fs/promises"
 import { pathToFileURL, fileURLToPath } from "url"
 import ObsidianLauncher, { ObsidianVersionInfo } from "obsidian-launcher";
@@ -54,9 +56,22 @@ export const getCapabilities = (testLevel?: string, overrides?: WebdriverIO.Capa
         }),
     ];
     if (testLevel != 'basic') {
-        caps.push(_.merge({}, base, { // all other specs
-            'wdio:exclude': ["e2e/basic.spec.ts"],
-        }))
+        const rand = crypto.randomBytes(10).toString("base64url").replace(/[-_]/g, '0');
+        caps.push(
+            _.merge({}, base, { // noCopy.spec.ts
+                'wdio:obsidianOptions': {
+                    // Manually create a copy to test the "no copy" mode. We can't parallel tests on the same vault without
+                    // copying, so to enable parallel testing we have to manually create copies (we create them in
+                    // onPrepare)
+                    vault: path.join(os.tmpdir(), `no-copy-${rand}`),
+                    copy: false,
+                },
+                'wdio:exclude': ['!(noCopy.spec.ts)'],
+            }),
+            _.merge({}, base, { // all other specs
+                'wdio:exclude': ["e2e/basic.spec.ts", "e2e/noCopy.spec.ts"],
+            }),
+        )
     }
     return caps.map(c => _.merge({}, c, overrides));
 }
@@ -81,4 +96,22 @@ export const config: WebdriverIO.Config = {
     logLevel: "warn",
 
     injectGlobals: false,
+
+    async onPrepare(config, capabilities) {
+        for (const cap of (capabilities as WebdriverIO.Capabilities[])) {
+            if (cap['wdio:obsidianOptions']?.copy === false) {
+                const vault = cap['wdio:obsidianOptions'].vault!;
+                fsAsync.cp("./test/vaults/basic", vault, {recursive: true});
+            }
+        }
+    },
+
+    async onComplete(exitCode, config, capabilities, results) {
+        for (const cap of (capabilities as WebdriverIO.Capabilities[])) {
+            if (cap['wdio:obsidianOptions']?.copy === false) {
+                const vault = cap['wdio:obsidianOptions'].vault!;
+                fsAsync.rm(vault, {recursive: true, force: false});
+            }
+        }
+    },
 }
