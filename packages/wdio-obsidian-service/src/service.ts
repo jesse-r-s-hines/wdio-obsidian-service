@@ -421,7 +421,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
         const runId = obsidianOptions.testRunId;
         const pathHash = crypto.createHash("SHA256").update(obsidianOptions.openVault!).digest("hex").slice(16);
         const basename = path.basename(obsidianOptions.vault!);
-        let androidVault = `${androidVaultsDir}/${basename}-${pathHash}-${runId}-${obsidianOptions.copy ? '' : 'no'}copy`;
+        const androidVault = `${androidVaultsDir}/${basename}-${pathHash}-${runId}-${obsidianOptions.copy ? '' : 'no'}copy`;
         obsidianOptions.androidVault = androidVault;
 
         // transfer the vault to the device
