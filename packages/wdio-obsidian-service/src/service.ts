@@ -121,7 +121,7 @@ export class ObsidianLauncherService implements Services.ServiceInstance {
     async onPrepare(config: Options.Testrunner, capabilities: Capabilities.TestrunnerCapabilities) {
         try {
             // Create an ID that is unique per test run, but the same between sessions.
-            const runId = crypto.randomUUID().replace(/-/g, '').slice(16);
+            const runId = crypto.randomBytes(10).toString("base64url").replace(/[-_]/g, '0');
 
             if (!Array.isArray(capabilities)) {
                 capabilities = Object.values(capabilities).map(
@@ -250,6 +250,24 @@ export class ObsidianLauncherService implements Services.ServiceInstance {
                     } as WebdriverIO.ChromedriverOptions;
                     cap["wdio:enforceWebDriverClassic"] = true; // electron doesn't support BiDi yet.
                 }
+            }
+
+            // show a warning if doing parallel tests on no copy vaults
+            const dupNoCopyVaults = _(obsidianCapabilities)
+                .map(cap => cap[OBSIDIAN_CAPABILITY_KEY])
+                .filter(cap => !!cap && cap.copy === false && !!cap.vault)
+                .map(cap => cap!.vault!)
+                .countBy(v => v)
+                .pickBy(count => count >= 2)
+                .keys()
+                .sort()
+                .value()
+            if (config.maxInstances !== 1 && dupNoCopyVaults.length > 0) {
+                log.warn(
+                    `Multiple capabilities share the same vault with \`copy: false\`. This means parallel tests will run ` +
+                    `on the same directory which can cause errors. Either set \`copy: true\` or set \`maxInstances: 1\`. ` +
+                    `Affected vaults: ${dupNoCopyVaults.join(', ')}`
+                )
             }
         } catch (e: any) {
             throw new SevereServiceError(getServiceErrorMessage(e));
@@ -419,7 +437,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
         // We want to make sure that nocopy vaults are still uploaded ONCE at the beginning of tests, even if the last
         // test run didn't clean up androidVaultsDir properly.
         const runId = obsidianOptions.testRunId;
-        const pathHash = crypto.createHash("SHA256").update(obsidianOptions.openVault!).digest("hex").slice(16);
+        const pathHash = crypto.createHash("SHA256").update(obsidianOptions.openVault!).digest("base64url").replace(/[-_]/g, '0').slice(0, 10);
         const basename = path.basename(obsidianOptions.vault!);
         const androidVault = `${androidVaultsDir}/${basename}-${pathHash}-${runId}-${obsidianOptions.copy ? '' : 'no'}copy`;
         obsidianOptions.androidVault = androidVault;
