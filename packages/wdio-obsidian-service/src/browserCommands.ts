@@ -135,14 +135,21 @@ export type ObsidianBrowserCommands = typeof browserCommands & {
      * your tests use the same vault, you can also just set the vault in the `wdio.conf.mts` capabilities section.
      * 
      * @param params.vault Path to the vault to open. The vault will be copied by default, so any changes made in your
-     *     tests won't be persisted to the original. Set `copy` to `false` to use the vault in-place. If omitted, it
-     *     will reboot Obsidian with the current vault without creating a new copy of the vault.
-     * @param params.copy Whether to copy the vault to a temporary directory. Defaults to `true`.
+     *   tests won't be persisted to the original. Set `copy` to `false` to use the vault in-place. If omitted, it will
+     *   reboot Obsidian with the current vault without creating a new copy of the vault.
+     * @param params.copy Whether to copy the vault to a temporary directory before running tests in it (default true).
+     *   When `true` (the default), the vault is copied so that tests don't modify the original and parallel tests will
+     *   work on separate copies of the vault. When `false`, the vault is used in-place, useful for debugging or
+     *   read-only tests on large vaults.
+     *
+     *   **WARNING**: With `copy: false`, even with "read-only" tests, Obsidian will often make changes under
+     *   `.obsidian` that will get persisted. This also means that running parallel tests on the same vault with
+     *   `copy: false` is unsafe.
      * @param params.plugins List of plugin ids to enable. If omitted it will keep current plugin list. Note, all the
-     *     plugins must be defined in your wdio.conf.mts capabilities. You can also use the enablePlugin and
-     *     disablePlugin commands to change plugins without relaunching Obsidian.
+     *   plugins must be defined in your wdio.conf.mts capabilities. You can also use the enablePlugin and disablePlugin
+     *   commands to change plugins without relaunching Obsidian.
      * @param params.theme Name of the theme to enable. If omitted it will keep the current theme. Pass "default" to
-     *     switch back to the default theme. Like with plugins, the theme must be defined in wdio.conf.mts.
+     *   switch back to the default theme. Like with plugins, the theme must be defined in wdio.conf.mts.
      */
     reloadObsidian(params?: {
         vault?: string,
