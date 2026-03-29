@@ -130,19 +130,7 @@ Options:
 - `--arch <arch>`: Architecture of the installer, one of arm64, ia32, x64. (default: system arch)
 - `-c, --cache <cache>`: Directory to use as the download cache (default: OBSIDIAN_CACHE env var or ~/.obsidian-cache)
 
-### cli
-Run an Obsidian CLI command.
+## Obsidian CLI
+Obsidian has its [own CLI](https://obsidian.md/help/cli) which connects to the running Obsidian instance and lets you run commands against it. The Obsidian CLI will still work with Obsidian instances launched via obsidian-launcher as long as you only run one Obsidian instance at a time. With multiple instances, obsidian-launcher's sandboxing interferes with the Obsidian CLI connection.
 
-As obsidian-launcher sandboxes the config dir for each obsidian instance, the Obsidian CLI won't connect to the launched instances by default. This command handles connecting the CLI to the sandboxed Obsidian
-instances.
-
-Like the regular Obsidian CLI, it will connect to the instance matching the `vault=` argument if present, or the cwd.
-
-The Obsidian CLI only works on Obsidian >=1.12.0 with installer >=1.11.7
-
-See https://help.obsidian.md/cli
-
-Example:
-```
-npx obsidian-launcher cli file file=Dashboard
-```
+Note, the Obsidian CLI requires Obsidian app>=1.12.7 with installer>=1.12.7

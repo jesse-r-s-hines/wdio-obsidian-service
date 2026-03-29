@@ -1,6 +1,5 @@
 import fsAsync from "fs/promises"
 import fs from "fs"
-import os from "os"
 import path from "path"
 import { promisify } from "util";
 import child_process from "child_process"
@@ -14,7 +13,7 @@ import type { RestEndpointMethodTypes } from "@octokit/rest";
 import CDP from "chrome-remote-interface";
 import { ObsidianLauncher } from "./launcher.js";
 import {
-    consola, atomicCreate, makeTmpDir, normalizeObject, pool, maybe, withTimeout, until, retry, UntilOpts, pathIsUnder,
+    consola, atomicCreate, makeTmpDir, normalizeObject, pool, maybe, withTimeout, until, retry, UntilOpts,
     fileExists,
 } from "./utils.js";
 import { downloadResponse, fetchGitHubAPIPaginated } from "./apis.js"
@@ -289,100 +288,6 @@ export async function getProcesses(): Promise<{pid: number, command: string}[]> 
         return _.sortBy(processes, i => i.startTime).map((i) => _.omit(i, 'startTime'));
     }
 }
-
-type ObsidianInstance = {
-    pid: number, exe: string, configDir: string,
-    vaultId: string, vaultPath: string
-}
-
-/**
- * Returns the command line necessary to run the Obsidian CLI.
- * 
- * As obsidian-launcher sandboxes the user data dir for each obsidian instance, the regular Obsidian CLI can't connect
- * to the launched instances. This handles finding the correct Obsidian instance and linking the command to the
- * configDir.
- * 
- * Returns [executable, args] tuple to use launch the CLI. Just pass the result to to exec or spawn.
- */
-export async function getObsidianCli(args: string[]): Promise<[string, string[]]> {
-    // I'm dynamically scanning the process list to find the right Obsidian instance.
-    // This keeps things stateless, but maybe it would be cleaner to keep a record of what's running in obsidian-cache?
-    const clean = (s: string) => { // trim spaces, remove surrounding quotes
-        return s.trim().match(/^["']?(.*?)["']?$/)![1]
-    }
-
-    let processes = await getProcesses();
-    processes = processes.filter(p => p.command.includes("--tag=obsidian-launcher"));
-
-    let obsidianInstances: ObsidianInstance[] = [];
-    for (const proc of processes) {
-        // Match on the obsidian-launcher-config- prefix to avoid potential issues if os.tempdir() contains spaces
-        // You could craft a convoluted path that would break this matching logic though... I don't see a way to prevent
-        // that without having to keep some complex manual state tracking.
-        try {
-            const match = proc.command.match(/(.*?) --user-data-dir=(.*?obsidian-launcher-config-.+?)( |$)/)!;
-            const [_, exe, configDir] = match.map(clean);
-            const obsidianJson = JSON.parse(await fsAsync.readFile(path.join(configDir, "obsidian.json"), 'utf-8'));
-            // There could be multiple vaults in a single instance if the user creates extra vaults manually
-            for (const [vaultId, vaultInfo] of Object.entries<any>(obsidianJson.vaults)) {
-                // realpath so that cwd comparison works on mac (/var is a symlink)
-                const vaultPath = await fsAsync.realpath(vaultInfo.path);
-                obsidianInstances.push({pid: proc.pid, exe, configDir, vaultId, vaultPath});
-            }
-        } catch (e) {
-            console.warn(`Failed to connect to obsidian-launcher instance ${proc.pid}: ${e}`)
-        }
-    }
-    obsidianInstances = obsidianInstances.reverse(); // newest instances first.
-
-    // to match Obsidian logic
-    //   if vault= is passed, match on vaultId or vault basename
-    //   else match if cwd is inside a vault
-    //   else use most recent
-
-    let match: ObsidianInstance|undefined;
-    let newArgs = [...args];
-    if (args.length > 0 && args[0].startsWith("vault=")) {
-        const vault = args[0].slice(6);
-        match = obsidianInstances.find(i => (
-            i.vaultId == vault || path.basename(i.vaultPath).toUpperCase() == vault.toUpperCase()
-        ));
-        if (!match) { // check if its a temporary vault copy
-            const systemTmpDir = await fsAsync.realpath(os.tmpdir());
-            match = obsidianInstances.find(i => (
-                pathIsUnder(systemTmpDir, i.vaultPath) &&
-                path.basename(i.vaultPath).toUpperCase().match(/(.*)-.{6}/)?.[1] == vault.toUpperCase()
-            ))
-        }
-        if (!match) {
-            throw Error(`No running Obsidian instance for ${vault}`);
-        }
-        newArgs = args.slice(1); // remove the vault= arg
-    }
-    if (!match) {
-        const cwd = await fsAsync.realpath(process.cwd()).catch(() => process.cwd());
-        match = obsidianInstances.find(i => cwd == i.vaultPath || pathIsUnder(i.vaultPath, cwd));
-    }
-    if (!match) {
-        match = obsidianInstances.at(0);
-    }
-    if (!match) {
-        throw Error(`No running Obsidian instance`);
-    }
-
-    // The .com wrapper doesn't pass through --user-data-dir. The .exe directly does work for most commands,
-    // but messes up stdin in the TUI
-    // const exe = match.exe.replace(/.exe$/, '.com');
-    newArgs = [
-        `--user-data-dir=${match.configDir}`,
-        ...(process.platform == 'linux' ? ["--no-sandbox"] : []),
-        `vault=${match.vaultId}`,
-        ...newArgs,
-    ]
-
-    return [match.exe, newArgs];
-}
-
 
 //// updateVersionList helpers ////
 
