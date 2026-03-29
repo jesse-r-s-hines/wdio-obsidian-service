@@ -91,15 +91,15 @@ export interface ObsidianCapabilityOptions {
     vault?: string,
 
     /**
-     * Whether to copy the vault to a temporary directory before running tests.
+     * Whether to copy the vault to a temporary directory before running tests in it (the default).
      *
-     * When `true` (the default), the vault is copied so that tests don't modify the original. When `false`, the
-     * vault is used in-place, useful for debugging or read-only tests on large vaults.
+     * When `true` (the default), the vault is copied so that tests don't modify the original and parallel tests will
+     * work on separate copies of the vault. When `false`, the vault is used in-place, useful for debugging or
+     * read-only tests on large vaults.
      *
-     * Note that, even with "read-only" tests `copy: false` will persist changes made by Obsidian and
-     * wdio-obsidian-service such as installed plugins and other files under `.obsidian`.
-     *
-     * Defaults to `true`.
+     * **WARNING**: With `copy: false`, even with "read-only" tests, Obsidian will often make changes under `.obsidian`
+     * that will get persisted. This also means that running parallel tests on the same vault with `copy: false` is
+     * unsafe.
      */
     copy?: boolean,
 
@@ -137,11 +137,17 @@ export interface NormalizedObsidianCapabilityOptions {
     installerVersion: string,
     plugins: DownloadedPluginEntry[],
     themes: DownloadedThemeEntry[],
-    vault?: string,
     copy: boolean,
-    vaultCopy?: string,
+    /** The original vault path passed by the user */
+    vault?: string,
+    /** The actually open vault (a copy of vault unless copy is false) */
+    openVault?: string,
     /** Path of the vault on the appium device */
-    uploadedVault?: string,
+    androidVault?: string,
+    /**
+     * Unique ID per test run. We use this for handling Appium vault uploads.
+     */
+    testRunId: string
     emulateMobile: boolean,
     binaryPath?: string,
     appPath?: string,

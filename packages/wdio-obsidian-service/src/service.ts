@@ -1,6 +1,7 @@
 import fs from "fs"
 import fsAsync from "fs/promises"
 import path from "path"
+import crypto from "crypto"
 import { SevereServiceError } from 'webdriverio'
 import type { Capabilities, Options, Services } from '@wdio/types'
 import logger from '@wdio/logger'
@@ -13,7 +14,8 @@ import {
     ObsidianServiceOptions, NormalizedObsidianCapabilityOptions, OBSIDIAN_CAPABILITY_KEY,
 } from "./types.js"
 import {
-    isAppium, appiumUploadFiles, appiumDownloadFile, getAppiumOptions, fileExists, navigateAndWait,
+    isAppium, appiumUploadFiles, appiumDownloadFile, appiumExists, appiumReaddir, getAppiumOptions, fileExists,
+    navigateAndWait,
 } from "./utils.js";
 import semver from "semver"
 import _ from "lodash"
@@ -83,6 +85,8 @@ function getNormalizedObsidianOptions(cap: WebdriverIO.Capabilities): Normalized
  */
 export const minSupportedObsidianVersion: string = "1.0.3"
 
+/** Path on Android devices to store temporary vaults */
+const androidVaultsDir = "/storage/emulated/0/Documents/wdio-obsidian-service-vaults";
 
 /**
  * wdio launcher service.
@@ -116,6 +120,9 @@ export class ObsidianLauncherService implements Services.ServiceInstance {
      */
     async onPrepare(config: Options.Testrunner, capabilities: Capabilities.TestrunnerCapabilities) {
         try {
+            // Create an ID that is unique per test run, but the same between sessions.
+            const runId = crypto.randomBytes(10).toString("base64url").replace(/[-_]/g, '0');
+
             if (!Array.isArray(capabilities)) {
                 capabilities = Object.values(capabilities).map(
                     (multiremoteOption) => (multiremoteOption as Capabilities.WithRequestedCapabilities).capabilities,
@@ -173,6 +180,7 @@ export class ObsidianLauncherService implements Services.ServiceInstance {
                         copy: obsidianOptions.copy ?? true,
                         appVersion, installerVersion: appVersion,
                         emulateMobile: false,
+                        testRunId: runId,
                     }
                     cap[OBSIDIAN_CAPABILITY_KEY] = normalizedObsidianOptions;
                     cap['appium:app'] = apk;
@@ -182,7 +190,7 @@ export class ObsidianLauncherService implements Services.ServiceInstance {
                     delete cap.browserName;
                     delete cap.browserVersion;
                     if (!getAppiumOptions(cap)['noReset']) {
-                        console.warn("Note: For best performance set noReset to true, wdio-obsidian-service will handle resetting Obsidian between tests.")
+                        log.warn("Note: For best performance set noReset to true, wdio-obsidian-service will handle resetting Obsidian between tests.")
                     }
                 } else {
                     const [, installerVersion] = await this.obsidianLauncher.resolveVersion(
@@ -216,6 +224,7 @@ export class ObsidianLauncherService implements Services.ServiceInstance {
                         binaryPath: installerPath, appPath: appPath,
                         appVersion, installerVersion,
                         emulateMobile: obsidianOptions.emulateMobile ?? false,
+                        testRunId: runId,
                     }
 
                     cap.browserName = "chrome";
@@ -242,6 +251,24 @@ export class ObsidianLauncherService implements Services.ServiceInstance {
                     cap["wdio:enforceWebDriverClassic"] = true; // electron doesn't support BiDi yet.
                 }
             }
+
+            // show a warning if doing parallel tests on no copy vaults
+            const dupNoCopyVaults = _(obsidianCapabilities)
+                .map(cap => cap[OBSIDIAN_CAPABILITY_KEY])
+                .filter(cap => !!cap && cap.copy === false && !!cap.vault)
+                .map(cap => cap!.vault!)
+                .countBy(v => v)
+                .pickBy(count => count >= 2)
+                .keys()
+                .sort()
+                .value()
+            if (config.maxInstances !== 1 && dupNoCopyVaults.length > 0) {
+                log.warn(
+                    `Multiple capabilities share the same vault with \`copy: false\`. This means parallel tests will run ` +
+                    `on the same directory which can cause errors. Either set \`copy: true\` or set \`maxInstances: 1\`. ` +
+                    `Affected vaults: ${dupNoCopyVaults.join(', ')}`
+                )
+            }
         } catch (e: any) {
             throw new SevereServiceError(getServiceErrorMessage(e));
         }
@@ -262,8 +289,6 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
     private browser: WebdriverIO.Browser|undefined;
     /** Directories to clean up after the tests */
     private tmpDirs: string[]
-    /** Path on Android devices to store temporary vaults */
-    private androidVaultDir = "/storage/emulated/0/Documents/wdio-obsidian-service-vaults";
 
     constructor (
         public options: ObsidianServiceOptions,
@@ -283,23 +308,23 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
      */
     private async setupVault(cap: WebdriverIO.Capabilities) {
         const obsidianOptions = getNormalizedObsidianOptions(cap);
-        let vaultCopy: string|undefined;
+        let openVault: string|undefined;
         if (obsidianOptions.vault != undefined) {
-            const shouldCopy = obsidianOptions.copy !== false;
-            log.info(`Opening vault ${obsidianOptions.vault}${shouldCopy ? ' (copy)' : ' (in-place)'}`);
-            vaultCopy = await this.obsidianLauncher.setupVault({
+            const shouldCopy = obsidianOptions.copy;
+            log.info(`Opening vault ${obsidianOptions.vault}${obsidianOptions.copy ? ' (copy)' : ' (in-place)'}`);
+            openVault = await this.obsidianLauncher.setupVault({
                 vault: obsidianOptions.vault,
                 copy: shouldCopy,
                 plugins: obsidianOptions.plugins,
                 themes: obsidianOptions.themes,
             });
             if (shouldCopy) {
-                this.tmpDirs.push(vaultCopy);
+                this.tmpDirs.push(openVault);
             }
         } else {
             log.info(`Opening Obsidian without a vault`)
         }
-        obsidianOptions.vaultCopy = vaultCopy; // for use in getVaultPath() and the other service hooks
+        obsidianOptions.openVault = openVault; // for use in getVaultPath() and the other service hooks
     }
 
     /**
@@ -310,7 +335,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
         const configDir = await this.obsidianLauncher.setupConfigDir({
             appVersion: obsidianOptions.appVersion, installerVersion: obsidianOptions.installerVersion,
             appPath: obsidianOptions.appPath,
-            vault: obsidianOptions.vaultCopy,
+            vault: obsidianOptions.openVault,
             // `app.emulateMobile` just sets this localStorage variable. Setting it ourselves here instead of calling
             // the function simplifies the boot/plugin load sequence and makes sure plugins load in mobile mode.
             localStorage: obsidianOptions.emulateMobile ? {"EmulateMobile": "1"} : {},
@@ -404,11 +429,23 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
     private async appiumOpenVault() {
         const browser = this.browser!;
         const obsidianOptions = getNormalizedObsidianOptions(browser.requestedCapabilities);
-        const androidVault = `${this.androidVaultDir}/${path.basename(obsidianOptions.vaultCopy!)}`;
-        // TODO: Capabilities is not really the right place to be storing state like vaultCopy and uploadVault
-        obsidianOptions.uploadedVault = androidVault;
+
+        // create a path based on the openVault.
+        // if copy: true, openVault path is randomized so the has hash will also be unique
+        // if copy: false, openVault is same as vault, so we'll reuse an already uploaded vault
+        // We include the runId and if its a copy so we can know what to clean up at the end of the tests
+        // We want to make sure that nocopy vaults are still uploaded ONCE at the beginning of tests, even if the last
+        // test run didn't clean up androidVaultsDir properly.
+        const runId = obsidianOptions.testRunId;
+        const pathHash = crypto.createHash("SHA256").update(obsidianOptions.openVault!).digest("base64url").replace(/[-_]/g, '0').slice(0, 10);
+        const basename = path.basename(obsidianOptions.vault!);
+        const androidVault = `${androidVaultsDir}/${basename}-${pathHash}-${runId}-${obsidianOptions.copy ? '' : 'no'}copy`;
+        obsidianOptions.androidVault = androidVault;
+
         // transfer the vault to the device
-        await appiumUploadFiles(browser, {src: obsidianOptions.vaultCopy!, dest: androidVault});
+        if (!(await appiumExists(browser, androidVault))) {
+            await appiumUploadFiles(browser, {src: obsidianOptions.openVault!, dest: androidVault});
+        }
 
         // open vault by setting the localStorage keys and relaunching Obsidian
         // on appium restarting the app with appium:fullReset is *really* slow. And, unlike electron we can actually
@@ -486,7 +523,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
             const oldObsidianOptions = getNormalizedObsidianOptions(this.requestedCapabilities);
             const selectedPlugins = selectPlugins(oldObsidianOptions.plugins, plugins);
             const selectedThemes = selectThemes(oldObsidianOptions.themes, theme);
-            if (!vault && oldObsidianOptions.vaultCopy == undefined) {
+            if (!vault && oldObsidianOptions.openVault == undefined) {
                 throw Error(`No vault is open, pass a vault path to reloadObsidian`);
             }
             const newObsidianOptions: NormalizedObsidianCapabilityOptions = {
@@ -509,17 +546,17 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
                     await navigateAndWait(this, () => location.replace('http://localhost/_capacitor_file_/not-a-file'));
 
                     // while Obsidian is down, modify the vault files to setup plugins and themes
-                    const local = path.join(oldObsidianOptions.vaultCopy!, ".obsidian");
+                    const local = path.join(oldObsidianOptions.openVault!, ".obsidian");
                     const localCommunityPlugins = path.join(local, "community-plugins.json");
                     const localAppearance = path.join(local, "appearance.json");
-                    const remote = `${oldObsidianOptions.uploadedVault!}/.obsidian`;
+                    const remote = `${oldObsidianOptions.androidVault!}/.obsidian`;
                     const remoteCommunityPlugins = `${remote}/community-plugins.json`;
                     const remoteAppearance = `${remote}/appearance.json`;
 
                     await appiumDownloadFile(this, remoteCommunityPlugins, localCommunityPlugins).catch(() => {});
                     await appiumDownloadFile(this, remoteAppearance, localAppearance).catch(() => {});
                     await service.obsidianLauncher.setupVault({
-                        vault: oldObsidianOptions.vaultCopy!, copy: false,
+                        vault: oldObsidianOptions.openVault!, copy: false,
                         plugins: selectedPlugins, themes: selectedThemes,
                     });
                     let files = [localCommunityPlugins, localAppearance];
@@ -551,7 +588,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
                     await this.deleteSession({shutdownDriver: false});
                     // while Obsidian is down, modify the vault files to setup plugins and themes
                     await service.obsidianLauncher.setupVault({
-                        vault: oldObsidianOptions.vaultCopy!, copy: false,
+                        vault: oldObsidianOptions.openVault!, copy: false,
                         plugins: selectedPlugins, themes: selectedThemes,
                     });
                     await this.reloadSession(newCap);
@@ -614,11 +651,16 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
     async after(result: number, cap: WebdriverIO.Capabilities) {
         const browser = this.browser!;
         if (!cap[OBSIDIAN_CAPABILITY_KEY]) return;
+        const obsidianOptions = getNormalizedObsidianOptions(browser.requestedCapabilities);
 
         if (isAppium(cap)) {
             await this.appiumCloseVault();
-            // "mobile: deleteFile" doesn't work on folders. "mobile:shell" requires appium --allow-insecure adb_shell
-            await browser.execute("mobile: shell", {command: "rm", args: ["-rf", this.androidVaultDir]});
+
+            for (const file of await appiumReaddir(browser, androidVaultsDir)) {
+                if (!file.includes(obsidianOptions.testRunId) || file.endsWith("-copy")) {
+                    await browser.execute("mobile: shell", {command: "rm", args: ["-rf", file]});
+                }
+            }
         }
     }
 
