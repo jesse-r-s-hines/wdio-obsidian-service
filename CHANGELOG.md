@@ -139,3 +139,9 @@ Support Obsidian CLI in wdio tests!
 - Fix hang when installing via PNPM (see https://github.com/pnpm/pnpm/issues/10718#issuecomment-4054773598)
 - Fix `ObsidianPage.runObsidianCli` on `1.12.5`
     - There's still issues using the `obsidian-launcher cli` command on 1.12.5, but `ObsidianPage.runObsidianCli` will work in wdio tests
+
+## 3.0.0
+- Add `copy: false` option to avoid copying large vaults in tests
+- Breaking change: Remove broken `ObsidianLauncher.getObsidianCli` method and `obsidian-launcher cli` command
+    - These no longer work as of Obsidian 1.12.5.
+    - However the default Obsidian CLI command will work with Obsidian instances launched via `obsidian-launcher` as long as you only have one Obsidian instance up at a time.
