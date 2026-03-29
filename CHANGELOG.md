@@ -145,3 +145,7 @@ Support Obsidian CLI in wdio tests!
 - Breaking change: Remove broken `ObsidianLauncher.getObsidianCli` method and `obsidian-launcher cli` command
     - These no longer work as of Obsidian 1.12.5.
     - However the default Obsidian CLI command will work with Obsidian instances launched via `obsidian-launcher` as long as you only have one Obsidian instance up at a time.
+
+## 3.0.1
+- Fix intermittent errors caused by incomplete writes to .obsidian files
+
