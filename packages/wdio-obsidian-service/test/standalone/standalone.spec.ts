@@ -1,6 +1,7 @@
 import path from "path";
 import { describe, it } from "mocha";
 import { expect } from "chai";
+import { createDirectory } from "../helpers.js";
 import { startWdioSession } from "wdio-obsidian-service"
 import { fileURLToPath, pathToFileURL } from "url"
 
@@ -45,7 +46,9 @@ describe("standalone mode test", function() {
 
 describe("standalone mode no-copy vault test", function() {
     let browser: WebdriverIO.Browser|undefined;
+    let vault: string|undefined
     before(async function() {
+        vault = await createDirectory({"Hello.md": "Hello World"});
         this.timeout("10m");
         browser = await startWdioSession({
             capabilities: {
@@ -56,7 +59,7 @@ describe("standalone mode no-copy vault test", function() {
                     plugins: [
                         "./test/plugins/basic-plugin",
                     ],
-                    vault: "./test/vaults/basic",
+                    vault: vault,
                     copy: false,
                 },
             },
@@ -74,6 +77,7 @@ describe("standalone mode no-copy vault test", function() {
         const vaultPath = await browser!.executeObsidian(({app}) => (app.vault.adapter as any).getFullPath(""));
         // With copy: false, the vault should be used in-place, so the path should end with the original vault name
         // (not a temp copy with a random suffix like "basic-xxxxx")
-        expect(vaultPath).to.match(/\/basic\/?$/);
+        expect(vaultPath).to.eql(vault);
+        expect(browser!.getObsidianPage().getVaultPath()).to.eql(vault)
     });
 })
