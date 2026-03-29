@@ -481,7 +481,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
         const service = this; // eslint-disable-line @typescript-eslint/no-this-alias
         const reloadObsidian: WebdriverIO.Browser['reloadObsidian'] = async function(
             this: WebdriverIO.Browser,
-            {vault, copy = false, plugins, theme} = {},
+            {vault, copy = true, plugins, theme} = {},
         ) {
             const oldObsidianOptions = getNormalizedObsidianOptions(this.requestedCapabilities);
             const selectedPlugins = selectPlugins(oldObsidianOptions.plugins, plugins);
