@@ -14,7 +14,7 @@ import CDP from "chrome-remote-interface";
 import { ObsidianLauncher } from "./launcher.js";
 import {
     consola, atomicCreate, makeTmpDir, normalizeObject, pool, maybe, withTimeout, until, retry, UntilOpts,
-    fileExists,
+    tryParseJson,
 } from "./utils.js";
 import { downloadResponse, fetchGitHubAPIPaginated } from "./apis.js"
 import {
@@ -183,9 +183,7 @@ export async function getCdpSession(
     `);
     const communityPluginsPath = path.join(params.vault, ".obsidian", "community-plugins.json"); 
     let communityPlugins = ["obsidian-launcher"]
-    if (await fileExists(communityPluginsPath)) {
-        communityPlugins = [...JSON.parse(await fsAsync.readFile(communityPluginsPath, 'utf-8')), ...communityPlugins];
-    }
+    communityPlugins = [...(await tryParseJson(communityPluginsPath) ?? []), ...communityPlugins];
     await fsAsync.writeFile(communityPluginsPath, JSON.stringify(communityPlugins));
 
     try {

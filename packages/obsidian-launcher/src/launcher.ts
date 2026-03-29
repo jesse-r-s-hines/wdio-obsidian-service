@@ -9,7 +9,7 @@ import semver from "semver"
 import { fileURLToPath } from "url";
 import _ from "lodash"
 import dotenv from "dotenv";
-import { consola, warnOnce, fileExists, makeTmpDir, atomicCreate, linkOrCp, maybe } from "./utils.js";
+import { consola, warnOnce, fileExists, makeTmpDir, atomicCreate, linkOrCp, maybe, tryParseJson } from "./utils.js";
 import {
     ObsidianVersionInfo, ObsidianVersionList, ObsidianInstallerInfo, PluginEntry, DownloadedPluginEntry, ThemeEntry,
     DownloadedThemeEntry, obsidianVersionsSchemaVersion,
@@ -614,7 +614,7 @@ export class ObsidianLauncher {
                 }
                 let pluginId = (typeof plugin == "object" && ("id" in plugin)) ? plugin.id : undefined;
                 if (!pluginId) {
-                    pluginId = JSON.parse(await fsAsync.readFile(manifestPath, 'utf8').catch(() => "{}")).id;
+                    pluginId = (await tryParseJson(manifestPath))?.id;
                     if (!pluginId) {
                         throw Error(`${manifestPath} malformed.`);
                     }
@@ -648,13 +648,13 @@ export class ObsidianLauncher {
         const enabledPluginsPath = path.join(obsidianDir, 'community-plugins.json');
         let originalEnabledPlugins: string[] = [];
         if (await fileExists(enabledPluginsPath)) {
-            originalEnabledPlugins = JSON.parse(await fsAsync.readFile(enabledPluginsPath, 'utf-8'));
+            originalEnabledPlugins = await tryParseJson(enabledPluginsPath) ?? [];
         }
         let enabledPlugins = [...originalEnabledPlugins];
 
         for (const {path: pluginPath, enabled = true, originalType} of downloadedPlugins) {
             const manifestPath = path.join(pluginPath, 'manifest.json');
-            const pluginId = JSON.parse(await fsAsync.readFile(manifestPath, 'utf8').catch(() => "{}")).id;
+            const pluginId = (await tryParseJson(manifestPath))?.id;
             if (!pluginId) {
                 throw Error(`${manifestPath} missing or malformed.`);
             }
@@ -805,7 +805,7 @@ export class ObsidianLauncher {
                 let themeName = (typeof theme == "object" && ("name" in theme)) ? theme.name : undefined;
                 if (!themeName) {
                     const manifestPath = path.join(themePath, "manifest.json");
-                    themeName = JSON.parse(await fsAsync.readFile(manifestPath, 'utf8').catch(() => "{}")).name;
+                    themeName = (await tryParseJson(manifestPath))?.name;
                     if (!themeName) {
                         throw Error(`${themePath}/manifest.json malformed.`);
                     }
@@ -842,7 +842,7 @@ export class ObsidianLauncher {
             const manifestPath = path.join(themePath, 'manifest.json');
             const cssPath = path.join(themePath, 'theme.css');
 
-            const themeName = JSON.parse(await fsAsync.readFile(manifestPath, 'utf8').catch(() => "{}")).name;
+            const themeName = (await tryParseJson(manifestPath))?.name;
             if (!themeName) {
                 throw Error(`${manifestPath} missing or malformed.`);
             }
@@ -865,10 +865,7 @@ export class ObsidianLauncher {
 
         if (themes.length > 0) { // Only update appearance.json if we set the themes
             const appearancePath = path.join(obsidianDir, 'appearance.json');
-            let appearance: ObsidianAppearanceConfig = {}
-            if (await fileExists(appearancePath)) {
-                appearance = JSON.parse(await fsAsync.readFile(appearancePath, 'utf-8'));
-            }
+            let appearance: ObsidianAppearanceConfig = await tryParseJson(appearancePath) ?? {}
             appearance.cssTheme = enabledTheme ?? "";
             await fsAsync.writeFile(appearancePath, JSON.stringify(appearance, undefined, 2));
         }
