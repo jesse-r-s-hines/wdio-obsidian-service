@@ -137,8 +137,7 @@ export type ObsidianBrowserCommands = typeof browserCommands & {
      * @param params.vault Path to the vault to open. The vault will be copied by default, so any changes made in your
      *     tests won't be persisted to the original. Set `copy` to `false` to use the vault in-place. If omitted, it
      *     will reboot Obsidian with the current vault without creating a new copy of the vault.
-     * @param params.copy Whether to copy the vault to a temporary directory. Defaults to `false` if omitted, so that
-     *     reloading with a different vault doesn't unexpectedly copy it. Set to `true` to copy.
+     * @param params.copy Whether to copy the vault to a temporary directory. Defaults to `true`.
      * @param params.plugins List of plugin ids to enable. If omitted it will keep current plugin list. Note, all the
      *     plugins must be defined in your wdio.conf.mts capabilities. You can also use the enablePlugin and
      *     disablePlugin commands to change plugins without relaunching Obsidian.
