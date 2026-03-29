@@ -257,36 +257,6 @@ export async function cdpEvaluateUntil(client: CDP.Client, expression: string, o
 }
 
 
-//// Obsidian CLI ////
-
-/** Cross platform function to get running processes */
-export async function getProcesses(): Promise<{pid: number, command: string}[]> {
-    if (process.platform === 'win32') {
-        const {stdout} = await execFile('powershell.exe', [
-            '-NoProfile', '-ExecutionPolicy', 'Bypass',
-            '-Command', 'Get-CimInstance Win32_Process | Sort-Object -Property CreationDate | Select-Object ProcessId,CommandLine | ConvertTo-Json',
-        ]);
-        const data = JSON.parse(stdout);
-        const list = Array.isArray(data) ? data : [data]; // PowerShell returns single element as object
-        return list.map(p => ({pid: p.ProcessId, command: p.CommandLine || ''}));
-    } else {
-        const {stdout} = await execFile('ps', ['-xww', '-o', 'lstart=,pid=,command=']);
-        const processes = stdout
-            .split('\n')
-            .map(l => l.trim())
-            .filter(line => line)
-            .map(line => {
-                const [_, startTime, pid, command] = line.match(/^(\w+\s+\w+\s+\d+\s+\d\d:\d\d:\d\d\s+\d\d\d\d)\s+(\d+)\s+(.*)$/)!;
-                return {
-                    pid: Number(pid),
-                    startTime: new Date(startTime).getTime(),
-                    command,
-                };
-            });
-        return _.sortBy(processes, i => i.startTime).map((i) => _.omit(i, 'startTime'));
-    }
-}
-
 //// updateVersionList helpers ////
 
 export type CommitInfo = {commitDate: string, commitSha: string}
