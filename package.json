@@ -1,6 +1,6 @@
 {
     "name": "wdio-obsidian-service-workspace",
-    "version": "3.0.1",
+    "version": "3.0.2",
     "private": true,
     "bin": {},
     "repository": {

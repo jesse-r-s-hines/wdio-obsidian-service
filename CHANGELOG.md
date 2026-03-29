@@ -149,3 +149,5 @@ Support Obsidian CLI in wdio tests!
 ## 3.0.1
 - Fix intermittent errors caused by incomplete writes to .obsidian files
 
+## 3.0.2
+- Fix publish workflow
