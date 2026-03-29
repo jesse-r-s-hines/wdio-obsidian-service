@@ -865,7 +865,7 @@ export class ObsidianLauncher {
 
         if (themes.length > 0) { // Only update appearance.json if we set the themes
             const appearancePath = path.join(obsidianDir, 'appearance.json');
-            let appearance: ObsidianAppearanceConfig = await tryParseJson(appearancePath) ?? {}
+            const appearance: ObsidianAppearanceConfig = await tryParseJson(appearancePath) ?? {}
             appearance.cssTheme = enabledTheme ?? "";
             await fsAsync.writeFile(appearancePath, JSON.stringify(appearance, undefined, 2));
         }
