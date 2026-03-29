@@ -101,16 +101,16 @@ export const config: WebdriverIO.Config = {
         for (const cap of (capabilities as WebdriverIO.Capabilities[])) {
             if (cap['wdio:obsidianOptions']?.copy === false) {
                 const vault = cap['wdio:obsidianOptions'].vault!;
-                fsAsync.cp("./test/vaults/basic", vault, {recursive: true});
+                await fsAsync.cp("./test/vaults/basic", vault, {recursive: true});
             }
         }
     },
 
-    async onComplete(exitCode, config, capabilities, results) {
+    async onComplete(exitCode, config, capabilities) {
         for (const cap of (capabilities as WebdriverIO.Capabilities[])) {
             if (cap['wdio:obsidianOptions']?.copy === false) {
                 const vault = cap['wdio:obsidianOptions'].vault!;
-                fsAsync.rm(vault, {recursive: true, force: false});
+                await fsAsync.rm(vault, {recursive: true, force: false});
             }
         }
     },
