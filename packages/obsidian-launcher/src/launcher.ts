@@ -19,7 +19,7 @@ import { obsidianApiLogin, fetchObsidianApi, downloadResponse } from "./apis.js"
 import ChromeLocalStorage from "./chromeLocalStorage.js";
 import {
     normalizeGitHubRepo, extractGz, extractObsidianAppImage, extractObsidianExe, extractObsidianDmg,
-    updateObsidianVersionList, getObsidianCli,
+    updateObsidianVersionList,
 } from "./launcherUtils.js";
 
 const currentPlatform = {
@@ -1082,35 +1082,5 @@ export class ObsidianLauncher {
         } else {
             return true;
         }
-    }
-
-    /**
-     * Return the command needed to run the Obsidian CLI.
-     * 
-     * As obsidian-launcher sandboxes the config dir for each Obsidian instance, the Obsidian CLI won't connect to the
-     * launched instances by default. This method takes Obsidian CLI args, and then returns an [executable, args] tuple
-     * that can be used to launch the Obsidian CLI against the sandboxed instances.
-     * 
-     * Like the regular Obsidian CLI, it will connect to the instance matching the `vault=` argument if present, or
-     * the cwd.
-     * 
-     * Just pass the result to child_process.spawn or child_process.execFile to run the command.
-     * 
-     * Example:
-     * ```js
-     * import child_process from "child_process";
-     * import util from "util";
-     * const execFile = util.promisify(child_process.execFile);
-     * const [executable, args] = await launcher.getObsidianCli(["file", "file=Dashboard"]);
-     * const {stdout, stderr} = await execFile(executable, args);
-     * ```
-     * 
-     * The Obsidian CLI only works on Obsidian >=1.12.0 with installer >=1.11.7.
-     * See https://help.obsidian.md/cli
-     * 
-     * @returns [executable, args] tuple
-     */
-    async getObsidianCli(args: string[]): Promise<[string, string[]]> {
-        return await getObsidianCli(args);
     }
 }
