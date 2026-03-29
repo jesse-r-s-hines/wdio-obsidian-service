@@ -138,6 +138,19 @@ export function pathIsUnder(parent: string, child: string): boolean {
 }
 
 
+/**
+ * Try reading and parsing the JSON file, return undefined if it doesn't exist or is malformed
+ */
+export async function tryParseJson(file: string) {
+    try {
+        const content = await fsAsync.readFile(file, 'utf-8');
+        return JSON.parse(content)
+    } catch { 
+        return undefined;
+    }
+}
+
+
 /// Promises ///
 
 export async function sleep(ms: number): Promise<void> {

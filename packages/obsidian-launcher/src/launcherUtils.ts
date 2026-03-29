@@ -14,7 +14,7 @@ import CDP from "chrome-remote-interface";
 import { ObsidianLauncher } from "./launcher.js";
 import {
     consola, atomicCreate, makeTmpDir, normalizeObject, pool, maybe, withTimeout, until, retry, UntilOpts,
-    fileExists,
+    tryParseJson,
 } from "./utils.js";
 import { downloadResponse, fetchGitHubAPIPaginated } from "./apis.js"
 import {
@@ -183,9 +183,7 @@ export async function getCdpSession(
     `);
     const communityPluginsPath = path.join(params.vault, ".obsidian", "community-plugins.json"); 
     let communityPlugins = ["obsidian-launcher"]
-    if (await fileExists(communityPluginsPath)) {
-        communityPlugins = [...JSON.parse(await fsAsync.readFile(communityPluginsPath, 'utf-8')), ...communityPlugins];
-    }
+    communityPlugins = [...(await tryParseJson(communityPluginsPath) ?? []), ...communityPlugins];
     await fsAsync.writeFile(communityPluginsPath, JSON.stringify(communityPlugins));
 
     try {
@@ -258,36 +256,6 @@ export async function cdpEvaluateUntil(client: CDP.Client, expression: string, o
     return await until(() => cdpEvaluate(client, expression), opts);
 }
 
-
-//// Obsidian CLI ////
-
-/** Cross platform function to get running processes */
-export async function getProcesses(): Promise<{pid: number, command: string}[]> {
-    if (process.platform === 'win32') {
-        const {stdout} = await execFile('powershell.exe', [
-            '-NoProfile', '-ExecutionPolicy', 'Bypass',
-            '-Command', 'Get-CimInstance Win32_Process | Sort-Object -Property CreationDate | Select-Object ProcessId,CommandLine | ConvertTo-Json',
-        ]);
-        const data = JSON.parse(stdout);
-        const list = Array.isArray(data) ? data : [data]; // PowerShell returns single element as object
-        return list.map(p => ({pid: p.ProcessId, command: p.CommandLine || ''}));
-    } else {
-        const {stdout} = await execFile('ps', ['-xww', '-o', 'lstart=,pid=,command=']);
-        const processes = stdout
-            .split('\n')
-            .map(l => l.trim())
-            .filter(line => line)
-            .map(line => {
-                const [_, startTime, pid, command] = line.match(/^(\w+\s+\w+\s+\d+\s+\d\d:\d\d:\d\d\s+\d\d\d\d)\s+(\d+)\s+(.*)$/)!;
-                return {
-                    pid: Number(pid),
-                    startTime: new Date(startTime).getTime(),
-                    command,
-                };
-            });
-        return _.sortBy(processes, i => i.startTime).map((i) => _.omit(i, 'startTime'));
-    }
-}
 
 //// updateVersionList helpers ////
 
