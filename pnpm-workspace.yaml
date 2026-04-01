@@ -13,3 +13,7 @@ onlyBuiltDependencies:
   - esbuild
   - geckodriver
   - sharp
+
+
+minimumReleaseAge: 2880 # 2 days
+blockExoticSubdeps: true
