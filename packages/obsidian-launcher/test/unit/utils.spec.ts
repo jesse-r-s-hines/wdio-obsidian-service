@@ -349,7 +349,7 @@ describe("retry", () => {
             {backoff: 0.1, retries: 3},
         ).catch(e => e);
         expect(result).to.be.instanceOf(Error);
-        expect(result.toString()).to.match(/attempt: 2/);
+        expect(result.toString()).to.match(/attempt: 3/);
     })
 
     it("instant failure", async () => {

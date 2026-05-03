@@ -60,7 +60,4 @@ export const config: WebdriverIO.Config = _.merge({}, sharedConfig, {
     mochaOpts: {
         timeout: 300 * 1000,
     },
-    // TODO: Temporary workaround for flaky appium timeouts
-    specFileRetries: 3,
-    specFileRetriesDelay: 10,
 })
