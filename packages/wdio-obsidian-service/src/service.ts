@@ -15,7 +15,7 @@ import {
 } from "./types.js"
 import {
     isAppium, appiumUploadFiles, appiumDownloadFile, appiumExists, appiumReaddir, getAppiumOptions, fileExists,
-    navigateAndWait,
+    navigateAndWait, retry,
 } from "./utils.js";
 import semver from "semver"
 import _ from "lodash"
@@ -87,6 +87,9 @@ export const minSupportedObsidianVersion: string = "1.0.3"
 
 /** Path on Android devices to store temporary vaults */
 const androidVaultsDir = "/storage/emulated/0/Documents/wdio-obsidian-service-vaults";
+
+const OBSIDIAN_HANG_ERROR = Symbol("hang");
+
 
 /**
  * wdio launcher service.
@@ -498,6 +501,33 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
 
         // wait until app is loaded
         if (obsidianOptions.vault) {
+            if (isAppium(browser.requestedCapabilities) && semver.gte(obsidianOptions.appVersion, '1.12.0')) {
+                // Obsidian >= 1.12.0 has a bug on mobile startup that intermittently causes the app to get stuck during
+                // boot in the emulator. Seems to be caused by changes to the Capacitor plugin load sequence and a race
+                // condition with the Capacitor bridge. Not sure why it doesn't show up in real usage, probably just the
+                // race condition only losing on the sluggish emulator. Only work around I've found is to just detect the
+                // state and trigger a refresh.
+                await retry(async (attempt) => {
+                    if (attempt > 0) {
+                        console.warn("Obsidian Android app stuck, relaunching...");
+                        await navigateAndWait(browser, () => location.reload());
+                    }
+                    await browser.waitUntil(
+                        () => browser.execute(() => !!window.ready), // wait for enhance.js to be loaded
+                        {timeout: 60_000, interval: 100},
+                    );
+                    await browser.waitUntil( // if this fails to load soon after, we are in the hang state
+                        () => browser.execute(() => document.body?.classList.contains("is-mobile")),
+                        {timeout: 2_000, interval: 100},
+                    ).catch(() => {
+                        throw OBSIDIAN_HANG_ERROR; // eslint-disable-line @typescript-eslint/only-throw-error
+                    });
+                }, {
+                    retries: 2,
+                    backoff: 2000,
+                    retryIf: (error) => error === OBSIDIAN_HANG_ERROR,
+                });
+            }
             await browser.waitUntil( // wait until the helper plugin is loaded
                 () => browser.execute(() => !!(window as any).wdioObsidianService),
                 {timeout: 60_000, interval: 100},

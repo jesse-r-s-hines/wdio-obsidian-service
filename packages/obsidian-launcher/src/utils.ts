@@ -230,18 +230,18 @@ export async function retry<T>(func: (attempt: number) => Promise<T>|T, opts: Re
     let attempt = 0;
     let error: any;
 
-    while (attempt < retries) {
+    while (attempt <= retries) {
         try {
             return await func(attempt);
         } catch (e: any) {
             error = e;
         }
         const delay = backoff*Math.random() + backoff*Math.pow(2, attempt);
-        attempt += 1;
         if (!retryIf(error) || attempt >= retries) {
             throw error; // throw without sleeping
         }
         await sleep(delay);
+        attempt += 1;
     }
     throw error; // unreachable
 }

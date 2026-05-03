@@ -154,3 +154,36 @@ export function isHidden(file: string) {
 export function isText(file: string) {
     return [".md", ".json", ".txt", ".js"].includes(path.extname(file).toLocaleLowerCase());
 }
+
+
+export async function sleep(ms: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+
+export type RetryOpts = {
+    retries?: number,
+    backoff?: number,
+    retryIf?: (error: any) => boolean,
+};
+/** Retries func on error */
+export async function retry<T>(func: (attempt: number) => Promise<T>|T, opts: RetryOpts = {}): Promise<T> {
+    const { retries = 4, backoff = 1000, retryIf = () => true } = opts;
+    let attempt = 0;
+    let error: any;
+
+    while (attempt <= retries) {
+        try {
+            return await func(attempt);
+        } catch (e: any) {
+            error = e;
+        }
+        const delay = backoff*Math.random() + backoff*Math.pow(2, attempt);
+        if (!retryIf(error) || attempt >= retries) {
+            throw error; // throw without sleeping
+        }
+        await sleep(delay);
+        attempt += 1;
+    }
+    throw error; // unreachable
+}
