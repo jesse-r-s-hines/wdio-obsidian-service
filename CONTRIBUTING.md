@@ -1,6 +1,6 @@
 # Contributing
 
-You'll need Node 18 or higher and [pnpm](https://pnpm.io/installation).
+You'll need Node 20 or higher and [pnpm](https://pnpm.io/installation).
 
 To setup local development just clone the repo and run:
 ```bash
