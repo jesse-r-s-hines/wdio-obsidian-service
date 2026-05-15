@@ -196,7 +196,11 @@ export async function getCdpSession(
             cleanup.push(() => fsAsync.rm(launchResult.vault!, {recursive: true, force: true}));
         }
         const {proc} = launchResult;
-        cleanup.push(() => fsAsync.rm(launchResult.configDir, {recursive: true, force: true}));
+        cleanup.push(() => retry(
+            // Windows can hold resources afterafter the process exits, causing EBUSY
+            () => fsAsync.rm(launchResult.configDir, {recursive: true, force: true}),
+            {retries: 5, backoff: 200, retryIf: (e) => ["EBUSY", "EPERM", "ENOTEMPTY"].includes(e?.code)},
+        ));
         const procExit = new Promise<number>((resolve) => proc.on('close', (code) => resolve(code ?? -1)));
         cleanup.push(async () => {
             proc.kill("SIGTERM");
