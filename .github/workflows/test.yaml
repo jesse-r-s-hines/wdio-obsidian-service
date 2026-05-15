@@ -186,7 +186,7 @@ jobs:
             android-api-level: 36
             android-profile: pixel
             node-version: "18.x"
-            package-resolution: lowest
+            package-resolution: lowest-direct
           - obsidian-versions: "latest"
             android-api-level: 36
             android-profile: pixel
