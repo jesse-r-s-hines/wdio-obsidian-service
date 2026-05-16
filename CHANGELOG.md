@@ -151,3 +151,6 @@ Support Obsidian CLI in wdio tests!
 
 ## 3.0.2
 - Fix publish workflow
+
+## 3.0.3
+- Update deps
