@@ -119,13 +119,13 @@ jobs:
           path: .obsidian-cache
           key: obsidian-cache-${{ matrix.os }}-${{ matrix.obsidian-versions }}-${{ hashFiles('./obsidian-versions.json') }}
 
-      - run: |
-          shopt -s globstar
+      - shell: bash
+        run: |
           if [[ '${{ matrix.package-resolution }}' == 'highest' ]]; then
-            rm -rf pnpm-lock.yaml node_modules/ **/node_modules
+            rm -rf pnpm-lock.yaml node_modules packages/*/node_modules
             pnpm install --config.resolutionMode=highest --no-frozen-lockfile
           elif [[ '${{ matrix.package-resolution }}' == 'lowest-direct' ]]; then
-            rm -rf pnpm-lock.yaml node_modules/ **/node_modules
+            rm -rf pnpm-lock.yaml node_modules packages/*/node_modules
             pnpm install --config.resolutionMode=lowest-direct --no-frozen-lockfile
           else
             pnpm install --frozen-lockfile
@@ -213,17 +213,18 @@ jobs:
           path: .obsidian-cache
           key: obsidian-cache-android-${{ matrix.obsidian-versions }}-${{ hashFiles('./obsidian-versions.json') }}
 
-      - run: |
-          shopt -s globstar
+      - shell: bash
+        run: |
           if [[ '${{ matrix.package-resolution }}' == 'highest' ]]; then
-            rm -rf pnpm-lock.yaml node_modules/ **/node_modules
+            rm -rf pnpm-lock.yaml node_modules packages/*/node_modules
             pnpm install --config.resolutionMode=highest --no-frozen-lockfile
           elif [[ '${{ matrix.package-resolution }}' == 'lowest-direct' ]]; then
-            rm -rf pnpm-lock.yaml node_modules/ **/node_modules
+            rm -rf pnpm-lock.yaml node_modules packages/*/node_modules
             pnpm install --config.resolutionMode=lowest-direct --no-frozen-lockfile
           else
             pnpm install --frozen-lockfile
           fi
+
       - name: Download build artifact
         uses: actions/download-artifact@v4
         with:
