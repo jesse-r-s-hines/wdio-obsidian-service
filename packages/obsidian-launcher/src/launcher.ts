@@ -482,6 +482,9 @@ export class ObsidianLauncher {
                 version: installerInfo.electron,
                 artifactName: 'chromedriver',
                 cacheRoot: path.join(scratch, 'download'),
+                downloadOptions: {
+                    timeout: 3 * 60 * 1000,
+                },
             });
             const extracted = path.join(scratch, "extracted");
             await extractZip(chromedriverZipPath, { dir: extracted });
