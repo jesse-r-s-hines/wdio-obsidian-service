@@ -488,6 +488,7 @@ export class ObsidianLauncher {
             });
             const extracted = path.join(scratch, "extracted");
             await extractZip(chromedriverZipPath, { dir: extracted });
+            consola.log(`Downloaded chromedriver for electron ${installerInfo.electron} ...`);
             return extracted;
         }, {replace: false})
         return chromedriverPath;
