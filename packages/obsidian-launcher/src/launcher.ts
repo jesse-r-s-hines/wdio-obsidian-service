@@ -483,12 +483,12 @@ export class ObsidianLauncher {
                 artifactName: 'chromedriver',
                 cacheRoot: path.join(scratch, 'download'),
                 downloadOptions: {
-                    timeout: 3 * 60 * 1000,
+                    signal: AbortSignal.timeout(3 * 60 * 1000),
                 },
             });
+            consola.log(`Downloaded chromedriver for electron ${installerInfo.electron} ...`);
             const extracted = path.join(scratch, "extracted");
             await extractZip(chromedriverZipPath, { dir: extracted });
-            consola.log(`Downloaded chromedriver for electron ${installerInfo.electron} ...`);
             return extracted;
         }, {replace: false})
         return chromedriverPath;
