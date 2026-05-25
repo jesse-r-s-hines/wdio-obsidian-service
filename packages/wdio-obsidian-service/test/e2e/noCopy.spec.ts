@@ -1,5 +1,6 @@
 import { browser, expect } from '@wdio/globals'
 import path from "path";
+import { fileURLToPath } from 'url';
 import { obsidianPage } from 'wdio-obsidian-service';
 
 
@@ -19,8 +20,8 @@ describe("obsidian no copy", function() {
         if ((await obsidianPage.getPlatform()).isDesktopApp) this.skip();
 
         const pageVault = obsidianPage.getVaultPath();
-        let obsVault = await browser.executeObsidian(({app}) => (app.vault.adapter as any).getFullPath(""));
-        obsVault = obsVault.replace(/\/$/, '') // on android getFullPath returns a trailing slash
+        let obsVault = await browser.executeObsidian(({app}) => (app.vault.adapter as any).getNativePath(""));
+        obsVault = fileURLToPath(obsVault).replace(/\/$/, '')
         const capAndroidVault = browser.requestedCapabilities['wdio:obsidianOptions'].androidVault;
 
         expect(pageVault).toEqual(obsVault);

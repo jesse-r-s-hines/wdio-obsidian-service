@@ -145,6 +145,15 @@ export function normalizePath(p: string) {
     return p;
 }
 
+/**
+ * Returns true if child is under parent. returns false if parent == child or child is outside of parent.
+ */
+export function pathIsUnder(parent: string, child: string): boolean {
+    const rel = path.relative(path.resolve(parent), path.resolve(child));
+    return rel != '' && rel.split(path.sep)[0] != ".." && !path.isAbsolute(rel)
+}
+
+
 /** Returns true if a vault file path is hidden (either it or one of it's parent directories starts with ".") */
 export function isHidden(file: string) {
     return file.split("/").some(p => p.startsWith("."))

@@ -5,7 +5,7 @@ import crypto from "crypto"
 import { SevereServiceError } from 'webdriverio'
 import type { Capabilities, Options, Services } from '@wdio/types'
 import logger from '@wdio/logger'
-import { fileURLToPath } from "url"
+import { fileURLToPath, pathToFileURL } from "url"
 import ObsidianLauncher, {
     PluginEntry, ThemeEntry, DownloadedPluginEntry, DownloadedThemeEntry,
 } from "obsidian-launcher"
@@ -15,7 +15,7 @@ import {
 } from "./types.js"
 import {
     isAppium, appiumUploadFiles, appiumDownloadFile, appiumExists, appiumReaddir, getAppiumOptions, fileExists,
-    navigateAndWait, retry,
+    navigateAndWait, retry, pathIsUnder,
 } from "./utils.js";
 import semver from "semver"
 import _ from "lodash"
@@ -85,8 +85,16 @@ function getNormalizedObsidianOptions(cap: WebdriverIO.Capabilities): Normalized
  */
 export const minSupportedObsidianVersion: string = "1.0.3"
 
-/** Path on Android devices to store temporary vaults */
-const androidVaultsDir = "/storage/emulated/0/Documents/wdio-obsidian-service-vaults";
+/**
+ * We used to put vaults on "Device Storage" by default. However, there's some weird issues with the emulated storage
+ * that can cause writes to intermittently fail silently. (See https://forum.obsidian.md/t/102935). This causes a bunch
+ * of intermittent issues when writing files, and when uploading the vault.
+ * 
+ * So now we are defaulting to "App Storage" mode which, even though its still under the emulated storage uses a
+ * different filesystem api and avoids the issue.
+ */
+const ANDROID_APP_STORAGE_DIR = "/storage/emulated/0/Android/data/md.obsidian/files"
+const ANDROID_DEFAULT_DEVICE_STORAGE_DIR = "/storage/emulated/0/Documents/wdio-obsidian-service-vaults"
 
 const OBSIDIAN_HANG_ERROR = Symbol("hang");
 
@@ -177,6 +185,17 @@ export class ObsidianLauncherService implements Services.ServiceInstance {
                         chromedriverDir = path.join(this.obsidianLauncher.cacheDir, 'appium-chromedriver');
                     }
 
+                    let androidVaultStorage = obsidianOptions.androidVaultStorage;
+                    if (!androidVaultStorage) {
+                        // App storage was introduced in 1.8.10
+                        androidVaultStorage = semver.lt(appVersion, "1.8.10") ? "device-storage" : "app-storage";
+                    }
+                    if (androidVaultStorage == "device-storage") {
+                        androidVaultStorage = ANDROID_DEFAULT_DEVICE_STORAGE_DIR;
+                    } else if (androidVaultStorage != "app-storage" && !androidVaultStorage.startsWith("/")) {
+                        throw Error(`androidVaultStorage must be "app-storage", "device-storage", or an absolute path on the Android device.`)
+                    }
+
                     const normalizedObsidianOptions: NormalizedObsidianCapabilityOptions = {
                         ...obsidianOptions,
                         plugins, themes, vault: vault,
@@ -184,6 +203,7 @@ export class ObsidianLauncherService implements Services.ServiceInstance {
                         appVersion, installerVersion: appVersion,
                         emulateMobile: false,
                         testRunId: runId,
+                        androidVaultStorage,
                     }
                     cap[OBSIDIAN_CAPABILITY_KEY] = normalizedObsidianOptions;
                     cap['appium:app'] = apk;
@@ -358,7 +378,41 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
     }
 
     /**
-     * Sets up the Obsidian app. Installs and launches it if needed, and sets permissions and contexts.
+     * Transfers src to dest. src may be a file or a directory.
+     * Handles making sure the permissions under Obsidian app storage are correct.
+     */
+    private async appiumUpload(src: string, dest: string) {
+        const browser = this.browser!;
+        const isDirectory = (await fsAsync.stat(src)).isDirectory();
+        const isAppStorage = pathIsUnder(ANDROID_APP_STORAGE_DIR, dest);
+
+        if (isAppStorage) {
+            // Even with root and run-as, I can't seem to get the permissions for app storage to work out directly via
+            // shell commands. And the Android Emulator won't always have root depending on how it was set up. So I use
+            // the Capacitor API to copy it directly from Obsidian.
+            const tmp = `/storage/emulated/0/Documents/tmp-${crypto.randomBytes(10).toString("base64url").replace(/[-_]/g, '0')}`
+            if (isDirectory) {
+                await appiumUploadFiles(browser, {src, dest: tmp});
+            } else {
+                await browser.pushFile(tmp, (await fsAsync.readFile(src)).toString('base64'));
+            }
+            await browser.execute(async (from, to) => {
+                    const Filesystem = (window as any).Capacitor.Plugins.Filesystem;
+                    await Filesystem.copy({ from, to });
+            }, pathToFileURL(tmp).toString(), pathToFileURL(dest).toString());
+            await browser.execute("mobile: shell", {command: "rm", args: ["-rf", tmp]});
+        } else {
+            if (isDirectory) {
+                await appiumUploadFiles(browser, {src, dest});
+            } else {
+                await browser.pushFile(dest, (await fsAsync.readFile(src)).toString('base64'));
+            }
+        }
+    }
+
+    /**
+     * Sets up the Obsidian app. Installs and launches it if needed, and sets permissions and contexts. Opens the vault
+     * switcher page.
      * 
      * You can configure Appium to install and launch the app for you. However, if you do that it reboots the app after
      * every session/spec which is really slow. So we are handling the app setup manually here.
@@ -421,46 +475,68 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
                 window.location.replace('http://localhost/');
             }
         })
-        if (!obsidianOptions.vault) { // skip if vault is set, as we'll clear state when we open the new vault
-            await this.appiumCloseVault();
+        await this.appiumCloseVault(); // close vault and go to vault switcher (if vault is open)
+    }
+
+    /**
+     * Uploads the vault to appium
+     */
+    private async appiumUploadVault() {
+        const browser = this.browser!;
+        const obsidianOptions = getNormalizedObsidianOptions(browser.requestedCapabilities);
+        const isAppStorage = (obsidianOptions.androidVaultStorage == 'app-storage');
+
+        // create a path based on the openVault.
+        // if copy: true, openVault path is randomized so the hash will also be unique
+        // if copy: false, openVault is same as vault, so we'll reuse an already uploaded vault
+        // We include the runId and if its a copy so we can know what to clean up at the end of the tests. We want to
+        // make sure that nocopy vaults are still uploaded ONCE at the beginning of tests, even if the last test didn't
+        // clean up androidVaultStorage  properly.
+        const runId = obsidianOptions.testRunId;
+        const pathHash = crypto.createHash("SHA256").update(obsidianOptions.openVault!).digest("base64url").replace(/[-_]/g, '0').slice(0, 8);
+        const basename = path.basename(obsidianOptions.vault!);
+        const androidVaultName = `${basename}-${pathHash}-${runId}-wdio-${obsidianOptions.copy ? 'copy' : 'nocopy'}`;
+        const androidVaultPath = `${isAppStorage ? ANDROID_APP_STORAGE_DIR : obsidianOptions.androidVaultStorage}/${androidVaultName}`;
+        obsidianOptions.androidVault = androidVaultPath;
+
+        // transfer the vault to the device
+        if (!(await appiumExists(browser, obsidianOptions.androidVault))) {
+            await this.appiumUpload(obsidianOptions.openVault!, obsidianOptions.androidVault);
         }
     }
 
     /**
      * Opens the vault in appium.
+     * 
+     * clearAppState determines whether we wipe localStorage or not. (In desktop mode we create a entirely new
+     * electron dir every time we open a new vault, in Android we need to use clearAppState to replicate that.)
      */
-    private async appiumOpenVault() {
+    private async appiumOpenVault(opts: {clearAppState: boolean}) {
         const browser = this.browser!;
         const obsidianOptions = getNormalizedObsidianOptions(browser.requestedCapabilities);
-
-        // create a path based on the openVault.
-        // if copy: true, openVault path is randomized so the has hash will also be unique
-        // if copy: false, openVault is same as vault, so we'll reuse an already uploaded vault
-        // We include the runId and if its a copy so we can know what to clean up at the end of the tests
-        // We want to make sure that nocopy vaults are still uploaded ONCE at the beginning of tests, even if the last
-        // test run didn't clean up androidVaultsDir properly.
-        const runId = obsidianOptions.testRunId;
-        const pathHash = crypto.createHash("SHA256").update(obsidianOptions.openVault!).digest("base64url").replace(/[-_]/g, '0').slice(0, 10);
-        const basename = path.basename(obsidianOptions.vault!);
-        const androidVault = `${androidVaultsDir}/${basename}-${pathHash}-${runId}-${obsidianOptions.copy ? '' : 'no'}copy`;
-        obsidianOptions.androidVault = androidVault;
-
-        // transfer the vault to the device
-        if (!(await appiumExists(browser, androidVault))) {
-            await appiumUploadFiles(browser, {src: obsidianOptions.openVault!, dest: androidVault});
-        }
+        const isAppStorage = (obsidianOptions.androidVaultStorage == 'app-storage');
 
         // open vault by setting the localStorage keys and relaunching Obsidian
         // on appium restarting the app with appium:fullReset is *really* slow. And, unlike electron we can actually
         // switch vault with just a reload. So for Appium, instead of rebooting we manually wipe localStorage and use
         // reload to switch the vault.
-        await browser.execute(async (androidVault) => {
-            localStorage.clear();
-            localStorage.setItem('mobile-external-vaults', JSON.stringify([androidVault]));
-            localStorage.setItem('mobile-selected-vault', androidVault);
-            // appId on mobile is just the full vault path
-            localStorage.setItem(`enable-plugin-${androidVault}`, 'true');
-        }, androidVault);
+        await browser.execute(async (androidVaultPath, isAppStorage, clearAppState) => {
+            if (clearAppState) {
+                localStorage.clear();
+            }
+             
+            if (isAppStorage) { // appId on mobile app storage, vault id is just the vault name
+                const androidVaultName = androidVaultPath.split("/").at(-1)!;
+                localStorage.setItem('mobile-external-vaults', JSON.stringify([]));
+                localStorage.setItem('mobile-selected-vault', androidVaultName);
+                localStorage.setItem(`enable-plugin-${androidVaultName}`, 'true');
+            } else { // On device storage its the full path
+                localStorage.setItem('mobile-external-vaults', JSON.stringify([androidVaultPath]));
+                localStorage.setItem('mobile-selected-vault', androidVaultPath);
+                localStorage.setItem(`enable-plugin-${androidVaultPath}`, 'true');
+            }
+
+        }, obsidianOptions.androidVault!, isAppStorage, opts.clearAppState);
         await navigateAndWait(browser, () => location.reload());
     }
 
@@ -470,8 +546,12 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
     private async appiumCloseVault() {
         const browser = this.browser!;
         // skip if we're already on the vault switcher
-        if (await browser.execute(() => localStorage.length > 0)) {
-            await browser.execute(() => localStorage.clear());
+        const isVaultOpen = await browser.execute(() => !!localStorage.getItem('mobile-selected-vault'));
+        if (isVaultOpen) {
+            await browser.execute(() => {
+                localStorage.removeItem('mobile-external-vaults');
+                localStorage.removeItem('mobile-selected-vault');
+            });
             await navigateAndWait(browser, () => location.reload());
         }
     }
@@ -530,7 +610,10 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
             }
             await browser.waitUntil( // wait until the helper plugin is loaded
                 () => browser.execute(() => !!(window as any).wdioObsidianService),
-                {timeout: 60_000, interval: 100},
+                {
+                    timeout: isAppium(browser.requestedCapabilities) ? 120_000 : 60_000,
+                    interval: 100,
+                },
             );
             await browser.executeObsidian(async ({app}) => {
                 await new Promise<void>((resolve) => app.workspace.onLayoutReady(resolve));
@@ -568,14 +651,13 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
                 this.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY] = newObsidianOptions;
                 if (vault) {
                     await service.setupVault(this.requestedCapabilities);
-                    await service.appiumOpenVault();
+                    await service.appiumUploadVault();
+                    await service.appiumOpenVault({clearAppState: true});
                 } else {
                     // reload without resetting app state or triggering appium:fullReset
+                    await service.appiumCloseVault()
 
-                    // hack to disable the Obsidian app and make sure it doesn't write to the vault while we modify it
-                    await navigateAndWait(this, () => location.replace('http://localhost/_capacitor_file_/not-a-file'));
-
-                    // while Obsidian is down, modify the vault files to setup plugins and themes
+                    // modify the vault files to setup plugins and themes
                     const local = path.join(oldObsidianOptions.openVault!, ".obsidian");
                     const localCommunityPlugins = path.join(local, "community-plugins.json");
                     const localAppearance = path.join(local, "appearance.json");
@@ -589,12 +671,12 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
                         vault: oldObsidianOptions.openVault!, copy: false,
                         plugins: selectedPlugins, themes: selectedThemes,
                     });
-                    let files = [localCommunityPlugins, localAppearance];
-                    files = (await Promise.all(files.map(async f => await fileExists(f) ? f : ""))).filter(f => f);
-                    await appiumUploadFiles(this, {src: local, dest: remote, files});
-
-                    // switch the app back
-                    await navigateAndWait(this, () => location.replace('http://localhost/'));
+                    for (const [src, dest] of [[localCommunityPlugins, remoteCommunityPlugins], [localAppearance, remoteAppearance]]) {
+                        if (await fileExists(src)) {
+                            await service.appiumUpload(src, dest)
+                        }
+                    }
+                    await service.appiumOpenVault({clearAppState: false})
                 }
             } else {
                 // if browserName is set, reloadSession tries to restart the driver entirely, so unset those
@@ -668,7 +750,8 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
             if (isAppium(browser.requestedCapabilities)) {
                 await this.appiumSetupApp();
                 if (cap[OBSIDIAN_CAPABILITY_KEY].vault) {
-                    await this.appiumOpenVault();
+                    await this.appiumUploadVault();
+                    await this.appiumOpenVault({clearAppState: true});
                 }
             }
             await this.prepareApp();
@@ -686,8 +769,13 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
         if (isAppium(cap)) {
             await this.appiumCloseVault();
 
+            const androidVaultsDir = obsidianOptions.androidVaultStorage == "app-storage" ? ANDROID_APP_STORAGE_DIR : obsidianOptions.androidVaultStorage!;
             for (const file of await appiumReaddir(browser, androidVaultsDir)) {
-                if (!file.includes(obsidianOptions.testRunId) || file.endsWith("-copy")) {
+                const name = path.posix.basename(file);
+                const isServiceManaged = name.match(/-wdio-(no)?copy$/);
+                const isFromThisRun = name.includes(obsidianOptions.testRunId);
+                const isCopy = name.match(/-copy$/)
+                if (isServiceManaged && (!isFromThisRun || isCopy)) {
                     await browser.execute("mobile: shell", {command: "rm", args: ["-rf", file]});
                 }
             }

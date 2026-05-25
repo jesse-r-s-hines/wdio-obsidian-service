@@ -38,7 +38,7 @@ describe("Test page object", () => {
         // vault should be copied
         expect(path.resolve(vaultPath1)).not.toEqual(originalVaultPath)
         if ((await obsidianPage.getPlatform()).isMobileApp) {
-            expect(vaultPath1).toMatch("wdio-obsidian-service-vaults");
+            expect(vaultPath1).toMatch(/\/storage\/emulated\/0/);
         }
 
         await browser.reloadObsidian({vault: "./test/vaults/basic"});

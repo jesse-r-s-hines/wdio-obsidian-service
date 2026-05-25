@@ -1,4 +1,3 @@
-import { minSupportedObsidianVersion } from "wdio-obsidian-service"
 import semver from "semver";
 import _ from "lodash"
 import {
@@ -6,9 +5,9 @@ import {
 } from "./wdio.shared.conf.js";
 
 let versionsToTest: string[]
-const minSupportedObsidianAndroidVersion = allVersions
-    .find(v => !!v.downloads.apk && semver.gte(v.version, minSupportedObsidianVersion))!
-    .version;
+// We have apks back to 1.5.8, "app storage" vaults were added in 1.8.10, and "device storage" vaults have write failure
+// bugs that cause intermittent failures.
+const minSupportedObsidianAndroidVersion = "1.8.10"
 
 if (process.env.OBSIDIAN_VERSIONS == "all") {
     versionsToTest = allVersions
