@@ -492,7 +492,10 @@ export async function checkCompatibility(
     const { client, cleanup } = cdpResult.result;
     let result = true;
     try {
-        if (semver.lt(appVersion, "0.7.4")) {
+        const loadedAppVersion = await cdpEvaluate(client, `window.obsidianLauncher.obsidian.apiVersion`)
+        if (loadedAppVersion && loadedAppVersion != appVersion) {
+            result = false;
+        } else if (semver.lt(appVersion, "0.7.4")) {
             // versions <0.7.4 show incompatibility warnings even for the installer of the same version. Something
             // must be broken with the installers listed in the release? Just setting these manually.
             result = semver.gte(installerVersion, '0.6.4');
