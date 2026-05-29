@@ -3,7 +3,7 @@
         "schemaVersion": "2.0.0",
         "commitDate": "2026-05-28T21:32:04Z",
         "commitSha": "bfd7ab894d4f70ea7892e7c760c6e4f5b7c76a65",
-        "timestamp": "2026-05-29T01:24:02.762Z"
+        "timestamp": "2026-05-29T22:31:42.083Z"
     },
     "versions": [
         {
@@ -8192,7 +8192,7 @@
         },
         {
             "version": "1.13.0",
-            "minInstallerVersion": "1.5.8",
+            "minInstallerVersion": "1.6.5",
             "maxInstallerVersion": "1.12.7",
             "isBeta": true,
             "downloads": {
