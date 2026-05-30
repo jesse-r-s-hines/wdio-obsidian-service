@@ -93,16 +93,7 @@ jobs:
       #     key: obsidian-cache-${{ matrix.os }}-${{ matrix.obsidian-versions }}-${{ hashFiles('./obsidian-versions.json') }}
 
       - shell: bash
-        run: |
-          if [[ '${{ matrix.package-resolution }}' == 'highest' ]]; then
-            rm -rf pnpm-lock.yaml node_modules packages/*/node_modules
-            pnpm install --config.resolutionMode=highest --no-frozen-lockfile
-          elif [[ '${{ matrix.package-resolution }}' == 'lowest-direct' ]]; then
-            rm -rf pnpm-lock.yaml node_modules packages/*/node_modules
-            pnpm install --config.resolutionMode=lowest-direct --no-frozen-lockfile
-          else
-            pnpm install --frozen-lockfile
-          fi
+        run: pnpm install --frozen-lockfile
 
       - name: Download build artifact
         uses: actions/download-artifact@v4
