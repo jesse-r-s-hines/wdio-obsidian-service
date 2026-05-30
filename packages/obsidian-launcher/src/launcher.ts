@@ -1,7 +1,6 @@
 import fsAsync from "fs/promises"
 import path from "path"
 import crypto from "crypto";
-import extractZip from "extract-zip"
 import { downloadArtifact } from '@electron/get';
 import child_process from "child_process";
 import os from "os";
@@ -18,7 +17,7 @@ import { ObsidianAppearanceConfig, ObsidianCommunityPlugin, ObsidianCommunityThe
 import { obsidianApiLogin, fetchObsidianApi, downloadResponse } from "./apis.js";
 import ChromeLocalStorage from "./chromeLocalStorage.js";
 import {
-    normalizeGitHubRepo, extractGz, extractObsidianAppImage, extractObsidianExe, extractObsidianDmg,
+    normalizeGitHubRepo, extractGz, extractObsidianAppImage, extractObsidianExe, extractObsidianDmg, sevenZ,
     updateObsidianVersionList,
 } from "./launcherUtils.js";
 
@@ -484,7 +483,7 @@ export class ObsidianLauncher {
                 cacheRoot: path.join(scratch, 'download'),
             });
             const extracted = path.join(scratch, "extracted");
-            await extractZip(chromedriverZipPath, { dir: extracted });
+            await sevenZ(["x", "-oextracted", path.relative(scratch, chromedriverZipPath)], {cwd: scratch});
             return extracted;
         }, {replace: false})
         return chromedriverPath;
