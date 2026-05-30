@@ -65,15 +65,13 @@ jobs:
       matrix:
         include:
           - os: ubuntu-latest
-            node-version: "24.x"
+            node-version: "22.x"
             test-level: "standard"
             obsidian-versions: "latest/latest/standard"
-            package-resolution: highest
           - os: ubuntu-latest
             node-version: "24.x"
             test-level: "standard"
             obsidian-versions: "latest/latest/standard"
-            package-resolution: highest
     runs-on: ${{ matrix.os }}
     timeout-minutes: 30
     name: "test e2e (${{ matrix.os }}, node ${{ matrix.node-version }} obsidian: ${{ matrix.obsidian-versions }}, package-resolution: ${{ matrix.package-resolution }})"
