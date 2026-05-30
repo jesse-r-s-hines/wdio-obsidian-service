@@ -162,7 +162,7 @@ jobs:
             sleep 1
 
       - name: Run e2e tests
-        run: pnpm run --aggregate-output --reporter-hide-prefix --sequential ${{ matrix.pnpm-args }} -F wdio-obsidian-service test:e2e:standalone
+        run: pnpm run ${{ matrix.pnpm-args }} --sequential test:e2e
         env:
           # 3 test levels:
           #   - basic (fast, just test the core features)
@@ -174,7 +174,6 @@ jobs:
           # Secrets won't be available when run on a PR
           OBSIDIAN_EMAIL: ${{ secrets.OBSIDIAN_EMAIL }}
           OBSIDIAN_PASSWORD: ${{ secrets.OBSIDIAN_PASSWORD }}
-          NODE_OPTIONS: "--dns-result-order=ipv4first"
 
   # test-e2e-android:
   #   needs: [test-unit]
