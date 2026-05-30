@@ -154,3 +154,6 @@ Support Obsidian CLI in wdio tests!
 
 ## 3.0.3
 - Update deps
+
+## 3.0.4
+- Fix hang in chromedriver download on node 24.16.0

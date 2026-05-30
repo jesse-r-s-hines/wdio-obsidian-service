@@ -173,7 +173,7 @@ importers:
         specifier: '>=1.1.1'
         version: 1.12.3(@codemirror/state@6.5.0)(@codemirror/view@6.38.6)
       obsidian-launcher:
-        specifier: 3.0.3
+        specifier: 3.0.4
         version: link:../obsidian-launcher
       semver:
         specifier: ^7.7.3
@@ -246,7 +246,7 @@ importers:
         specifier: ^5.9.3
         version: 5.9.3
       wdio-obsidian-reporter:
-        specifier: 3.0.3
+        specifier: 3.0.4
         version: link:../wdio-obsidian-reporter
 
 packages:
