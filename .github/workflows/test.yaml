@@ -89,7 +89,7 @@ jobs:
             # macos runners have less RAM and have issues with high parallelism
             max-instances: 2
             pnpm-args: "--sequential"
-          - os: ubuntu-latest # TODO: switch back to ubuntu arm, but currently the GitHub arm runners are broken.
+          - os: ubuntu-24.04-arm
             node-version: "24.x"
             test-level: "standard"
             obsidian-versions: "latest/latest/standard earliest/earliest/basic"
