@@ -89,7 +89,7 @@ jobs:
           #   # macos runners have less RAM and have issues with high parallelism
           #   max-instances: 2
           #   pnpm-args: "--sequential"
-          - os: ubuntu-24.04-arm
+          - os: ubuntu-latest
             node-version: "24.x"
             test-level: "standard"
             obsidian-versions: "latest/latest/standard earliest/earliest/basic"
@@ -162,7 +162,7 @@ jobs:
             sleep 1
 
       - name: Run e2e tests
-        run: pnpm run --aggregate-output --reporter-hide-prefix --sequential ${{ matrix.pnpm-args }} test:e2e
+        run: pnpm run --aggregate-output --reporter-hide-prefix --sequential ${{ matrix.pnpm-args }} -F wdio-obsidian-service test:e2e:standalone
         env:
           # 3 test levels:
           #   - basic (fast, just test the core features)
