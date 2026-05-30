@@ -483,7 +483,7 @@ export class ObsidianLauncher {
                 artifactName: 'chromedriver',
                 cacheRoot: path.join(scratch, 'download'),
                 downloadOptions: {
-                    signal: AbortSignal.timeout(2 * 60 * 1000),
+                    signal: AbortSignal.timeout(45 * 1000),
                 },
             });
             consola.log(`Downloaded chromedriver for electron ${installerInfo.electron} ...`);
