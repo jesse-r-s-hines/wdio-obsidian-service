@@ -76,8 +76,8 @@ jobs:
           - os: ubuntu-latest
             node-version: "18.x"
             test-level: "standard"
-            obsidian-versions: "latest/latest/standard earliest/earliest/basic"
-            package-resolution: lowest-direct
+            obsidian-versions: "latest/latest/standard"
+            package-resolution: highest
           # - os: windows-latest
           #   node-version: "20.x"
           #   test-level: "standard"
@@ -92,7 +92,7 @@ jobs:
           - os: ubuntu-latest
             node-version: "24.x"
             test-level: "standard"
-            obsidian-versions: "latest/latest/standard earliest/earliest/basic"
+            obsidian-versions: "latest/latest/standard"
             package-resolution: highest
           # Skip these to save time (window-arm is especially slow for some reason)
           # - os: windows-11-arm
