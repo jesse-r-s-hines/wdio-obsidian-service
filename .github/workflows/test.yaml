@@ -162,7 +162,7 @@ jobs:
             sleep 1
 
       - name: Run e2e tests
-        run: pnpm run ${{ matrix.pnpm-args }} --sequential test:e2e
+        run: pnpm run ${{ matrix.pnpm-args }} --sequential -F wdio-obsidian-service test:e2e:standalone
         env:
           # 3 test levels:
           #   - basic (fast, just test the core features)
