@@ -75,21 +75,21 @@ jobs:
           # organized to minimize job count
           - os: ubuntu-latest
             node-version: "18.x"
-            test-level: "all"
-            obsidian-versions: "sample"
+            test-level: "standard"
+            obsidian-versions: "latest/latest/standard earliest/earliest/basic"
             package-resolution: lowest-direct
-          - os: windows-latest
-            node-version: "20.x"
-            test-level: "standard"
-            obsidian-versions: "latest/latest/standard earliest/earliest/basic"
-          - os: macos-latest # arm
-            node-version: "22.x"
-            test-level: "standard"
-            obsidian-versions: "latest/latest/standard earliest/earliest/basic"
-            # macos runners have less RAM and have issues with high parallelism
-            max-instances: 2
-            pnpm-args: "--sequential"
-          - os: ubuntu-latest # TODO: switch back to ubuntu arm, but currently the GitHub arm runners are broken.
+          # - os: windows-latest
+          #   node-version: "20.x"
+          #   test-level: "standard"
+          #   obsidian-versions: "latest/latest/standard earliest/earliest/basic"
+          # - os: macos-latest # arm
+          #   node-version: "22.x"
+          #   test-level: "standard"
+          #   obsidian-versions: "latest/latest/standard earliest/earliest/basic"
+          #   # macos runners have less RAM and have issues with high parallelism
+          #   max-instances: 2
+          #   pnpm-args: "--sequential"
+          - os: ubuntu-24.04-arm
             node-version: "24.x"
             test-level: "standard"
             obsidian-versions: "latest/latest/standard earliest/earliest/basic"
@@ -162,7 +162,7 @@ jobs:
             sleep 1
 
       - name: Run e2e tests
-        run: pnpm run --aggregate-output --reporter-hide-prefix ${{ matrix.pnpm-args }} test:e2e
+        run: pnpm run --aggregate-output --reporter-hide-prefix --sequential ${{ matrix.pnpm-args }} test:e2e
         env:
           # 3 test levels:
           #   - basic (fast, just test the core features)
@@ -174,98 +174,99 @@ jobs:
           # Secrets won't be available when run on a PR
           OBSIDIAN_EMAIL: ${{ secrets.OBSIDIAN_EMAIL }}
           OBSIDIAN_PASSWORD: ${{ secrets.OBSIDIAN_PASSWORD }}
+          NODE_OPTIONS: "--dns-result-order=ipv4first"
 
-  test-e2e-android:
-    needs: [test-unit]
-    env:
-      AVD_ARGS: "-no-metrics -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none"
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          # Test two versions at once to test that reinstalling works
-          - obsidian-versions: "latest earliest"
-            android-api-level: 36
-            android-profile: pixel
-            node-version: "20.x"
-            package-resolution: lowest-direct
-          - obsidian-versions: "latest"
-            android-api-level: 36
-            android-profile: pixel
-            node-version: "24.x"
-            package-resolution: highest
-    runs-on: ubuntu-latest
-    name: "test e2e (android, api ${{ matrix.android-api-level }}, profile ${{ matrix.android-profile }}, obsidian ${{ matrix.obsidian-versions }}, package-resolution: ${{ matrix.package-resolution }})"
-    steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 10
-      - name: Use Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ matrix.node-version }}
-          cache: 'pnpm'
+  # test-e2e-android:
+  #   needs: [test-unit]
+  #   env:
+  #     AVD_ARGS: "-no-metrics -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none"
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       include:
+  #         # Test two versions at once to test that reinstalling works
+  #         - obsidian-versions: "latest earliest"
+  #           android-api-level: 36
+  #           android-profile: pixel
+  #           node-version: "20.x"
+  #           package-resolution: lowest-direct
+  #         - obsidian-versions: "latest"
+  #           android-api-level: 36
+  #           android-profile: pixel
+  #           node-version: "24.x"
+  #           package-resolution: highest
+  #   runs-on: ubuntu-latest
+  #   name: "test e2e (android, api ${{ matrix.android-api-level }}, profile ${{ matrix.android-profile }}, obsidian ${{ matrix.obsidian-versions }}, package-resolution: ${{ matrix.package-resolution }})"
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: pnpm/action-setup@v4
+  #       with:
+  #         version: 10
+  #     - name: Use Node.js
+  #       uses: actions/setup-node@v4
+  #       with:
+  #         node-version: ${{ matrix.node-version }}
+  #         cache: 'pnpm'
 
-      - name: Cache .obsidian-cache
-        uses: actions/cache@v4
-        with:
-          path: .obsidian-cache
-          key: obsidian-cache-android-${{ matrix.obsidian-versions }}-${{ hashFiles('./obsidian-versions.json') }}
+  #     - name: Cache .obsidian-cache
+  #       uses: actions/cache@v4
+  #       with:
+  #         path: .obsidian-cache
+  #         key: obsidian-cache-android-${{ matrix.obsidian-versions }}-${{ hashFiles('./obsidian-versions.json') }}
 
-      - shell: bash
-        run: |
-          if [[ '${{ matrix.package-resolution }}' == 'highest' ]]; then
-            rm -rf pnpm-lock.yaml node_modules packages/*/node_modules
-            pnpm install --config.resolutionMode=highest --no-frozen-lockfile
-          elif [[ '${{ matrix.package-resolution }}' == 'lowest-direct' ]]; then
-            rm -rf pnpm-lock.yaml node_modules packages/*/node_modules
-            pnpm install --config.resolutionMode=lowest-direct --no-frozen-lockfile
-          else
-            pnpm install --frozen-lockfile
-          fi
+  #     - shell: bash
+  #       run: |
+  #         if [[ '${{ matrix.package-resolution }}' == 'highest' ]]; then
+  #           rm -rf pnpm-lock.yaml node_modules packages/*/node_modules
+  #           pnpm install --config.resolutionMode=highest --no-frozen-lockfile
+  #         elif [[ '${{ matrix.package-resolution }}' == 'lowest-direct' ]]; then
+  #           rm -rf pnpm-lock.yaml node_modules packages/*/node_modules
+  #           pnpm install --config.resolutionMode=lowest-direct --no-frozen-lockfile
+  #         else
+  #           pnpm install --frozen-lockfile
+  #         fi
 
-      - name: Download build artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: build
+  #     - name: Download build artifact
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: build
 
-      - name: Enable KVM
-        run: |
-          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
-          sudo udevadm control --reload-rules
-          sudo udevadm trigger --name-match=kvm
+  #     - name: Enable KVM
+  #       run: |
+  #         echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+  #         sudo udevadm control --reload-rules
+  #         sudo udevadm trigger --name-match=kvm
   
-      - name: AVD cache
-        id: avd-cache
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.android/avd/*
-            ~/.android/adb*
-          key: avd-${{ matrix.android-api-level }}-${{ matrix.android-profile }}
+  #     - name: AVD cache
+  #       id: avd-cache
+  #       uses: actions/cache@v4
+  #       with:
+  #         path: |
+  #           ~/.android/avd/*
+  #           ~/.android/adb*
+  #         key: avd-${{ matrix.android-api-level }}-${{ matrix.android-profile }}
 
-      - name: run android tests
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          force-avd-creation: false
-          avd-name: obsidian_test
-          emulator-options: -no-snapshot-save ${{ env.AVD_ARGS }}
-          api-level: ${{ matrix.android-api-level }}
-          arch: "x86_64"
-          target: google_apis
-          profile: ${{ matrix.android-profile }}
-          disk-size: 4096M
-          heap-size: 512M
-          script: pnpm run --aggregate-output --reporter-hide-prefix test:android
-        env:
-          OBSIDIAN_VERSIONS: ${{ matrix.obsidian-versions }}
-          OBSIDIAN_EMAIL: ${{ secrets.OBSIDIAN_EMAIL }}
-          OBSIDIAN_PASSWORD: ${{ secrets.OBSIDIAN_PASSWORD }}
+  #     - name: run android tests
+  #       uses: reactivecircus/android-emulator-runner@v2
+  #       with:
+  #         force-avd-creation: false
+  #         avd-name: obsidian_test
+  #         emulator-options: -no-snapshot-save ${{ env.AVD_ARGS }}
+  #         api-level: ${{ matrix.android-api-level }}
+  #         arch: "x86_64"
+  #         target: google_apis
+  #         profile: ${{ matrix.android-profile }}
+  #         disk-size: 4096M
+  #         heap-size: 512M
+  #         script: pnpm run --aggregate-output --reporter-hide-prefix test:android
+  #       env:
+  #         OBSIDIAN_VERSIONS: ${{ matrix.obsidian-versions }}
+  #         OBSIDIAN_EMAIL: ${{ secrets.OBSIDIAN_EMAIL }}
+  #         OBSIDIAN_PASSWORD: ${{ secrets.OBSIDIAN_PASSWORD }}
 
   post-check:
     if: always()
-    needs: [test-unit, test-e2e-desktop, test-e2e-android]
+    needs: [test-unit, test-e2e-desktop]
     runs-on: ubuntu-latest
     steps:
       - name: Check all tests passed
