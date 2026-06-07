@@ -157,3 +157,8 @@ Support Obsidian CLI in wdio tests!
 
 ## 3.0.4
 - Fix hang in chromedriver download on node 24.16.0
+
+## 3.1.0
+- Fix intermittent errors when running Appium/Android tests
+- Support storing Android test vaults in either App Storage or Device Storage.
+    - App Storage is now the default, which avoids intermittent test failures caused by write failures on slower Android emulators
