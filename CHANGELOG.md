@@ -162,3 +162,6 @@ Support Obsidian CLI in wdio tests!
 - Fix intermittent errors when running Appium/Android tests
 - Support storing Android test vaults in either App Storage or Device Storage.
     - App Storage is now the default, which avoids intermittent test failures caused by write failures on slower Android emulators
+
+## 3.1.1
+- Fix errors on node 26
