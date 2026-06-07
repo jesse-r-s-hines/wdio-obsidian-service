@@ -1,5 +1,7 @@
 # yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
 # Trigger this workflow with `pnpm run release patch`
+# It uses https://docs.npmjs.com/staged-publishing so to actually publish the package, go to the https://www.npmjs.com
+# Staged Packages page and approve and actually publish them
 name: Publish
 on:
   push:
@@ -19,7 +21,7 @@ jobs:
 
       - uses: pnpm/action-setup@v4
         with:
-          version: 10
+          version: 11
       - uses: actions/setup-node@v4
         with:
           node-version: 24
@@ -40,7 +42,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish
-        run: pnpm publish -r --aggregate-output --no-git-checks --tag $RELEASE_TYPE
+        run: pnpm stage publish -r --aggregate-output --no-git-checks --tag $RELEASE_TYPE
         env:
           RELEASE_TYPE: ${{ contains(github.ref, '-') && 'beta' || 'latest'}}
 

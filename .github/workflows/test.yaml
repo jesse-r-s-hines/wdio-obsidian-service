@@ -257,7 +257,7 @@ jobs:
           profile: ${{ matrix.android-profile }}
           disk-size: 4096M
           heap-size: 512M
-          script: pnpm run --aggregate-output --reporter-hide-prefix test:android
+          script: pnpm run --sequential test:android
         env:
           OBSIDIAN_VERSIONS: ${{ matrix.obsidian-versions }}
           OBSIDIAN_EMAIL: ${{ secrets.OBSIDIAN_EMAIL }}

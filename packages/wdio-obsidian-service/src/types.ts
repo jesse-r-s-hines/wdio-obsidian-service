@@ -128,6 +128,17 @@ export interface ObsidianCapabilityOptions {
      * Path to the app asar to load into obsidian. If omitted it will be downloaded automatically.
      */
     appPath?: string,
+
+    /**
+     * Where to store test vaults when test on Android.
+     * 
+     * Options:
+     * - "app-storage": Store the vault as Obsidian app data. Default.
+     * - "device-storage": Store the vault on the SD card (`/storage/emulated/0`). Currently not recommended due to 
+     *                     intermittent write failures in Capacitor that cause flaky tests. See https://forum.obsidian.md/t/102935
+     * - custom path: Store vaults under a custom device storage path. Same caveats as "device-storage" apply.
+     */
+    androidVaultStorage?: string,
 }
 
 
@@ -151,6 +162,8 @@ export interface NormalizedObsidianCapabilityOptions {
     emulateMobile: boolean,
     binaryPath?: string,
     appPath?: string,
+    /** Just app-storage or the absolute path (device-storage is resolved to the default) */
+    androidVaultStorage?: string,
 }
 
 
