@@ -1,5 +1,5 @@
 import { remote } from 'webdriverio'
-import type { Capabilities, Options } from '@wdio/types'
+import type { Capabilities } from '@wdio/types'
 import { ObsidianLauncherService, ObsidianWorkerService } from "./service.js"
 import { ObsidianServiceOptions } from "./types.js"
 
@@ -44,18 +44,15 @@ export async function startWdioSession(
 ): Promise<WebdriverIO.Browser> {
     serviceOptions = serviceOptions ?? {};
     const capabilities = params.capabilities as WebdriverIO.Capabilities;
-    const testRunnerOptions: Options.Testrunner = {
-        cacheDir: params.cacheDir,
-    };
     const launcherService = new ObsidianLauncherService(
         serviceOptions,
         [capabilities] as WebdriverIO.Capabilities,
-        testRunnerOptions,
+        params,
     );
-    const workerService = new ObsidianWorkerService(serviceOptions, capabilities, testRunnerOptions);
+    const workerService = new ObsidianWorkerService(serviceOptions, capabilities, params);
 
-    await launcherService.onPrepare(testRunnerOptions, [capabilities]);
-    await workerService.beforeSession(testRunnerOptions, capabilities);
+    await launcherService.onPrepare(params, [capabilities]);
+    await workerService.beforeSession(params, capabilities);
 
     const browser = await remote(params);
 

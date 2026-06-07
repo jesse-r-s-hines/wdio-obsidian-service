@@ -715,6 +715,17 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
      * Runs before the session and browser have started.
      */
     async beforeSession(config: Options.Testrunner, cap: WebdriverIO.Capabilities) {
+        // Workaround for https://github.com/webdriverio/webdriverio/issues/15265 on Node 26
+        if (!config.transformRequest) {
+            config.transformRequest = (requestOptions: RequestInit): RequestInit => {
+                if (requestOptions.headers instanceof Headers) {
+                    requestOptions.headers.delete('Connection');
+                    requestOptions.headers.delete('Content-Length');
+                }
+                return requestOptions;
+            }
+        }
+
         try {
             if (!cap[OBSIDIAN_CAPABILITY_KEY]) return;
             if (cap[OBSIDIAN_CAPABILITY_KEY].vault != undefined) {
