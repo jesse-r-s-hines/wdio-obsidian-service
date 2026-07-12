@@ -1,4 +1,4 @@
-export const obsidianVersionsSchemaVersion = '2.0.0';
+export const obsidianVersionsSchemaVersion = '2.1.0';
 
 /**
  * Type of the obsidian-versions.json file.
@@ -40,7 +40,13 @@ export type ObsidianInstallerInfo = {
  */
 export type ObsidianVersionInfo = {
     version: string,
+    /** Minimum installer version that is fully compatible with this app version */
     minInstallerVersion?: string,
+    /**
+     * Minimum installer version that will run at all. An installer version between minRunnableInstallerVersion and minInstallerVersion
+     * will launch, but Obsidian will show warnings about installer compatibility and some features may not work.
+     */
+    minRunnableInstallerVersion?: string,
     maxInstallerVersion?: string,
     isBeta: boolean,
     gitHubRelease?: string,

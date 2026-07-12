@@ -297,3 +297,31 @@ export function normalizeObject<T>(canonical: CanonicalForm, obj: T): T {
     }
     return helper(rootCanonical, rootObj);
 }
+
+
+/**
+ * Use a binary search to find the first entry that passes check. Assumes the list is in order such that all that fail
+ * the check are before all that pass the check.
+ * start and end range is [start, end)
+ */
+export async function findFirstPassing<T>(
+    arr: T[], check: (x: T) => Promise<boolean>|boolean, start = 0, end = arr.length,
+): Promise<T | undefined> {
+    if (start < 0 || end > arr.length || end < start) throw new Error(`Invalid start/end: ${start} -> ${end}`);
+    const origEnd = end;
+
+    if (start < end && await check(arr[start])) { // optimization for the common case where all in range are passing
+        return arr[start];
+    }
+    start += 1;
+
+    while (start < end) {
+        const mid = Math.floor((start + end) / 2);
+        if (await check(arr[mid])) {
+            end = mid;
+        } else {
+            start = mid + 1;
+        }
+    }
+    return start < origEnd ? arr[start] : undefined;
+}

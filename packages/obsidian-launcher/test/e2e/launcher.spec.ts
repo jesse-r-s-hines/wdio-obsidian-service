@@ -123,15 +123,15 @@ describe("ObsidianLauncher", function() {
 
     it("test checkCompatibility compatible", async function() {
         if (process.env.TEST_LEVEL != "all") this.skip();
-        expect(await checkCompatibility(launcher, latest, latestMinInstaller)).to.equal(true);
-        expect(await checkCompatibility(launcher, ...versions[0])).to.equal(true);
+        expect(await checkCompatibility(launcher, latest, latestMinInstaller)).to.equal("compatible");
+        expect(await checkCompatibility(launcher, ...versions[0])).to.equal("compatible");
     })
 
     it("test checkCompatibility incompatible", async function() {
         if (process.env.TEST_LEVEL != "all") this.skip();
         const installers = versions.map(v => v[1]).sort(semver.compare);
         const incompatibleInstaller = _.findLast(installers, v => semver.lt(v, latestMinInstaller))!;
-        expect(await checkCompatibility(launcher, latest, incompatibleInstaller)).to.equal(false);
+        expect(await checkCompatibility(launcher, latest, incompatibleInstaller)).to.not.equal("compatible");
     })
 
     for (const [appVersion, installerVersion] of versions) {
