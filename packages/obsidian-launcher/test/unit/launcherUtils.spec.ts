@@ -9,7 +9,7 @@ import fs from "fs";
 import fsAsync from "fs/promises";
 import semver from "semver"
 import _ from "lodash";
-import { ObsidianVersionInfo, ObsidianVersionList } from "../../src/types.js";
+import { ObsidianVersionInfo, ObsidianVersionList, obsidianVersionsSchemaVersion } from "../../src/types.js";
 import { ObsidianDesktopRelease } from "../../src/obsidianTypes.js";
 
 
@@ -128,7 +128,7 @@ describe("updateObsidianVersionList", function() {
     ) {
         const { destkopReleases, githubReleases, _extractInstallerInfo, _checkCompatibility } = opts;
         const metadata = { // dummy metadata
-            schemaVersion: "2.0.0",
+            schemaVersion: obsidianVersionsSchemaVersion,
             commitDate: "1970-01-01T00:00:00Z",
             commitSha: "0000000000000000000000000000000000000000",
             timestamp: timestamp,
@@ -152,10 +152,19 @@ describe("updateObsidianVersionList", function() {
                     return installerInfo;
                 }),
                 _checkCompatibility: _checkCompatibility ?? (async (_, appVersion, installerVersion) => {
-                    if (!fullVersionsMap[appVersion].minInstallerVersion) {
+                    const info = fullVersionsMap[appVersion];
+                    if (!info.minInstallerVersion) {
                         throw Error(`No minInstallerVersion for ${appVersion}`);
                     }
-                    return semver.gte(installerVersion, fullVersionsMap[appVersion].minInstallerVersion);
+                    if (semver.gte(installerVersion, info.minInstallerVersion)) {
+                        return "compatible";
+                    } else if (info.minRunnableInstallerVersion &&
+                        semver.gte(installerVersion, info.minRunnableInstallerVersion)
+                    ) {
+                        return "warning";
+                    } else {
+                        return "error";
+                    }
                 }),
             },
         );

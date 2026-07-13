@@ -14,7 +14,7 @@ import CDP from "chrome-remote-interface";
 import { ObsidianLauncher } from "./launcher.js";
 import {
     consola, atomicCreate, makeTmpDir, normalizeObject, pool, maybe, withTimeout, until, retry, UntilOpts,
-    tryParseJson,
+    tryParseJson, findFirstPassing,
 } from "./utils.js";
 import { downloadResponse, fetchGitHubAPIPaginated } from "./apis.js"
 import {
@@ -467,11 +467,19 @@ export async function extractInstallerInfo(
 }
 
 /**
+ * The result of checking an Obsidian app version against an installer version:
+ * - `"compatible"`: the app launches without warnings
+ * - `"warning"`: the app launches but Obsidian shows an "installer version too low" warning
+ * - `"error"`: the installer is too old to launch the app at all
+ */
+export type CompatibilityResult = "error" | "warning" | "compatible";
+
+/**
  * Checks if an Obsidian app and installer version are compatible.
  */
 export async function checkCompatibility(
     launcher: ObsidianLauncher, appVersion: string, installerVersion: string,
-) {
+): Promise<CompatibilityResult> {
     [appVersion, installerVersion] = await launcher.resolveVersion(appVersion, installerVersion);
     consola.log(`Checking if app ${appVersion} and installer ${installerVersion} are compatible...`)
     // getCdpSession will download, but do it here first so we don't interpret network errors as launch failure
@@ -485,20 +493,22 @@ export async function checkCompatibility(
         {retries: 3, backoff: 4000},
     ));
     if (!cdpResult.success) {
+        // note getCdpSession will also fail if electron fails but the Obsidian app doesn't load
         consola.log(`app ${appVersion} with installer ${installerVersion} failed to launch: ${cdpResult.error}`);
-        return false;
+        return "error";
     }
 
     const { client, cleanup } = cdpResult.result;
-    let result = true;
+    let result: CompatibilityResult = "compatible";
     try {
-        const loadedAppVersion = await cdpEvaluate(client, `window.obsidianLauncher.obsidian.apiVersion`)
+        let loadedAppVersion = await cdpEvaluate(client, `window.obsidianLauncher?.obsidian?.apiVersion`);
         if (loadedAppVersion && loadedAppVersion != appVersion) {
-            result = false;
+            // on some old installers, it will fall back to running the bundled asar instead of the incompatible app
+            result = "error";
         } else if (semver.lt(appVersion, "0.7.4")) {
             // versions <0.7.4 show incompatibility warnings even for the installer of the same version. Something
             // must be broken with the installers listed in the release? Just setting these manually.
-            result = semver.gte(installerVersion, '0.6.4');
+            result = semver.gte(installerVersion, '0.6.4') ? "compatible" : "warning";
         } else if (semver.lt(appVersion, "0.13.4")) {
             // the debug command was added in 0.13.4, so check the about page before then
             await cdpEvaluate(client, `window.app.commands.executeCommandById('app:open-settings')`);
@@ -508,24 +518,29 @@ export async function checkCompatibility(
                     document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null
                 ).singleNodeValue.click() ?? true;
             `), {timeout: 5000});
-            const aboutText = await until(() => cdpEvaluate(client, `
+            const aboutText: string = await until(() => cdpEvaluate(client, `
                 document.evaluate(
                     "//*[contains(@class, 'setting-item-name') and contains(text(),'Current version:')]",
                     document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null
                 ).singleNodeValue.parentNode.innerText;
             `), {timeout: 5000});
-            if (['manual installation', "manually install"].some(t => aboutText.includes(t))) {
-                result = false;
+            // plugins don't work below 0.12.8, so window.obsidianLauncher isn't set. So check the app version matches here
+            loadedAppVersion = aboutText.match(/Current version:\s*v?(\d+\.\d+\.\d+)/)?.[1];
+            if (loadedAppVersion != appVersion) {
+                result = "error";
+            } else if (['manual installation', "manually install"].some(t => aboutText.includes(t))) {
+                result = "warning";
             }
         } else {
             // check the debug info for installer incompatibility warning
+            // note, old installers don't support the debug command (less than 0.9.17) so treat failure as incompatible
             await cdpEvaluate(client, `window.obsidianLauncher.app.commands.executeCommandById('app:show-debug-info')`);
             const debugInfo: string = await cdpEvaluateUntil(client,
                 `document.querySelector(".debug-textarea").value.trim()`,
                 {timeout: 5000},
-            );
-            if (debugInfo.toLowerCase().match(/installer version too low/)) {
-                result = false;
+            ).catch(() => "");
+            if (debugInfo == "" || debugInfo.toLowerCase().match(/installer version too low/)) {
+                result = "warning";
             }
         }
     } finally {
@@ -533,7 +548,7 @@ export async function checkCompatibility(
         await fsAsync.rm(vault, {recursive: true, force: true});
     }
 
-    consola.log(`app ${appVersion} and installer ${installerVersion} are ${!result ? 'in' : ''}compatible`);
+    consola.log(`app ${appVersion} and installer ${installerVersion} compatibility: ${result}`);
     return result;
 }
 
@@ -581,45 +596,50 @@ export async function getCompatibilityInfos(
 
         // create array of only installer versions
         const installerArr = versionArr.filter(v => !!v.downloads.appImage);
-        // map installer versions to their index
-        const installerIndexMap = _.fromPairs(installerArr.map((v, i) => [v.version, i]));
+        const checkCompatibilityCached = _.memoize(
+            (app: string, installer: string) => _checkCompatibility(launcher, app, installer),
+            (app: string, installer: string) => `${app}/${installer}`,
+        )
 
-        // populate minInstallerVersion
+        // populate minInstallerVersion and minRunnableInstallerVersion
         for (const [i, version] of versionArr.entries()) {
-            if (version.minInstallerVersion) {
+            if (version.minInstallerVersion && version.minRunnableInstallerVersion) {
                 continue;
             }
-            // do a binary search of sorts to find the first "compatible" installer
             const prev = i > 0 ? versionArr[i - 1] : undefined;
-            let start = prev ? installerIndexMap[prev.minInstallerVersion!] : 0;
-            let end = installerIndexMap[version.maxInstallerVersion!];
+   
+            const minInstallerVersion = await findFirstPassing(installerArr,
+                async (v) => (await checkCompatibilityCached(version.version, v.version)) == "compatible",
+                prev ? installerArr.findIndex(v => v.version == prev.minInstallerVersion) : 0,
+                installerArr.findIndex(v => v.version == version.maxInstallerVersion) + 1,
+            );
+            const minRunnableInstallerVersion = await findFirstPassing(installerArr,
+                async (v) => ['warning', 'compatible'].includes(await checkCompatibilityCached(version.version, v.version)),
+                prev ? installerArr.findIndex(v => v.version == prev.minRunnableInstallerVersion) : 0,
+                installerArr.findIndex(v => v.version == version.maxInstallerVersion) + 1,
+            );
 
-            while (start <= end) {
-                const mid = Math.floor((start + end) / 2);
-                const compatible = await _checkCompatibility(launcher,
-                    version.version, installerArr[mid].version,
-                );
-                if (!compatible) {
-                    start = mid + 1;
-                } else {
-                    end = mid - 1;
-                }
+            if (!minInstallerVersion || !minRunnableInstallerVersion) {
+                throw Error(`${version.version} incompatible with all installers`)
             }
-            if (start > installerIndexMap[version.maxInstallerVersion!]) {
-                throw Error(`${version.version} failed to launch for all installers`)
-            }
-            version.minInstallerVersion = installerArr[start].version;
+
+            version.minInstallerVersion = minInstallerVersion.version;
+            version.minRunnableInstallerVersion = minRunnableInstallerVersion.version;
         }
 
         // Return only new information
         const origVersions = _(versions)
-            .map(v => _.pick(v, ["version", "minInstallerVersion", "maxInstallerVersion"]))
+            .map(v => _.pick(v, [
+                "version", "minInstallerVersion", "minRunnableInstallerVersion", "maxInstallerVersion",
+            ]))
             .keyBy(v => v.version)
             .value();
         return versionArr
             .map(v => ({
                 version: v.version,
-                minInstallerVersion: v.minInstallerVersion!, maxInstallerVersion: v.maxInstallerVersion!,
+                minInstallerVersion: v.minInstallerVersion!,
+                minRunnableInstallerVersion: v.minRunnableInstallerVersion!,
+                maxInstallerVersion: v.maxInstallerVersion!,
             }))
             .filter(v => !_.isEqual(v, origVersions[v.version]));
     } finally {
@@ -643,6 +663,7 @@ export function normalizeObsidianVersionInfo(versionInfo: DeepPartial<ObsidianVe
     const canonicalForm = {
         version: null,
         minInstallerVersion: null,
+        minRunnableInstallerVersion: null,
         maxInstallerVersion: null,
         isBeta: null,
         gitHubRelease: null,

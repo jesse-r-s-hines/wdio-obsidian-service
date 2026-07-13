@@ -5,7 +5,7 @@ import path from "path"
 import { createDirectory } from "../helpers.js";
 import {
     fileExists, atomicCreate, linkOrCp, pathIsUnder, sleep, withTimeout, pool, maybe, normalizeObject,
-    CanonicalForm, until, retry,
+    CanonicalForm, until, retry, findFirstPassing,
 } from "../../src/utils.js";
 
 
@@ -362,5 +362,48 @@ describe("retry", () => {
         }).catch(r => r);
         expect(result).to.be.instanceOf(Error);
         expect(result.toString()).to.match(/unrecoverable/);
+    });
+})
+
+describe("findFirstPassing", () => {
+    const tests: {
+        name: string,
+        arr: any[], cond: (x: any) => boolean,
+        start?: any, end?: any,
+        expected: any,
+    }[] = [
+        {name: "middle", arr: [1, 2, 3, 4, 5], cond: x => x >= 3, expected: 3},
+        {name: "strings", arr: ['a', 'b', 'c', 'd', 'e'], cond: x => x >= "c", expected: "c"},
+        {name: "first element", arr: [1, 2, 3, 4, 5], cond: x => x >= 0, expected: 1},
+        {name: "last element", arr: [1, 2, 3, 4, 5], cond: x => x >= 5, expected: 5},
+        {name: "none pass", arr: [1, 2, 3, 4, 5], cond: x => x >= 6, expected: undefined},
+        {name: "all pass", arr: [1, 2, 3, 4, 5], cond: x => x >= -1, expected: 1},
+        {name: "single passing", arr: [5], cond: x => x >= 3, expected: 5},
+        {name: "single failing", arr: [1], cond: x => x >= 3, expected: undefined},
+        {name: "even length", arr: [1, 2, 3, 4, 5, 6], cond: x => x >= 4, expected: 4},
+        {name: "duplicates", arr: [1, 2, 2, 2, 3], cond: x => x >= 2, expected: 2},
+        {name: "bounds", arr: [1, 2, 3, 4, 5], start: 1, end: 4, cond: x => x >= 0, expected: 2},
+        {name: "end is exclusive", arr: [1, 2, 3, 4, 5], start: 0, end: 2, cond: x => x >= 3, expected: undefined},
+        {name: "no match", arr: [1, 2, 3, 4, 5], start: 0, end: 3, cond: x => x >= 10, expected: undefined},
+        {name: "empty range", arr: [1, 2, 3, 4, 5], start: 2, end: 2, cond: x => x >= 0, expected: undefined},
+        {name: "empty", arr: [], cond: () => true, expected: undefined},
+        {name: "single element passing", arr: [1, 2, 3, 4, 5], start: 2, end: 3, cond: x => x >= 3, expected: 3},
+        {name: "single element failing", arr: [1, 2, 3, 4, 5], start: 2, end: 3, cond: x => x >= 4, expected: undefined},
+    ];
+
+    tests.forEach(({name, arr, start, end, cond, expected}) => {
+        it(name, async () => {
+            const result = await findFirstPassing(arr, cond, start, end);
+            expect(result).to.equal(expected);
+        });
+    });
+
+    it("async", async () => {
+        const arr = [1, 2, 3, 4, 5];
+        const result = await findFirstPassing(arr, async (x) => {
+            await sleep(1);
+            return x >= 3;
+        });
+        expect(result).to.equal(3);
     });
 })
