@@ -62,7 +62,7 @@ export function warnOnce(key: string, message: string) {
  * still recover the original manually if needed.
  * 
  * If `replace` is false, this function is thread safe when dest is a folder. But if dest is a file, it is possible for
- * `fs.rename` to silently overwite dest if two processes/threads create it at almost the  same time. If `replace` is
+ * `fs.rename` to silently overwite dest if two processes/threads create it at almost the same time. If `replace` is
  * true, this function is thread safe when dest is a file, but not when its a folder.
  * 
  * @param dest Path the file or folder should end up at.
