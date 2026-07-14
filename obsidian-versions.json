@@ -3,7 +3,7 @@
         "schemaVersion": "2.1.0",
         "commitDate": "2026-06-09T20:58:23Z",
         "commitSha": "43e0c875353e4abc55315ccb7182e0fb1b512591",
-        "timestamp": "2026-07-13T14:01:33.770Z"
+        "timestamp": "2026-07-14T04:44:10.974Z"
     },
     "versions": [
         {
@@ -5815,7 +5815,7 @@
         },
         {
             "version": "1.4.14",
-            "minInstallerVersion": "1.4.5",
+            "minInstallerVersion": "1.1.9",
             "minRunnableInstallerVersion": "0.14.5",
             "maxInstallerVersion": "1.4.14",
             "isBeta": false,
@@ -8496,8 +8496,8 @@
         },
         {
             "version": "1.13.1",
-            "minInstallerVersion": "1.6.5",
-            "minRunnableInstallerVersion": "1.6.5",
+            "minInstallerVersion": "1.5.8",
+            "minRunnableInstallerVersion": "1.1.9",
             "maxInstallerVersion": "1.12.7",
             "isBeta": true,
             "downloads": {

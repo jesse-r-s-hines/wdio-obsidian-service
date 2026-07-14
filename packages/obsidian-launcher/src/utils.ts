@@ -303,17 +303,26 @@ export function normalizeObject<T>(canonical: CanonicalForm, obj: T): T {
  * Use a binary search to find the first entry that passes check. Assumes the list is in order such that all that fail
  * the check are before all that pass the check.
  * start and end range is [start, end)
+ * guess is an optimization to start the search at a given position you expect to be most likely
  */
 export async function findFirstPassing<T>(
-    arr: T[], check: (x: T) => Promise<boolean>|boolean, start = 0, end = arr.length,
+    arr: T[], check: (x: T) => Promise<boolean>|boolean,
+    {start = 0, end = arr.length, guess}: {start?: number, end?: number, guess?: number} = {},
 ): Promise<T | undefined> {
     if (start < 0 || end > arr.length || end < start) throw new Error(`Invalid start/end: ${start} -> ${end}`);
+    if (guess != undefined && (guess < start || guess >= end)) throw new Error(`Invalid guess: ${guess}`);
     const origEnd = end;
 
-    if (start < end && await check(arr[start])) { // optimization for the common case where all in range are passing
-        return arr[start];
+    if (guess != undefined) {
+        if (await check(arr[guess])) {
+            if (guess == start || !(await check(arr[guess - 1]))) {
+                return arr[guess];
+            }
+            end = guess - 1;
+        } else {
+            start = guess + 1;
+        }
     }
-    start += 1;
 
     while (start < end) {
         const mid = Math.floor((start + end) / 2);

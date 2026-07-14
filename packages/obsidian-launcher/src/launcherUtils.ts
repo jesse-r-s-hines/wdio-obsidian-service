@@ -610,13 +610,17 @@ export async function getCompatibilityInfos(
    
             const minInstallerVersion = await findFirstPassing(installerArr,
                 async (v) => (await checkCompatibilityCached(version.version, v.version)) == "compatible",
-                prev ? installerArr.findIndex(v => v.version == prev.minInstallerVersion) : 0,
-                installerArr.findIndex(v => v.version == version.maxInstallerVersion) + 1,
+                {
+                    start: 0, end: installerArr.findIndex(v => v.version == version.maxInstallerVersion) + 1,
+                    guess: prev ? installerArr.findIndex(v => v.version == prev.minInstallerVersion) : 0,
+                }
             );
             const minRunnableInstallerVersion = await findFirstPassing(installerArr,
                 async (v) => ['warning', 'compatible'].includes(await checkCompatibilityCached(version.version, v.version)),
-                prev ? installerArr.findIndex(v => v.version == prev.minRunnableInstallerVersion) : 0,
-                installerArr.findIndex(v => v.version == version.maxInstallerVersion) + 1,
+                {
+                    start: 0, end: installerArr.findIndex(v => v.version == version.maxInstallerVersion) + 1,
+                    guess: prev ? installerArr.findIndex(v => v.version == prev.minRunnableInstallerVersion) : 0,
+                }
             );
 
             if (!minInstallerVersion || !minRunnableInstallerVersion) {
