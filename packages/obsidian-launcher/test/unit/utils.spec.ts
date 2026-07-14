@@ -369,7 +369,7 @@ describe("findFirstPassing", () => {
     const tests: {
         name: string,
         arr: any[], cond: (x: any) => boolean,
-        start?: any, end?: any,
+        start?: any, end?: any, guess?: number,
         expected: any,
     }[] = [
         {name: "middle", arr: [1, 2, 3, 4, 5], cond: x => x >= 3, expected: 3},
@@ -389,11 +389,15 @@ describe("findFirstPassing", () => {
         {name: "empty", arr: [], cond: () => true, expected: undefined},
         {name: "single element passing", arr: [1, 2, 3, 4, 5], start: 2, end: 3, cond: x => x >= 3, expected: 3},
         {name: "single element failing", arr: [1, 2, 3, 4, 5], start: 2, end: 3, cond: x => x >= 4, expected: undefined},
+        {name: "guess right", arr: [1, 2, 3, 4, 5], guess: 3, cond: x => x >= 3, expected: 3},
+        {name: "guess wrong start", arr: [1, 2, 3, 4, 5], guess: 0, cond: x => x >= 3, expected: 3},
+        {name: "guess wrong end", arr: [1, 2, 3, 4, 5], guess: 4, cond: x => x >= 3, expected: 3},
+        {name: "guess wrong middle", arr: [1, 2, 3, 4, 5], guess: 1, cond: x => x >= 3, expected: 3},
     ];
 
-    tests.forEach(({name, arr, start, end, cond, expected}) => {
+    tests.forEach(({name, arr, cond, start, end, guess, expected}) => {
         it(name, async () => {
-            const result = await findFirstPassing(arr, cond, start, end);
+            const result = await findFirstPassing(arr, cond, {start, end, guess});
             expect(result).to.equal(expected);
         });
     });

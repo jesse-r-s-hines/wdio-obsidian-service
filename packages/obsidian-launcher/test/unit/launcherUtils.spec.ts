@@ -21,9 +21,13 @@ function compareVersionLists(actual: ObsidianVersionInfo[], expected: ObsidianVe
     }
 }
 
+async function readData(name: string) {
+    const filePath = path.resolve("./test/data", name);
+    return await fsAsync.readFile(filePath, 'utf-8');
+}
+
 async function readJson(name: string) {
-    const filePath = path.resolve("./test/data", name) + ".json";
-    return JSON.parse(await fsAsync.readFile(filePath, 'utf-8'));
+    return JSON.parse(await readData(name + ".json"));
 }
 
 describe('launcherUtils', () => {
@@ -122,11 +126,12 @@ describe("updateObsidianVersionList", function() {
         opts: {
             destkopReleases: ObsidianDesktopRelease[],
             githubReleases: GitHubRelease[],
+            changelogRss: string,
             _extractInstallerInfo?: typeof extractInstallerInfo,
             _checkCompatibility?: typeof checkCompatibility,
         },
     ) {
-        const { destkopReleases, githubReleases, _extractInstallerInfo, _checkCompatibility } = opts;
+        const { destkopReleases, githubReleases, changelogRss, _extractInstallerInfo, _checkCompatibility } = opts;
         const metadata = { // dummy metadata
             schemaVersion: obsidianVersionsSchemaVersion,
             commitDate: "1970-01-01T00:00:00Z",
@@ -142,6 +147,13 @@ describe("updateObsidianVersionList", function() {
                     commitSha: "0000000000000000000000000000000000000000",
                 }],
                 _fetchObsidianGitHubReleases: async () => githubReleases,
+                _fetchObsidianChangelogsRss: async () => `
+                    <?xml version="1.0" encoding="UTF-8"?>
+                    <feed xmlns="http://www.w3.org/2005/Atom" xml:base="en">
+                        <title>Obsidian Changelog</title>
+                        ${changelogRss}
+                    </feed>
+                `,
                 // these are tested individually elsewhere, we'll mock them in these tests so we can run them quickly
                 // without downloading or launching obsidian.
                 _extractInstallerInfo: _extractInstallerInfo ?? (async (version, key) => {
@@ -176,6 +188,7 @@ describe("updateObsidianVersionList", function() {
         const actual = await updateObsidianVersionListMocked(undefined, {
             destkopReleases: await readJson("desktop-releases-1"),
             githubReleases: await readJson("github-releases-1"),
+            changelogRss: await readData("changelog-rss-1.xml"),
         });
         compareVersionLists(actual.versions, expected);
     });
@@ -186,6 +199,7 @@ describe("updateObsidianVersionList", function() {
         const actual = await updateObsidianVersionListMocked(original, {
             destkopReleases: await readJson("desktop-releases-2"),
             githubReleases: [...await readJson("github-releases-1"), ...await readJson("github-releases-2")],
+            changelogRss: await readData("changelog-rss-1.xml") + await readData("changelog-rss-2.xml"),
         });
         compareVersionLists(actual.versions, expected);
         expect(new Date(actual.metadata.timestamp)).to.be.gt(new Date(timestamp));
@@ -220,6 +234,7 @@ describe("updateObsidianVersionList", function() {
                 }
             }],
             githubReleases: await readJson("github-releases-1"),
+            changelogRss: await readData("changelog-rss-1.xml"),
         });
         compareVersionLists(actual.versions, expected);
         expect(new Date(actual.metadata.timestamp)).to.be.gt(new Date(timestamp));
@@ -230,6 +245,7 @@ describe("updateObsidianVersionList", function() {
         const actual = await updateObsidianVersionListMocked(original, {
             destkopReleases: await readJson("desktop-releases-1"),
             githubReleases: await readJson("github-releases-1"),
+            changelogRss: await readData("changelog-rss-1.xml"),
         });
         compareVersionLists(actual.versions, original);
         expect(actual.metadata.timestamp).to.eql(timestamp);
@@ -240,6 +256,7 @@ describe("updateObsidianVersionList", function() {
         const actual = await updateObsidianVersionListMocked(original, {
             destkopReleases: [],
             githubReleases: [],
+            changelogRss: "",
         });
         compareVersionLists(actual.versions, original);
         expect(actual.metadata.timestamp).to.eql(timestamp);
@@ -254,6 +271,7 @@ describe("updateObsidianVersionList", function() {
         const actual = await updateObsidianVersionListMocked(original, {
             destkopReleases: [],
             githubReleases: githubReleases,
+            changelogRss: "",
             _extractInstallerInfo: async () => ({
                 electron: "999.0.0", chrome: "999.0.0.0",
                 platforms: ["linux-arm64"],
