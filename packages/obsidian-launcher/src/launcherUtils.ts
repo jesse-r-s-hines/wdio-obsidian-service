@@ -11,6 +11,7 @@ import { fileURLToPath, pathToFileURL } from "url"
 import { DeepPartial } from "ts-essentials";
 import type { RestEndpointMethodTypes } from "@octokit/rest";
 import CDP from "chrome-remote-interface";
+import { XMLParser } from "fast-xml-parser";
 import { ObsidianLauncher } from "./launcher.js";
 import {
     consola, atomicCreate, makeTmpDir, normalizeObject, pool, maybe, withTimeout, until, retry, UntilOpts,
@@ -379,6 +380,30 @@ export function parseObsidianGithubRelease(gitHubRelease: GitHubRelease): DeepPa
     }
 }
 
+export async function fetchObsidianChangelogsRss(): Promise<string> {
+    return await fetch("https://obsidian.md/changelog.xml").then(r => r.text());
+}
+
+/** Filter only desktop releases and parse out the changelog url */
+export function parseObsidianChangelogRss(rss: string): {version: string, changelogUrl: string}[] {
+    const parser = new XMLParser({
+        ignoreAttributes: false, attributeNamePrefix: '',
+        isArray: (name) => name == "entry", // force array regardless of entry count <= 1
+    });
+    const entries = parser.parse(rss).feed.entry;
+    return _(entries)
+        // only include desktop releases, and filter out "major.minor" summary changelogs
+        .filter(e => e.id.match(/-desktop-v(\d+\.\d+\.\d+)/))
+        // prefer betas over public release logs, which typically summarize all beta versions before the release
+        .sortBy(e => +/early access/.test(e.title.toLowerCase()))
+        .map(e => ({version: e.id.match(/-v(\d+\.\d+\.\d+)/)![1], changelogUrl: e.link.href}))
+        .keyBy(e => e.version) // last duplicate wins
+        .values()
+        .sort((a, b) => semver.compare(a.version, b.version))
+        .value();
+}
+
+
 export type InstallerKey = keyof ObsidianVersionInfo['installers'];
 export const INSTALLER_KEYS: InstallerKey[] = [
     "appImage", "appImageArm", "tar", "tarArm", "dmg", "exe",
@@ -671,6 +696,7 @@ export function normalizeObsidianVersionInfo(versionInfo: DeepPartial<ObsidianVe
         maxInstallerVersion: null,
         isBeta: null,
         gitHubRelease: null,
+        changelogUrl: null,
         downloads: {
             asar: null,
             appImage: null,
@@ -704,6 +730,7 @@ export async function updateObsidianVersionList(original?: ObsidianVersionList, 
     maxInstances = 1,
     _fetchObsidianDesktopReleases = fetchObsidianDesktopReleases,
     _fetchObsidianGitHubReleases = fetchObsidianGitHubReleases,
+    _fetchObsidianChangelogsRss = fetchObsidianChangelogsRss,
     _extractInstallerInfo = extractInstallerInfo,
     _checkCompatibility = checkCompatibility,
 } = {}): Promise<ObsidianVersionList> {
@@ -736,6 +763,13 @@ export async function updateObsidianVersionList(original?: ObsidianVersionList, 
                 }
             }
             newVersions[parsed.version!] = newVersion;
+        }
+    }
+
+    const changelogRss = await _fetchObsidianChangelogsRss();
+    for (const changelog of parseObsidianChangelogRss(changelogRss)) {
+        if (newVersions[changelog.version]) {
+            newVersions[changelog.version] = _.merge(newVersions[changelog.version], changelog);
         }
     }
 

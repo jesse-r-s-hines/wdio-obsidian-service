@@ -1,4 +1,4 @@
-export const obsidianVersionsSchemaVersion = '2.1.0';
+export const obsidianVersionsSchemaVersion = '2.2.0';
 
 /**
  * Type of the obsidian-versions.json file.
@@ -50,6 +50,7 @@ export type ObsidianVersionInfo = {
     maxInstallerVersion?: string,
     isBeta: boolean,
     gitHubRelease?: string,
+    changelogUrl?: string,
     downloads: {
         asar?: string,
         appImage?: string,

@@ -75,6 +75,7 @@
         "commander": "^14.0.2",
         "consola": "^3.4.2",
         "dotenv": "^17.2.3",
+        "fast-xml-parser": "^5.10.0",
         "lodash": "^4.17.21",
         "readline-sync": "^1.4.10",
         "semver": "^7.7.3"

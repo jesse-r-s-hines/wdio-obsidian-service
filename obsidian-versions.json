@@ -1,15 +1,16 @@
 {
     "metadata": {
-        "schemaVersion": "2.1.0",
+        "schemaVersion": "2.2.0",
         "commitDate": "2026-06-09T20:58:23Z",
         "commitSha": "43e0c875353e4abc55315ccb7182e0fb1b512591",
-        "timestamp": "2026-07-14T04:44:10.974Z"
+        "timestamp": "2026-07-14T17:09:02.050Z"
     },
     "versions": [
         {
             "version": "0.5.0",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.5.0",
+            "changelogUrl": "https://obsidian.md/changelog/2020-05-10-desktop-v0.5.0/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.5.0/obsidian-0.5.0.asar.gz"
             },
@@ -19,6 +20,7 @@
             "version": "0.5.1",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.5.1",
+            "changelogUrl": "https://obsidian.md/changelog/2020-05-13-desktop-v0.5.1/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.5.1/obsidian-0.5.1.asar.gz"
             },
@@ -28,6 +30,7 @@
             "version": "0.5.2",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.5.2",
+            "changelogUrl": "https://obsidian.md/changelog/2020-05-15-desktop-v0.5.2/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.5.2/obsidian-0.5.2.asar.gz"
             },
@@ -37,6 +40,7 @@
             "version": "0.5.3",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.5.3",
+            "changelogUrl": "https://obsidian.md/changelog/2020-05-15-desktop-v0.5.3/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.5.3/obsidian-0.5.3.asar.gz"
             },
@@ -46,6 +50,7 @@
             "version": "0.6.0",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.6.0",
+            "changelogUrl": "https://obsidian.md/changelog/2020-05-18-desktop-v0.6.0/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.6.0/obsidian-0.6.0.asar.gz"
             },
@@ -55,6 +60,7 @@
             "version": "0.6.1",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.6.1",
+            "changelogUrl": "https://obsidian.md/changelog/2020-05-22-desktop-v0.6.1/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.6.1/obsidian-0.6.1.asar.gz"
             },
@@ -64,6 +70,7 @@
             "version": "0.6.2",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.6.2",
+            "changelogUrl": "https://obsidian.md/changelog/2020-05-22-desktop-v0.6.2/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.6.2/obsidian-0.6.2.asar.gz"
             },
@@ -73,6 +80,7 @@
             "version": "0.6.3",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.6.3",
+            "changelogUrl": "https://obsidian.md/changelog/2020-05-24-desktop-v0.6.3/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.6.3/obsidian-0.6.3.asar.gz"
             },
@@ -85,6 +93,7 @@
             "maxInstallerVersion": "0.6.4",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.6.4",
+            "changelogUrl": "https://obsidian.md/changelog/2020-05-24-desktop-v0.6.4/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.6.4/obsidian-0.6.4.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.6.4/Obsidian-0.6.4.AppImage",
@@ -128,6 +137,7 @@
             "maxInstallerVersion": "0.6.5",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.6.5",
+            "changelogUrl": "https://obsidian.md/changelog/2020-05-29-desktop-v0.6.5/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.6.5/obsidian-0.6.5.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.6.5/Obsidian-0.6.5.AppImage",
@@ -171,6 +181,7 @@
             "maxInstallerVersion": "0.6.5",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.6.6",
+            "changelogUrl": "https://obsidian.md/changelog/2020-06-01-desktop-v0.6.6/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.6.6/obsidian-0.6.6.asar.gz"
             },
@@ -183,6 +194,7 @@
             "maxInstallerVersion": "0.6.7",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.6.7",
+            "changelogUrl": "https://obsidian.md/changelog/2020-06-02-desktop-v0.6.7/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.6.7/obsidian-0.6.7.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.6.7/Obsidian-0.6.7.AppImage",
@@ -226,6 +238,7 @@
             "maxInstallerVersion": "0.6.7",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.7.0",
+            "changelogUrl": "https://obsidian.md/changelog/2020-06-09-desktop-v0.7.0/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.7.0/obsidian-0.7.0.asar.gz"
             },
@@ -238,6 +251,7 @@
             "maxInstallerVersion": "0.6.7",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.7.1",
+            "changelogUrl": "https://obsidian.md/changelog/2020-06-10-desktop-v0.7.1/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.7.1/obsidian-0.7.1.asar.gz"
             },
@@ -250,6 +264,7 @@
             "maxInstallerVersion": "0.6.7",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.7.2",
+            "changelogUrl": "https://obsidian.md/changelog/2020-06-13-desktop-v0.7.2/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.7.2/obsidian-0.7.2.asar.gz"
             },
@@ -262,6 +277,7 @@
             "maxInstallerVersion": "0.7.3",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.7.3",
+            "changelogUrl": "https://obsidian.md/changelog/2020-06-14-desktop-v0.7.3/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.7.3/obsidian-0.7.3.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.7.3/Obsidian-0.7.3.AppImage",
@@ -305,6 +321,7 @@
             "maxInstallerVersion": "0.7.4",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.7.4",
+            "changelogUrl": "https://obsidian.md/changelog/2020-06-20-desktop-v0.7.4/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.7.4/obsidian-0.7.4.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.7.4/Obsidian-0.7.4.AppImage",
@@ -348,6 +365,7 @@
             "maxInstallerVersion": "0.7.4",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.7.5",
+            "changelogUrl": "https://obsidian.md/changelog/2020-07-01-desktop-v0.7.5/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.7.5/obsidian-0.7.5.asar.gz"
             },
@@ -360,6 +378,7 @@
             "maxInstallerVersion": "0.7.6",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.7.6",
+            "changelogUrl": "https://obsidian.md/changelog/2020-07-02-desktop-v0.7.6/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.7.6/obsidian-0.7.6.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.7.6/Obsidian-0.7.6.AppImage",
@@ -403,6 +422,7 @@
             "maxInstallerVersion": "0.8.0",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.8.0",
+            "changelogUrl": "https://obsidian.md/changelog/2020-07-14-desktop-v0.8.0/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.0/obsidian-0.8.0.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.0/Obsidian-0.8.0.AppImage",
@@ -446,6 +466,7 @@
             "maxInstallerVersion": "0.8.1",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.8.1",
+            "changelogUrl": "https://obsidian.md/changelog/2020-07-21-desktop-v0.8.1/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.1/obsidian-0.8.1.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.1/Obsidian-0.8.1.AppImage",
@@ -489,6 +510,7 @@
             "maxInstallerVersion": "0.8.2",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.8.2",
+            "changelogUrl": "https://obsidian.md/changelog/2020-07-30-desktop-v0.8.2/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.2/obsidian-0.8.2.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.2/Obsidian-0.8.2.AppImage",
@@ -532,6 +554,7 @@
             "maxInstallerVersion": "0.8.2",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.8.3",
+            "changelogUrl": "https://obsidian.md/changelog/2020-08-10-desktop-v0.8.3/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.3/obsidian-0.8.3.asar.gz"
             },
@@ -544,6 +567,7 @@
             "maxInstallerVersion": "0.8.4",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.8.4",
+            "changelogUrl": "https://obsidian.md/changelog/2020-08-12-desktop-v0.8.4/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.4/obsidian-0.8.4.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.4/Obsidian-0.8.4.AppImage",
@@ -587,6 +611,7 @@
             "maxInstallerVersion": "0.8.4",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.8.5",
+            "changelogUrl": "https://obsidian.md/changelog/2020-08-21-desktop-v0.8.5/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.5/obsidian-0.8.5.asar.gz"
             },
@@ -599,6 +624,7 @@
             "maxInstallerVersion": "0.8.4",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.8.6",
+            "changelogUrl": "https://obsidian.md/changelog/2020-08-24-desktop-v0.8.6/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.6/obsidian-0.8.6.asar.gz"
             },
@@ -611,6 +637,7 @@
             "maxInstallerVersion": "0.8.4",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.8.7",
+            "changelogUrl": "https://obsidian.md/changelog/2020-08-24-desktop-v0.8.7/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.7/obsidian-0.8.7.asar.gz"
             },
@@ -623,6 +650,7 @@
             "maxInstallerVersion": "0.8.4",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.8.8",
+            "changelogUrl": "https://obsidian.md/changelog/2020-08-24-desktop-v0.8.8/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.8/obsidian-0.8.8.asar.gz"
             },
@@ -635,6 +663,7 @@
             "maxInstallerVersion": "0.8.9",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.8.9",
+            "changelogUrl": "https://obsidian.md/changelog/2020-08-31-desktop-v0.8.9/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.9/obsidian-0.8.9.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.9/Obsidian-0.8.9.AppImage",
@@ -678,6 +707,7 @@
             "maxInstallerVersion": "0.8.9",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.8.10",
+            "changelogUrl": "https://obsidian.md/changelog/2020-08-31-desktop-v0.8.10/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.10/obsidian-0.8.10.asar.gz"
             },
@@ -690,6 +720,7 @@
             "maxInstallerVersion": "0.8.9",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.8.11",
+            "changelogUrl": "https://obsidian.md/changelog/2020-09-01-desktop-v0.8.11/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.11/obsidian-0.8.11.asar.gz"
             },
@@ -702,6 +733,7 @@
             "maxInstallerVersion": "0.8.12",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.8.12",
+            "changelogUrl": "https://obsidian.md/changelog/2020-09-07-desktop-v0.8.12/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.12/obsidian-0.8.12.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.12/Obsidian-0.8.12.AppImage",
@@ -745,6 +777,7 @@
             "maxInstallerVersion": "0.8.12",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.8.13",
+            "changelogUrl": "https://obsidian.md/changelog/2020-09-07-desktop-v0.8.13/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.13/obsidian-0.8.13.asar.gz"
             },
@@ -757,6 +790,7 @@
             "maxInstallerVersion": "0.8.14",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.8.14",
+            "changelogUrl": "https://obsidian.md/changelog/2020-09-10-desktop-v0.8.14/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.14/obsidian-0.8.14.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.14/Obsidian-0.8.14.AppImage",
@@ -800,6 +834,7 @@
             "maxInstallerVersion": "0.8.15",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.8.15",
+            "changelogUrl": "https://obsidian.md/changelog/2020-09-14-desktop-v0.8.15/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.15/obsidian-0.8.15.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.8.15/Obsidian-0.8.15.AppImage",
@@ -843,6 +878,7 @@
             "maxInstallerVersion": "0.8.15",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.9.0",
+            "changelogUrl": "https://obsidian.md/changelog/2020-09-21-desktop-v0.9.0/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.0/obsidian-0.9.0.asar.gz"
             },
@@ -855,6 +891,7 @@
             "maxInstallerVersion": "0.9.1",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.9.1",
+            "changelogUrl": "https://obsidian.md/changelog/2020-09-24-desktop-v0.9.1/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.1/obsidian-0.9.1.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.1/Obsidian-0.9.1.AppImage",
@@ -907,6 +944,7 @@
             "maxInstallerVersion": "0.9.2",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.9.2",
+            "changelogUrl": "https://obsidian.md/changelog/2020-09-30-desktop-v0.9.2/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.2/obsidian-0.9.2.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.2/Obsidian-0.9.2.AppImage",
@@ -959,6 +997,7 @@
             "maxInstallerVersion": "0.9.3",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.9.3",
+            "changelogUrl": "https://obsidian.md/changelog/2020-10-05-desktop-v0.9.3/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.3/obsidian-0.9.3.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.3/Obsidian-0.9.3.AppImage",
@@ -1011,6 +1050,7 @@
             "maxInstallerVersion": "0.9.4",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.9.4",
+            "changelogUrl": "https://obsidian.md/changelog/2020-10-13-desktop-v0.9.4/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.4/obsidian-0.9.4.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.4/Obsidian-0.9.4.AppImage",
@@ -1063,6 +1103,7 @@
             "maxInstallerVersion": "0.9.4",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.9.5",
+            "changelogUrl": "https://obsidian.md/changelog/2020-10-19-desktop-v0.9.5/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.5/obsidian-0.9.5.asar.gz"
             },
@@ -1075,6 +1116,7 @@
             "maxInstallerVersion": "0.9.6",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.9.6",
+            "changelogUrl": "https://obsidian.md/changelog/2020-10-20-desktop-v0.9.6/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.6/obsidian-0.9.6.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.6/Obsidian-0.9.6.AppImage",
@@ -1127,6 +1169,7 @@
             "maxInstallerVersion": "0.9.6",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.9.7",
+            "changelogUrl": "https://obsidian.md/changelog/2020-10-26-desktop-v0.9.7/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.7/obsidian-0.9.7.asar.gz"
             },
@@ -1139,6 +1182,7 @@
             "maxInstallerVersion": "0.9.6",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.9.8",
+            "changelogUrl": "https://obsidian.md/changelog/2020-10-29-desktop-v0.9.8/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.8/obsidian-0.9.8.asar.gz"
             },
@@ -1151,6 +1195,7 @@
             "maxInstallerVersion": "0.9.6",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.9.9",
+            "changelogUrl": "https://obsidian.md/changelog/2020-10-29-desktop-v0.9.9/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.9/obsidian-0.9.9.asar.gz"
             },
@@ -1163,6 +1208,7 @@
             "maxInstallerVersion": "0.9.10",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.9.10",
+            "changelogUrl": "https://obsidian.md/changelog/2020-10-30-desktop-v0.9.10/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.10/obsidian-0.9.10.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.10/Obsidian-0.9.10.AppImage",
@@ -1215,6 +1261,7 @@
             "maxInstallerVersion": "0.9.11",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.9.11",
+            "changelogUrl": "https://obsidian.md/changelog/2020-11-03-desktop-v0.9.11/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.11/obsidian-0.9.11.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.11/Obsidian-0.9.11.AppImage",
@@ -1267,6 +1314,7 @@
             "maxInstallerVersion": "0.9.11",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.9.12",
+            "changelogUrl": "https://obsidian.md/changelog/2020-11-10-desktop-v0.9.12/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.12/obsidian-0.9.12.asar.gz"
             },
@@ -1279,6 +1327,7 @@
             "maxInstallerVersion": "0.9.11",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.9.13",
+            "changelogUrl": "https://obsidian.md/changelog/2020-11-12-desktop-v0.9.13/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.13/obsidian-0.9.13.asar.gz"
             },
@@ -1291,6 +1340,7 @@
             "maxInstallerVersion": "0.9.11",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.9.14",
+            "changelogUrl": "https://obsidian.md/changelog/2020-11-13-desktop-v0.9.14/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.14/obsidian-0.9.14.asar.gz"
             },
@@ -1303,6 +1353,7 @@
             "maxInstallerVersion": "0.9.15",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.9.15",
+            "changelogUrl": "https://obsidian.md/changelog/2020-11-17-desktop-v0.9.15/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.15/obsidian-0.9.15.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.15/Obsidian-0.9.15.AppImage",
@@ -1355,6 +1406,7 @@
             "maxInstallerVersion": "0.9.15",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.9.16",
+            "changelogUrl": "https://obsidian.md/changelog/2020-11-19-desktop-v0.9.16/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.16/obsidian-0.9.16.asar.gz"
             },
@@ -1367,6 +1419,7 @@
             "maxInstallerVersion": "0.9.17",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.9.17",
+            "changelogUrl": "https://obsidian.md/changelog/2020-11-21-desktop-v0.9.17/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.17/obsidian-0.9.17.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.17/Obsidian-0.9.17.AppImage",
@@ -1437,6 +1490,7 @@
             "maxInstallerVersion": "0.9.17",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.9.18",
+            "changelogUrl": "https://obsidian.md/changelog/2020-11-25-desktop-v0.9.18/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.18/obsidian-0.9.18.asar.gz"
             },
@@ -1449,6 +1503,7 @@
             "maxInstallerVersion": "0.9.17",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.9.19",
+            "changelogUrl": "https://obsidian.md/changelog/2020-11-26-desktop-v0.9.19/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.19/obsidian-0.9.19.asar.gz"
             },
@@ -1461,6 +1516,7 @@
             "maxInstallerVersion": "0.9.20",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.9.20",
+            "changelogUrl": "https://obsidian.md/changelog/2020-12-02-desktop-v0.9.20/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.20/obsidian-0.9.20.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.20/Obsidian-0.9.20.AppImage",
@@ -1513,6 +1569,7 @@
             "maxInstallerVersion": "0.9.20",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.9.21",
+            "changelogUrl": "https://obsidian.md/changelog/2020-12-07-desktop-v0.9.21/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.21/obsidian-0.9.21.asar.gz"
             },
@@ -1525,6 +1582,7 @@
             "maxInstallerVersion": "0.9.22",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.9.22",
+            "changelogUrl": "https://obsidian.md/changelog/2020-12-08-desktop-v0.9.22/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.22/obsidian-0.9.22.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.9.22/Obsidian-0.9.22.AppImage",
@@ -1577,6 +1635,7 @@
             "maxInstallerVersion": "0.9.22",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.10.0",
+            "changelogUrl": "https://obsidian.md/changelog/2020-12-14-desktop-v0.10.0/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.0/obsidian-0.10.0.asar.gz"
             },
@@ -1589,6 +1648,7 @@
             "maxInstallerVersion": "0.10.1",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.10.1",
+            "changelogUrl": "https://obsidian.md/changelog/2020-12-16-desktop-v0.10.1/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.1/obsidian-0.10.1.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.1/Obsidian-0.10.1.AppImage",
@@ -1641,6 +1701,7 @@
             "maxInstallerVersion": "0.10.1",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.10.2",
+            "changelogUrl": "https://obsidian.md/changelog/2020-12-21-desktop-v0.10.2/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.2/obsidian-0.10.2.asar.gz"
             },
@@ -1653,6 +1714,7 @@
             "maxInstallerVersion": "0.10.1",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.10.3",
+            "changelogUrl": "https://obsidian.md/changelog/2020-12-29-desktop-v0.10.3/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.3/obsidian-0.10.3.asar.gz"
             },
@@ -1665,6 +1727,7 @@
             "maxInstallerVersion": "0.10.1",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.10.4",
+            "changelogUrl": "https://obsidian.md/changelog/2020-12-30-desktop-v0.10.4/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.4/obsidian-0.10.4.asar.gz"
             },
@@ -1677,6 +1740,7 @@
             "maxInstallerVersion": "0.10.1",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.10.5",
+            "changelogUrl": "https://obsidian.md/changelog/2020-12-31-desktop-v0.10.5/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.5/obsidian-0.10.5.asar.gz"
             },
@@ -1689,6 +1753,7 @@
             "maxInstallerVersion": "0.10.6",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.10.6",
+            "changelogUrl": "https://obsidian.md/changelog/2021-01-04-desktop-v0.10.6/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.6/obsidian-0.10.6.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.6/Obsidian-0.10.6.AppImage",
@@ -1741,6 +1806,7 @@
             "maxInstallerVersion": "0.10.7",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.10.7",
+            "changelogUrl": "https://obsidian.md/changelog/2021-01-07-desktop-v0.10.7/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.7/obsidian-0.10.7.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.7/Obsidian-0.10.7.AppImage",
@@ -1793,6 +1859,7 @@
             "maxInstallerVersion": "0.10.8",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.10.8",
+            "changelogUrl": "https://obsidian.md/changelog/2021-01-11-desktop-v0.10.8/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.8/obsidian-0.10.8.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.8/Obsidian-0.10.8.AppImage",
@@ -1845,6 +1912,7 @@
             "maxInstallerVersion": "0.10.9",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.10.9",
+            "changelogUrl": "https://obsidian.md/changelog/2021-01-19-desktop-v0.10.9/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.9/obsidian-0.10.9.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.9/Obsidian-0.10.9.AppImage",
@@ -1897,6 +1965,7 @@
             "maxInstallerVersion": "0.10.9",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.10.10",
+            "changelogUrl": "https://obsidian.md/changelog/2021-01-25-desktop-v0.10.10/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.10/obsidian-0.10.10.asar.gz"
             },
@@ -1909,6 +1978,7 @@
             "maxInstallerVersion": "0.10.11",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.10.11",
+            "changelogUrl": "https://obsidian.md/changelog/2021-01-28-desktop-v0.10.11/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.11/obsidian-0.10.11.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.11/Obsidian-0.10.11.AppImage",
@@ -1961,6 +2031,7 @@
             "maxInstallerVersion": "0.10.11",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.10.12",
+            "changelogUrl": "https://obsidian.md/changelog/2021-02-01-desktop-v0.10.12/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.12/obsidian-0.10.12.asar.gz"
             },
@@ -1973,6 +2044,7 @@
             "maxInstallerVersion": "0.10.13",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.10.13",
+            "changelogUrl": "https://obsidian.md/changelog/2021-02-05-desktop-v0.10.13/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.13/obsidian-0.10.13.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.10.13/Obsidian-0.10.13.AppImage",
@@ -2025,6 +2097,7 @@
             "maxInstallerVersion": "0.11.0",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.11.0",
+            "changelogUrl": "https://obsidian.md/changelog/2021-02-09-desktop-v0.11.0/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.0/obsidian-0.11.0.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.0/Obsidian-0.11.0.AppImage",
@@ -2077,6 +2150,7 @@
             "maxInstallerVersion": "0.11.0",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.11.1",
+            "changelogUrl": "https://obsidian.md/changelog/2021-02-16-desktop-v0.11.1/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.1/obsidian-0.11.1.asar.gz"
             },
@@ -2089,6 +2163,7 @@
             "maxInstallerVersion": "0.11.0",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.11.2",
+            "changelogUrl": "https://obsidian.md/changelog/2021-02-18-desktop-v0.11.2/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.2/obsidian-0.11.2.asar.gz"
             },
@@ -2101,6 +2176,7 @@
             "maxInstallerVersion": "0.11.3",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.11.3",
+            "changelogUrl": "https://obsidian.md/changelog/2021-02-20-desktop-v0.11.3/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.3/obsidian-0.11.3.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.3/Obsidian-0.11.3.AppImage",
@@ -2153,6 +2229,7 @@
             "maxInstallerVersion": "0.11.3",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.11.4",
+            "changelogUrl": "https://obsidian.md/changelog/2021-02-26-desktop-v0.11.4/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.4/obsidian-0.11.4.asar.gz"
             },
@@ -2165,6 +2242,7 @@
             "maxInstallerVersion": "0.11.5",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.11.5",
+            "changelogUrl": "https://obsidian.md/changelog/2021-03-02-desktop-v0.11.5/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.5/obsidian-0.11.5.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.5/Obsidian-0.11.5.AppImage",
@@ -2217,6 +2295,7 @@
             "maxInstallerVersion": "0.11.5",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.11.6",
+            "changelogUrl": "https://obsidian.md/changelog/2021-03-09-desktop-v0.11.6/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.6/obsidian-0.11.6.asar.gz"
             },
@@ -2229,6 +2308,7 @@
             "maxInstallerVersion": "0.11.5",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.11.7",
+            "changelogUrl": "https://obsidian.md/changelog/2021-03-14-desktop-v0.11.7/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.7/obsidian-0.11.7.asar.gz"
             },
@@ -2241,6 +2321,7 @@
             "maxInstallerVersion": "0.11.5",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.11.8",
+            "changelogUrl": "https://obsidian.md/changelog/2021-03-21-desktop-v0.11.8/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.8/obsidian-0.11.8.asar.gz"
             },
@@ -2253,6 +2334,7 @@
             "maxInstallerVersion": "0.11.9",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.11.9",
+            "changelogUrl": "https://obsidian.md/changelog/2021-03-21-desktop-v0.11.9/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.9/obsidian-0.11.9.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.9/Obsidian-0.11.9.AppImage",
@@ -2305,6 +2387,7 @@
             "maxInstallerVersion": "0.11.9",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.11.10",
+            "changelogUrl": "https://obsidian.md/changelog/2021-03-26-desktop-v0.11.10/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.10/obsidian-0.11.10.asar.gz"
             },
@@ -2317,6 +2400,7 @@
             "maxInstallerVersion": "0.11.9",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.11.11",
+            "changelogUrl": "https://obsidian.md/changelog/2021-04-01-desktop-v0.11.11/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.11/obsidian-0.11.11.asar.gz"
             },
@@ -2329,6 +2413,7 @@
             "maxInstallerVersion": "0.11.9",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.11.12",
+            "changelogUrl": "https://obsidian.md/changelog/2021-04-01-desktop-v0.11.12/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.12/obsidian-0.11.12.asar.gz"
             },
@@ -2341,6 +2426,7 @@
             "maxInstallerVersion": "0.11.13",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.11.13",
+            "changelogUrl": "https://obsidian.md/changelog/2021-04-04-desktop-v0.11.13/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.13/obsidian-0.11.13.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.11.13/Obsidian-0.11.13.AppImage",
@@ -2393,6 +2479,7 @@
             "maxInstallerVersion": "0.11.13",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.12.0",
+            "changelogUrl": "https://obsidian.md/changelog/2021-04-19-desktop-v0.12.0/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.0/obsidian-0.12.0.asar.gz"
             },
@@ -2405,6 +2492,7 @@
             "maxInstallerVersion": "0.11.13",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.12.1",
+            "changelogUrl": "https://obsidian.md/changelog/2021-04-20-desktop-v0.12.1/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.1/obsidian-0.12.1.asar.gz"
             },
@@ -2417,6 +2505,7 @@
             "maxInstallerVersion": "0.11.13",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.12.2",
+            "changelogUrl": "https://obsidian.md/changelog/2021-05-03-desktop-v0.12.2/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.2/obsidian-0.12.2.asar.gz"
             },
@@ -2429,6 +2518,7 @@
             "maxInstallerVersion": "0.12.3",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.12.3",
+            "changelogUrl": "https://obsidian.md/changelog/2021-05-10-desktop-v0.12.3/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.3/obsidian-0.12.3.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.3/Obsidian-0.12.3.AppImage",
@@ -2481,6 +2571,7 @@
             "maxInstallerVersion": "0.12.4",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.12.4",
+            "changelogUrl": "https://obsidian.md/changelog/2021-05-25-desktop-v0.12.4/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.4/obsidian-0.12.4.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.4/Obsidian-0.12.4.AppImage",
@@ -2533,6 +2624,7 @@
             "maxInstallerVersion": "0.12.5",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.12.5",
+            "changelogUrl": "https://obsidian.md/changelog/2021-06-07-desktop-v0.12.5/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.5/obsidian-0.12.5.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.5/Obsidian-0.12.5.AppImage",
@@ -2585,6 +2677,7 @@
             "maxInstallerVersion": "0.12.5",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.12.6",
+            "changelogUrl": "https://obsidian.md/changelog/2021-06-21-desktop-v0.12.6/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.6/obsidian-0.12.6.asar.gz"
             },
@@ -2597,6 +2690,7 @@
             "maxInstallerVersion": "0.12.5",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.12.7",
+            "changelogUrl": "https://obsidian.md/changelog/2021-06-23-desktop-v0.12.7/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.7/obsidian-0.12.7.asar.gz"
             },
@@ -2609,6 +2703,7 @@
             "maxInstallerVersion": "0.12.5",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.12.8",
+            "changelogUrl": "https://obsidian.md/changelog/2021-06-28-desktop-v0.12.8/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.8/obsidian-0.12.8.asar.gz"
             },
@@ -2621,6 +2716,7 @@
             "maxInstallerVersion": "0.12.5",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.12.9",
+            "changelogUrl": "https://obsidian.md/changelog/2021-06-30-desktop-v0.12.9/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.9/obsidian-0.12.9.asar.gz"
             },
@@ -2633,6 +2729,7 @@
             "maxInstallerVersion": "0.12.10",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.12.10",
+            "changelogUrl": "https://obsidian.md/changelog/2021-07-07-desktop-v0.12.10/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.10/obsidian-0.12.10.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.10/Obsidian-0.12.10.AppImage",
@@ -2685,6 +2782,7 @@
             "maxInstallerVersion": "0.12.10",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.12.11",
+            "changelogUrl": "https://obsidian.md/changelog/2021-07-19-desktop-v0.12.11/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.11/obsidian-0.12.11.asar.gz"
             },
@@ -2697,6 +2795,7 @@
             "maxInstallerVersion": "0.12.12",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.12.12",
+            "changelogUrl": "https://obsidian.md/changelog/2021-07-26-desktop-v0.12.12/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.12/obsidian-0.12.12.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.12/Obsidian-0.12.12.AppImage",
@@ -2749,6 +2848,7 @@
             "maxInstallerVersion": "0.12.12",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.12.13",
+            "changelogUrl": "https://obsidian.md/changelog/2021-08-03-desktop-v0.12.13/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.13/obsidian-0.12.13.asar.gz"
             },
@@ -2761,6 +2861,7 @@
             "maxInstallerVersion": "0.12.12",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.12.14",
+            "changelogUrl": "https://obsidian.md/changelog/2021-08-23-desktop-v0.12.14/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.14/obsidian-0.12.14.asar.gz"
             },
@@ -2773,6 +2874,7 @@
             "maxInstallerVersion": "0.12.15",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.12.15",
+            "changelogUrl": "https://obsidian.md/changelog/2021-08-29-desktop-v0.12.15/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.15/obsidian-0.12.15.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.15/Obsidian-0.12.15.AppImage",
@@ -2843,6 +2945,7 @@
             "maxInstallerVersion": "0.12.15",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.12.17",
+            "changelogUrl": "https://obsidian.md/changelog/2021-10-06-desktop-v0.12.17/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.17/obsidian-0.12.17.asar.gz"
             },
@@ -2855,6 +2958,7 @@
             "maxInstallerVersion": "0.12.15",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.12.18",
+            "changelogUrl": "https://obsidian.md/changelog/2021-10-12-desktop-v0.12.18/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.18/obsidian-0.12.18.asar.gz"
             },
@@ -2867,6 +2971,7 @@
             "maxInstallerVersion": "0.12.19",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.12.19",
+            "changelogUrl": "https://obsidian.md/changelog/2021-10-15-desktop-v0.12.19/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.19/obsidian-0.12.19.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.19/Obsidian-0.12.19.AppImage",
@@ -2918,6 +3023,7 @@
             "minRunnableInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.12.19",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2021-11-10-desktop-v0.13.0/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.13.0.asar.gz"
             },
@@ -2929,6 +3035,7 @@
             "minRunnableInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.12.19",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2021-11-11-desktop-v0.13.1/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.13.1.asar.gz"
             },
@@ -2940,6 +3047,7 @@
             "minRunnableInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.12.19",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2021-11-12-desktop-v0.13.2/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.13.2.asar.gz"
             },
@@ -2951,6 +3059,7 @@
             "minRunnableInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.12.19",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2021-11-19-desktop-v0.13.3/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.13.3.asar.gz"
             },
@@ -2962,6 +3071,7 @@
             "minRunnableInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.12.19",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2021-11-19-desktop-v0.13.4/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.13.4.asar.gz"
             },
@@ -2973,6 +3083,7 @@
             "minRunnableInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.12.19",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2021-11-22-desktop-v0.13.5/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.13.5.asar.gz"
             },
@@ -2984,6 +3095,7 @@
             "minRunnableInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.12.19",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2021-11-25-desktop-v0.13.6/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.13.6.asar.gz"
             },
@@ -2995,6 +3107,7 @@
             "minRunnableInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.12.19",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2021-12-03-desktop-v0.13.7/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.13.7.asar.gz"
             },
@@ -3006,6 +3119,7 @@
             "minRunnableInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.12.19",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2021-12-09-desktop-v0.13.8/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.13.8.asar.gz"
             },
@@ -3017,6 +3131,7 @@
             "minRunnableInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.12.19",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2021-12-13-desktop-v0.13.9/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.13.9.asar.gz"
             },
@@ -3028,6 +3143,7 @@
             "minRunnableInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.12.19",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2021-12-14-desktop-v0.13.10/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.13.10.asar.gz"
             },
@@ -3039,6 +3155,7 @@
             "minRunnableInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.12.19",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2021-12-17-desktop-v0.13.11/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.13.11.asar.gz"
             },
@@ -3050,6 +3167,7 @@
             "minRunnableInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.12.19",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2021-12-17-desktop-v0.13.12/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.13.12.asar.gz"
             },
@@ -3061,6 +3179,7 @@
             "minRunnableInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.12.19",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2021-12-20-desktop-v0.13.13/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.13.13.asar.gz"
             },
@@ -3073,6 +3192,7 @@
             "maxInstallerVersion": "0.13.14",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.13.14",
+            "changelogUrl": "https://obsidian.md/changelog/2021-12-21-desktop-v0.13.14/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.13.14/obsidian-0.13.14.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.13.14/Obsidian-0.13.14.AppImage",
@@ -3124,6 +3244,7 @@
             "minRunnableInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.13.14",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2021-12-23-desktop-v0.13.15/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.13.15.asar.gz"
             },
@@ -3135,6 +3256,7 @@
             "minRunnableInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.13.14",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2021-12-24-desktop-v0.13.16/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.13.16.asar.gz"
             },
@@ -3146,6 +3268,7 @@
             "minRunnableInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.13.14",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2021-12-29-desktop-v0.13.17/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.13.17.asar.gz"
             },
@@ -3157,6 +3280,7 @@
             "minRunnableInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.13.14",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2022-01-02-desktop-v0.13.18/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.13.18.asar.gz"
             },
@@ -3169,6 +3293,7 @@
             "maxInstallerVersion": "0.13.19",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.13.19",
+            "changelogUrl": "https://obsidian.md/changelog/2022-01-05-desktop-v0.13.19/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.13.19/obsidian-0.13.19.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.13.19/Obsidian-0.13.19.AppImage",
@@ -3220,6 +3345,7 @@
             "minRunnableInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.13.19",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2022-01-17-desktop-v0.13.20/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.13.20.asar.gz"
             },
@@ -3231,6 +3357,7 @@
             "minRunnableInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.13.19",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2022-01-17-desktop-v0.13.21/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.13.21.asar.gz"
             },
@@ -3242,6 +3369,7 @@
             "minRunnableInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.13.19",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2022-01-24-desktop-v0.13.22/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.13.22.asar.gz"
             },
@@ -3254,6 +3382,7 @@
             "maxInstallerVersion": "0.13.23",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.13.23",
+            "changelogUrl": "https://obsidian.md/changelog/2022-01-27-desktop-v0.13.23/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.13.23/obsidian-0.13.23.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.13.23/Obsidian-0.13.23.AppImage",
@@ -3306,6 +3435,7 @@
             "maxInstallerVersion": "0.13.24",
             "isBeta": true,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.13.24",
+            "changelogUrl": "https://obsidian.md/changelog/2022-02-04-desktop-v0.13.24/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.13.24/obsidian-0.13.24.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.13.24/Obsidian-0.13.24.AppImage",
@@ -3357,6 +3487,7 @@
             "minRunnableInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.13.24",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2022-02-18-desktop-v0.13.25/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.13.25.asar.gz"
             },
@@ -3368,6 +3499,7 @@
             "minRunnableInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.13.24",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2022-02-18-desktop-v0.13.26/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.13.26.asar.gz"
             },
@@ -3379,6 +3511,7 @@
             "minRunnableInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.13.24",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2022-02-28-desktop-v0.13.27/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.13.27.asar.gz"
             },
@@ -3390,6 +3523,7 @@
             "minRunnableInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.13.24",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2022-03-01-desktop-v0.13.28/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.13.28.asar.gz"
             },
@@ -3401,6 +3535,7 @@
             "minRunnableInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.13.24",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2022-03-05-desktop-v0.13.29/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.13.29.asar.gz"
             },
@@ -3413,6 +3548,7 @@
             "maxInstallerVersion": "0.13.30",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.13.30",
+            "changelogUrl": "https://obsidian.md/changelog/2022-03-07-desktop-v0.13.30/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.13.30/obsidian-0.13.30.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.13.30/Obsidian-0.13.30.AppImage",
@@ -3483,6 +3619,7 @@
             "maxInstallerVersion": "0.13.31",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.13.31",
+            "changelogUrl": "https://obsidian.md/changelog/2022-03-08-desktop-v0.13.31/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.13.31/obsidian-0.13.31.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.13.31/Obsidian-0.13.31.AppImage",
@@ -3552,6 +3689,7 @@
             "minRunnableInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.13.31",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2022-03-09-desktop-v0.13.32/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.13.32.asar.gz"
             },
@@ -3564,6 +3702,7 @@
             "maxInstallerVersion": "0.13.31",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.13.33",
+            "changelogUrl": "https://obsidian.md/changelog/2022-03-10-desktop-v0.13.33/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.13.33/obsidian-0.13.33.asar.gz"
             },
@@ -3575,6 +3714,7 @@
             "minRunnableInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.13.31",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2022-03-14-desktop-v0.14.0/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.14.0.asar.gz"
             },
@@ -3586,6 +3726,7 @@
             "minRunnableInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.13.31",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2022-03-16-desktop-v0.14.1/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.14.1.asar.gz"
             },
@@ -3598,6 +3739,7 @@
             "maxInstallerVersion": "0.14.2",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.14.2",
+            "changelogUrl": "https://obsidian.md/changelog/2022-03-17-desktop-v0.14.2/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.14.2/obsidian-0.14.2.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.14.2/Obsidian-0.14.2.AppImage",
@@ -3649,6 +3791,7 @@
             "minRunnableInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.14.2",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2022-03-28-desktop-v0.14.3/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.14.3.asar.gz"
             },
@@ -3660,6 +3803,7 @@
             "minRunnableInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.14.2",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2022-03-31-desktop-v0.14.4/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.14.4.asar.gz"
             },
@@ -3672,6 +3816,7 @@
             "maxInstallerVersion": "0.14.5",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.14.5",
+            "changelogUrl": "https://obsidian.md/changelog/2022-04-01-desktop-v0.14.5/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.14.5/obsidian-0.14.5.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.14.5/Obsidian-0.14.5.AppImage",
@@ -3733,6 +3878,7 @@
             "maxInstallerVersion": "0.14.6",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.14.6",
+            "changelogUrl": "https://obsidian.md/changelog/2022-04-11-desktop-v0.14.6/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.14.6/obsidian-0.14.6.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.14.6/Obsidian-0.14.6.AppImage",
@@ -3793,6 +3939,7 @@
             "minRunnableInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.14.6",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2022-04-25-desktop-v0.14.7/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.14.7.asar.gz"
             },
@@ -3804,6 +3951,7 @@
             "minRunnableInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.14.6",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2022-05-03-desktop-v0.14.8/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.14.8.asar.gz"
             },
@@ -3815,6 +3963,7 @@
             "minRunnableInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.14.6",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2022-05-03-desktop-v0.14.9/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.14.9.asar.gz"
             },
@@ -3826,6 +3975,7 @@
             "minRunnableInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.14.6",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2022-05-10-desktop-v0.14.10/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.14.10.asar.gz"
             },
@@ -3837,6 +3987,7 @@
             "minRunnableInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.14.6",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2022-05-16-desktop-v0.14.11/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.14.11.asar.gz"
             },
@@ -3848,6 +3999,7 @@
             "minRunnableInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.14.6",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2022-05-16-desktop-v0.14.12/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.14.12.asar.gz"
             },
@@ -3859,6 +4011,7 @@
             "minRunnableInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.14.6",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2022-05-24-desktop-v0.14.13/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.14.13.asar.gz"
             },
@@ -3870,6 +4023,7 @@
             "minRunnableInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.14.6",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2022-05-26-desktop-v0.14.14/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.14.14.asar.gz"
             },
@@ -3882,6 +4036,7 @@
             "maxInstallerVersion": "0.14.15",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.14.15",
+            "changelogUrl": "https://obsidian.md/changelog/2022-05-27-desktop-v0.14.15/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.14.15/obsidian-0.14.15.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.14.15/Obsidian-0.14.15.AppImage",
@@ -3942,6 +4097,7 @@
             "minRunnableInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.14.15",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2022-06-14-desktop-v0.15.0/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.15.0.asar.gz"
             },
@@ -3953,6 +4109,7 @@
             "minRunnableInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.14.15",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2022-06-15-desktop-v0.15.1/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.15.1.asar.gz"
             },
@@ -3964,6 +4121,7 @@
             "minRunnableInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.14.15",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2022-06-17-desktop-v0.15.2/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.15.2.asar.gz"
             },
@@ -3975,6 +4133,7 @@
             "minRunnableInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.14.15",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2022-06-17-desktop-v0.15.3/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.15.3.asar.gz"
             },
@@ -3986,6 +4145,7 @@
             "minRunnableInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.14.15",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2022-07-05-desktop-v0.15.4/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.15.4.asar.gz"
             },
@@ -3997,6 +4157,7 @@
             "minRunnableInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.14.15",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2022-07-08-desktop-v0.15.5/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.15.5.asar.gz"
             },
@@ -4009,6 +4170,7 @@
             "maxInstallerVersion": "0.15.6",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.15.6",
+            "changelogUrl": "https://obsidian.md/changelog/2022-07-12-desktop-v0.15.6/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.15.6/obsidian-0.15.6.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.15.6/Obsidian-0.15.6.AppImage",
@@ -4069,6 +4231,7 @@
             "minRunnableInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.15.6",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2022-07-18-desktop-v0.15.7/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.15.7.asar.gz"
             },
@@ -4081,6 +4244,7 @@
             "maxInstallerVersion": "0.15.8",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.15.8",
+            "changelogUrl": "https://obsidian.md/changelog/2022-07-22-desktop-v0.15.8/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.15.8/obsidian-0.15.8.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.15.8/Obsidian-0.15.8.AppImage",
@@ -4142,6 +4306,7 @@
             "maxInstallerVersion": "0.15.9",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v0.15.9",
+            "changelogUrl": "https://obsidian.md/changelog/2022-07-26-desktop-v0.15.9/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.15.9/obsidian-0.15.9.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v0.15.9/Obsidian-0.15.9.AppImage",
@@ -4211,6 +4376,7 @@
             "minRunnableInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.15.9",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2022-08-30-desktop-v0.16.0/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.16.0.asar.gz"
             },
@@ -4222,6 +4388,7 @@
             "minRunnableInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.15.9",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2022-08-31-desktop-v0.16.1/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.16.1.asar.gz"
             },
@@ -4233,6 +4400,7 @@
             "minRunnableInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.15.9",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2022-09-02-desktop-v0.16.2/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.16.2.asar.gz"
             },
@@ -4244,6 +4412,7 @@
             "minRunnableInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.15.9",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2022-09-19-desktop-v0.16.3/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.16.3.asar.gz"
             },
@@ -4255,6 +4424,7 @@
             "minRunnableInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.15.9",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2022-10-03-desktop-v0.16.4/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.16.4.asar.gz"
             },
@@ -4266,6 +4436,7 @@
             "minRunnableInstallerVersion": "0.6.4",
             "maxInstallerVersion": "0.15.9",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2022-10-06-desktop-v0.16.5/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-0.16.5.asar.gz"
             },
@@ -4278,6 +4449,7 @@
             "maxInstallerVersion": "1.0.0",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.0.0",
+            "changelogUrl": "https://obsidian.md/changelog/2022-10-13-desktop-v1.0.0/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.0.0/obsidian-1.0.0.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.0.0/Obsidian-1.0.0.AppImage",
@@ -4347,6 +4519,7 @@
             "minRunnableInstallerVersion": "0.6.4",
             "maxInstallerVersion": "1.0.0",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2022-10-20-desktop-v1.0.2/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.0.2.asar.gz"
             },
@@ -4359,6 +4532,7 @@
             "maxInstallerVersion": "1.0.3",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.0.3",
+            "changelogUrl": "https://obsidian.md/changelog/2022-10-26-desktop-v1.0.3/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.0.3/obsidian-1.0.3.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.0.3/Obsidian-1.0.3.AppImage",
@@ -4428,6 +4602,7 @@
             "minRunnableInstallerVersion": "0.6.4",
             "maxInstallerVersion": "1.0.3",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2022-12-05-desktop-v1.1.0/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.1.0.asar.gz"
             },
@@ -4439,6 +4614,7 @@
             "minRunnableInstallerVersion": "0.6.4",
             "maxInstallerVersion": "1.0.3",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2022-12-08-desktop-v1.1.1/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.1.1.asar.gz"
             },
@@ -4450,6 +4626,7 @@
             "minRunnableInstallerVersion": "0.6.4",
             "maxInstallerVersion": "1.0.3",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2022-12-08-desktop-v1.1.2/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.1.2.asar.gz"
             },
@@ -4461,6 +4638,7 @@
             "minRunnableInstallerVersion": "0.6.4",
             "maxInstallerVersion": "1.0.3",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2022-12-09-desktop-v1.1.3/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.1.3.asar.gz"
             },
@@ -4472,6 +4650,7 @@
             "minRunnableInstallerVersion": "0.6.4",
             "maxInstallerVersion": "1.0.3",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2022-12-12-desktop-v1.1.4/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.1.4.asar.gz"
             },
@@ -4483,6 +4662,7 @@
             "minRunnableInstallerVersion": "0.6.4",
             "maxInstallerVersion": "1.0.3",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2022-12-14-desktop-v1.1.5/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.1.5.asar.gz"
             },
@@ -4494,6 +4674,7 @@
             "minRunnableInstallerVersion": "0.6.4",
             "maxInstallerVersion": "1.0.3",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2022-12-16-desktop-v1.1.6/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.1.6.asar.gz"
             },
@@ -4505,6 +4686,7 @@
             "minRunnableInstallerVersion": "0.6.4",
             "maxInstallerVersion": "1.0.3",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2022-12-19-desktop-v1.1.7/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.1.7.asar.gz"
             },
@@ -4517,6 +4699,7 @@
             "maxInstallerVersion": "1.1.8",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.1.8",
+            "changelogUrl": "https://obsidian.md/changelog/2022-12-20-desktop-v1.1.8/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.1.8/obsidian-1.1.8.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.1.8/Obsidian-1.1.8.AppImage",
@@ -4587,6 +4770,7 @@
             "maxInstallerVersion": "1.1.9",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.1.9",
+            "changelogUrl": "https://obsidian.md/changelog/2022-12-23-desktop-v1.1.9/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.1.9/obsidian-1.1.9.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.1.9/Obsidian-1.1.9.AppImage",
@@ -4656,6 +4840,7 @@
             "minRunnableInstallerVersion": "0.6.4",
             "maxInstallerVersion": "1.1.9",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2023-01-10-desktop-v1.1.10/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.1.10.asar.gz"
             },
@@ -4667,6 +4852,7 @@
             "minRunnableInstallerVersion": "0.6.4",
             "maxInstallerVersion": "1.1.9",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2023-01-10-desktop-v1.1.11/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.1.11.asar.gz"
             },
@@ -4678,6 +4864,7 @@
             "minRunnableInstallerVersion": "0.6.4",
             "maxInstallerVersion": "1.1.9",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2023-01-12-desktop-v1.1.12/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.1.12.asar.gz"
             },
@@ -4689,6 +4876,7 @@
             "minRunnableInstallerVersion": "0.6.4",
             "maxInstallerVersion": "1.1.9",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2023-02-13-desktop-v1.1.13/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.1.13.asar.gz"
             },
@@ -4700,6 +4888,7 @@
             "minRunnableInstallerVersion": "0.6.4",
             "maxInstallerVersion": "1.1.9",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2023-02-16-desktop-v1.1.14/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.1.14.asar.gz"
             },
@@ -4712,6 +4901,7 @@
             "maxInstallerVersion": "1.1.15",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.1.15",
+            "changelogUrl": "https://obsidian.md/changelog/2023-02-22-desktop-v1.1.15/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.1.15/obsidian-1.1.15.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.1.15/Obsidian-1.1.15.AppImage",
@@ -4782,6 +4972,7 @@
             "maxInstallerVersion": "1.1.16",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.1.16",
+            "changelogUrl": "https://obsidian.md/changelog/2023-03-01-desktop-v1.1.16/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.1.16/obsidian-1.1.16.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.1.16/Obsidian-1.1.16.AppImage",
@@ -4851,6 +5042,7 @@
             "minRunnableInstallerVersion": "0.6.4",
             "maxInstallerVersion": "1.1.16",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2023-03-29-desktop-v1.2.0/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.2.0.asar.gz"
             },
@@ -4862,6 +5054,7 @@
             "minRunnableInstallerVersion": "0.6.4",
             "maxInstallerVersion": "1.1.16",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2023-03-31-desktop-v1.2.1/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.2.1.asar.gz"
             },
@@ -4873,6 +5066,7 @@
             "minRunnableInstallerVersion": "0.6.4",
             "maxInstallerVersion": "1.1.16",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2023-04-04-desktop-v1.2.2/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.2.2.asar.gz"
             },
@@ -4884,6 +5078,7 @@
             "minRunnableInstallerVersion": "0.6.4",
             "maxInstallerVersion": "1.1.16",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2023-04-14-desktop-v1.2.3/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.2.3.asar.gz"
             },
@@ -4906,6 +5101,7 @@
             "minRunnableInstallerVersion": "0.6.4",
             "maxInstallerVersion": "1.1.16",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2023-04-20-desktop-v1.2.5/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.2.5.asar.gz"
             },
@@ -4917,6 +5113,7 @@
             "minRunnableInstallerVersion": "0.6.4",
             "maxInstallerVersion": "1.1.16",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2023-04-26-desktop-v1.2.6/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.2.6.asar.gz"
             },
@@ -4929,6 +5126,7 @@
             "maxInstallerVersion": "1.2.7",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.2.7",
+            "changelogUrl": "https://obsidian.md/changelog/2023-05-02-desktop-v1.2.7/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.2.7/obsidian-1.2.7.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.2.7/Obsidian-1.2.7.AppImage",
@@ -4999,6 +5197,7 @@
             "maxInstallerVersion": "1.2.8",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.2.8",
+            "changelogUrl": "https://obsidian.md/changelog/2023-05-03-desktop-v1.2.8/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.2.8/obsidian-1.2.8.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.2.8/Obsidian-1.2.8.AppImage",
@@ -5079,6 +5278,7 @@
             "minRunnableInstallerVersion": "0.14.5",
             "maxInstallerVersion": "1.2.8",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2023-05-15-desktop-v1.3.1/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.3.1.asar.gz"
             },
@@ -5090,6 +5290,7 @@
             "minRunnableInstallerVersion": "0.14.5",
             "maxInstallerVersion": "1.2.8",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2023-05-19-desktop-v1.3.2/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.3.2.asar.gz"
             },
@@ -5102,6 +5303,7 @@
             "maxInstallerVersion": "1.3.3",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.3.3",
+            "changelogUrl": "https://obsidian.md/changelog/2023-05-23-desktop-v1.3.3/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.3.3/obsidian-1.3.3.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.3.3/Obsidian-1.3.3.AppImage",
@@ -5172,6 +5374,7 @@
             "maxInstallerVersion": "1.3.4",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.3.4",
+            "changelogUrl": "https://obsidian.md/changelog/2023-05-24-desktop-v1.3.4/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.3.4/obsidian-1.3.4.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.3.4/Obsidian-1.3.4.AppImage",
@@ -5242,6 +5445,7 @@
             "maxInstallerVersion": "1.3.5",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.3.5",
+            "changelogUrl": "https://obsidian.md/changelog/2023-06-01-desktop-v1.3.5/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.3.5/obsidian-1.3.5.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.3.5/Obsidian-1.3.5.AppImage",
@@ -5311,6 +5515,7 @@
             "minRunnableInstallerVersion": "0.14.5",
             "maxInstallerVersion": "1.3.5",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2023-06-26-desktop-v1.3.6/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.3.6.asar.gz"
             },
@@ -5323,6 +5528,7 @@
             "maxInstallerVersion": "1.3.7",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.3.7",
+            "changelogUrl": "https://obsidian.md/changelog/2023-06-26-desktop-v1.3.7/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.3.7/obsidian-1.3.7.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.3.7/Obsidian-1.3.7.AppImage",
@@ -5392,6 +5598,7 @@
             "minRunnableInstallerVersion": "0.14.5",
             "maxInstallerVersion": "1.3.7",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2023-07-26-desktop-v1.4.0/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.4.0.asar.gz"
             },
@@ -5403,6 +5610,7 @@
             "minRunnableInstallerVersion": "0.14.5",
             "maxInstallerVersion": "1.3.7",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2023-07-27-desktop-v1.4.1/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.4.1.asar.gz"
             },
@@ -5414,6 +5622,7 @@
             "minRunnableInstallerVersion": "0.14.5",
             "maxInstallerVersion": "1.3.7",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2023-07-31-desktop-v1.4.2/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.4.2.asar.gz"
             },
@@ -5425,6 +5634,7 @@
             "minRunnableInstallerVersion": "0.14.5",
             "maxInstallerVersion": "1.3.7",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2023-07-31-desktop-v1.4.3/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.4.3.asar.gz"
             },
@@ -5436,6 +5646,7 @@
             "minRunnableInstallerVersion": "0.14.5",
             "maxInstallerVersion": "1.3.7",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2023-08-23-desktop-v1.4.4/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.4.4.asar.gz"
             },
@@ -5448,6 +5659,7 @@
             "maxInstallerVersion": "1.4.5",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.4.5",
+            "changelogUrl": "https://obsidian.md/changelog/2023-08-30-desktop-v1.4.5/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.4.5/obsidian-1.4.5.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.4.5/Obsidian-1.4.5.AppImage",
@@ -5517,6 +5729,7 @@
             "minRunnableInstallerVersion": "0.14.5",
             "maxInstallerVersion": "1.4.5",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2023-09-02-desktop-v1.4.6/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.4.6.asar.gz"
             },
@@ -5528,6 +5741,7 @@
             "minRunnableInstallerVersion": "0.14.5",
             "maxInstallerVersion": "1.4.5",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2023-09-07-desktop-v1.4.9/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.4.9.asar.gz"
             },
@@ -5540,6 +5754,7 @@
             "maxInstallerVersion": "1.4.10",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.4.10",
+            "changelogUrl": "https://obsidian.md/changelog/2023-09-11-desktop-v1.4.10/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.4.10/obsidian-1.4.10.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.4.10/Obsidian-1.4.10.AppImage",
@@ -5610,6 +5825,7 @@
             "maxInstallerVersion": "1.4.11",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.4.11",
+            "changelogUrl": "https://obsidian.md/changelog/2023-09-11-desktop-v1.4.11/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.4.11/obsidian-1.4.11.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.4.11/Obsidian-1.4.11.AppImage",
@@ -5680,6 +5896,7 @@
             "maxInstallerVersion": "1.4.12",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.4.12",
+            "changelogUrl": "https://obsidian.md/changelog/2023-09-11-desktop-v1.4.12/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.4.12/obsidian-1.4.12.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.4.12/Obsidian-1.4.12.AppImage",
@@ -5750,6 +5967,7 @@
             "maxInstallerVersion": "1.4.13",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.4.13",
+            "changelogUrl": "https://obsidian.md/changelog/2023-09-15-desktop-v1.4.13/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.4.13/obsidian-1.4.13.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.4.13/Obsidian-1.4.13.AppImage",
@@ -5820,6 +6038,7 @@
             "maxInstallerVersion": "1.4.14",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.4.14",
+            "changelogUrl": "https://obsidian.md/changelog/2023-09-22-desktop-v1.4.14/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.4.14/obsidian-1.4.14.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.4.14/Obsidian-1.4.14.AppImage",
@@ -5889,6 +6108,7 @@
             "minRunnableInstallerVersion": "0.14.5",
             "maxInstallerVersion": "1.4.14",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2023-10-10-desktop-v1.4.15/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.4.15.asar.gz"
             },
@@ -5901,6 +6121,7 @@
             "maxInstallerVersion": "1.4.16",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.4.16",
+            "changelogUrl": "https://obsidian.md/changelog/2023-10-13-desktop-v1.4.16/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.4.16/obsidian-1.4.16.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.4.16/Obsidian-1.4.16.AppImage",
@@ -5970,6 +6191,7 @@
             "minRunnableInstallerVersion": "0.14.5",
             "maxInstallerVersion": "1.4.16",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2023-11-20-desktop-v1.5.0/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.5.0.asar.gz"
             },
@@ -5981,6 +6203,7 @@
             "minRunnableInstallerVersion": "0.14.5",
             "maxInstallerVersion": "1.4.16",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2023-11-29-desktop-v1.5.1/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.5.1.asar.gz"
             },
@@ -5992,6 +6215,7 @@
             "minRunnableInstallerVersion": "0.14.5",
             "maxInstallerVersion": "1.4.16",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2023-12-12-desktop-v1.5.2/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.5.2.asar.gz"
             },
@@ -6004,6 +6228,7 @@
             "maxInstallerVersion": "1.5.3",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.5.3",
+            "changelogUrl": "https://obsidian.md/changelog/2023-12-26-desktop-v1.5.3-diff/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.5.3/obsidian-1.5.3.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.5.3/Obsidian-1.5.3.AppImage",
@@ -6073,6 +6298,7 @@
             "minRunnableInstallerVersion": "1.1.9",
             "maxInstallerVersion": "1.5.3",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2024-02-06-desktop-v1.5.4/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.5.4.asar.gz"
             },
@@ -6084,6 +6310,7 @@
             "minRunnableInstallerVersion": "1.1.9",
             "maxInstallerVersion": "1.5.3",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2024-02-13-desktop-v1.5.5/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.5.5.asar.gz"
             },
@@ -6095,6 +6322,7 @@
             "minRunnableInstallerVersion": "1.1.9",
             "maxInstallerVersion": "1.5.3",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2024-02-16-desktop-v1.5.6/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.5.6.asar.gz"
             },
@@ -6106,6 +6334,7 @@
             "minRunnableInstallerVersion": "1.1.9",
             "maxInstallerVersion": "1.5.3",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2024-02-20-desktop-v1.5.7/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.5.7.asar.gz"
             },
@@ -6118,6 +6347,7 @@
             "maxInstallerVersion": "1.5.8",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.5.8",
+            "changelogUrl": "https://obsidian.md/changelog/2024-02-21-desktop-v1.5.8/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.5.8/obsidian-1.5.8.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.5.8/Obsidian-1.5.8.AppImage",
@@ -6188,6 +6418,7 @@
             "minRunnableInstallerVersion": "1.1.9",
             "maxInstallerVersion": "1.5.8",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2024-03-04-desktop-v1.5.9/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.5.9.asar.gz"
             },
@@ -6199,6 +6430,7 @@
             "minRunnableInstallerVersion": "1.1.9",
             "maxInstallerVersion": "1.5.8",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2024-03-04-desktop-v1.5.10/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.5.10.asar.gz"
             },
@@ -6211,6 +6443,7 @@
             "maxInstallerVersion": "1.5.11",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.5.11",
+            "changelogUrl": "https://obsidian.md/changelog/2024-03-13-desktop-v1.5.11/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.5.11/obsidian-1.5.11.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.5.11/Obsidian-1.5.11.AppImage",
@@ -6282,6 +6515,7 @@
             "maxInstallerVersion": "1.5.12",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.5.12",
+            "changelogUrl": "https://obsidian.md/changelog/2024-03-31-desktop-v1.5.12/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.5.12/obsidian-1.5.12.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.5.12/Obsidian-1.5.12.AppImage",
@@ -6352,6 +6586,7 @@
             "minRunnableInstallerVersion": "1.1.9",
             "maxInstallerVersion": "1.5.12",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2024-05-09-desktop-v1.6.0/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.6.0.asar.gz"
             },
@@ -6363,6 +6598,7 @@
             "minRunnableInstallerVersion": "1.1.9",
             "maxInstallerVersion": "1.5.12",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2024-05-22-desktop-v1.6.1/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.6.1.asar.gz"
             },
@@ -6375,6 +6611,7 @@
             "maxInstallerVersion": "1.6.2",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.6.2",
+            "changelogUrl": "https://obsidian.md/changelog/2024-06-04-desktop-v1.6.2/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.6.2/obsidian-1.6.2.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.6.2/Obsidian-1.6.2.AppImage",
@@ -6446,6 +6683,7 @@
             "maxInstallerVersion": "1.6.3",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.6.3",
+            "changelogUrl": "https://obsidian.md/changelog/2024-06-08-desktop-v1.6.3/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.6.3/obsidian-1.6.3.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.6.3/Obsidian-1.6.3.AppImage",
@@ -6516,6 +6754,7 @@
             "minRunnableInstallerVersion": "1.1.9",
             "maxInstallerVersion": "1.6.3",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2024-06-20-desktop-v1.6.4/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.6.4.asar.gz"
             },
@@ -6528,6 +6767,7 @@
             "maxInstallerVersion": "1.6.5",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.6.5",
+            "changelogUrl": "https://obsidian.md/changelog/2024-06-25-desktop-v1.6.5/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.6.5/obsidian-1.6.5.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.6.5/Obsidian-1.6.5.AppImage",
@@ -6600,6 +6840,7 @@
             "minRunnableInstallerVersion": "1.1.9",
             "maxInstallerVersion": "1.6.5",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2024-07-09-desktop-v1.6.6/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.6.6.asar.gz"
             },
@@ -6612,6 +6853,7 @@
             "maxInstallerVersion": "1.6.7",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.6.7",
+            "changelogUrl": "https://obsidian.md/changelog/2024-07-11-desktop-v1.6.7/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.6.7/obsidian-1.6.7.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.6.7/Obsidian-1.6.7.AppImage",
@@ -6684,6 +6926,7 @@
             "minRunnableInstallerVersion": "1.1.9",
             "maxInstallerVersion": "1.6.7",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2024-08-08-desktop-v1.7.0/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.7.0.asar.gz"
             },
@@ -6695,6 +6938,7 @@
             "minRunnableInstallerVersion": "1.1.9",
             "maxInstallerVersion": "1.6.7",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2024-08-27-desktop-v1.7.1/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.7.1.asar.gz"
             },
@@ -6706,6 +6950,7 @@
             "minRunnableInstallerVersion": "1.1.9",
             "maxInstallerVersion": "1.6.7",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2024-09-19-desktop-v1.7.2/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.7.2.asar.gz"
             },
@@ -6717,6 +6962,7 @@
             "minRunnableInstallerVersion": "1.1.9",
             "maxInstallerVersion": "1.6.7",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2024-09-24-desktop-v1.7.3/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.7.3.asar.gz"
             },
@@ -6729,6 +6975,7 @@
             "maxInstallerVersion": "1.7.4",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.7.4",
+            "changelogUrl": "https://obsidian.md/changelog/2024-10-08-desktop-v1.7.4/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.7.4/obsidian-1.7.4.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.7.4/Obsidian-1.7.4.AppImage",
@@ -6802,6 +7049,7 @@
             "maxInstallerVersion": "1.7.5",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.7.5",
+            "changelogUrl": "https://obsidian.md/changelog/2024-11-04-desktop-v1.7.5/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.7.5/obsidian-1.7.5.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.7.5/Obsidian-1.7.5.AppImage",
@@ -6875,6 +7123,7 @@
             "maxInstallerVersion": "1.7.6",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.7.6",
+            "changelogUrl": "https://obsidian.md/changelog/2024-11-12-desktop-v1.7.6/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.7.6/obsidian-1.7.6.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.7.6/Obsidian-1.7.6.AppImage",
@@ -6948,6 +7197,7 @@
             "maxInstallerVersion": "1.7.7",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.7.7",
+            "changelogUrl": "https://obsidian.md/changelog/2024-11-18-desktop-v1.7.7/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.7.7/obsidian-1.7.7.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.7.7/Obsidian-1.7.7.AppImage",
@@ -7020,6 +7270,7 @@
             "minRunnableInstallerVersion": "1.1.9",
             "maxInstallerVersion": "1.7.7",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2024-12-18-desktop-v1.8.0/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.8.0.asar.gz"
             },
@@ -7031,6 +7282,7 @@
             "minRunnableInstallerVersion": "1.1.9",
             "maxInstallerVersion": "1.7.7",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2025-01-07-desktop-v1.8.1/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.8.1.asar.gz"
             },
@@ -7042,6 +7294,7 @@
             "minRunnableInstallerVersion": "1.1.9",
             "maxInstallerVersion": "1.7.7",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2025-01-22-desktop-v1.8.2/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.8.2.asar.gz"
             },
@@ -7054,6 +7307,7 @@
             "maxInstallerVersion": "1.8.3",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.8.3",
+            "changelogUrl": "https://obsidian.md/changelog/2025-01-28-desktop-v1.8.3/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.8.3/obsidian-1.8.3.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.8.3/Obsidian-1.8.3.AppImage",
@@ -7127,6 +7381,7 @@
             "maxInstallerVersion": "1.8.4",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.8.4",
+            "changelogUrl": "https://obsidian.md/changelog/2025-01-31-desktop-v1.8.4/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.8.4/obsidian-1.8.4.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.8.4/Obsidian-1.8.4.AppImage",
@@ -7199,6 +7454,7 @@
             "minRunnableInstallerVersion": "1.1.9",
             "maxInstallerVersion": "1.8.4",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2025-02-03-desktop-v1.8.5/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.8.5.asar.gz"
             },
@@ -7210,6 +7466,7 @@
             "minRunnableInstallerVersion": "1.1.9",
             "maxInstallerVersion": "1.8.4",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2025-02-12-desktop-v1.8.6/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.8.6.asar.gz"
             },
@@ -7222,6 +7479,7 @@
             "maxInstallerVersion": "1.8.7",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.8.7",
+            "changelogUrl": "https://obsidian.md/changelog/2025-02-18-desktop-v1.8.7/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.8.7/obsidian-1.8.7.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.8.7/Obsidian-1.8.7.AppImage",
@@ -7294,6 +7552,7 @@
             "minRunnableInstallerVersion": "1.1.9",
             "maxInstallerVersion": "1.8.7",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2025-02-25-desktop-v1.8.8/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.8.8.asar.gz"
             },
@@ -7306,6 +7565,7 @@
             "maxInstallerVersion": "1.8.9",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.8.9",
+            "changelogUrl": "https://obsidian.md/changelog/2025-02-28-desktop-v1.8.9/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.8.9/obsidian-1.8.9.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.8.9/Obsidian-1.8.9.AppImage",
@@ -7379,6 +7639,7 @@
             "maxInstallerVersion": "1.8.10",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.8.10",
+            "changelogUrl": "https://obsidian.md/changelog/2025-04-10-desktop-v1.8.10/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.8.10/obsidian-1.8.10.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.8.10/Obsidian-1.8.10.AppImage",
@@ -7451,6 +7712,7 @@
             "minRunnableInstallerVersion": "1.1.9",
             "maxInstallerVersion": "1.8.10",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2025-05-21-desktop-v1.9.0/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.9.0.asar.gz"
             },
@@ -7462,6 +7724,7 @@
             "minRunnableInstallerVersion": "1.1.9",
             "maxInstallerVersion": "1.8.10",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2025-05-22-desktop-v1.9.1/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.9.1.asar.gz"
             },
@@ -7473,6 +7736,7 @@
             "minRunnableInstallerVersion": "1.1.9",
             "maxInstallerVersion": "1.8.10",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2025-06-05-desktop-v1.9.2/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.9.2.asar.gz"
             },
@@ -7484,6 +7748,7 @@
             "minRunnableInstallerVersion": "1.1.9",
             "maxInstallerVersion": "1.8.10",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2025-06-26-desktop-v1.9.3/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.9.3.asar.gz"
             },
@@ -7495,6 +7760,7 @@
             "minRunnableInstallerVersion": "1.1.9",
             "maxInstallerVersion": "1.8.10",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2025-06-27-desktop-v1.9.4/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.9.4.asar.gz"
             },
@@ -7506,6 +7772,7 @@
             "minRunnableInstallerVersion": "1.1.9",
             "maxInstallerVersion": "1.8.10",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2025-07-17-desktop-v1.9.5/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.9.5.asar.gz"
             },
@@ -7517,6 +7784,7 @@
             "minRunnableInstallerVersion": "1.1.9",
             "maxInstallerVersion": "1.8.10",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2025-07-18-desktop-v1.9.6/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.9.6.asar.gz"
             },
@@ -7528,6 +7796,7 @@
             "minRunnableInstallerVersion": "1.1.9",
             "maxInstallerVersion": "1.8.10",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2025-08-05-desktop-v1.9.7/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.9.7.asar.gz"
             },
@@ -7539,6 +7808,7 @@
             "minRunnableInstallerVersion": "1.1.9",
             "maxInstallerVersion": "1.8.10",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2025-08-14-desktop-v1.9.8/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.9.8.asar.gz"
             },
@@ -7550,6 +7820,7 @@
             "minRunnableInstallerVersion": "1.1.9",
             "maxInstallerVersion": "1.8.10",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2025-08-15-desktop-v1.9.9/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.9.9.asar.gz"
             },
@@ -7562,6 +7833,7 @@
             "maxInstallerVersion": "1.9.10",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.9.10",
+            "changelogUrl": "https://obsidian.md/changelog/2025-08-17-desktop-v1.9.10/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.9.10/obsidian-1.9.10.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.9.10/Obsidian-1.9.10.AppImage",
@@ -7634,6 +7906,7 @@
             "minRunnableInstallerVersion": "1.1.9",
             "maxInstallerVersion": "1.9.10",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2025-08-22-desktop-v1.9.11/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.9.11.asar.gz"
             },
@@ -7646,6 +7919,7 @@
             "maxInstallerVersion": "1.9.12",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.9.12",
+            "changelogUrl": "https://obsidian.md/changelog/2025-08-25-desktop-v1.9.12/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.9.12/obsidian-1.9.12.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.9.12/Obsidian-1.9.12.AppImage",
@@ -7718,6 +7992,7 @@
             "minRunnableInstallerVersion": "1.1.9",
             "maxInstallerVersion": "1.9.12",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2025-09-19-desktop-v1.9.13/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.9.13.asar.gz"
             },
@@ -7730,6 +8005,7 @@
             "maxInstallerVersion": "1.9.14",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.9.14",
+            "changelogUrl": "https://obsidian.md/changelog/2025-09-25-desktop-v1.9.14/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.9.14/obsidian-1.9.14.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.9.14/Obsidian-1.9.14.AppImage",
@@ -7802,6 +8078,7 @@
             "minRunnableInstallerVersion": "1.1.9",
             "maxInstallerVersion": "1.9.14",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2025-10-01-desktop-v1.10.0/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.10.0.asar.gz"
             },
@@ -7813,6 +8090,7 @@
             "minRunnableInstallerVersion": "1.1.9",
             "maxInstallerVersion": "1.9.14",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2025-10-21-desktop-v1.10.1/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.10.1.asar.gz"
             },
@@ -7824,6 +8102,7 @@
             "minRunnableInstallerVersion": "1.1.9",
             "maxInstallerVersion": "1.9.14",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2025-10-29-desktop-v1.10.2/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.10.2.asar.gz"
             },
@@ -7836,6 +8115,7 @@
             "maxInstallerVersion": "1.10.3",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.10.3",
+            "changelogUrl": "https://obsidian.md/changelog/2025-11-11-desktop-v1.10.3/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.10.3/obsidian-1.10.3.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.10.3/Obsidian-1.10.3.AppImage",
@@ -7908,6 +8188,7 @@
             "minRunnableInstallerVersion": "1.1.9",
             "maxInstallerVersion": "1.10.3",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2025-11-18-desktop-v1.10.4/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.10.4.asar.gz"
             },
@@ -7919,6 +8200,7 @@
             "minRunnableInstallerVersion": "1.1.9",
             "maxInstallerVersion": "1.10.3",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2025-11-19-desktop-v1.10.5/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.10.5.asar.gz"
             },
@@ -7931,6 +8213,7 @@
             "maxInstallerVersion": "1.10.6",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.10.6",
+            "changelogUrl": "https://obsidian.md/changelog/2025-11-25-desktop-v1.10.6/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.10.6/obsidian-1.10.6.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.10.6/Obsidian-1.10.6.AppImage",
@@ -8003,6 +8286,7 @@
             "minRunnableInstallerVersion": "1.1.9",
             "maxInstallerVersion": "1.10.6",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2025-12-10-desktop-v1.11.0/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.11.0.asar.gz"
             },
@@ -8014,6 +8298,7 @@
             "minRunnableInstallerVersion": "1.1.9",
             "maxInstallerVersion": "1.10.6",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2025-12-12-desktop-v1.11.1/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.11.1.asar.gz"
             },
@@ -8025,6 +8310,7 @@
             "minRunnableInstallerVersion": "1.1.9",
             "maxInstallerVersion": "1.10.6",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2025-12-23-desktop-v1.11.2/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.11.2.asar.gz"
             },
@@ -8036,6 +8322,7 @@
             "minRunnableInstallerVersion": "1.1.9",
             "maxInstallerVersion": "1.10.6",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2025-12-31-desktop-v1.11.3/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.11.3.asar.gz"
             },
@@ -8048,6 +8335,7 @@
             "maxInstallerVersion": "1.11.4",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.11.4",
+            "changelogUrl": "https://obsidian.md/changelog/2026-01-07-desktop-v1.11.4/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.11.4/obsidian-1.11.4.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.11.4/Obsidian-1.11.4.AppImage",
@@ -8121,6 +8409,7 @@
             "maxInstallerVersion": "1.11.5",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.11.5",
+            "changelogUrl": "https://obsidian.md/changelog/2026-01-15-desktop-v1.11.5/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.11.5/obsidian-1.11.5.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.11.5/Obsidian-1.11.5.AppImage",
@@ -8193,6 +8482,7 @@
             "minRunnableInstallerVersion": "1.1.9",
             "maxInstallerVersion": "1.11.5",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2026-01-26-desktop-v1.11.6/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.11.6.asar.gz"
             },
@@ -8205,6 +8495,7 @@
             "maxInstallerVersion": "1.11.7",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.11.7",
+            "changelogUrl": "https://obsidian.md/changelog/2026-01-28-desktop-v1.11.7/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.11.7/obsidian-1.11.7.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.11.7/Obsidian-1.11.7.AppImage",
@@ -8277,6 +8568,7 @@
             "minRunnableInstallerVersion": "1.1.9",
             "maxInstallerVersion": "1.11.7",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2026-02-10-desktop-v1.12.0/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.12.0.asar.gz"
             },
@@ -8288,6 +8580,7 @@
             "minRunnableInstallerVersion": "1.1.9",
             "maxInstallerVersion": "1.11.7",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2026-02-10-desktop-v1.12.1/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.12.1.asar.gz"
             },
@@ -8299,6 +8592,7 @@
             "minRunnableInstallerVersion": "1.1.9",
             "maxInstallerVersion": "1.11.7",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2026-02-18-desktop-v1.12.2/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.12.2.asar.gz"
             },
@@ -8310,6 +8604,7 @@
             "minRunnableInstallerVersion": "1.1.9",
             "maxInstallerVersion": "1.11.7",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2026-02-23-desktop-v1.12.3/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.12.3.asar.gz"
             },
@@ -8322,6 +8617,7 @@
             "maxInstallerVersion": "1.12.4",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.12.4",
+            "changelogUrl": "https://obsidian.md/changelog/2026-02-24-desktop-v1.12.4/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.12.4/obsidian-1.12.4.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.12.4/Obsidian-1.12.4.AppImage",
@@ -8394,6 +8690,7 @@
             "minRunnableInstallerVersion": "1.1.9",
             "maxInstallerVersion": "1.12.4",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2026-03-05-desktop-v1.12.5/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.12.5.asar.gz"
             },
@@ -8405,6 +8702,7 @@
             "minRunnableInstallerVersion": "1.1.9",
             "maxInstallerVersion": "1.12.4",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2026-03-18-desktop-v1.12.6/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.12.6.asar.gz"
             },
@@ -8417,6 +8715,7 @@
             "maxInstallerVersion": "1.12.7",
             "isBeta": false,
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.12.7",
+            "changelogUrl": "https://obsidian.md/changelog/2026-03-23-desktop-v1.12.7/",
             "downloads": {
                 "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.12.7/obsidian-1.12.7.asar.gz",
                 "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.12.7/Obsidian-1.12.7.AppImage",
@@ -8489,6 +8788,7 @@
             "minRunnableInstallerVersion": "1.6.5",
             "maxInstallerVersion": "1.12.7",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2026-05-28-desktop-v1.13.0/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.13.0.asar.gz"
             },
@@ -8500,6 +8800,7 @@
             "minRunnableInstallerVersion": "1.1.9",
             "maxInstallerVersion": "1.12.7",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2026-06-09-desktop-v1.13.1/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.13.1.asar.gz"
             },
