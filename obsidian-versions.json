@@ -1,9 +1,9 @@
 {
     "metadata": {
         "schemaVersion": "2.2.0",
-        "commitDate": "2026-08-05T17:14:31Z",
-        "commitSha": "d1b03f3039fdb5f3de4132446409f3b9339d95a7",
-        "timestamp": "2026-08-05T17:57:12.385Z"
+        "commitDate": "2026-08-07T13:53:38Z",
+        "commitSha": "16eaef352cb58848c6fba34e1c32eb726ba15a1a",
+        "timestamp": "2026-08-08T02:26:22.457Z"
     },
     "versions": [
         {
@@ -8913,6 +8913,18 @@
             "changelogUrl": "https://obsidian.md/changelog/2026-08-05-desktop-v1.13.5/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.13.5.asar.gz"
+            },
+            "installers": {}
+        },
+        {
+            "version": "1.13.6",
+            "minInstallerVersion": "1.5.8",
+            "minRunnableInstallerVersion": "1.1.9",
+            "maxInstallerVersion": "1.13.4",
+            "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2026-08-07-desktop-v1.13.6/",
+            "downloads": {
+                "asar": "https://releases.obsidian.md/release/obsidian-1.13.6.asar.gz"
             },
             "installers": {}
         }
