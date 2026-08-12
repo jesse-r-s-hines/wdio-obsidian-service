@@ -1,5 +1,7 @@
 # yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
-# Trigger this workflow with `pnpm run release patch/minor/major` then `git push && git push origin tag 3.1.0`
+# Trigger this workflow with `pnpm run release patch/minor/major` then `git push && git push origin tag <tag>`
+# It uses https://docs.npmjs.com/staged-publishing so to actually publish the package, go to the https://www.npmjs.com
+# Staged Packages page and approve to actually publish them
 name: Publish
 on:
   push:
@@ -40,7 +42,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish
-        run: pnpm publish -r --aggregate-output --no-git-checks --tag $RELEASE_TYPE
+        run: pnpm stage publish -r --aggregate-output --no-git-checks --tag $RELEASE_TYPE
         env:
           RELEASE_TYPE: ${{ contains(github.ref, '-') && 'beta' || 'latest'}}
 
