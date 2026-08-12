@@ -19,7 +19,7 @@ jobs:
     steps:
       - name: "Check if update is needed"
         id: check
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           result-encoding: string
           script: |
@@ -57,7 +57,7 @@ jobs:
             return needsUpdate ? 'true' : 'false';
 
       - if: ${{ steps.check.outputs.result == 'true' }}
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           # By default, GitHub won't trigger workflows from events created from a workflow, so the new commit won't
           # trigger the tests. The recommended workaround is to use a Personal Access Token instead of the default
@@ -67,11 +67,11 @@ jobs:
           # - https://stackoverflow.com/questions/67550727 
           token: ${{ secrets.GH_PAT }}
       - if: ${{ steps.check.outputs.result == 'true' }}
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@v6
         with:
           version: 10
       - if: ${{ steps.check.outputs.result == 'true' }}
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: 24
           cache: 'pnpm'
