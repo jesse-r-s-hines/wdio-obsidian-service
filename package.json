@@ -1,6 +1,6 @@
 {
     "name": "wdio-obsidian-service-workspace",
-    "version": "3.1.1",
+    "version": "3.1.2",
     "private": true,
     "bin": {},
     "packageManager": "pnpm@11.21.0",

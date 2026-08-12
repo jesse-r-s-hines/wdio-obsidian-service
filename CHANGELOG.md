@@ -165,3 +165,6 @@ Support Obsidian CLI in wdio tests!
 
 ## 3.1.1
 - Fix errors on node 26
+
+## 3.1.2
+- Increase retries during Obsidian login when downloading beta versions
