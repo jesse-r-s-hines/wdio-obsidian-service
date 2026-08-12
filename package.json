@@ -3,6 +3,7 @@
     "version": "3.1.1",
     "private": true,
     "bin": {},
+    "packageManager": "pnpm@11.21.0",
     "repository": {
         "type": "git",
         "url": "git+https://github.com/jesse-r-s-hines/wdio-obsidian-service.git"
