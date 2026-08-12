@@ -1,9 +1,9 @@
 {
     "metadata": {
         "schemaVersion": "2.2.0",
-        "commitDate": "2026-08-10T15:53:57Z",
-        "commitSha": "840aedd63564ca4e355892b1a13c5f33af54f518",
-        "timestamp": "2026-08-10T17:12:45.977Z"
+        "commitDate": "2026-08-11T20:13:24Z",
+        "commitSha": "623a17f523e62206d0dd52e5e68f5a5bb98c698d",
+        "timestamp": "2026-08-12T02:49:45.347Z"
     },
     "versions": [
         {
@@ -8989,6 +8989,18 @@
             },
             "electronVersion": "43.3.0",
             "chromeVersion": "150.0.7871.212"
+        },
+        {
+            "version": "1.13.7",
+            "minInstallerVersion": "1.5.8",
+            "minRunnableInstallerVersion": "1.1.9",
+            "maxInstallerVersion": "1.13.6",
+            "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2026-08-11-desktop-v1.13.7/",
+            "downloads": {
+                "asar": "https://releases.obsidian.md/release/obsidian-1.13.7.asar.gz"
+            },
+            "installers": {}
         }
     ]
 }
