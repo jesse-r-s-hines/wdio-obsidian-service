@@ -168,3 +168,7 @@ Support Obsidian CLI in wdio tests!
 
 ## 3.1.2
 - Increase retries during Obsidian login when downloading beta versions
+
+## 3.1.3
+- Increase retries during Obsidian login when downloading beta versions
+- Fix publish workflow
