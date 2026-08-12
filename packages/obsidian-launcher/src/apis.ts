@@ -134,10 +134,10 @@ export async function obsidianApiLogin(opts: {
     let needsMfa = false;
     let retries = 0;
     let signin: SigninResult|undefined = undefined;
-    while (!signin?.token && retries < 4) {
+    while (!signin?.token && retries < 5) {
         // exponential backoff with random offset. Always trigger in CI to avoid multiple jobs hitting the API at once
         if (retries > 0 || env.CI) {
-            await sleep((2*Math.random() + retries*retries * 3) * 1000);
+            await sleep((2*Math.random() + retries*retries * 4) * 1000);
         }
 
         let mfa = '';

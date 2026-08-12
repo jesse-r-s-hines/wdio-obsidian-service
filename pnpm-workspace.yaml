@@ -6,14 +6,13 @@ packages:
 linkWorkspacePackages: true
 resolutionMode: 'highest'
 
-onlyBuiltDependencies:
-  - appium
-  - classic-level
-  - edgedriver
-  - esbuild
-  - geckodriver
-  - sharp
-
-
 minimumReleaseAge: 2880 # 2 days
 blockExoticSubdeps: true
+allowBuilds:
+  appium: true
+  classic-level: true
+  edgedriver: true
+  esbuild: true
+  geckodriver: true
+  sharp: true
+

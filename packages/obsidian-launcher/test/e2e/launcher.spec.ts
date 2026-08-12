@@ -156,7 +156,7 @@ describe("ObsidianLauncher", function() {
 
 
 describe("ObsidianLauncher login", function() {
-    this.timeout("120s");
+    this.timeout("300s");
 
     before(async function() {
         if (process.env.TEST_LEVEL != "all" || !process.env.OBSIDIAN_PASSWORD) this.skip();

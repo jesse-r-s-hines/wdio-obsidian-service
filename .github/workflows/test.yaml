@@ -37,12 +37,12 @@ jobs:
     name: "test build, lint & unit"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
+      - uses: actions/checkout@v7
+      - uses: pnpm/setup@v2
         with:
-          version: 10
+          install: false
       - name: Use Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: "18.x"
           cache: 'pnpm'
@@ -54,7 +54,7 @@ jobs:
       - name: Run unit tests
         run: pnpm run --aggregate-output --reporter-hide-prefix test:unit
       - name: Upload build artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: build
           retention-days: 1
@@ -108,18 +108,18 @@ jobs:
     timeout-minutes: 30
     name: "test e2e (${{ matrix.os }}, node ${{ matrix.node-version }} obsidian: ${{ matrix.obsidian-versions }}, package-resolution: ${{ matrix.package-resolution }})"
     steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
+      - uses: actions/checkout@v7
+      - uses: pnpm/setup@v2
         with:
-          version: 10
+          install: false
       - name: Use Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'pnpm'
 
       - name: Cache .obsidian-cache
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: .obsidian-cache
           key: obsidian-cache-${{ matrix.os }}-${{ matrix.obsidian-versions }}-${{ hashFiles('./obsidian-versions.json') }}
@@ -137,7 +137,7 @@ jobs:
           fi
 
       - name: Download build artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: build
 
@@ -202,18 +202,18 @@ jobs:
     runs-on: ubuntu-latest
     name: "test e2e (android, api ${{ matrix.android-api-level }}, profile ${{ matrix.android-profile }}, obsidian ${{ matrix.obsidian-versions }}, package-resolution: ${{ matrix.package-resolution }})"
     steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
+      - uses: actions/checkout@v7
+      - uses: pnpm/setup@v2
         with:
-          version: 10
+          install: false
       - name: Use Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'pnpm'
 
       - name: Cache .obsidian-cache
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: .obsidian-cache
           key: obsidian-cache-android-${{ matrix.obsidian-versions }}-${{ hashFiles('./obsidian-versions.json') }}
@@ -231,7 +231,7 @@ jobs:
           fi
 
       - name: Download build artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: build
 
@@ -243,7 +243,7 @@ jobs:
   
       - name: AVD cache
         id: avd-cache
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: |
             ~/.android/avd/*

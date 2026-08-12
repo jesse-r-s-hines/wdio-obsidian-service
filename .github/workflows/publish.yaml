@@ -1,5 +1,7 @@
 # yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
-# Trigger this workflow with `pnpm run release patch/minor/major` then `git push && git push origin tag 3.1.0`
+# Trigger this workflow with `pnpm run release patch/minor/major` then `git push && git push origin tag <tag>`
+# It uses https://docs.npmjs.com/staged-publishing so to actually publish the package, go to the https://www.npmjs.com
+# Staged Packages page and approve to actually publish them
 name: Publish
 on:
   push:
@@ -12,15 +14,15 @@ jobs:
       contents: write
       id-token: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with: # Needed for the `--notes-from-tag` option to work
           fetch-depth: 0
           ref: ${{ github.ref }}
 
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/setup@v2
         with:
-          version: 10
-      - uses: actions/setup-node@v4
+          install: false
+      - uses: actions/setup-node@v7
         with:
           node-version: 24
           cache: 'pnpm'
@@ -40,7 +42,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish
-        run: pnpm publish -r --aggregate-output --no-git-checks --tag $RELEASE_TYPE
+        run: pnpm stage publish -r --aggregate-output --no-git-checks --tag $RELEASE_TYPE
         env:
           RELEASE_TYPE: ${{ contains(github.ref, '-') && 'beta' || 'latest'}}
 
@@ -49,7 +51,7 @@ jobs:
 
       - name: Upload docs as artifact
         id: deployment
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v5
         with:
           name: github-pages
           path: generated-docs/
@@ -68,6 +70,6 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
         with:
           artifact_name: github-pages
