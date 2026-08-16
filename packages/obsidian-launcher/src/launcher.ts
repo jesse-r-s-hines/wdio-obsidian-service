@@ -7,18 +7,19 @@ import os from "os";
 import semver from "semver"
 import { fileURLToPath } from "url";
 import _ from "lodash"
-import { consola, warnOnce, fileExists, makeTmpDir, atomicCreate, linkOrCp, maybe, tryParseJson, loadEnv } from "./utils.js";
 import {
     ObsidianVersionInfo, ObsidianVersionList, ObsidianInstallerInfo, PluginEntry, DownloadedPluginEntry, ThemeEntry,
-    DownloadedThemeEntry, obsidianVersionsSchemaVersion,
+    DownloadedThemeEntry, obsidianVersionsSchemaVersion, ObsidianAppearanceConfig, ObsidianCommunityPlugin,
+    ObsidianCommunityTheme, PluginManifest
 } from "./types.js";
-import { ObsidianAppearanceConfig, ObsidianCommunityPlugin, ObsidianCommunityTheme, PluginManifest } from "./obsidianTypes.js";
-import { obsidianApiLogin, fetchObsidianApi, downloadResponse } from "./apis.js";
-import ChromeLocalStorage from "./chromeLocalStorage.js";
-import {
-    normalizeGitHubRepo, extractGz, extractObsidianAppImage, extractObsidianExe, extractObsidianDmg, sevenZ,
-    updateObsidianVersionList,
-} from "./launcherUtils.js";
+import { fileExists, makeTmpDir, atomicCreate, linkOrCp } from "./utils/file.js"
+import { consola, warnOnce, maybe, tryParseJson, loadEnv } from "./utils/misc.js";
+import { normalizeGitHubRepo, obsidianApiLogin, fetchObsidianApi, downloadResponse } from "./apis.js";
+import ChromeLocalStorage from "./utils/chromeLocalStorage.js";
+import { extractGz, extract7z } from "./utils/extract.js";
+import { extractObsidianAppImage, extractObsidianExe, extractObsidianDmg } from "./installers.js";
+import { updateObsidianVersionList } from "./obsidianVersions.js";
+
 
 const currentPlatform = {
     platform: process.platform,
@@ -481,9 +482,8 @@ export class ObsidianLauncher {
                 artifactName: 'chromedriver',
                 cacheRoot: path.join(scratch, 'download'),
             });
-            const extracted = path.join(scratch, "extracted");
-            await sevenZ(["x", "-oextracted", path.relative(scratch, chromedriverZipPath)], {cwd: scratch});
-            return extracted;
+            await extract7z(chromedriverZipPath, path.join(scratch, "extracted"));
+            return path.join(scratch, "extracted");
         }, {replace: false})
         return chromedriverPath;
     }

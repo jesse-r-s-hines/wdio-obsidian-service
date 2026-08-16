@@ -184,3 +184,71 @@ export type DownloadedThemeEntry = {
     /** Type of the theme entry before downloading */
     originalType: "local"|"github"|"community",
 }
+
+/**
+ * Schema of entries in https://github.com/obsidianmd/obsidian-releases/blob/HEAD/community-plugins.json
+ * @category Types
+ */
+export type ObsidianCommunityPlugin = {
+    id: string,
+    name: string
+    author: string,
+    description: string,
+    repo: string,
+}
+
+/**
+ * Schema of entries in https://github.com/obsidianmd/obsidian-releases/blob/HEAD/community-css-themes.json
+ * @category Types
+ */
+export type ObsidianCommunityTheme = {
+    name: string,
+    author: string,
+    repo: string,
+    screenshot: string,
+    modes: string[],
+}
+
+/** 
+ * Type of manifest.json
+ * @category Types
+ */
+export interface PluginManifest {
+    author: string;
+    authorUrl?: string;
+    description: string;
+    dir?: string;
+    fundingUrl?: string;
+    id: string;
+    isDesktopOnly?: boolean;
+    minAppVersion: string;
+    name: string;
+    version: string;
+}
+
+/** 
+ * Type of .obsidian/appearance.json
+ * @category Types
+ */
+export interface ObsidianAppearanceConfig {
+    cssTheme?: string,
+}
+
+/**
+ * Schema of entries in https://github.com/obsidianmd/obsidian-releases/blob/HEAD/desktop-releases.json
+ * @category Types
+ */
+export interface ObsidianDesktopRelease {
+    minimumVersion: string,
+    latestVersion: string,
+    downloadUrl: string,
+    hash: string,
+    signature: string,
+    beta?: {
+        minimumVersion: string,
+        latestVersion: string,
+        downloadUrl: string,
+        hash: string,
+        signature: string,
+    }
+}

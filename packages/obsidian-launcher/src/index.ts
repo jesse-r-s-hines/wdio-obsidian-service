@@ -10,4 +10,4 @@ export type {
     ObsidianVersionList, ObsidianVersionInfo, ObsidianInstallerInfo, PluginEntry, DownloadedPluginEntry, ThemeEntry,
     DownloadedThemeEntry,
 } from "./types.js";
-export type { ObsidianCommunityPlugin, ObsidianCommunityTheme } from "./obsidianTypes.js";
+export type { ObsidianCommunityPlugin, ObsidianCommunityTheme } from "./types.js";

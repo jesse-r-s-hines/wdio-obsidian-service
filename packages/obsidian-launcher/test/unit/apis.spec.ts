@@ -1,6 +1,6 @@
 import { describe, it } from "mocha";
 import { expect } from "chai";
-import { parseLinkHeader } from "../../src/apis.js";
+import { parseLinkHeader, normalizeGitHubRepo } from "../../src/apis.js";
 
 
 describe("parseLinkHeader", () => {
@@ -50,3 +50,16 @@ describe("parseLinkHeader", () => {
     })
 })
 
+
+describe('normalizeGithubRepo', () => {
+    [
+        ["SilentVoid13/Templater", "SilentVoid13/Templater"],
+        ["https://github.com/Vinzent03/obsidian-git", "Vinzent03/obsidian-git"],
+        ["github.com/Vinzent03/obsidian-git", "Vinzent03/obsidian-git"],
+        ["http://github.com/SilentVoid13/Templater/", "SilentVoid13/Templater"],
+    ].forEach(([input, expected]) => {
+        it(`normalizeGithubRepo("${input}")`, async () => {
+            expect(normalizeGitHubRepo(input)).to.eql(expected);
+        })
+    });
+});

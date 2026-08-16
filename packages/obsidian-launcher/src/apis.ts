@@ -1,3 +1,4 @@
+/** Functions for downloading files and interacting with the Obsidian and GitHub APIs. */
 import _ from "lodash"
 import fs from "fs";
 import { finished } from 'stream/promises';
@@ -8,7 +9,8 @@ import readlineSync from "readline-sync";
 import dotenv from "dotenv";
 import path from "path";
 import { env } from "process";
-import { consola, sleep, retry, RetryOpts } from "./utils.js";
+import { consola, sleep, retry, RetryOpts } from "./utils/misc.js";
+
 
 /**
  * GitHub API stores pagination information in the "Link" header. The header looks like this:
@@ -86,6 +88,11 @@ export async function fetchGitHubAPIPaginated(url: string, params: SearchParamsD
         next = parseLinkHeader(response.headers.get('link') ?? '').next?.url;
     }
     return results;
+}
+
+
+export function normalizeGitHubRepo(repo: string) {
+    return repo.match(/^(https?:\/\/)?(github.com\/)?(.*?)\/?$/)?.[3] ?? repo;
 }
 
 
@@ -195,6 +202,7 @@ export async function obsidianApiLogin(opts: {
     return signin.token;
 }
 
+
 /**
  * Fetch from the Obsidian API to download insider versions.
  */
@@ -212,6 +220,7 @@ export async function fetchObsidianApi(url: string, opts: {token: string}) {
     })
     return response;
 }
+
 
 /**
  * Downloads a url to disk. Retries on failure.
