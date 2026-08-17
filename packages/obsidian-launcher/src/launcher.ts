@@ -360,10 +360,7 @@ export class ObsidianLauncher {
      */
     async login() {
         if (!this.obsidianApiToken) {
-            this.obsidianApiToken = await obsidianApiLogin({
-                interactive: this.interactive,
-                savePath: path.join(this.cacheDir, "obsidian-credentials.env"),
-            });
+            this.obsidianApiToken = await obsidianApiLogin({interactive: this.interactive});
         }
     }
 
@@ -1070,8 +1067,7 @@ export class ObsidianLauncher {
         }
 
         if (new URL(versionInfo.downloads.asar).hostname.endsWith('.obsidian.md')) {
-            const hasCreds = !!(process.env['OBSIDIAN_EMAIL'] && process.env['OBSIDIAN_PASSWORD']) ||
-                             await fileExists(path.join(this.cacheDir, "obsidian-credentials.env"));
+            const hasCreds = !!(process.env['OBSIDIAN_EMAIL'] && process.env['OBSIDIAN_PASSWORD']);
             const inCache = await this.isInCache('app', versionInfo.version);
             return (hasCreds || inCache);
         } else {
