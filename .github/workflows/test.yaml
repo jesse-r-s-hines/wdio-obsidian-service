@@ -8,7 +8,6 @@ on:
   workflow_dispatch:
 
 permissions:
-  actions: write
   contents: read
 
 defaults:
@@ -22,6 +21,9 @@ env:
 jobs:
   pre-check: # Check and avoid running tests on the same code (e.g. after pr merge)
     runs-on: ubuntu-latest
+    permissions:
+      actions: write
+      contents: read
     outputs:
       should_skip: ${{ steps.skip_check.outputs.should_skip }}
     steps:
@@ -181,7 +183,7 @@ jobs:
           TEST_LEVEL: ${{ matrix.test-level }}
           OBSIDIAN_VERSIONS: ${{matrix.obsidian-versions}}
           WDIO_MAX_INSTANCES: ${{matrix.max-instances || '3'}}
-          # Secrets won't be available when run on a PR
+          # Secrets won't be available when run on an external PR
           OBSIDIAN_EMAIL: ${{ secrets.OBSIDIAN_EMAIL }}
           OBSIDIAN_PASSWORD: ${{ secrets.OBSIDIAN_PASSWORD }}
 
