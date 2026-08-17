@@ -172,3 +172,6 @@ Support Obsidian CLI in wdio tests!
 ## 3.1.3
 - Increase retries during Obsidian login when downloading beta versions
 - Fix publish workflow
+
+## 3.2.0
+- Improve .env file handling, now will search for .env files in parent directories
