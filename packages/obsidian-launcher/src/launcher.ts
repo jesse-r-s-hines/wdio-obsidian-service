@@ -7,8 +7,7 @@ import os from "os";
 import semver from "semver"
 import { fileURLToPath } from "url";
 import _ from "lodash"
-import dotenv from "dotenv";
-import { consola, warnOnce, fileExists, makeTmpDir, atomicCreate, linkOrCp, maybe, tryParseJson } from "./utils.js";
+import { consola, warnOnce, fileExists, makeTmpDir, atomicCreate, linkOrCp, maybe, tryParseJson, loadEnv } from "./utils.js";
 import {
     ObsidianVersionInfo, ObsidianVersionList, ObsidianInstallerInfo, PluginEntry, DownloadedPluginEntry, ThemeEntry,
     DownloadedThemeEntry, obsidianVersionsSchemaVersion,
@@ -26,7 +25,7 @@ const currentPlatform = {
     arch: process.arch,
 }
 
-dotenv.config({path: [".env"], quiet: true});
+loadEnv();
 
 export const minSupportedObsidianVersion = "0.12.8";
 

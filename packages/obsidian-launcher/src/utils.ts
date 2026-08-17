@@ -2,6 +2,7 @@ import fsAsync from "fs/promises"
 import fs from "fs";
 import path from "path"
 import os from "os"
+import dotenv from 'dotenv';
 import { createConsola } from "consola";
 import { PromisePool } from '@supercharge/promise-pool'
 import _ from "lodash"
@@ -333,4 +334,17 @@ export async function findFirstPassing<T>(
         }
     }
     return start < origEnd ? arr[start] : undefined;
+}
+
+
+/** Load .env files. Search all parent directories for .env files. */
+export function loadEnv() {
+  const envFiles: string[] = [];
+  let dir = process.cwd();
+  while (true) {
+    envFiles.push(path.join(dir, '.env'));
+    if (path.parse(dir).root == dir) break;
+    dir = path.dirname(dir);
+  }
+  dotenv.config({ path: envFiles, quiet: true});
 }
