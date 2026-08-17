@@ -115,10 +115,10 @@ export class ObsidianLauncher {
             // otherwise try to fetch the url
             if (!data) {
                 const response = await maybe(fetch(url).then(async (r) => {
-                    if (!r.ok) throw Error(`Fetch ${url} failed with status ${r.status}`);
+                    if (!r.ok) throw Error(`Failed with status ${r.status}`);
                     const d = await r.text();
                     // throw if invalid JSON, but keep original formatting
-                    if (_.isError(_.attempt(JSON.parse, d))) throw Error(`Failed to parse response from ${url}`);
+                    if (_.isError(_.attempt(JSON.parse, d))) throw Error(`Failed to parse response`);
                     return d;
                 }));
                 if (response.success) {
@@ -141,7 +141,7 @@ export class ObsidianLauncher {
                 }
             }
             if (!data) {
-                throw error;
+                throw Error(`Fetch ${url} failed: ${error}`);
             }
 
             this.metadataCache[dest] = data;
