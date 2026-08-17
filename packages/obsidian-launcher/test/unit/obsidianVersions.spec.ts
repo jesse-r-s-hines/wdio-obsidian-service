@@ -2,15 +2,16 @@ import { describe, it } from "mocha";
 import { expect } from "chai";
 import path from "path";
 import {
-    normalizeGitHubRepo, ParsedDesktopRelease, parseObsidianDesktopRelease, updateObsidianVersionList, GitHubRelease,
+    ParsedDesktopRelease, parseObsidianDesktopRelease, updateObsidianVersionList, GitHubRelease,
     extractInstallerInfo, checkCompatibility,
-} from "../../src/launcherUtils.js";
+} from "../../src/obsidianVersions.js";
 import fs from "fs";
 import fsAsync from "fs/promises";
 import semver from "semver"
 import _ from "lodash";
-import { ObsidianVersionInfo, ObsidianVersionList, obsidianVersionsSchemaVersion } from "../../src/types.js";
-import { ObsidianDesktopRelease } from "../../src/obsidianTypes.js";
+import {
+    ObsidianVersionInfo, ObsidianVersionList, obsidianVersionsSchemaVersion, ObsidianDesktopRelease,
+} from "../../src/types.js";
 
 
 function compareVersionLists(actual: ObsidianVersionInfo[], expected: ObsidianVersionInfo[]) {
@@ -30,18 +31,7 @@ async function readJson(name: string) {
     return JSON.parse(await readData(name + ".json"));
 }
 
-describe('launcherUtils', () => {
-    [
-        ["SilentVoid13/Templater", "SilentVoid13/Templater"],
-        ["https://github.com/Vinzent03/obsidian-git", "Vinzent03/obsidian-git"],
-        ["github.com/Vinzent03/obsidian-git", "Vinzent03/obsidian-git"],
-        ["http://github.com/SilentVoid13/Templater/", "SilentVoid13/Templater"],
-    ].forEach(([input, expected]) => {
-        it(`normalizeGithubRepo("${input}")`, async () => {
-            expect(normalizeGitHubRepo(input)).to.eql(expected);
-        })
-    });
-
+describe('misc', () => {
     const parseObsidianDesktopReleaseTests: [ObsidianDesktopRelease, ParsedDesktopRelease][] = [
         [{
             minimumVersion: "0.14.5",

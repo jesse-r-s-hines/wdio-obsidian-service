@@ -2,7 +2,8 @@
 import { Command } from 'commander';
 import _ from "lodash";
 import { ObsidianLauncher } from "./launcher.js"
-import { consola, watchFiles } from './utils.js';
+import { consola } from './utils/misc.js';
+import { watchFiles } from './utils/file.js';
 import { ObsidianVersionList, PluginEntry, ThemeEntry } from "./types.js";
 import path from "path"
 import fsAsync from "fs/promises";

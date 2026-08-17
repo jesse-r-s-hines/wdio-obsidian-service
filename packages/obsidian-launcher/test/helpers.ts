@@ -5,9 +5,8 @@ import serverHandler from "serve-handler";
 import http from "http";
 import { AddressInfo } from "net";
 import { after } from "mocha";
-import { atomicCreate } from "../src/utils.js";
+import { atomicCreate, linkOrCp, fileExists } from "../src/utils/file.js";
 import { downloadResponse } from "../src/apis.js";
-import { linkOrCp, fileExists } from "../src/utils.js";
 
 /**
  * Creates a temporary directory with the given files and contents. Cleans up the directory after the tests.

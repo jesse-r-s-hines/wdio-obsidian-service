@@ -31,7 +31,10 @@ jobs:
       - name: Build
         run: |
           pnpm install --frozen-lockfile
-          pnpm run --aggregate-output --reporter-hide-prefix build
+          pnpm run build
+        env:
+          PNPM_CONFIG_AGGREGATE_OUTPUT: 'true'
+          PNPM_CONFIG_REPORTER_HIDE_PREFIX: 'true'
 
       - name: Github Release
         run: |

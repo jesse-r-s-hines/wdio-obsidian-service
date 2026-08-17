@@ -1,14 +1,13 @@
+/** Functions for downloading files and interacting with the Obsidian and GitHub APIs. */
 import _ from "lodash"
 import fs from "fs";
 import { finished } from 'stream/promises';
 import { Readable } from 'stream';
 import { ReadableStream } from "stream/web"
-import fsAsync from "fs/promises";
 import readlineSync from "readline-sync";
-import dotenv from "dotenv";
-import path from "path";
 import { env } from "process";
-import { consola, sleep, retry, RetryOpts } from "./utils.js";
+import { consola, sleep, retry, RetryOpts } from "./utils/misc.js";
+
 
 /**
  * GitHub API stores pagination information in the "Link" header. The header looks like this:
@@ -89,22 +88,19 @@ export async function fetchGitHubAPIPaginated(url: string, params: SearchParamsD
 }
 
 
+export function normalizeGitHubRepo(repo: string) {
+    return repo.match(/^(https?:\/\/)?(github.com\/)?(.*?)\/?$/)?.[3] ?? repo;
+}
+
+
 /**
  * Login and returns the token from the Obsidian API.
  * @param opts.interactive if true, we can prompt the user for credentials
- * @param opts.savePath Save/cache Obsidian credentials to this path
  */
-export async function obsidianApiLogin(opts: {
-    interactive?: boolean,
-    savePath?: string,
-}): Promise<string> {
-    const {interactive = false, savePath} = opts;
-    // you can also just use a regular .env file, but we'll prompt to cache credentials for convenience
-    // The root .env is loaded elsewhere
-    const cached = savePath ? dotenv.parse(await fsAsync.readFile(savePath).catch(() => '')) : {};
-    let email = env.OBSIDIAN_EMAIL ?? cached.OBSIDIAN_EMAIL;
-    let password = env.OBSIDIAN_PASSWORD ?? cached.OBSIDIAN_PASSWORD;
-    let promptedCredentials = false;
+export async function obsidianApiLogin(opts: {interactive?: boolean}): Promise<string> {
+    const {interactive = false} = opts;
+    let email = env.OBSIDIAN_EMAIL;
+    let password = env.OBSIDIAN_PASSWORD;
 
     // we'll only show this when not in CI to avoid confusion
     const predownloadMessage = "pre-download the Obsidian beta with:\n" +
@@ -116,7 +112,6 @@ export async function obsidianApiLogin(opts: {
             consola.log("You can set OBSIDIAN_EMAIL and OBSIDIAN_PASSWORD environment variables (.env file is supported) to avoid this prompt.")
             email = email || readlineSync.question("Obsidian email: ");
             password = password || readlineSync.question("Obsidian password: ", {hideEchoBack: true});
-            promptedCredentials = true;
         } else  {
             throw Error(
                 "Obsidian Insiders account is required to download Obsidian beta versions. Set the OBSIDIAN_EMAIL " +
@@ -180,20 +175,9 @@ export async function obsidianApiLogin(opts: {
         throw Error("Obsidian Insiders account is required to download Obsidian beta versions");
     }
 
-    if (savePath && promptedCredentials) {
-        const save = readlineSync.question("Cache credentails to disk? [y/n]: ");
-        if (['y', 'yes'].includes(save.toLowerCase())) {
-            // you don't need to escape ' in dotenv, it still reads to the last quote (weird...)
-            await fsAsync.writeFile(savePath,
-                `OBSIDIAN_EMAIL='${email}'\n` +
-                `OBSIDIAN_PASSWORD='${password}'\n`
-            );
-            consola.log(`Saved Obsidian credentials to ${path.relative(process.cwd(), savePath)}`);
-        }
-    }
-
     return signin.token;
 }
+
 
 /**
  * Fetch from the Obsidian API to download insider versions.
@@ -212,6 +196,7 @@ export async function fetchObsidianApi(url: string, opts: {token: string}) {
     })
     return response;
 }
+
 
 /**
  * Downloads a url to disk. Retries on failure.

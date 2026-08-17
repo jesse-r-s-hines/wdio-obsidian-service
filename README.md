@@ -5,7 +5,7 @@ Test your [Obsidian](https://obsidian.md) plugins end-to-end using [WebdriverIO]
 WDIO Obsidian Service can:
 - Download and test multiple versions of Obsidian
 - Run tests on Windows, macOS, Linux, and Android
-- Sandbox Obsidian so tests don't interfere with your system or each other
+- Sandbox Obsidian so tests don't interfere with your system and can run in parallel
 - Open and switch between vaults
 - Provide helper functions for common testing tasks
 - Run tests in CI

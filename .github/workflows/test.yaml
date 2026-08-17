@@ -8,16 +8,22 @@ on:
   workflow_dispatch:
 
 permissions:
-  actions: write
   contents: read
 
 defaults:
   run:
     shell: bash
 
+env:
+  PNPM_CONFIG_AGGREGATE_OUTPUT: 'true'
+  PNPM_CONFIG_REPORTER_HIDE_PREFIX: 'true'
+
 jobs:
   pre-check: # Check and avoid running tests on the same code (e.g. after pr merge)
     runs-on: ubuntu-latest
+    permissions:
+      actions: write
+      contents: read
     outputs:
       should_skip: ${{ steps.skip_check.outputs.should_skip }}
     steps:
@@ -48,11 +54,11 @@ jobs:
           cache: 'pnpm'
       - run: pnpm install --frozen-lockfile
       - name: Build
-        run: pnpm run --aggregate-output --reporter-hide-prefix build
+        run: pnpm run build
       - name: Run lint
         run: pnpm run test:lint
       - name: Run unit tests
-        run: pnpm run --aggregate-output --reporter-hide-prefix test:unit
+        run: pnpm run test:unit
       - name: Upload build artifact
         uses: actions/upload-artifact@v7
         with:
@@ -88,7 +94,7 @@ jobs:
             obsidian-versions: "latest/latest/standard earliest/earliest/basic"
             # macos runners have less RAM and have issues with high parallelism
             max-instances: 2
-            pnpm-args: "--sequential"
+            workspace-concurrency: 1
           - os: ubuntu-24.04-arm
             node-version: "24.x"
             test-level: "standard"
@@ -143,7 +149,7 @@ jobs:
 
       # We already ran these, but we'll run in the matrix as well to test different node versions
       - name: Run unit tests
-        run: pnpm run --aggregate-output --reporter-hide-prefix test:unit
+        run: pnpm run test:unit
 
       # On linux runners we need to set up a virtual graphics stack for Obsidian. Here we use xvfb as a virtual display
       # server and herbstluftwm as the window manager. (You can sometimes get by without the window manager, but some
@@ -167,8 +173,9 @@ jobs:
             sleep 1
 
       - name: Run e2e tests
-        run: pnpm run --aggregate-output --reporter-hide-prefix ${{ matrix.pnpm-args }} test:e2e
+        run: pnpm run test:e2e
         env:
+          PNPM_CONFIG_WORKSPACE_CONCURRENCY: ${{ matrix.workspace-concurrency || '' }}
           # 3 test levels:
           #   - basic (fast, just test the core features)
           #   - standard (medium, run most the tests)
@@ -176,7 +183,7 @@ jobs:
           TEST_LEVEL: ${{ matrix.test-level }}
           OBSIDIAN_VERSIONS: ${{matrix.obsidian-versions}}
           WDIO_MAX_INSTANCES: ${{matrix.max-instances || '3'}}
-          # Secrets won't be available when run on a PR
+          # Secrets won't be available when run on an external PR
           OBSIDIAN_EMAIL: ${{ secrets.OBSIDIAN_EMAIL }}
           OBSIDIAN_PASSWORD: ${{ secrets.OBSIDIAN_PASSWORD }}
 
@@ -262,8 +269,9 @@ jobs:
           profile: ${{ matrix.android-profile }}
           disk-size: 4096M
           heap-size: 512M
-          script: pnpm run --sequential test:android
+          script: pnpm run test:android
         env:
+          PNPM_CONFIG_WORKSPACE_CONCURRENCY: 1
           OBSIDIAN_VERSIONS: ${{ matrix.obsidian-versions }}
           OBSIDIAN_EMAIL: ${{ secrets.OBSIDIAN_EMAIL }}
           OBSIDIAN_PASSWORD: ${{ secrets.OBSIDIAN_PASSWORD }}

@@ -6,9 +6,9 @@ import { pathToFileURL } from "url";
 import semver from "semver";
 import { createDirectory } from "../helpers.js"
 import { ObsidianLauncher } from "../../src/launcher.js";
-import { fileExists } from "../../src/utils.js";
+import { fileExists } from "../../src/utils/file.js";
 import { ObsidianVersionInfo, obsidianVersionsSchemaVersion } from "../../src/types.js";
-import ChromeLocalStorage from "../../src/chromeLocalStorage.js";
+import ChromeLocalStorage from "../../src/utils/chromeLocalStorage.js";
 
 
 const obsidianLauncherOpts = {

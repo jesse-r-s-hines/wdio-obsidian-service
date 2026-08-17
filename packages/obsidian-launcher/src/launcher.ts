@@ -7,26 +7,26 @@ import os from "os";
 import semver from "semver"
 import { fileURLToPath } from "url";
 import _ from "lodash"
-import dotenv from "dotenv";
-import { consola, warnOnce, fileExists, makeTmpDir, atomicCreate, linkOrCp, maybe, tryParseJson } from "./utils.js";
 import {
     ObsidianVersionInfo, ObsidianVersionList, ObsidianInstallerInfo, PluginEntry, DownloadedPluginEntry, ThemeEntry,
-    DownloadedThemeEntry, obsidianVersionsSchemaVersion,
+    DownloadedThemeEntry, obsidianVersionsSchemaVersion, ObsidianAppearanceConfig, ObsidianCommunityPlugin,
+    ObsidianCommunityTheme, PluginManifest
 } from "./types.js";
-import { ObsidianAppearanceConfig, ObsidianCommunityPlugin, ObsidianCommunityTheme, PluginManifest } from "./obsidianTypes.js";
-import { obsidianApiLogin, fetchObsidianApi, downloadResponse } from "./apis.js";
-import ChromeLocalStorage from "./chromeLocalStorage.js";
-import {
-    normalizeGitHubRepo, extractGz, extractObsidianAppImage, extractObsidianExe, extractObsidianDmg, sevenZ,
-    updateObsidianVersionList,
-} from "./launcherUtils.js";
+import { fileExists, makeTmpDir, atomicCreate, linkOrCp } from "./utils/file.js"
+import { consola, warnOnce, maybe, tryParseJson, loadEnv } from "./utils/misc.js";
+import { normalizeGitHubRepo, obsidianApiLogin, fetchObsidianApi, downloadResponse } from "./apis.js";
+import ChromeLocalStorage from "./utils/chromeLocalStorage.js";
+import { extractGz, extract7z } from "./utils/extract.js";
+import { extractObsidianAppImage, extractObsidianExe, extractObsidianDmg } from "./installers.js";
+import { updateObsidianVersionList } from "./obsidianVersions.js";
+
 
 const currentPlatform = {
     platform: process.platform,
     arch: process.arch,
 }
 
-dotenv.config({path: [".env"], quiet: true});
+loadEnv();
 
 export const minSupportedObsidianVersion = "0.12.8";
 
@@ -115,10 +115,10 @@ export class ObsidianLauncher {
             // otherwise try to fetch the url
             if (!data) {
                 const response = await maybe(fetch(url).then(async (r) => {
-                    if (!r.ok) throw Error(`Fetch ${url} failed with status ${r.status}`);
+                    if (!r.ok) throw Error(`Failed with status ${r.status}`);
                     const d = await r.text();
                     // throw if invalid JSON, but keep original formatting
-                    if (_.isError(_.attempt(JSON.parse, d))) throw Error(`Failed to parse response from ${url}`);
+                    if (_.isError(_.attempt(JSON.parse, d))) throw Error(`Failed to parse response`);
                     return d;
                 }));
                 if (response.success) {
@@ -141,7 +141,7 @@ export class ObsidianLauncher {
                 }
             }
             if (!data) {
-                throw error;
+                throw Error(`Fetch ${url} failed: ${error}`);
             }
 
             this.metadataCache[dest] = data;
@@ -360,10 +360,7 @@ export class ObsidianLauncher {
      */
     async login() {
         if (!this.obsidianApiToken) {
-            this.obsidianApiToken = await obsidianApiLogin({
-                interactive: this.interactive,
-                savePath: path.join(this.cacheDir, "obsidian-credentials.env"),
-            });
+            this.obsidianApiToken = await obsidianApiLogin({interactive: this.interactive});
         }
     }
 
@@ -482,9 +479,8 @@ export class ObsidianLauncher {
                 artifactName: 'chromedriver',
                 cacheRoot: path.join(scratch, 'download'),
             });
-            const extracted = path.join(scratch, "extracted");
-            await sevenZ(["x", "-oextracted", path.relative(scratch, chromedriverZipPath)], {cwd: scratch});
-            return extracted;
+            await extract7z(chromedriverZipPath, path.join(scratch, "extracted"));
+            return path.join(scratch, "extracted");
         }, {replace: false})
         return chromedriverPath;
     }
@@ -1071,8 +1067,7 @@ export class ObsidianLauncher {
         }
 
         if (new URL(versionInfo.downloads.asar).hostname.endsWith('.obsidian.md')) {
-            const hasCreds = !!(process.env['OBSIDIAN_EMAIL'] && process.env['OBSIDIAN_PASSWORD']) ||
-                             await fileExists(path.join(this.cacheDir, "obsidian-credentials.env"));
+            const hasCreds = !!(process.env['OBSIDIAN_EMAIL'] && process.env['OBSIDIAN_PASSWORD']);
             const inCache = await this.isInCache('app', versionInfo.version);
             return (hasCreds || inCache);
         } else {

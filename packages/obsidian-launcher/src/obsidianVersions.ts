@@ -1,268 +1,34 @@
+/** Functions for building the obsidian-versions.json file */
+
 import fsAsync from "fs/promises"
 import fs from "fs"
 import path from "path"
-import { promisify } from "util";
-import child_process from "child_process"
 import semver from "semver"
 import _ from "lodash"
-import { pipeline } from "stream/promises";
-import zlib from "zlib"
-import { fileURLToPath, pathToFileURL } from "url"
+import { pathToFileURL } from "url"
 import { DeepPartial } from "ts-essentials";
 import type { RestEndpointMethodTypes } from "@octokit/rest";
-import CDP from "chrome-remote-interface";
 import { XMLParser } from "fast-xml-parser";
 import { ObsidianLauncher } from "./launcher.js";
-import {
-    consola, atomicCreate, makeTmpDir, normalizeObject, pool, maybe, withTimeout, until, retry, UntilOpts,
-    tryParseJson, findFirstPassing,
-} from "./utils.js";
-import { downloadResponse, fetchGitHubAPIPaginated } from "./apis.js"
+import { makeTmpDir } from "./utils/file.js";
+import {consola, normalizeObject, pool, maybe, until, retry, findFirstPassing } from "./utils/misc.js";
+import { downloadResponse, fetchGitHubAPIPaginated } from "./apis.js";
+import { run7z } from "./utils/extract.js";
+import { getCdpSession, cdpEvaluate, cdpEvaluateUntil } from "./cdp.js";
 import {
     ObsidianInstallerInfo, ObsidianVersionInfo, obsidianVersionsSchemaVersion, ObsidianVersionList,
+    ObsidianDesktopRelease,
 } from "./types.js";
-import { ObsidianDesktopRelease } from "./obsidianTypes.js"
-const execFile = promisify(child_process.execFile);
+import { extractObsidianAppImage, extractObsidianDmg, extractObsidianExe, extractObsidianTar } from "./installers.js"
 
 
-export function normalizeGitHubRepo(repo: string) {
-    return repo.match(/^(https?:\/\/)?(github.com\/)?(.*?)\/?$/)?.[3] ?? repo;
-}
+const BROKEN_VERSIONS = [
+    "0.12.16", // broken download link
+    "1.4.7", // broken download link
+    "1.4.8", // broken download link
+    "1.0.1",  // won't launch
+];
 
-
-//// Installer Extraction ////
-
-export async function extractGz(archive: string, dest: string) {
-    await pipeline(fs.createReadStream(archive), zlib.createGunzip(), fs.createWriteStream(dest));
-}
-
-/**
- * Run 7zip.
- * Note there's some weirdness around absolute paths because of the way wasm's filesystem works. The root is mounted
- * under /nodefs, so either use relative paths or prefix paths with /nodefs.
- */
-export async function sevenZ(args: string[], options?: child_process.SpawnOptions) {
-    // run 7z.js script as sub_process (so it doesn't block the main thread)
-    const sevenZipScript = path.resolve(fileURLToPath(import.meta.url), '../7z.js');
-    const proc = child_process.spawn(process.execPath, [sevenZipScript, ...args], {
-        stdio: "pipe",
-        ...options,
-    });
-
-    let stdout = "", stderr = "";
-    proc.stdout!.on('data', data => stdout += data);
-    proc.stderr!.on('data', data => stderr += data);
-    const procExit = new Promise<number>((resolve) => proc.on('close', (code) => resolve(code ?? -1)));
-    const exitCode = await procExit;
-
-    const result = {stdout, stderr}
-    if (exitCode != 0) {
-        throw Error(`"7z ${args.join(' ')}" failed with ${exitCode}:\n${stdout}\n${stderr}`)
-    }
-    return result;
-}
-
-/**
- * Running AppImage requires libfuse2, extracting the AppImage first avoids that.
- */
-export async function extractObsidianAppImage(appImage: string, dest: string) {
-    // Could also use `--appimage-extract` instead.
-    await atomicCreate(dest, async (scratch) => {
-        await sevenZ(["x", "-o.", path.relative(scratch, appImage)], {cwd: scratch});
-        return scratch;
-    })
-}
-
-
-/**
- * Extract the obsidian.tar.gz
- */
-export async function extractObsidianTar(tar: string, dest: string) {
-    await atomicCreate(dest, async (scratch) => {
-        await extractGz(tar, path.join(scratch, "inflated.tar"));
-        await sevenZ(["x", "-o.", "inflated.tar"], {cwd: scratch});
-        return (await fsAsync.readdir(scratch)).find(p => p.match("obsidian-"))!;
-    })
-}
-
-
-/**
- * Obsidian appears to use NSIS to bundle their Window's installers. We want to extract the executable
- * files directly without running the installer. 7zip can extract the raw files from the exe.
- */
-export async function extractObsidianExe(exe: string, arch: NodeJS.Architecture, dest: string) {
-    // The installer contains several `.7z` files with files for different architectures
-    let subArchive: string
-    if (arch == "x64") {
-        subArchive = `$PLUGINSDIR/app-64.7z`;
-    } else if (arch == "ia32") {
-        subArchive = `$PLUGINSDIR/app-32.7z`;
-    } else if (arch == "arm64") {
-        subArchive = `$PLUGINSDIR/app-arm64.7z`;
-    } else {
-        throw Error(`No Obsidian installer found for ${process.platform} ${process.arch}`);
-    }
-    await atomicCreate(dest, async (scratch) => {
-        await sevenZ(["x", "-oinstaller", path.relative(scratch, exe), subArchive], {cwd: scratch});
-        await sevenZ(["x", "-oobsidian", path.join("installer", subArchive)], {cwd: scratch});
-        return "obsidian";
-    })
-}
-
-/**
- * Extract the executable from the Obsidian dmg installer.
- */
-export async function extractObsidianDmg(dmg: string, dest: string) {
-    dest = path.resolve(dest);
-
-    await atomicCreate(dest, async (scratch) => {
-        if (process.platform == "darwin") {
-            const proc = await execFile('hdiutil', ['attach', '-nobrowse', '-readonly', dmg]);
-            const volume = proc.stdout.match(/\/Volumes\/.*$/m)![0];
-            // Current mac dmg files just have `Obsidian.app`, but on older '-universal' ones it's nested another level.
-            const files = await fsAsync.readdir(volume);
-            let obsidianApp = files.includes("Obsidian.app") ? "Obsidian.app" : path.join(files[0], "Obsidian.app");
-            obsidianApp = path.join(volume, obsidianApp);
-            try {
-                await fsAsync.cp(obsidianApp, scratch, {recursive: true, verbatimSymlinks: true, preserveTimestamps: true});
-            } finally {
-                await execFile('hdiutil', ['detach', volume]);
-            }
-            // Clear the `com.apple.quarantine` bit to avoid MacOS bocking the downloaded Obsidian executable "Obsidian
-            // is damaged and can't be opened. This file was downloaded on an unknown date". See issue #46 and https://ss64.com/mac/xattr.html
-            await execFile('xattr', ['-cr', scratch]);
-            return scratch;
-        } else {
-            // we'll use 7zip if you aren't on MacOS so that we can still extract the executable on other platforms
-            // (needed for the update-obsidian-versions GitHub workflow)
-            await sevenZ(["x", "-o.", path.relative(scratch, dmg), "*/Obsidian.app", "Obsidian.app"], {cwd: scratch});
-            const files = await fsAsync.readdir(scratch);
-            const obsidianApp = files.includes("Obsidian.app") ? "Obsidian.app" : path.join(files[0], "Obsidian.app");
-            return path.join(scratch, obsidianApp);
-        }
-    });
-}
-
-
-//// CDP ////
-
-/**
- * Launches Obsidian. Returns a CDP client connected to it and a function to cleanup the process and resources.
- * Mostly used for testing, but also used in updateVersionList.
- * 
- * This logic is somewhat duplicated with wdio-obsidian-service's setup, but I don't want obsidian-launcher to depend
- * on wdio or wdio-obsidian-service.
- */
-export async function getCdpSession(
-    launcher: ObsidianLauncher, params: Parameters<ObsidianLauncher['launch']>[0] & {vault: string},
-) {
-    const [appVersion, installerVersion] = await launcher.resolveVersion(
-        params.appVersion ?? "latest",
-        params.installerVersion ?? "latest",
-    );
-
-    const cleanup: (() => Promise<void>)[] = [];
-    const doCleanup = async () => {
-        for (const func of [...cleanup].reverse()) {
-            await func()
-        }
-    }
-
-    const pluginDir = path.join(params.vault, ".obsidian", "plugins", "obsidian-launcher");
-    await fsAsync.mkdir(pluginDir, {recursive: true});
-    await fsAsync.writeFile(path.join(pluginDir, "manifest.json"), JSON.stringify({
-        id: "obsidian-launcher", name: "Obsidian Launcher",
-        version: "1.0.0", minAppVersion: "0.0.1",
-        description: "", author: "obsidian-launcher", isDesktopOnly: false
-    }));
-    await fsAsync.writeFile(path.join(pluginDir, "main.js"), `
-        const obsidian = require('obsidian');
-        class ObsidianLauncherPlugin extends obsidian.Plugin {
-            async onload() { window.obsidianLauncher = {app: this.app, obsidian: obsidian}; };
-        }
-        module.exports = ObsidianLauncherPlugin;
-    `);
-    const communityPluginsPath = path.join(params.vault, ".obsidian", "community-plugins.json"); 
-    let communityPlugins = ["obsidian-launcher"]
-    communityPlugins = [...(await tryParseJson(communityPluginsPath) ?? []), ...communityPlugins];
-    await fsAsync.writeFile(communityPluginsPath, JSON.stringify(communityPlugins));
-
-    try {
-        const launchResult = await launcher.launch({
-            ...params,
-            // will choose a random available port
-            args: [`--remote-debugging-port=0`, '--test-type=webdriver', ...(params.args ?? [])],
-        });
-        if (params.copy) {
-            cleanup.push(() => fsAsync.rm(launchResult.vault!, {recursive: true, force: true}));
-        }
-        const {proc} = launchResult;
-        cleanup.push(() => retry(
-            // Windows can hold resources afterafter the process exits, causing EBUSY
-            () => fsAsync.rm(launchResult.configDir, {recursive: true, force: true}),
-            {retries: 5, backoff: 200, retryIf: (e) => ["EBUSY", "EPERM", "ENOTEMPTY"].includes(e?.code)},
-        ));
-        const procExit = new Promise<number>((resolve) => proc.on('close', (code) => resolve(code ?? -1)));
-        cleanup.push(async () => {
-            proc.kill("SIGTERM");
-            const timeout = await maybe(withTimeout(procExit, 5 * 1000));
-            if (!timeout.success) {
-                consola.warn(`Stuck process ${proc.pid}, using SIGKILL`);
-                proc.kill("SIGKILL");
-            }
-            await procExit;
-        });
-
-        // Wait for the logs showing that Obsidian is ready, and pull the chosen DevTool Protocol port from it
-        const portPromise = new Promise<number>((resolve, reject) => {
-            void procExit.then(() => reject(Error("Processed ended without opening a port")));
-            proc.stderr!.on('data', data => {
-                const port = data.toString().match(/ws:\/\/[\w.]+?:(\d+)/)?.[1];
-                if (port) {
-                    resolve(Number(port));
-                }
-            });
-        });
-        const port = await maybe(withTimeout(portPromise, 20 * 1000));
-        if (!port.success) {
-            throw new Error("Timed out waiting for Chrome DevTools protocol port");
-        }
-
-        const client = await CDP({port: port.result});
-        cleanup.push(() => client.close());
-
-        const expr = semver.gte(appVersion, '0.12.8') ? "!!window.obsidianLauncher" : "!!window.app.workspace";
-        await until(
-            () => client.Runtime.evaluate({expression: expr}).then(r => r.result.value),
-            {timeout: 5000},
-        );
-
-        return {
-            ...launchResult,
-            client,
-            cleanup: doCleanup,
-            vault: launchResult.vault!,
-        };
-    } catch (e: any) {
-        await doCleanup();
-        throw e;
-    }
-}
-
-export async function cdpEvaluate(client: CDP.Client, expression: string) {
-    const response = await client.Runtime.evaluate({ expression, returnByValue: true });
-    if (response.exceptionDetails) {
-        throw Error(response.exceptionDetails.text);
-    }
-    return response.result.value;
-}
-
-export async function cdpEvaluateUntil(client: CDP.Client, expression: string, opts: UntilOpts) {
-    return await until(() => cdpEvaluate(client, expression), opts);
-}
-
-
-//// updateVersionList helpers ////
 
 export type CommitInfo = {commitDate: string, commitSha: string}
 /**
@@ -291,6 +57,7 @@ export async function fetchObsidianDesktopReleases(
     return [fileHistory, {commitDate, commitSha}]
 }
 
+
 /**
  * Subset of fields from the GitHub releases api.
  * I'm just using a subset instead of the full type from octokit so I can create tests without having to fill out all
@@ -314,13 +81,6 @@ export async function fetchObsidianGitHubReleases(): Promise<GitHubRelease[]> {
     return releases.reverse(); // sort oldest first
 }
 
-const BROKEN_VERSIONS = [
-    "0.12.16", // broken download link
-    "1.4.7", // broken download link
-    "1.4.8", // broken download link
-    "1.0.1",  // won't launch
-];
-
 export type ParsedDesktopRelease = {current: DeepPartial<ObsidianVersionInfo>, beta?: DeepPartial<ObsidianVersionInfo>}
 export function parseObsidianDesktopRelease(fileRelease: ObsidianDesktopRelease): ParsedDesktopRelease {
     const parse = (r: ObsidianDesktopRelease, isBeta: boolean): DeepPartial<ObsidianVersionInfo> => {
@@ -339,6 +99,7 @@ export function parseObsidianDesktopRelease(fileRelease: ObsidianDesktopRelease)
     }
     return result;
 }
+
 
 export function parseObsidianGithubRelease(gitHubRelease: GitHubRelease): DeepPartial<ObsidianVersionInfo> {
     const version = gitHubRelease.name!;
@@ -380,6 +141,7 @@ export function parseObsidianGithubRelease(gitHubRelease: GitHubRelease): DeepPa
     }
 }
 
+
 export async function fetchObsidianChangelogsRss(): Promise<string> {
     return await fetch("https://obsidian.md/changelog.xml").then(r => r.text());
 }
@@ -405,10 +167,7 @@ export function parseObsidianChangelogRss(rss: string): {version: string, change
 
 
 export type InstallerKey = keyof ObsidianVersionInfo['installers'];
-export const INSTALLER_KEYS: InstallerKey[] = [
-    "appImage", "appImageArm", "tar", "tarArm", "dmg", "exe",
-];
-
+export const INSTALLER_KEYS: InstallerKey[] = ["appImage", "appImageArm", "tar", "tarArm", "dmg", "exe"];
 /**
  * Extract Electron and Chrome versions for an Obsidian version.
  * Takes path to the installer (the whole folder, not just the entrypoint executable).
@@ -433,7 +192,7 @@ export async function extractInstallerInfo(
             platforms = ['linux-' + (installerKey == "tar" ? 'x64' : 'arm64')];
         } else if (installerKey == "exe") {
             await extractObsidianExe(installerPath, "x64", exractedPath);
-            const {stdout} = await sevenZ(["l", '-ba', path.relative(tmpDir, installerPath)], {cwd: tmpDir});
+            const {stdout} = await run7z(["l", '-ba', path.relative(tmpDir, installerPath)], {cwd: tmpDir});
             const lines = stdout.trim().split("\n").map(l => l.trim());
             const files = lines.map(l => l.split(/\s+/).at(-1)!.replace(/\\/g, "/"));
 
@@ -491,6 +250,7 @@ export async function extractInstallerInfo(
     }
 }
 
+
 /**
  * The result of checking an Obsidian app version against an installer version:
  * - `"compatible"`: the app launches without warnings
@@ -498,10 +258,7 @@ export async function extractInstallerInfo(
  * - `"error"`: the installer is too old to launch the app at all
  */
 export type CompatibilityResult = "error" | "warning" | "compatible";
-
-/**
- * Checks if an Obsidian app and installer version are compatible.
- */
+/** Checks if an Obsidian app and installer version are compatible. */
 export async function checkCompatibility(
     launcher: ObsidianLauncher, appVersion: string, installerVersion: string,
 ): Promise<CompatibilityResult> {
@@ -720,6 +477,7 @@ export function normalizeObsidianVersionInfo(versionInfo: DeepPartial<ObsidianVe
     };
     return normalizeObject(canonicalForm, versionInfo) as ObsidianVersionInfo;
 }
+
 
 /**
  * Updates obsidian version information.

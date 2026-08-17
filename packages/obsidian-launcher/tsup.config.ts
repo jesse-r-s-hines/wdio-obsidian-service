@@ -3,11 +3,11 @@ import fs from "fs";
 const packageJson = JSON.parse(fs.readFileSync("./package.json", 'utf-8'))
 
 export default defineConfig({
-    entry: [
-        "src/index.ts",
-        "src/cli.ts",
-        "src/7z.js",
-    ],
+    entry: {
+        index: "src/index.ts",
+        cli: "src/cli.ts",
+        "7z": "src/utils/7z.js", // output at root
+    },
     format: ["cjs", "esm"], // Build for commonJS and ESmodules
     dts: true, // Generate declaration file (.d.ts)
     splitting: true,
