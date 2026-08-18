@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
+
 :root:root {
     --light-color-background: #ffffff;
     --light-color-background-secondary: #f6f6f6;
@@ -6,10 +8,9 @@
     --light-color-text: #222222;
     --light-color-contrast-text: #000000;
     --light-color-text-aside: #5c5c5c;
-    --light-color-link: #8a5cf5;
-    --light-color-focus-outline: #8a5cf5;
+    --light-color-link: #7852ee;
+    --light-color-focus-outline: #7852ee;
     --light-code-background: #fafafa;
-
 
     --dark-color-background: #1e1e1e;
     --dark-color-background-secondary: #262626;
@@ -18,8 +19,8 @@
     --dark-color-text: #dadada;
     --dark-color-contrast-text: #ffffff;
     --dark-color-text-aside: #b3b3b3;
-    --dark-color-link: #a68af9;
-    --dark-color-focus-outline: #a68af9;
+    --dark-color-link: #a882ff;
+    --dark-color-focus-outline: #a882ff;
     --dark-code-background: #242424;
 
     --light-color-ts-keyword: #086ddd;
@@ -51,8 +52,81 @@
     --dark-color-ts-accessor: #fb464c;
     --dark-color-ts-reference: #fa99cd;
     --dark-color-document: #b3b3b3;
+
+    --light-color-alert-note: #0b64c8;
+    --light-color-alert-tip: #0a7d7b;
+    --light-color-alert-important: #6b46e0;
+    --light-color-alert-warning: #a35a00;
+    --light-color-alert-caution: #cc2033;
+
+    --dark-color-alert-note: #4a9eff;
+    --dark-color-alert-tip: #53dfdd;
+    --dark-color-alert-important: #a882ff;
+    --dark-color-alert-warning: #e9973f;
+    --dark-color-alert-caution: #fb464c;
+
+    --light-color-background-warning: #fdf3e6;
+    --light-color-warning-text: #6b3b00;
+    --dark-color-background-warning: #33281a;
+    --dark-color-warning-text: #e9973f;
+
+    --light-color-comment-tag: #f6f6f6;
+    --light-color-comment-tag-text: #5c5c5c;
+    --dark-color-comment-tag: #262626;
+    --dark-color-comment-tag-text: #b3b3b3;
 }
 
 body {
-    font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", "InterVariable", "Inter", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+    font-family:
+        "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+        Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+        "Segoe UI Symbol";
+    font-feature-settings: "liga", "calt";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
+/* 
+code,
+pre,
+.tsd-signature {
+    font-family:
+        ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Roboto Mono",
+        monospace;
+}
+
+.tsd-alert {
+    padding: 12px 14px;
+    margin-bottom: 16px;
+    border: none;
+    border-radius: 8px;
+    background-color: color-mix(in srgb, var(--alert-color) 10%, transparent);
+}
+
+.tsd-alert-title {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 4px;
+    color: var(--alert-color);
+    font-weight: 600;
+    line-height: 1.3;
+}
+
+.tsd-alert-title svg {
+    width: 18px;
+    height: 18px;
+    stroke-width: 1.75px;
+    flex-shrink: 0;
+}
+
+.tsd-alert-title span {
+    margin-left: 0;
+}
+
+.tsd-alert code {
+    background-color: color-mix(in srgb, var(--alert-color) 12%, transparent);
+}
+
+.tsd-kind-icon.tsd-kind-icon {
+    filter: none;
+} */
