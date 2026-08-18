@@ -20,6 +20,9 @@ importers:
       eslint:
         specifier: ^9.39.2
         version: 9.39.4(jiti@2.7.0)(supports-color@8.1.1)
+      lucide-static:
+        specifier: ^1.31.0
+        version: 1.31.0
       serve:
         specifier: ^14.2.5
         version: 14.2.6(supports-color@10.2.2)
@@ -2983,6 +2986,9 @@ packages:
   lru-cache@7.18.3:
     resolution: {integrity: sha512-jumlc0BIUrS3qJGgIkWZsyfAM7NCWiBcCDhnd+3NNM5KbBmLTgHVfWBcg6W+rLUsIpzpERPsvwUP7CckAQSOoA==}
     engines: {node: '>=12'}
+
+  lucide-static@1.31.0:
+    resolution: {integrity: sha512-XFX9NO+gcLsOkXISmeQZYGJa2siGWZc/lgT/BK1b83h9RdOiz3cj1eQP5nWhELiB1KhW5ryk0nmMopOgm/CuSA==}
 
   lunr@2.3.9:
     resolution: {integrity: sha512-zTU3DaZaF3Rt9rhN3uBMGQD3dD2/vFQqnvZCDv4dl5iOzq2IZQqTxu90r4E5J+nP70J3ilqVCrbho2eWaeW8Ow==}
@@ -7647,6 +7653,8 @@ snapshots:
   lru-cache@11.3.6: {}
 
   lru-cache@7.18.3: {}
+
+  lucide-static@1.31.0: {}
 
   lunr@2.3.9: {}
 

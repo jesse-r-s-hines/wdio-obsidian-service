@@ -38,7 +38,7 @@
             "source-order"
         ]
     },
-    "plugin": ["typedoc-theme-fresh"],
-    "theme": "fresh",
+    "plugin": ["./myTheme.ts"],
+    "theme": "my-theme",
     "customCss": "./typedoc.css"
 }
