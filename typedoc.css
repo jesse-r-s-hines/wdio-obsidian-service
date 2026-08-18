@@ -1,0 +1,58 @@
+:root:root {
+    --light-color-background: #ffffff;
+    --light-color-background-secondary: #f6f6f6;
+    --light-color-background-active: #e0e0e0;
+    --light-color-accent: #e0e0e0;
+    --light-color-text: #222222;
+    --light-color-contrast-text: #000000;
+    --light-color-text-aside: #5c5c5c;
+    --light-color-link: #8a5cf5;
+    --light-color-focus-outline: #8a5cf5;
+    --light-code-background: #fafafa;
+
+
+    --dark-color-background: #1e1e1e;
+    --dark-color-background-secondary: #262626;
+    --dark-color-background-active: #363636;
+    --dark-color-accent: #363636;
+    --dark-color-text: #dadada;
+    --dark-color-contrast-text: #ffffff;
+    --dark-color-text-aside: #b3b3b3;
+    --dark-color-link: #a68af9;
+    --dark-color-focus-outline: #a68af9;
+    --dark-code-background: #242424;
+
+    --light-color-ts-keyword: #086ddd;
+    --light-color-ts-project: #7852ee;
+    --light-color-ts-class: #086ddd;
+    --light-color-ts-interface: #08b94e;
+    --light-color-ts-function: #7852ee;
+    --light-color-ts-method: #d53984;
+    --light-color-ts-property: #ec7500;
+    --light-color-ts-variable: #086ddd;
+    --light-color-ts-enum: #e0ac00;
+    --light-color-ts-type-alias: #d53984;
+    --light-color-ts-type-parameter: #00bfbc;
+    --light-color-ts-accessor: #e93147;
+    --light-color-ts-reference: #d53984;
+    --light-color-document: #5c5c5c;
+
+    --dark-color-ts-keyword: #027aff;
+    --dark-color-ts-project: #a882ff;
+    --dark-color-ts-class: #027aff;
+    --dark-color-ts-interface: #44cf6e;
+    --dark-color-ts-function: #a882ff;
+    --dark-color-ts-method: #fa99cd;
+    --dark-color-ts-property: #e9973f;
+    --dark-color-ts-variable: #027aff;
+    --dark-color-ts-enum: #e0de71;
+    --dark-color-ts-type-alias: #fa99cd;
+    --dark-color-ts-type-parameter: #53dfdd;
+    --dark-color-ts-accessor: #fb464c;
+    --dark-color-ts-reference: #fa99cd;
+    --dark-color-document: #b3b3b3;
+}
+
+body {
+    font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", "InterVariable", "Inter", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+}

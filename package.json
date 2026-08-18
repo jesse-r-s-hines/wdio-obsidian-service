@@ -27,6 +27,7 @@
         "serve": "^14.2.5",
         "tsx": "4.21.0",
         "typedoc": "^0.28.16",
+        "typedoc-theme-fresh": "^0.2.3",
         "typescript": "^5.9.3",
         "typescript-eslint": "^8.53.0"
     },
