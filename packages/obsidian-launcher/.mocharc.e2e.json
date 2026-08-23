@@ -1,5 +1,5 @@
 {
     "$schema": "https://json.schemastore.org/mocharc.json",
     "spec": "test/e2e/**/*.ts",
-    "require": "tsx"
+    "require": ["tsx", "test/setup.js"]
 }
