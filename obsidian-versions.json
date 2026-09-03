@@ -9063,26 +9063,6 @@
             },
             "electronVersion": "43.3.0",
             "chromeVersion": "150.0.7871.212"
-        },
-        {
-            "version": "1.13.8",
-            "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.13.8",
-            "downloads": {
-                "apk": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.13.8/Obsidian-1.13.8.apk"
-            },
-            "installers": {}
-        },
-        {
-            "version": "1.14.0",
-            "minInstallerVersion": "1.5.8",
-            "minRunnableInstallerVersion": "1.1.9",
-            "maxInstallerVersion": "1.13.7",
-            "isBeta": true,
-            "changelogUrl": "https://obsidian.md/changelog/2026-09-02-desktop-v1.14.0/",
-            "downloads": {
-                "asar": "https://releases.obsidian.md/release/obsidian-1.14.0.asar.gz"
-            },
-            "installers": {}
         }
     ]
 }
