@@ -27,6 +27,7 @@ const BROKEN_VERSIONS = [
     "1.4.7", // broken download link
     "1.4.8", // broken download link
     "1.0.1",  // won't launch
+    "1.13.8", // mobile only version TODO: update logic to handle mobile only releases
 ];
 
 
