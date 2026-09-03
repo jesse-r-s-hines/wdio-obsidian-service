@@ -1,9 +1,9 @@
 {
     "metadata": {
         "schemaVersion": "2.2.0",
-        "commitDate": "2026-08-12T13:57:45Z",
-        "commitSha": "11fc3ae2320769a5db81b9029ab644928540f9b8",
-        "timestamp": "2026-08-12T17:16:35.093Z"
+        "commitDate": "2026-09-02T19:57:34Z",
+        "commitSha": "dc095efeb8ae4d289023c69c3580b4fe80a68f94",
+        "timestamp": "2026-09-03T04:41:13.969Z"
     },
     "versions": [
         {
@@ -9063,6 +9063,26 @@
             },
             "electronVersion": "43.3.0",
             "chromeVersion": "150.0.7871.212"
+        },
+        {
+            "version": "1.13.8",
+            "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.13.8",
+            "downloads": {
+                "apk": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.13.8/Obsidian-1.13.8.apk"
+            },
+            "installers": {}
+        },
+        {
+            "version": "1.14.0",
+            "minInstallerVersion": "1.5.8",
+            "minRunnableInstallerVersion": "1.1.9",
+            "maxInstallerVersion": "1.13.7",
+            "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2026-09-02-desktop-v1.14.0/",
+            "downloads": {
+                "asar": "https://releases.obsidian.md/release/obsidian-1.14.0.asar.gz"
+            },
+            "installers": {}
         }
     ]
 }
