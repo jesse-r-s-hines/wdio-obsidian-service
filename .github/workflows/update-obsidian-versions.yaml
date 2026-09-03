@@ -78,18 +78,41 @@ jobs:
       - if: ${{ steps.check.outputs.result == 'true' }}
         name: "Setup virtual graphics"
         run: |
+            # Some hacks to speed up apt install
+            sudo rm -rf /etc/apt/sources.list.d/*.list
+            echo "set man-db/auto-update false" | sudo debconf-communicate
+            sudo dpkg-reconfigure man-db
+
+            sudo apt-get update -q
+            sudo apt-get install -q herbstluftwm dzen2 x11-xserver-utils
+
             export DISPLAY=:99
             echo "DISPLAY=$DISPLAY" >> "$GITHUB_ENV"
             Xvfb $DISPLAY -screen 0 1280x1024x24 +extension GLX -noreset &
+            sleep 1
+            herbstluftwm &
+            sleep 1
       - if: ${{ steps.check.outputs.result == 'true' }}
         name: "Update obsidian-versions.json"
         run: |
           pnpm install --frozen-lockfile
-          cd packages/obsidian-launcher
           pnpm run build
+          cd packages/obsidian-launcher
           npx obsidian-launcher update-version-list --max-instances 4 ../../obsidian-versions.json
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OBSIDIAN_EMAIL: ${{ secrets.OBSIDIAN_EMAIL }}
+          OBSIDIAN_PASSWORD: ${{ secrets.OBSIDIAN_PASSWORD }}
+      - if: ${{ steps.check.outputs.result == 'true' }}
+        name: "Run basic tests"
+        run: |
+          pnpm run test:unit
+          pnpm run test:e2e
+        env:
+          PNPM_CONFIG_WORKSPACE_CONCURRENCY: 2
+          TEST_LEVEL: basic # Only run basic tests, don't prevent Obsidian updates for non-critical test failures
+          OBSIDIAN_VERSIONS: "latest-beta/latest latest/earliest"
+          WDIO_MAX_INSTANCES: 2
           OBSIDIAN_EMAIL: ${{ secrets.OBSIDIAN_EMAIL }}
           OBSIDIAN_PASSWORD: ${{ secrets.OBSIDIAN_PASSWORD }}
       - if: ${{ steps.check.outputs.result == 'true' }}

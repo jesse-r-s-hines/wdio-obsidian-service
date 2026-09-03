@@ -364,6 +364,18 @@ export class ObsidianLauncher {
         }
     }
 
+    /** Verifies that the URL is under an expected domain as a safety check */
+    private verifyUrl(url: string) {
+        const disableCheck = ['1', 'true', 'yes'].includes(process.env['OBSIDIAN_LAUNCHER_DISABLE_URL_CHECK']?.toLowerCase() ?? '');
+        const allowedPrefixes = [
+            "https://github.com/obsidianmd/obsidian-releases/releases/",
+            "https://releases.obsidian.md/",
+        ]
+        if (!disableCheck && !allowedPrefixes.some(p => url.startsWith(p))) {
+            throw new Error(`Invalid Obsidian asset url ${url}`);
+        }
+    }
+
     /**
      * Downloads the Obsidian installer for the given version and platform/arch (defaults to host platform/arch).
      * Returns the file path.
@@ -379,6 +391,7 @@ export class ObsidianLauncher {
         const versionInfo = await this.getVersionInfo(installerVersion);
         installerVersion = versionInfo.version;
         const installerInfo = await this.getInstallerInfo(installerVersion, {platform, arch});
+        this.verifyUrl(installerInfo.url);
         const installerDir = path.join(this.cacheDir, `obsidian-installer/${platform}-${arch}/Obsidian-${installerVersion}`);
 
         let binaryPath: string;
@@ -424,6 +437,8 @@ export class ObsidianLauncher {
         if (!appUrl) {
             throw Error(`No asar found for Obsidian version ${appVersion}`);
         }
+        this.verifyUrl(appUrl);
+
         const appPath = path.join(this.cacheDir, 'obsidian-app', `obsidian-${versionInfo.version}.asar`);
         const isInsiders = new URL(appUrl).hostname.endsWith('.obsidian.md');
         if (isInsiders && !(await fileExists(appPath))) {
@@ -497,6 +512,7 @@ export class ObsidianLauncher {
                 (versionInfo.isBeta ? ` (${version} is a beta version)` : '')
             );
         }
+        this.verifyUrl(apkUrl);
         const apkPath = path.join(this.cacheDir, 'obsidian-apk', `obsidian-${versionInfo.version}.apk`);
 
         await atomicCreate(apkPath, async (scratch) => {
