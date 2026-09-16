@@ -96,7 +96,7 @@ export class ObsidianLauncher {
         cacheValid = cacheValid ?? (() => true);
         dest = path.join(this.cacheDir, dest);
 
-        if (!(dest in this.metadataCache)) {
+        const fetchFunc = async () => {
             let data: any;
             let error: any;
             const cacheMtime = (await fsAsync.stat(dest).catch(() => undefined))?.mtime;
@@ -143,8 +143,14 @@ export class ObsidianLauncher {
             if (!data) {
                 throw Error(`Fetch ${url} failed: ${error}`);
             }
+            return data;
+        }
 
-            this.metadataCache[dest] = data;
+        if (!(dest in this.metadataCache)) {
+            this.metadataCache[dest] = fetchFunc().catch(err => {
+                delete this.metadataCache[dest];
+                throw err;
+            });
         }
         return this.metadataCache[dest];
     }
