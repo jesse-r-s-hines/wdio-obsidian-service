@@ -175,3 +175,6 @@ Support Obsidian CLI in wdio tests!
 
 ## 3.2.0
 - Improve .env file handling, now will search for .env files in parent directories
+
+## 3.2.1
+- Fix race condition in .obsidian-cache when downloading metadata on Windows
