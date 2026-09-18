@@ -1,7 +1,7 @@
 import { browser, expect } from '@wdio/globals'
 import { obsidianPage } from 'wdio-obsidian-service';
 import { appiumUploadFiles, appiumReaddir, quote } from '../../src/utils.js';
-import fsAsync from "fs/promises";
+import fs from "fs-extra";
 import path from "path";
 import crypto from "crypto";
 import { createDirectory } from '../helpers.js';
@@ -57,7 +57,7 @@ describe("Appium Utils", function() {
         src = path.resolve(src);
 
         expect(await appiumIsDir(dest));
-        const srcFiles = await fsAsync.readdir(src, {recursive: true, withFileTypes: true});
+        const srcFiles = await fs.readdir(src, {recursive: true, withFileTypes: true});
         for (const file of srcFiles) {
             const srcPath = path.join(file.parentPath, file.name);
             const destPath = path.posix.join(dest, path.relative(src, srcPath));
@@ -66,7 +66,7 @@ describe("Appium Utils", function() {
                 expect(await appiumIsDir(destPath)).toEqual(true);
             } else {
                 const actualContent = Buffer.from(await browser.pullFile(destPath), "base64").toString('utf-8');
-                const expectedContent = await fsAsync.readFile(srcPath, 'utf-8')
+                const expectedContent = await fs.readFile(srcPath, 'utf-8')
                 expect(actualContent).toEqual(expectedContent);
             }
         }
@@ -86,16 +86,16 @@ describe("Appium Utils", function() {
 
     it("empty subdirectory", async function() {
         const src = await createDirectory();
-        await fsAsync.mkdir(path.join(src, "sub"));
+        await fs.mkdir(path.join(src, "sub"));
         await appiumUploadFiles(browser, {src, dest: testDest});
         await checkUploadSuccessful(src, testDest);
     })
 
     it("splitting", async function() {
         const src = await createDirectory();
-        await fsAsync.writeFile(path.join(src, 'a'), crypto.randomBytes(1024 * 1024).toString('base64'));
-        await fsAsync.writeFile(path.join(src, 'b'), crypto.randomBytes(1024).toString('base64'));
-        await fsAsync.writeFile(path.join(src, 'c'), crypto.randomBytes(1024).toString('base64'));
+        await fs.writeFile(path.join(src, 'a'), crypto.randomBytes(1024 * 1024).toString('base64'));
+        await fs.writeFile(path.join(src, 'b'), crypto.randomBytes(1024).toString('base64'));
+        await fs.writeFile(path.join(src, 'c'), crypto.randomBytes(1024).toString('base64'));
         await appiumUploadFiles(browser, {src, dest: testDest, chunkSize: 16 * 1024});
         await checkUploadSuccessful(src, testDest);
     })
@@ -111,7 +111,7 @@ describe("Appium Utils", function() {
         expect(await appiumReaddir(browser, testDest)).toEqual([destFile]);
 
         // overwrite
-        await fsAsync.writeFile(srcFile, "FOO");
+        await fs.writeFile(srcFile, "FOO");
         await appiumUploadFiles(browser, {src, dest: testDest, files: [srcFile]});
         const content = Buffer.from(await browser.pullFile(destFile), "base64").toString('utf-8');
         expect(content).toEqual("FOO");

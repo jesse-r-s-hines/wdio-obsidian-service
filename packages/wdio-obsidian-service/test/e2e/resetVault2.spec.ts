@@ -1,6 +1,6 @@
 import { browser, expect } from '@wdio/globals'
 import { obsidianPage } from 'wdio-obsidian-service';
-import fsAsync from "fs/promises"
+import fs from "fs-extra"
 import path from "path"
 import { getAllFiles, createDirectory } from '../helpers.js';
 
@@ -76,7 +76,7 @@ describe("resetVault2", function() {
 
     it("empty folder", async () => {
         const vault = await createDirectory();
-        await fsAsync.mkdir(path.join(vault, 'foo'));
+        await fs.mkdir(path.join(vault, 'foo'));
 
         await browser.reloadObsidian({ vault: "./test/vaults/basic" });
         await obsidianPage.resetVault(vault);

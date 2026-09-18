@@ -1,7 +1,6 @@
 /** Functions for building the obsidian-versions.json file */
 
-import fsAsync from "fs/promises"
-import fs from "fs"
+import fs from "fs-extra"
 import path from "path"
 import semver from "semver"
 import _ from "lodash"
@@ -214,7 +213,7 @@ export async function extractInstallerInfo(
         // GitHub job matrix to run this on all platform/arch combinations or we can just grep the binary.
 
         const matches: string[] = [];
-        const installerFiles = await fsAsync.readdir(exractedPath, {recursive: true, withFileTypes: true});
+        const installerFiles = await fs.readdir(exractedPath, {recursive: true, withFileTypes: true});
         for (const file of installerFiles) {
             if (file.isFile() && !file.name.endsWith(".asar")) {
                 const stream = fs.createReadStream(path.join(file.parentPath, file.name), {encoding: "utf-8"});
@@ -247,7 +246,7 @@ export async function extractInstallerInfo(
         consola.log(`Extracted installer info for ${installerName}`)
         return { electron, chrome, platforms };
     } finally {
-        await fsAsync.rm(tmpDir, { recursive: true, force: true });
+        await fs.rm(tmpDir, { recursive: true, force: true });
     }
 }
 
@@ -328,7 +327,7 @@ export async function checkCompatibility(
         }
     } finally {
         await cleanup();
-        await fsAsync.rm(vault, {recursive: true, force: true});
+        await fs.rm(vault, {recursive: true, force: true});
     }
 
     consola.log(`app ${appVersion} and installer ${installerVersion} compatibility: ${result}`);
@@ -356,7 +355,7 @@ export async function getCompatibilityInfos(
                 maxInstallerVersion: v.maxInstallerVersion ?? "999.9.9",
             })),
         }
-        await fsAsync.writeFile(path.join(tmp, 'obsidian-versions.json'), JSON.stringify(versionsFile));
+        await fs.writeFile(path.join(tmp, 'obsidian-versions.json'), JSON.stringify(versionsFile));
         const launcher = new ObsidianLauncher({
             cacheDir: path.join(tmp, 'cache'),
             versionsUrl: pathToFileURL(path.join(tmp, 'obsidian-versions.json')).toString(),
@@ -430,7 +429,7 @@ export async function getCompatibilityInfos(
             }))
             .filter(v => !_.isEqual(v, origVersions[v.version]));
     } finally {
-        await fsAsync.rm(tmp, {recursive: true, force: true});
+        await fs.rm(tmp, {recursive: true, force: true});
     }
 }
 

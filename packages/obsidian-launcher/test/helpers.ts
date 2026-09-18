@@ -1,11 +1,11 @@
 import os from "os"
 import path from "path"
-import fsAsync from "fs/promises"
+import fs from "fs-extra"
 import serverHandler from "serve-handler";
 import http from "http";
 import { AddressInfo } from "net";
 import { after } from "mocha";
-import { atomicCreate, linkOrCp, fileExists } from "../src/utils/file.js";
+import { atomicCreate, linkOrCp } from "../src/utils/file.js";
 import { downloadResponse } from "../src/apis.js";
 
 /**
@@ -13,16 +13,16 @@ import { downloadResponse } from "../src/apis.js";
  * @param files Map of file path to file content.
  */
 export async function createDirectory(files: Record<string, string> = {}) {
-    const tmpDir = await fsAsync.mkdtemp(path.join(os.tmpdir(), "mocha-"));
+    const tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "mocha-"));
     // after hook works even if its called within a test, though it doesn't run until the end of the test suite.
     after(async () => {
-        await fsAsync.rm(tmpDir, { recursive: true, force: true });
+        await fs.rm(tmpDir, { recursive: true, force: true });
     });
 
     for (const [file, content] of Object.entries(files)) {
         const dest = path.join(tmpDir, file);
-        await fsAsync.mkdir(path.dirname(dest), { recursive: true });
-        await fsAsync.writeFile(dest, content);
+        await fs.mkdir(path.dirname(dest), { recursive: true });
+        await fs.writeFile(dest, content);
     }
 
     return tmpDir;
@@ -66,8 +66,8 @@ export async function createServer(cacheDir: string, endpoints: Record<string, E
                 return;
             }
 
-            if (endpoint && !(await fileExists(dest))) {
-                await fsAsync.mkdir(path.dirname(dest), {recursive: true});
+            if (endpoint && !(await fs.pathExists(dest))) {
+                await fs.mkdir(path.dirname(dest), {recursive: true});
                 if (endpoint.fetch) {
                     const cacheDest = path.join(cacheDir, path.relative(serverDir, dest));
                     await atomicCreate(cacheDest, async (scratch) => {
@@ -76,7 +76,7 @@ export async function createServer(cacheDir: string, endpoints: Record<string, E
                     }, {replace: false});
                     await linkOrCp(cacheDest, dest);
                 } else if (endpoint.content) {
-                    await fsAsync.writeFile(dest, endpoint.content);
+                    await fs.writeFile(dest, endpoint.content);
                 } else if (endpoint.path) {
                     await linkOrCp(endpoint?.path, dest);
                 } else {

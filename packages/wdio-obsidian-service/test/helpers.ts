@@ -1,5 +1,5 @@
 import { browser } from '@wdio/globals'
-import fsAsync from "fs/promises"
+import fs from "fs-extra"
 import path from "path";
 import os from "os";
 import crypto from "crypto";
@@ -47,16 +47,16 @@ export async function getAllFiles(opts: {
  * @param files Map of file path to file content.
  */
 export async function createDirectory(files: Record<string, string> = {}) {
-    const tmpDir = await fsAsync.mkdtemp(path.join(os.tmpdir(), "mocha-"));
+    const tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "mocha-"));
     // after hook works even if its called within a test, though it doesn't run until the end of the test suite.
     after(async () => {
-        await fsAsync.rm(tmpDir, { recursive: true, force: true });
+        await fs.rm(tmpDir, { recursive: true, force: true });
     });
 
     for (const [file, content] of Object.entries(files)) {
         const dest = path.join(tmpDir, file);
-        await fsAsync.mkdir(path.dirname(dest), { recursive: true });
-        await fsAsync.writeFile(dest, content);
+        await fs.mkdir(path.dirname(dest), { recursive: true });
+        await fs.writeFile(dest, content);
     }
 
     return tmpDir;

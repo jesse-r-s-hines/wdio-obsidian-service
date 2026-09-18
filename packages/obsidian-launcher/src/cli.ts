@@ -6,7 +6,7 @@ import { consola } from './utils/misc.js';
 import { watchFiles } from './utils/file.js';
 import { ObsidianVersionList, PluginEntry, ThemeEntry } from "./types.js";
 import path from "path"
-import fsAsync from "fs/promises";
+import fs from "fs-extra";
 
 
 function parsePlugins(plugins: string[] = []): PluginEntry[] {
@@ -198,7 +198,7 @@ program
         const cleanup = async () => {
             proc.kill("SIGTERM");
             await procExit;
-            await fsAsync.rm(configDir, {recursive: true, force: true});
+            await fs.rm(configDir, {recursive: true, force: true});
             process.exit(1);
         }
         process.on('SIGINT', cleanup);
@@ -289,7 +289,7 @@ program
     .action(async (dest, opts) => {
         let versionInfos: ObsidianVersionList|undefined;
         try {
-            versionInfos = JSON.parse(await fsAsync.readFile(dest, "utf-8"))
+            versionInfos = JSON.parse(await fs.readFile(dest, "utf-8"))
         } catch {
             versionInfos = undefined;
         }
@@ -300,7 +300,7 @@ program
 
         const launcher = getLauncher(opts);
         versionInfos = await launcher.updateVersionList(versionInfos, { maxInstances });
-        await fsAsync.writeFile(dest, JSON.stringify(versionInfos, undefined, 4) + "\n");
+        await fs.writeFile(dest, JSON.stringify(versionInfos, undefined, 4) + "\n");
         consola.log(`Wrote updated version information to ${dest}`)
     })
 

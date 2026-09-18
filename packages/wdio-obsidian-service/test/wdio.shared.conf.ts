@@ -2,14 +2,14 @@ import _ from "lodash";
 import path from "path"
 import crypto from "crypto"
 import os from "os"
-import fsAsync from "fs/promises"
+import fs from "fs-extra"
 import { pathToFileURL, fileURLToPath } from "url"
 import ObsidianLauncher, { ObsidianVersionInfo } from "obsidian-launcher";
 
 const workspacePath = path.resolve(fileURLToPath(import.meta.url), "../../../..")
 const obsidianVersionsJson = path.join(workspacePath, "obsidian-versions.json");
 
-export const allVersions: ObsidianVersionInfo[] = JSON.parse(await fsAsync.readFile(obsidianVersionsJson, 'utf-8')).versions;
+export const allVersions: ObsidianVersionInfo[] = JSON.parse(await fs.readFile(obsidianVersionsJson, 'utf-8')).versions;
 
 export function minorVersion(v: string) {
     return v.split(".").slice(0, 2).join('.')
@@ -101,7 +101,7 @@ export const config: WebdriverIO.Config = {
         for (const cap of (capabilities as WebdriverIO.Capabilities[])) {
             if (cap['wdio:obsidianOptions']?.copy === false) {
                 const vault = cap['wdio:obsidianOptions'].vault!;
-                await fsAsync.cp("./test/vaults/basic", vault, {recursive: true});
+                await fs.copy("./test/vaults/basic", vault);
             }
         }
     },
@@ -110,7 +110,7 @@ export const config: WebdriverIO.Config = {
         for (const cap of (capabilities as WebdriverIO.Capabilities[])) {
             if (cap['wdio:obsidianOptions']?.copy === false) {
                 const vault = cap['wdio:obsidianOptions'].vault!;
-                await fsAsync.rm(vault, {recursive: true, force: false});
+                await fs.rm(vault, {recursive: true, force: false});
             }
         }
     },

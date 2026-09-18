@@ -1,6 +1,6 @@
 import { describe, it } from "mocha";
 import { expect } from "chai";
-import { fileExists } from "../../src/utils/file.js";
+import fs from "fs-extra";
 import { createDirectory } from "../helpers.js"
 import ChromeLocalStorage from "../../src/utils/chromeLocalStorage.js";
 
@@ -22,7 +22,7 @@ describe("ChromeLocalStorage", () => {
     it("basics", async () => {
         await localStorage.setItem("https://www.example.com", "foo", "bar");
         expect(await localStorage.getItem("https://www.example.com", "foo")).to.eql("bar");
-        expect(await fileExists(`${localStorage.userDataDir}/Local Storage/leveldb`)).to.eql(true);
+        expect(await fs.pathExists(`${localStorage.userDataDir}/Local Storage/leveldb`)).to.eql(true);
 
         await localStorage.close();
         localStorage = new ChromeLocalStorage(localStorage.userDataDir);

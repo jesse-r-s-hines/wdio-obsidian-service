@@ -1,5 +1,5 @@
 /** Functions for handling Obsidian installers on different platforms */
-import fsAsync from "fs/promises"
+import fs from "fs-extra"
 import path from "path"
 import { promisify } from "util";
 import child_process from "child_process"
@@ -22,7 +22,7 @@ export async function extractObsidianTar(tar: string, dest: string) {
         await extractGz(tar, inflated);
         const extracted = path.join(scratch, "extracted");
         await extract7z(inflated, extracted);
-        return path.join(extracted, (await fsAsync.readdir(extracted)).find(p => p.match("obsidian-"))!);
+        return path.join(extracted, (await fs.readdir(extracted)).find(p => p.match("obsidian-"))!);
     })
 }
 
@@ -60,11 +60,11 @@ export async function extractObsidianDmg(dmg: string, dest: string) {
             const proc = await execFile('hdiutil', ['attach', '-nobrowse', '-readonly', dmg]);
             const volume = proc.stdout.match(/\/Volumes\/.*$/m)![0];
             // Current mac dmg files just have `Obsidian.app`, but on older '-universal' ones it's nested another level.
-            const files = await fsAsync.readdir(volume);
+            const files = await fs.readdir(volume);
             let obsidianApp = files.includes("Obsidian.app") ? "Obsidian.app" : path.join(files[0], "Obsidian.app");
             obsidianApp = path.join(volume, obsidianApp);
             try {
-                await fsAsync.cp(obsidianApp, scratch, {recursive: true, verbatimSymlinks: true, preserveTimestamps: true});
+                await fs.promises.cp(obsidianApp, scratch, {recursive: true, verbatimSymlinks: true, preserveTimestamps: true});
             } finally {
                 await execFile('hdiutil', ['detach', volume]);
             }
@@ -76,7 +76,7 @@ export async function extractObsidianDmg(dmg: string, dest: string) {
             // we'll use 7zip if you aren't on MacOS so that we can still extract the executable on other platforms
             // (needed for the update-obsidian-versions GitHub workflow)
             await extract7z(dmg, scratch, {files: ["*/Obsidian.app", "Obsidian.app"]});
-            const files = await fsAsync.readdir(scratch);
+            const files = await fs.readdir(scratch);
             const obsidianApp = files.includes("Obsidian.app") ? "Obsidian.app" : path.join(files[0], "Obsidian.app");
             return path.join(scratch, obsidianApp);
         }

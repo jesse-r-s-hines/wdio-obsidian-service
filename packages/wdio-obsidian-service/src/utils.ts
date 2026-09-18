@@ -1,21 +1,12 @@
 import path from "path";
 import crypto from "crypto";
-import fsAsync from "fs/promises";
+import fs from "fs-extra";
 import * as tar from "tar";
 import _ from "lodash";
 
 /** Quote string for use in shell scripts */
 export function quote(input: string) {
     return `'${input.replace(/'/g, "'\\''")}'`;
-}
-
-export async function fileExists(path: string) {
-    try {
-        await fsAsync.access(path);
-        return true;
-    } catch {
-        return false;
-    }
 }
 
 /**
@@ -97,7 +88,7 @@ export async function appiumDownloadFile(browser: WebdriverIO.Browser, src: stri
     src = path.posix.normalize(src);
     dest = path.resolve(dest);
     const content = Buffer.from(await browser.pullFile(src), "base64");
-    await fsAsync.writeFile(dest, content);
+    await fs.writeFile(dest, content);
 }
 
 /** Lists all files under a folder. Returns full paths. */

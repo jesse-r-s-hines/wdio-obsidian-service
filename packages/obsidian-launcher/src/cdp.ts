@@ -1,4 +1,4 @@
-import fsAsync from "fs/promises"
+import fs from "fs-extra"
 import path from "path"
 import semver from "semver"
 import CDP from "chrome-remote-interface";
@@ -29,13 +29,13 @@ export async function getCdpSession(
     }
 
     const pluginDir = path.join(params.vault, ".obsidian", "plugins", "obsidian-launcher");
-    await fsAsync.mkdir(pluginDir, {recursive: true});
-    await fsAsync.writeFile(path.join(pluginDir, "manifest.json"), JSON.stringify({
+    await fs.mkdir(pluginDir, {recursive: true});
+    await fs.writeFile(path.join(pluginDir, "manifest.json"), JSON.stringify({
         id: "obsidian-launcher", name: "Obsidian Launcher",
         version: "1.0.0", minAppVersion: "0.0.1",
         description: "", author: "obsidian-launcher", isDesktopOnly: false
     }));
-    await fsAsync.writeFile(path.join(pluginDir, "main.js"), `
+    await fs.writeFile(path.join(pluginDir, "main.js"), `
         const obsidian = require('obsidian');
         class ObsidianLauncherPlugin extends obsidian.Plugin {
             async onload() { window.obsidianLauncher = {app: this.app, obsidian: obsidian}; };
@@ -45,7 +45,7 @@ export async function getCdpSession(
     const communityPluginsPath = path.join(params.vault, ".obsidian", "community-plugins.json"); 
     let communityPlugins = ["obsidian-launcher"]
     communityPlugins = [...(await tryParseJson(communityPluginsPath) ?? []), ...communityPlugins];
-    await fsAsync.writeFile(communityPluginsPath, JSON.stringify(communityPlugins));
+    await fs.writeFile(communityPluginsPath, JSON.stringify(communityPlugins));
 
     try {
         const launchResult = await launcher.launch({
@@ -54,12 +54,12 @@ export async function getCdpSession(
             args: [`--remote-debugging-port=0`, '--test-type=webdriver', ...(params.args ?? [])],
         });
         if (params.copy) {
-            cleanup.push(() => fsAsync.rm(launchResult.vault!, {recursive: true, force: true}));
+            cleanup.push(() => fs.rm(launchResult.vault!, {recursive: true, force: true}));
         }
         const {proc} = launchResult;
         cleanup.push(() => retry(
             // Windows can hold resources afterafter the process exits, causing EBUSY
-            () => fsAsync.rm(launchResult.configDir, {recursive: true, force: true}),
+            () => fs.rm(launchResult.configDir, {recursive: true, force: true}),
             {retries: 5, backoff: 200, retryIf: (e) => ["EBUSY", "EPERM", "ENOTEMPTY"].includes(e?.code)},
         ));
         const procExit = new Promise<number>((resolve) => proc.on('close', (code) => resolve(code ?? -1)));

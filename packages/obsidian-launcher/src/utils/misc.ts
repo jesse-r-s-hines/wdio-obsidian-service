@@ -1,4 +1,4 @@
-import fsAsync from "fs/promises"
+import fs from "fs-extra";
 import path from "path"
 import dotenv from 'dotenv';
 import { createConsola } from "consola";
@@ -140,7 +140,7 @@ export async function retry<T>(func: (attempt: number) => Promise<T>|T, opts: Re
  */
 export async function tryParseJson(file: string) {
     try {
-        const content = await fsAsync.readFile(file, 'utf-8');
+        const content = await fs.readFile(file, 'utf-8');
         return JSON.parse(content)
     } catch { 
         return undefined;
