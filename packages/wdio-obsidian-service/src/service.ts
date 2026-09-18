@@ -1,5 +1,4 @@
-import fs from "fs"
-import fsAsync from "fs/promises"
+import fs from "fs-extra"
 import path from "path"
 import crypto from "crypto"
 import { SevereServiceError } from 'webdriverio'
@@ -14,7 +13,7 @@ import {
     ObsidianServiceOptions, NormalizedObsidianCapabilityOptions, OBSIDIAN_CAPABILITY_KEY,
 } from "./types.js"
 import {
-    isAppium, appiumUploadFiles, appiumDownloadFile, appiumExists, appiumReaddir, getAppiumOptions, fileExists,
+    isAppium, appiumUploadFiles, appiumDownloadFile, appiumExists, appiumReaddir, getAppiumOptions,
     navigateAndWait, retry, pathIsUnder,
 } from "./utils.js";
 import semver from "semver"
@@ -383,7 +382,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
      */
     private async appiumUpload(src: string, dest: string) {
         const browser = this.browser!;
-        const isDirectory = (await fsAsync.stat(src)).isDirectory();
+        const isDirectory = (await fs.stat(src)).isDirectory();
         const isAppStorage = pathIsUnder(ANDROID_APP_STORAGE_DIR, dest);
 
         if (isAppStorage) {
@@ -394,7 +393,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
             if (isDirectory) {
                 await appiumUploadFiles(browser, {src, dest: tmp});
             } else {
-                await browser.pushFile(tmp, (await fsAsync.readFile(src)).toString('base64'));
+                await browser.pushFile(tmp, (await fs.readFile(src)).toString('base64'));
             }
             await browser.execute(async (from, to) => {
                     const Filesystem = (window as any).Capacitor.Plugins.Filesystem;
@@ -405,7 +404,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
             if (isDirectory) {
                 await appiumUploadFiles(browser, {src, dest});
             } else {
-                await browser.pushFile(dest, (await fsAsync.readFile(src)).toString('base64'));
+                await browser.pushFile(dest, (await fs.readFile(src)).toString('base64'));
             }
         }
     }
@@ -672,7 +671,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
                         plugins: selectedPlugins, themes: selectedThemes,
                     });
                     for (const [src, dest] of [[localCommunityPlugins, remoteCommunityPlugins], [localAppearance, remoteAppearance]]) {
-                        if (await fileExists(src)) {
+                        if (await fs.pathExists(src)) {
                             await service.appiumUpload(src, dest)
                         }
                     }
@@ -798,7 +797,7 @@ export class ObsidianWorkerService implements Services.ServiceInstance {
      */
     async afterSession() {
         for (const tmpDir of this.tmpDirs) {
-            await fsAsync.rm(tmpDir, { recursive: true, force: true });
+            await fs.rm(tmpDir, { recursive: true, force: true });
         }
     }
 }

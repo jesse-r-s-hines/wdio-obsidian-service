@@ -1,4 +1,4 @@
-import fsAsync from "fs/promises"
+import fs from "fs-extra"
 import path from "path"
 import crypto from "crypto";
 import { downloadArtifact } from '@electron/get';
@@ -12,7 +12,7 @@ import {
     DownloadedThemeEntry, obsidianVersionsSchemaVersion, ObsidianAppearanceConfig, ObsidianCommunityPlugin,
     ObsidianCommunityTheme, PluginManifest
 } from "./types.js";
-import { fileExists, makeTmpDir, atomicCreate, linkOrCp } from "./utils/file.js"
+import { makeTmpDir, atomicCreate, linkOrCp } from "./utils/file.js"
 import { consola, warnOnce, maybe, tryParseJson, loadEnv } from "./utils/misc.js";
 import { normalizeGitHubRepo, obsidianApiLogin, fetchObsidianApi, downloadResponse } from "./apis.js";
 import ChromeLocalStorage from "./utils/chromeLocalStorage.js";
@@ -99,15 +99,15 @@ export class ObsidianLauncher {
         const fetchFunc = async () => {
             let data: any;
             let error: any;
-            const cacheMtime = (await fsAsync.stat(dest).catch(() => undefined))?.mtime;
+            const cacheMtime = (await fs.stat(dest).catch(() => undefined))?.mtime;
 
             // read file urls directly
             if (url.startsWith("file:")) {
-                data = JSON.parse(await fsAsync.readFile(fileURLToPath(url), 'utf-8'));
+                data = JSON.parse(await fs.readFile(fileURLToPath(url), 'utf-8'));
             }
             // read from cache if it's recent and valid
             if (!data && cacheMtime && new Date().getTime() - cacheMtime.getTime() < this.cacheDuration) {
-                const parsed = JSON.parse(await fsAsync.readFile(dest, 'utf-8'));
+                const parsed = JSON.parse(await fs.readFile(dest, 'utf-8'));
                 if (cacheValid(parsed)) {
                     data = parsed;
                 }
@@ -123,7 +123,7 @@ export class ObsidianLauncher {
                 }));
                 if (response.success) {
                     await atomicCreate(dest, async (scratch) => {
-                        await fsAsync.writeFile(path.join(scratch, 'download.json'), response.result);
+                        await fs.writeFile(path.join(scratch, 'download.json'), response.result);
                         return path.join(scratch, 'download.json');
                     }, {replace: true});
                     data = JSON.parse(response.result);
@@ -132,8 +132,8 @@ export class ObsidianLauncher {
                 }
             }
             // use cache on network error, even if old
-            if (!data && (await fileExists(dest))) {
-                const parsed = JSON.parse(await fsAsync.readFile(dest, 'utf-8'));
+            if (!data && (await fs.pathExists(dest))) {
+                const parsed = JSON.parse(await fs.readFile(dest, 'utf-8'));
                 if (cacheValid(parsed)) {
                     consola.warn(error)
                     consola.warn(`Unable to download ${url}, using cached file.`);
@@ -162,12 +162,12 @@ export class ObsidianLauncher {
         if (!('manifest.json' in this.metadataCache)) {
             const root = path.parse(process.cwd()).root;
             let dir = process.cwd();
-            while (dir != root && !(await fileExists(path.join(dir, 'manifest.json')))) {
+            while (dir != root && !(await fs.pathExists(path.join(dir, 'manifest.json')))) {
                 dir = path.dirname(dir);
             }
             const manifestPath = path.join(dir, 'manifest.json');
-            if (await fileExists(manifestPath)) {
-                this.metadataCache['manifest.json'] = JSON.parse(await fsAsync.readFile(manifestPath, 'utf-8'));
+            if (await fs.pathExists(manifestPath)) {
+                this.metadataCache['manifest.json'] = JSON.parse(await fs.readFile(manifestPath, 'utf-8'));
             } else {
                 this.metadataCache['manifest.json'] = null;
             }
@@ -447,7 +447,7 @@ export class ObsidianLauncher {
 
         const appPath = path.join(this.cacheDir, 'obsidian-app', `obsidian-${versionInfo.version}.asar`);
         const isInsiders = new URL(appUrl).hostname.endsWith('.obsidian.md');
-        if (isInsiders && !(await fileExists(appPath))) {
+        if (isInsiders && !(await fs.pathExists(appPath))) {
             // do this here to avoid readline-sync blocking in the middle of atomicCreate
             await this.login();
         }
@@ -626,7 +626,7 @@ export class ObsidianLauncher {
                 }
 
                 const manifestPath = path.join(pluginPath, "manifest.json");
-                if (!(await fileExists(manifestPath))) {
+                if (!(await fs.pathExists(manifestPath))) {
                     throw Error(`No plugin found at ${pluginPath}`)
                 }
                 let pluginId = (typeof plugin == "object" && ("id" in plugin)) ? plugin.id : undefined;
@@ -636,7 +636,7 @@ export class ObsidianLauncher {
                         throw Error(`${manifestPath} malformed.`);
                     }
                 }
-                if (!(await fileExists(path.join(pluginPath, "main.js")))) {
+                if (!(await fs.pathExists(path.join(pluginPath, "main.js")))) {
                     throw Error(`No main.js found under ${pluginPath}`)
                 }
 
@@ -660,11 +660,11 @@ export class ObsidianLauncher {
         const downloadedPlugins = await this.downloadPlugins(plugins);
 
         const obsidianDir = path.join(vault, '.obsidian');
-        await fsAsync.mkdir(obsidianDir, { recursive: true });
+        await fs.mkdir(obsidianDir, { recursive: true });
 
         const enabledPluginsPath = path.join(obsidianDir, 'community-plugins.json');
         let originalEnabledPlugins: string[] = [];
-        if (await fileExists(enabledPluginsPath)) {
+        if (await fs.pathExists(enabledPluginsPath)) {
             originalEnabledPlugins = await tryParseJson(enabledPluginsPath) ?? [];
         }
         let enabledPlugins = [...originalEnabledPlugins];
@@ -677,7 +677,7 @@ export class ObsidianLauncher {
             }
 
             const pluginDest = path.join(obsidianDir, 'plugins', pluginId);
-            await fsAsync.mkdir(pluginDest, { recursive: true });
+            await fs.mkdir(pluginDest, { recursive: true });
 
             const files = {
                 "manifest.json": true,
@@ -685,17 +685,17 @@ export class ObsidianLauncher {
                 "styles.css": false,
             }
             for (const [file, required] of Object.entries(files)) {
-                if (await fileExists(path.join(pluginPath, file))) {
+                if (await fs.pathExists(path.join(pluginPath, file))) {
                     await linkOrCp(path.join(pluginPath, file), path.join(pluginDest, file));
                 } else if (required) {
                     throw Error(`${pluginPath}/${file} missing.`);
                 } else {
-                    await fsAsync.rm(path.join(pluginDest, file), {force: true});
+                    await fs.rm(path.join(pluginDest, file), {force: true});
                 }
             }
-            if (await fileExists(path.join(pluginPath, "data.json"))) {
+            if (await fs.pathExists(path.join(pluginPath, "data.json"))) {
                 // don't link data.json since it can be modified. Don't delete it if it already exists.
-                await fsAsync.cp(path.join(pluginPath, "data.json"), path.join(pluginDest, "data.json"));
+                await fs.copy(path.join(pluginPath, "data.json"), path.join(pluginDest, "data.json"));
             }
 
             const pluginAlreadyListed = enabledPlugins.includes(pluginId);
@@ -707,12 +707,12 @@ export class ObsidianLauncher {
 
             if (originalType == "local") {
                 // Add a .hotreload file for the https://github.com/pjeby/hot-reload plugin
-                await fsAsync.writeFile(path.join(pluginDest, '.hotreload'), '');
+                await fs.writeFile(path.join(pluginDest, '.hotreload'), '');
             }
         }
 
         if (!_.isEqual(enabledPlugins, originalEnabledPlugins)) {
-            await fsAsync.writeFile(enabledPluginsPath, JSON.stringify(enabledPlugins, undefined, 2));
+            await fs.writeFile(enabledPluginsPath, JSON.stringify(enabledPlugins, undefined, 2));
         }
     }
 
@@ -816,7 +816,7 @@ export class ObsidianLauncher {
                 }
 
                 const manifestPath = path.join(themePath, "manifest.json");
-                if (!(await fileExists(manifestPath))) {
+                if (!(await fs.pathExists(manifestPath))) {
                     throw Error(`No theme found at ${themePath}`)
                 }
                 let themeName = (typeof theme == "object" && ("name" in theme)) ? theme.name : undefined;
@@ -827,7 +827,7 @@ export class ObsidianLauncher {
                         throw Error(`${themePath}/manifest.json malformed.`);
                     }
                 }
-                if (!(await fileExists(path.join(themePath, "theme.css")))) {
+                if (!(await fs.pathExists(path.join(themePath, "theme.css")))) {
                     throw Error(`No theme.css found under ${themePath}`)
                 }
 
@@ -851,7 +851,7 @@ export class ObsidianLauncher {
         const downloadedThemes = await this.downloadThemes(themes);
 
         const obsidianDir = path.join(vault, '.obsidian');
-        await fsAsync.mkdir(obsidianDir, { recursive: true });
+        await fs.mkdir(obsidianDir, { recursive: true });
 
         let enabledTheme: string|undefined = undefined;
 
@@ -863,12 +863,12 @@ export class ObsidianLauncher {
             if (!themeName) {
                 throw Error(`${manifestPath} missing or malformed.`);
             }
-            if (!(await fileExists(cssPath))) {
+            if (!(await fs.pathExists(cssPath))) {
                 throw Error(`${cssPath} missing.`);
             }
 
             const themeDest = path.join(obsidianDir, 'themes', themeName);
-            await fsAsync.mkdir(themeDest, { recursive: true });
+            await fs.mkdir(themeDest, { recursive: true });
 
             await linkOrCp(manifestPath, path.join(themeDest, "manifest.json"));
             await linkOrCp(cssPath, path.join(themeDest, "theme.css"));
@@ -884,7 +884,7 @@ export class ObsidianLauncher {
             const appearancePath = path.join(obsidianDir, 'appearance.json');
             const appearance: ObsidianAppearanceConfig = await tryParseJson(appearancePath) ?? {}
             appearance.cssTheme = enabledTheme ?? "";
-            await fsAsync.writeFile(appearancePath, JSON.stringify(appearance, undefined, 2));
+            await fs.writeFile(appearancePath, JSON.stringify(appearance, undefined, 2));
         }
     }
 
@@ -929,7 +929,7 @@ export class ObsidianLauncher {
         }
 
         if (params.vault !== undefined) {
-            if (!await fileExists(params.vault)) {
+            if (!await fs.pathExists(params.vault)) {
                 throw Error(`Vault path ${params.vault} doesn't exist.`)
             }
             Object.assign(obsidianJson, {
@@ -946,8 +946,8 @@ export class ObsidianLauncher {
             }
         }
 
-        await fsAsync.writeFile(path.join(configDir, 'obsidian.json'), JSON.stringify(obsidianJson));
-        await fsAsync.writeFile(path.join(configDir, 'Preferences'), JSON.stringify(chromePreferences));
+        await fs.writeFile(path.join(configDir, 'obsidian.json'), JSON.stringify(obsidianJson));
+        await fs.writeFile(path.join(configDir, 'Preferences'), JSON.stringify(chromePreferences));
 
         let appPath = params.appPath;
         if (!appPath) {
@@ -979,7 +979,7 @@ export class ObsidianLauncher {
         let vault = params.vault;
         if (params.copy) {
             const dest = await makeTmpDir(`${path.basename(vault)}-`);
-            await fsAsync.cp(vault, dest, { recursive: true, preserveTimestamps: true });
+            await fs.copy(vault, dest, { preserveTimestamps: true });
             vault = dest;
         }
         await this.installPlugins(vault, params.plugins ?? []);
@@ -1074,7 +1074,7 @@ export class ObsidianLauncher {
             dest =`obsidian-installer/${platform}-${arch}/Obsidian-${version}`;
         }
 
-        return (await fileExists(path.join(this.cacheDir, dest)));
+        return (await fs.pathExists(path.join(this.cacheDir, dest)));
     }
 
     /**

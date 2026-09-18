@@ -1,5 +1,5 @@
 import { browser, expect } from '@wdio/globals'
-import fsAsync from "fs/promises";
+import fs from "fs-extra";
 import path from "path";
 import { obsidianPage } from 'wdio-obsidian-service';
 import semver from "semver"
@@ -119,7 +119,7 @@ describe("Test page object", () => {
 
     it("loadWorkspaceLayout object", async () => {
         const workspacesPath = 'test/vaults/basic/.obsidian/workspaces.json';
-        const workspaces = JSON.parse(await fsAsync.readFile(workspacesPath, 'utf-8'))
+        const workspaces = JSON.parse(await fs.readFile(workspacesPath, 'utf-8'))
         const workspace = workspaces.workspaces['saved-layout'];
         expect(await getOpenFiles()).toEqual([]);
         await obsidianPage.loadWorkspaceLayout(workspace);

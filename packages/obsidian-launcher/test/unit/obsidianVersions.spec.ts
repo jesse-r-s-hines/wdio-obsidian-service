@@ -5,8 +5,7 @@ import {
     ParsedDesktopRelease, parseObsidianDesktopRelease, updateObsidianVersionList, GitHubRelease,
     extractInstallerInfo, checkCompatibility,
 } from "../../src/obsidianVersions.js";
-import fs from "fs";
-import fsAsync from "fs/promises";
+import fs from "fs-extra";
 import semver from "semver"
 import _ from "lodash";
 import {
@@ -24,7 +23,7 @@ function compareVersionLists(actual: ObsidianVersionInfo[], expected: ObsidianVe
 
 async function readData(name: string) {
     const filePath = path.resolve("./test/data", name);
-    return await fsAsync.readFile(filePath, 'utf-8');
+    return await fs.readFile(filePath, 'utf-8');
 }
 
 async function readJson(name: string) {

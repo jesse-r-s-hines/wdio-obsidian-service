@@ -1,21 +1,7 @@
-import fsAsync from "fs/promises"
+import fs from "fs-extra"
 import path from "path"
 import os from "os"
-import fs from "fs";
 import _ from "lodash"
-
-
-export async function fileExists(path: string) {
-    try {
-        await fsAsync.stat(path);
-        return true;
-    } catch (e: any) {
-        if (e?.code == "ENOENT") {
-            return false
-        }
-        throw e
-    }
-}
 
 
 /**
@@ -24,7 +10,7 @@ export async function fileExists(path: string) {
  * @returns 
  */
 export async function makeTmpDir(prefix?: string) {
-    return fsAsync.mkdtemp(path.join(os.tmpdir(), prefix ?? 'tmp-'));
+    return fs.mkdtemp(path.join(os.tmpdir(), prefix ?? 'tmp-'));
 }
 
 
@@ -32,11 +18,11 @@ export async function makeTmpDir(prefix?: string) {
  * Tries to hardlink a file, falls back to copy if it fails
  */
 export async function linkOrCp(src: string, dest: string) {
-    await fsAsync.rm(dest, {recursive: true, force: true});
+    await fs.rm(dest, {recursive: true, force: true});
     try {
-        await fsAsync.link(src, dest);
+        await fs.link(src, dest);
     } catch {
-        await fsAsync.copyFile(src, dest);
+        await fs.copyFile(src, dest);
     }
 }
 
@@ -83,10 +69,10 @@ export async function atomicCreate(
     dest = path.resolve(dest);
     const parentDir = path.dirname(dest);
 
-    if (!replace && (await fileExists(dest))) return
+    if (!replace && (await fs.pathExists(dest))) return
 
-    await fsAsync.mkdir(parentDir, { recursive: true });
-    const scratch = await fsAsync.mkdtemp(path.join(parentDir, `.${path.basename(dest)}.tmp.`));
+    await fs.mkdir(parentDir, { recursive: true });
+    const scratch = await fs.mkdtemp(path.join(parentDir, `.${path.basename(dest)}.tmp.`));
 
     try {
         let result = await func(scratch) ?? scratch;
@@ -97,25 +83,25 @@ export async function atomicCreate(
 
         if (replace) {
             // rename will overwrite files but not directories
-            if ((await fsAsync.stat(dest).catch(() => null))?.isDirectory()) {
-                await fsAsync.rename(dest, `${scratch}.old`)
+            if ((await fs.stat(dest).catch(() => null))?.isDirectory()) {
+                await fs.rename(dest, `${scratch}.old`)
             }
             // Potential race condition here if a folder is immediately recreated
-            await fsAsync.rename(result, dest);
+            await fs.rename(result, dest);
         } else {
-            if (!(await fileExists(dest))) {
+            if (!(await fs.pathExists(dest))) {
                 // Ignore error if folder already exists. However, because rename overwrites files, it
                 // is theoretically possible replace dest if it's a file...
-                await fsAsync.rename(result, dest)
+                await fs.rename(result, dest)
                     .catch(e => { if (e?.code != 'ENOTEMPTY') throw e });
             }
         }
 
-        await fsAsync.rm(scratch, { recursive: true, force: true });
-        await fsAsync.rm(`${scratch}.old`, { recursive: true, force: true });
+        await fs.rm(scratch, { recursive: true, force: true });
+        await fs.rm(`${scratch}.old`, { recursive: true, force: true });
     } catch (e: any) {
         if (!preserveTmpDir) {
-            await fsAsync.rm(scratch, { recursive: true, force: true });
+            await fs.rm(scratch, { recursive: true, force: true });
         }
         throw e
     }

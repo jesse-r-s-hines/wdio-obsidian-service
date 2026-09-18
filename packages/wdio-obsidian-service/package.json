@@ -46,6 +46,7 @@
     "homepage": "https://jesse-r-s-hines.github.io/wdio-obsidian-service/wdio-obsidian-service/README.html",
     "devDependencies": {
         "@types/chai": "^5.2.3",
+        "@types/fs-extra": "^11.0.4",
         "@types/lodash": "^4.17.23",
         "@types/mocha": "^10.0.10",
         "@types/node": "^18.19.130",
@@ -68,6 +69,7 @@
         "wdio-obsidian-reporter": "3.2.0"
     },
     "dependencies": {
+        "fs-extra": "^11.4.0",
         "lodash": "^4.17.21",
         "obsidian-launcher": "3.2.0",
         "semver": "^7.7.3",

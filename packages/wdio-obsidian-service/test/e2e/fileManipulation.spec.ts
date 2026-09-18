@@ -1,5 +1,5 @@
 import { browser, expect } from '@wdio/globals'
-import fsAsync from "fs/promises";
+import fs from "fs-extra";
 import { TFile } from 'obsidian';
 import { hash } from '../helpers.js';
 import { obsidianPage } from 'wdio-obsidian-service';
@@ -55,7 +55,7 @@ describe("file manipulation", () => {
 
         it("read", async () => {
             const actual = await obsidianPage.read("Welcome.md");
-            const expected = await fsAsync.readFile('test/vaults/basic/Goodbye.md', 'utf-8');
+            const expected = await fs.readFile('test/vaults/basic/Goodbye.md', 'utf-8');
 
             expect(actual).toEqual(expected);
         })
@@ -131,7 +131,7 @@ describe("file manipulation", () => {
         })
 
         it("write create binary", async () => {
-            const expected = await fsAsync.readFile('test/vaults/fileTypes/logo.png');
+            const expected = await fs.readFile('test/vaults/fileTypes/logo.png');
 
             await obsidianPage.write("newImage.png", expected.buffer);
 
@@ -149,10 +149,10 @@ describe("file manipulation", () => {
         })
 
         it("write modify binary", async () => {
-            const logo = await fsAsync.readFile('test/vaults/fileTypes/logo.png');
+            const logo = await fs.readFile('test/vaults/fileTypes/logo.png');
             await obsidianPage.write("logo.png", logo.buffer);
 
-            const expected = await fsAsync.readFile('test/vaults/fileTypes/example.png');
+            const expected = await fs.readFile('test/vaults/fileTypes/example.png');
             await obsidianPage.write("logo.png", expected.buffer);
 
             const actual = new Uint8Array(await browser.executeObsidian(async ({app}) => {
@@ -164,7 +164,7 @@ describe("file manipulation", () => {
         })
 
         it("write create binary hidden", async () => {
-            const expected = await fsAsync.readFile('test/vaults/fileTypes/logo.png');
+            const expected = await fs.readFile('test/vaults/fileTypes/logo.png');
             await obsidianPage.write(".newImage.png", expected.buffer);
 
             const actual = new Uint8Array(await browser.executeObsidian(async ({app}) => {

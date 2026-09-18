@@ -2,8 +2,7 @@ import { describe, it } from "mocha";
 import { expect } from "chai";
 import _ from "lodash";
 import os from "os";
-import fsAsync from "fs/promises";
-import fs from "fs";
+import fs from "fs-extra";
 import path from "path";
 import { pathToFileURL } from "url";
 import semver from "semver"
@@ -11,7 +10,6 @@ import { ObsidianLauncher, minSupportedObsidianVersion } from "../../src/launche
 import { getCdpSession, cdpEvaluate} from "../../src/cdp.js";
 import { extractInstallerInfo, checkCompatibility } from "../../src/obsidianVersions.js";
 import { fetchObsidianApi } from "../../src/apis.js";
-import { fileExists } from "../../src/utils/file.js";
 import { maybe } from "../../src/utils/misc.js";
 import { ObsidianVersionList } from "../../src/types.js";
 import { createServer, createDirectory } from "../helpers.js";
@@ -83,14 +81,14 @@ describe("ObsidianLauncher", function() {
 
         launcher = new ObsidianLauncher({
             ...obsidianLauncherOpts,
-            cacheDir: await fsAsync.mkdtemp(path.join(os.tmpdir(), "mocha-")), // fresh cacheDir
+            cacheDir: await fs.mkdtemp(path.join(os.tmpdir(), "mocha-")), // fresh cacheDir
             versionsUrl: `${server.url}/obsidian-versions.json`,
         });
     })
 
     after(async function() {
         // on Windows something is holding on to files in the installer that causes the rm to be unreliable
-        const success = (await maybe(fsAsync.rm(launcher.cacheDir, {force: true, recursive: true}))).success;
+        const success = (await maybe(fs.rm(launcher.cacheDir, {force: true, recursive: true}))).success;
         if (!success) {
             console.warn(`Failed to delete ${launcher.cacheDir}`);
         }
@@ -99,19 +97,19 @@ describe("ObsidianLauncher", function() {
     it("test downloadApp", async function() {
         // test that it downloads and extracts properly
         const path = await launcher.downloadApp(latest);
-        expect(await fileExists(path)).to.eql(true);
+        expect(await fs.pathExists(path)).to.eql(true);
     })
 
     it("test downloadInstaller latest", async function() {
         // test that it downloads and extracts properly
         const path = await launcher.downloadInstaller(latest);
-        expect(await fileExists(path)).to.eql(true);
+        expect(await fs.pathExists(path)).to.eql(true);
     })
 
     it("test downloadInstaller earliest", async function() {
         // test that it downloads and extracts properly
         const path = await launcher.downloadInstaller(versions[0][0]);
-        expect(await fileExists(path)).to.eql(true);
+        expect(await fs.pathExists(path)).to.eql(true);
     })
 
     it("test extractInstallerInfo", async function() {

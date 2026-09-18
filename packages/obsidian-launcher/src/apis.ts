@@ -1,6 +1,6 @@
 /** Functions for downloading files and interacting with the Obsidian and GitHub APIs. */
 import _ from "lodash"
-import fs from "fs";
+import fs from "fs-extra";
 import { finished } from 'stream/promises';
 import { Readable } from 'stream';
 import { ReadableStream } from "stream/web"

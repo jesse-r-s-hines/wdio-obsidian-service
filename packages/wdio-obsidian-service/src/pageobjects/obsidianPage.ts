@@ -1,5 +1,5 @@
 import * as path from "path"
-import * as fsAsync from "fs/promises"
+import fs from "fs-extra";
 import * as crypto from "crypto";
 import * as semver from "semver";
 import { fileURLToPath } from "url";
@@ -373,7 +373,7 @@ class ObsidianPage extends BasePage {
         for (let vault of vaults) {
             if (typeof vault == "string") {
                 vault = path.resolve(vault);
-                const files = await fsAsync.readdir(vault, { recursive: true, withFileTypes: true });
+                const files = await fs.readdir(vault, { recursive: true, withFileTypes: true });
                 for (const f of files) {
                     const fullPath = path.join(f.parentPath, f.name);
                     const vaultPath = path.relative(vault, fullPath).split(path.sep).join("/");
@@ -444,7 +444,7 @@ class ObsidianPage extends BasePage {
             if (newFileInfo.type == "file") {
                 let content = newFileInfo.sourceContent;
                 if (!content) {
-                    content = (await fsAsync.readFile(newFileInfo.sourceFile!)).buffer as ArrayBuffer;
+                    content = (await fs.readFile(newFileInfo.sourceFile!)).buffer as ArrayBuffer;
                 }
                 const hash = crypto.createHash("SHA256")
                     .update(typeof content == "string" ? content : new Uint8Array(content))
