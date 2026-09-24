@@ -252,15 +252,25 @@ export class ObsidianLauncherService implements Services.ServiceInstance {
                     cap.browserName = "chrome";
                     cap.browserVersion = installerInfo.chrome;
                     cap[OBSIDIAN_CAPABILITY_KEY] = normalizedObsidianOptions;
+                    const extraChromeArgs: string[] = [];
+                    if (process.platform == 'linux') {
+                        // Workaround for SUID issue on linux. See https://github.com/electron/electron/issues/42510
+                        extraChromeArgs.push("--no-sandbox");
+                        // wayland doesn't auto-focus the window, causing intermittent issues with tests depending on if
+                        // the Obsidian window spawns behind something. So prefer x11 if possible.
+                        const userSpecified = !!(cap['goog:chromeOptions']?.args?.some(
+                            a => a.startsWith("--ozone-platform") || a.startsWith("--headless")
+                        ))
+                        const onWayland = (process.env.XDG_SESSION_TYPE === "wayland" || !!process.env.WAYLAND_DISPLAY);
+                        if (!userSpecified && onWayland && process.env.DISPLAY) {
+                            extraChromeArgs.push("--ozone-platform=x11");
+                        }
+                    }
                     cap['goog:chromeOptions'] = {
                         binary: installerPath,
                         windowTypes: ["app", "webview"],
                         ...cap['goog:chromeOptions'],
-                        args: [
-                            // Workaround for SUID issue on linux. See https://github.com/electron/electron/issues/42510
-                            ...(process.platform == 'linux' ? ["--no-sandbox"] : []),
-                            ...(cap['goog:chromeOptions']?.args ?? [])
-                        ],
+                        args: [...extraChromeArgs, ...(cap['goog:chromeOptions']?.args ?? [])],
                     }
                     cap['wdio:chromedriverOptions'] = {
                         // allowedIps is not included in the types, but gets passed as --allowed-ips to chromedriver.
