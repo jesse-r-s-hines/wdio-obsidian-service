@@ -56,21 +56,27 @@ describe("Test windows", () => {
             await app.workspace.getLeaf('tab').openFile(app.vault.getAbstractFileByPath("Goodbye.md") as TFile);
         })
         await browser.executeObsidianCommand("workspace:move-to-new-window");
-        const mainWindow = await browser.getWindowHandle();
-        const otherWindow = (await browser.getWindowHandles()).find(h => h != mainWindow)!;
+        let mainWindow = await browser.getWindowHandle();
+        let otherWindow = (await browser.getWindowHandles()).find(h => h != mainWindow)!;
         await browser.switchToWindow(otherWindow);
 
-        const response = await browser.executeObsidian((obj) => {
-            return !!(
-                obj?.app &&
-                obj?.app?.workspace &&
-                obj?.obsidian &&
-                obj?.obsidian.App
-            )
-        })
+        let response = await browser.executeObsidian((obj) => !!(obj?.app?.workspace && obj?.obsidian.App));
         expect(response).toEqual(true);
 
         await browser.switchToWindow(mainWindow);
-        await browser.executeObsidian(({app}) => { app.workspace.detachLeavesOfType("markdown") })
+
+        await browser.reloadObsidian();
+
+        mainWindow = await browser.getWindowHandle();
+        otherWindow = (await browser.getWindowHandles()).find(h => h != mainWindow)!;
+
+        response = await browser.executeObsidian((obj) => !!(obj?.app?.workspace && obj?.obsidian.App));
+        expect(response).toEqual(true);
+
+        await browser.switchToWindow(otherWindow);
+        response = await browser.executeObsidian((obj) => !!(obj?.app?.workspace && obj?.obsidian.App));
+        expect(response).toEqual(true);
+
+        await browser.executeObsidian(({app}) => { app.workspace.detachLeavesOfType("markdown") });
     })
 })
