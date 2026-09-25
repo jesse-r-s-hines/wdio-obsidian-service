@@ -20,10 +20,14 @@ class WdioObsidianServicePlugin extends obsidian.Plugin {
             require: require,
         });
 
-        window.wdioObsidianService = getGlobals;
         // pop-out windows have separate window objects so the globals don't tranfer by default. webdriverio normally
         // executes in the main window but you can switch that with `switchWindow`. Here we add the global to all
         // windows so executeObsidian still works.
+        const windows = new Set([this.app.workspace.rootSplit?.win ?? window]);
+        this.app.workspace.iterateAllLeaves(l => { windows.add(l.getContainer().win) });
+        for (const win of windows) {
+            win.wdioObsidianService = getGlobals;
+        }
         this.registerEvent(this.app.workspace.on("window-open", (win) => {
             win.win.wdioObsidianService = getGlobals;
         }))
