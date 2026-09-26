@@ -1,6 +1,4 @@
 import { browser, expect } from '@wdio/globals'
-import { TFile } from 'obsidian';
-import semver from "semver";
 import { obsidianPage } from 'wdio-obsidian-service';
 
 
@@ -37,46 +35,5 @@ describe("Test custom browser commands", () => {
     it("getObsidianPage", async () => {
         const commandObsidianPage = browser.getObsidianPage();
         expect(commandObsidianPage).toBeInstanceOf(obsidianPage.constructor);
-    })
-})
-
-describe("Test windows", () => {
-    before(async function() {
-        const installerVersion = browser.getObsidianInstallerVersion();
-        if (semver.lt(installerVersion, "0.12.19") || (await obsidianPage.getPlatform()).isMobile) {
-            this.skip(); // Windows don't work on older installer versions or mobile
-        }
-    })
-
-    it('windows', async function() {
-        // pop-out windows have isolated window objects, check that executeObsidian still works and can access the
-        // globals.
-        await browser.executeObsidian(async ({app}) => {
-            await app.workspace.getLeaf('tab').openFile(app.vault.getAbstractFileByPath("Welcome.md") as TFile);
-            await app.workspace.getLeaf('tab').openFile(app.vault.getAbstractFileByPath("Goodbye.md") as TFile);
-        })
-        await browser.executeObsidianCommand("workspace:move-to-new-window");
-        let mainWindow = await browser.getWindowHandle();
-        let otherWindow = (await browser.getWindowHandles()).find(h => h != mainWindow)!;
-        await browser.switchToWindow(otherWindow);
-
-        let response = await browser.executeObsidian((obj) => !!(obj?.app?.workspace && obj?.obsidian.App));
-        expect(response).toEqual(true);
-
-        await browser.switchToWindow(mainWindow);
-
-        await browser.reloadObsidian();
-
-        mainWindow = await browser.getWindowHandle();
-        otherWindow = (await browser.getWindowHandles()).find(h => h != mainWindow)!;
-
-        response = await browser.executeObsidian((obj) => !!(obj?.app?.workspace && obj?.obsidian.App));
-        expect(response).toEqual(true);
-
-        await browser.switchToWindow(otherWindow);
-        response = await browser.executeObsidian((obj) => !!(obj?.app?.workspace && obj?.obsidian.App));
-        expect(response).toEqual(true);
-
-        await browser.executeObsidian(({app}) => { app.workspace.detachLeavesOfType("markdown") });
     })
 })

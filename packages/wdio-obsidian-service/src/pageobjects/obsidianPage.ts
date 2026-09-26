@@ -457,6 +457,37 @@ class ObsidianPage extends BasePage {
             }
         }
     }
+
+    private mainWindowHandle: string|undefined;
+
+    /**
+     * Returns the handle for the main Obsidian window.
+     * 
+     * See also: https://webdriver.io/docs/api/webdriver/#getwindowhandle
+     */
+    async getMainWindowHandle() {
+        const windowHandles = await this.browser.getWindowHandles();
+        if (this.getObsidianCapabilities().openVault == undefined) {
+            return windowHandles[0];
+        }
+
+        if (!this.mainWindowHandle || !windowHandles.includes(this.mainWindowHandle)) {
+            const currentWindow = await this.browser.getWindowHandle();
+            try {
+                for (const windowHandle of windowHandles) {
+                    await this.browser.switchToWindow(windowHandle);
+                    const isMain = await this.browser.executeObsidian(({app}) => (app.workspace.rootSplit.win == window));
+                    if (isMain) {
+                        this.mainWindowHandle = windowHandle;
+                        break;
+                    }
+                }
+            } finally {
+                await this.browser.switchToWindow(currentWindow);
+            }
+        }
+        return this.mainWindowHandle!;
+    }
 }
 
 /**
