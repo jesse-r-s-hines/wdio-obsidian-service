@@ -1,9 +1,9 @@
 {
     "metadata": {
         "schemaVersion": "2.2.0",
-        "commitDate": "2026-10-01T20:37:19Z",
-        "commitSha": "a39c6958a49d6a2e868bb1e67cb6121d4852203c",
-        "timestamp": "2026-10-01T21:07:25.392Z"
+        "commitDate": "2026-10-05T16:06:20Z",
+        "commitSha": "fed8367b71c99109042afdbee16cfcec7ca63174",
+        "timestamp": "2026-10-05T17:14:09.324Z"
     },
     "versions": [
         {
@@ -9116,13 +9116,75 @@
             "version": "1.14.4",
             "minInstallerVersion": "1.5.8",
             "minRunnableInstallerVersion": "1.1.9",
-            "maxInstallerVersion": "1.13.7",
-            "isBeta": true,
+            "maxInstallerVersion": "1.14.4",
+            "isBeta": false,
+            "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.14.4",
             "changelogUrl": "https://obsidian.md/changelog/2026-10-01-desktop-v1.14.4/",
             "downloads": {
-                "asar": "https://releases.obsidian.md/release/obsidian-1.14.4.asar.gz"
+                "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.14.4/obsidian-1.14.4.asar.gz",
+                "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.14.4/Obsidian-1.14.4.AppImage",
+                "appImageArm": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.14.4/Obsidian-1.14.4-arm64.AppImage",
+                "tar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.14.4/obsidian-1.14.4.tar.gz",
+                "tarArm": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.14.4/obsidian-1.14.4-arm64.tar.gz",
+                "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.14.4/Obsidian-1.14.4.dmg",
+                "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.14.4/Obsidian-1.14.4.exe",
+                "apk": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.14.4/Obsidian-1.14.4.apk"
             },
-            "installers": {}
+            "installers": {
+                "appImage": {
+                    "digest": "sha256:6362ddbeeeebb7bbccb48fae009572cf2284ef92f5c919c1332aba48de6ffeaa",
+                    "electron": "43.7.7",
+                    "chrome": "150.0.7871.250",
+                    "platforms": [
+                        "linux-x64"
+                    ]
+                },
+                "appImageArm": {
+                    "digest": "sha256:721829a4f0ffadf7674f396aed58a5699e116b76b78747873d1751193efb66a9",
+                    "electron": "43.7.7",
+                    "chrome": "150.0.7871.250",
+                    "platforms": [
+                        "linux-arm64"
+                    ]
+                },
+                "tar": {
+                    "digest": "sha256:e70b7cd63787e7f798a84fec453f5c446b91877bd3f612e8fb98e9b76cc81120",
+                    "electron": "43.7.7",
+                    "chrome": "150.0.7871.250",
+                    "platforms": [
+                        "linux-x64"
+                    ]
+                },
+                "tarArm": {
+                    "digest": "sha256:fc212804515713ed85fe5ef5bc4b009872bcc01847c4be4fcc14971deee2a42d",
+                    "electron": "43.7.7",
+                    "chrome": "150.0.7871.250",
+                    "platforms": [
+                        "linux-arm64"
+                    ]
+                },
+                "dmg": {
+                    "digest": "sha256:dcf818dd20ee5d9dd3e782eee0c0c4c47cc225383b051c2fc9af7d5772f59f70",
+                    "electron": "43.7.7",
+                    "chrome": "150.0.7871.250",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
+                },
+                "exe": {
+                    "digest": "sha256:28662520368d5956df7798076b8370ac730164a8863dcd4f678ced53f63faa00",
+                    "electron": "43.7.7",
+                    "chrome": "150.0.7871.250",
+                    "platforms": [
+                        "win32-arm64",
+                        "win32-ia32",
+                        "win32-x64"
+                    ]
+                }
+            },
+            "electronVersion": "43.7.7",
+            "chromeVersion": "150.0.7871.250"
         }
     ]
 }
