@@ -178,3 +178,8 @@ Support Obsidian CLI in wdio tests!
 
 ## 3.2.1
 - Fix race condition in .obsidian-cache when downloading metadata on Windows
+
+## 3.3.0
+- Add getMainWindowHandle helper to ObsidianPage
+- Prefer x11 over wayland on linux systems to avoid issues with wayland not capturing focus
+- Fix executeObsidian not working when using the Obsidian settings window as the execution context
