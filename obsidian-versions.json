@@ -9201,7 +9201,8 @@
                 "tar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.14.5/obsidian-1.14.5.tar.gz",
                 "tarArm": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.14.5/obsidian-1.14.5-arm64.tar.gz",
                 "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.14.5/Obsidian-1.14.5.dmg",
-                "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.14.5/Obsidian-1.14.5.exe"
+                "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.14.5/Obsidian-1.14.5.exe",
+                "apk": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.14.4/Obsidian-1.14.4.apk"
             },
             "installers": {
                 "appImage": {
