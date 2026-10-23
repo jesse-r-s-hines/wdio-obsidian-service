@@ -1,9 +1,9 @@
 {
     "metadata": {
         "schemaVersion": "2.2.0",
-        "commitDate": "2026-10-05T16:06:20Z",
-        "commitSha": "fed8367b71c99109042afdbee16cfcec7ca63174",
-        "timestamp": "2026-10-05T17:14:09.324Z"
+        "commitDate": "2026-10-22T20:48:52Z",
+        "commitSha": "2658231681dbe4d4d395343b6af703e63c6ca939",
+        "timestamp": "2026-10-23T05:08:38.369Z"
     },
     "versions": [
         {
@@ -9185,6 +9185,91 @@
             },
             "electronVersion": "43.7.7",
             "chromeVersion": "150.0.7871.250"
+        },
+        {
+            "version": "1.14.5",
+            "minInstallerVersion": "1.5.8",
+            "minRunnableInstallerVersion": "1.1.9",
+            "maxInstallerVersion": "1.14.5",
+            "isBeta": false,
+            "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.14.5",
+            "changelogUrl": "https://obsidian.md/changelog/2026-10-22-desktop-v1.14.5/",
+            "downloads": {
+                "asar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.14.5/obsidian-1.14.5.asar.gz",
+                "appImage": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.14.5/Obsidian-1.14.5.AppImage",
+                "appImageArm": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.14.5/Obsidian-1.14.5-arm64.AppImage",
+                "tar": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.14.5/obsidian-1.14.5.tar.gz",
+                "tarArm": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.14.5/obsidian-1.14.5-arm64.tar.gz",
+                "dmg": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.14.5/Obsidian-1.14.5.dmg",
+                "exe": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.14.5/Obsidian-1.14.5.exe"
+            },
+            "installers": {
+                "appImage": {
+                    "digest": "sha256:306815f60d15dea8610d72886ef5e50ef4b7e7185e952ffc3bb21bee1582d952",
+                    "electron": "43.8.3",
+                    "chrome": "150.0.7871.250",
+                    "platforms": [
+                        "linux-x64"
+                    ]
+                },
+                "appImageArm": {
+                    "digest": "sha256:378d88c6c01c26783d3565c4b7a8de865e163e67c8ffb447ae06675d52623665",
+                    "electron": "43.8.3",
+                    "chrome": "150.0.7871.250",
+                    "platforms": [
+                        "linux-arm64"
+                    ]
+                },
+                "tar": {
+                    "digest": "sha256:1bc6547c889d7d02c3f2c5b55884cba14980bfac4ada32c0bdc6ec6db542aaf8",
+                    "electron": "43.8.3",
+                    "chrome": "150.0.7871.250",
+                    "platforms": [
+                        "linux-x64"
+                    ]
+                },
+                "tarArm": {
+                    "digest": "sha256:ba1d2e7070acffb39a795e81c48c3a2119c44be526337dd8ff58963f3ab2052a",
+                    "electron": "43.8.3",
+                    "chrome": "150.0.7871.250",
+                    "platforms": [
+                        "linux-arm64"
+                    ]
+                },
+                "dmg": {
+                    "digest": "sha256:be79e6410d80fa705218aa4e8cb24ce8418cf16e13be4036227a5659b1f6aab2",
+                    "electron": "43.8.3",
+                    "chrome": "150.0.7871.250",
+                    "platforms": [
+                        "darwin-arm64",
+                        "darwin-x64"
+                    ]
+                },
+                "exe": {
+                    "digest": "sha256:4b95aa855062fb253439c392a32b536c3f9f22ac7fad04f1a6cbf176ecbcfa2a",
+                    "electron": "43.8.3",
+                    "chrome": "150.0.7871.250",
+                    "platforms": [
+                        "win32-arm64",
+                        "win32-ia32",
+                        "win32-x64"
+                    ]
+                }
+            },
+            "electronVersion": "43.8.3",
+            "chromeVersion": "150.0.7871.250"
+        },
+        {
+            "version": "1.15.0",
+            "minInstallerVersion": "1.5.8",
+            "minRunnableInstallerVersion": "1.1.9",
+            "maxInstallerVersion": "1.14.5",
+            "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2026-10-22-desktop-v1.15.0/",
+            "downloads": {
+                "asar": "https://releases.obsidian.md/release/obsidian-1.15.0.asar.gz"
+            },
+            "installers": {}
         }
     ]
 }
