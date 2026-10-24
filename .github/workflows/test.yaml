@@ -15,8 +15,8 @@ defaults:
     shell: bash
 
 env:
-  PNPM_CONFIG_AGGREGATE_OUTPUT: 'true'
-  PNPM_CONFIG_REPORTER_HIDE_PREFIX: 'true'
+  PNPM_CONFIG_AGGREGATE_OUTPUT: 'false'
+  PNPM_CONFIG_REPORTER_HIDE_PREFIX: 'false'
 
 jobs:
   pre-check: # Check and avoid running tests on the same code (e.g. after pr merge)
