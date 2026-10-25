@@ -10,7 +10,7 @@ import _ from "lodash"
 import {
     ObsidianVersionInfo, ObsidianVersionList, ObsidianInstallerInfo, PluginEntry, DownloadedPluginEntry, ThemeEntry,
     DownloadedThemeEntry, obsidianVersionsSchemaVersion, ObsidianAppearanceConfig, ObsidianCommunityPlugin,
-    ObsidianCommunityTheme, PluginManifest
+    ObsidianCommunityTheme, PluginManifest, ObsidianDistribution,
 } from "./types.js";
 import { makeTmpDir, atomicCreate, linkOrCp } from "./utils/file.js"
 import { consola, warnOnce, maybe, tryParseJson, loadEnv } from "./utils/misc.js";
@@ -21,9 +21,17 @@ import { extractObsidianAppImage, extractObsidianExe, extractObsidianDmg } from 
 import { updateObsidianVersionList } from "./obsidianVersions.js";
 
 
-const currentPlatform = {
-    platform: process.platform,
-    arch: process.arch,
+function resolvePlatform(opts: ObsidianDistribution): Required<ObsidianDistribution> {
+    if (opts.platform == "android") {
+        return {platform: "android", arch: opts.arch ?? "arm64"};
+    } else {
+        return _.defaults({}, opts, {platform: process.platform, arch: process.arch});
+    }
+}
+
+function platformName(opts: ObsidianDistribution) {
+    opts = resolvePlatform(opts);
+    return opts.platform == 'android' ? 'android' : `${opts.platform}-${opts.arch}`;
 }
 
 loadEnv();
@@ -211,59 +219,97 @@ export class ObsidianLauncher {
      * @param installerVersion specific version or one of
      *   - "latest": Get the latest Obsidian installer compatible with `appVersion`
      *   - "earliest": Get the oldest Obsidian installer compatible with `appVersion`
-     * 
+     * @param opts latest version can vary by platform (i.e. a mobile-only bugfix release). Defaults to host platform.
      * See also: [Obsidian App vs Installer Versions](../README.md#obsidian-app-vs-installer-versions)
      *
      * @returns [appVersion, installerVersion] with any "latest" etc. resolved to specific versions.
      */
-    async resolveVersion(appVersion: string, installerVersion = "latest"): Promise<[string, string]> {
-        const versions = await this.getVersions();
-        const appVersionInfo = await this.getVersionInfo(appVersion);
-        appVersion = appVersionInfo.version;
-        let installerVersionInfo: ObsidianVersionInfo|undefined;
-        const { platform, arch } = process;
+    async resolveVersion(appVersion: string, installerVersion = "latest", opts: ObsidianDistribution = {}): Promise<[string, string]> {
+        const {platform, arch} = resolvePlatform(opts);
+        appVersion = semver.valid(appVersion) ?? appVersion;
+        installerVersion = semver.valid(installerVersion) ?? installerVersion;
+        const allVersions = await this.getVersions();
 
-        if (semver.lt(appVersion, minSupportedObsidianVersion)) {
+        const platformMatch = (v: ObsidianVersionInfo) => {
+            if (platform == "android") {
+                return !!v.downloads.apk;
+            } else {
+                return !!(
+                    v.downloads.asar && v.minInstallerVersion && v.maxInstallerVersion &&
+                    _.findLast(allVersions, i =>
+                        semver.gte(i.version, v.minInstallerVersion!) &&
+                        semver.lte(i.version, v.maxInstallerVersion!) &&
+                        this.getInstallerKey(i, {platform, arch})
+                    )
+                )
+            }
+        }
+
+        let appVersionInfo: ObsidianVersionInfo|undefined;
+        if (appVersion == "latest-beta") {
+            appVersionInfo = _.findLast(allVersions, v => platformMatch(v));
+            if (!appVersionInfo) throw Error(`No Obsidian version found for ${platformName({platform, arch})}`);
+        } else if (appVersion == "latest") {
+            appVersionInfo = _.findLast(allVersions, v => !v.isBeta && platformMatch(v));
+            if (!appVersionInfo) throw Error(`No Obsidian version found for ${platformName({platform, arch})}`);
+        } else if (appVersion == "earliest") {
+            const manifest = await this.getRootManifest();
+            if (!manifest?.minAppVersion) {
+                throw Error('Unable to resolve Obsidian appVersion "earliest", no manifest.json or minAppVersion found.')
+            }
+            appVersionInfo = allVersions.find(v => semver.gte(v.version, manifest.minAppVersion) && platformMatch(v));
+            if (!appVersionInfo) throw Error(`No Obsidian version >=minAppVersion found for ${platformName({platform, arch})}`);
+        } else {
+            appVersionInfo = allVersions.find(v => v.version == appVersion);
+            if (!appVersionInfo) {
+                throw Error(`No Obsidian version "${appVersion}" found`);
+            } else if (!platformMatch(appVersionInfo)) {
+                const msg = `Obsidian version "${appVersion}" is not available for ${platformName({platform, arch})}.`
+                const hostLatest = _.findLast(allVersions, v => !v.isBeta && !!v.downloads.asar)!.version;
+                const hostLatestBeta = _.findLast(allVersions, v => !!v.downloads.asar)!.version;
+                if ([hostLatest, hostLatestBeta].includes(appVersionInfo.version)) {
+                    throw Error(msg + ` Maybe you resolved latest version for host platform instead of ${platformName({platform, arch})}, such as forgetting to pass ${platform} to parseObsidianVersions?`);
+                } else {
+                    throw Error(msg);
+                }
+            }
+        }
+        if (semver.lt(appVersionInfo.version, minSupportedObsidianVersion)) {
             warnOnce("unsupported-version",
                 `Obsidian versions before ${minSupportedObsidianVersion} are unsupported, some obsidian-launcher ` +
                 `features will not work.`
             );
         }
 
-        if (installerVersion == "latest") {
-            installerVersionInfo = _.findLast(versions, v =>
-                semver.lte(v.version, appVersionInfo.version) &&
-                !!this.getInstallerKey(v, {platform, arch})
-            );
-        } else if (installerVersion == "earliest") {
-            installerVersionInfo = versions.find(v =>
-                appVersionInfo.minInstallerVersion &&
-                semver.gte(v.version, appVersionInfo.minInstallerVersion) &&
-                semver.lte(v.version, appVersionInfo.version) &&
-                !!this.getInstallerKey(v, {platform, arch})
-            );
+        let installerVersionInfo: ObsidianVersionInfo|undefined;
+        if (platform == "android") {
+            installerVersionInfo = appVersionInfo;
         } else {
-            installerVersion = semver.valid(installerVersion) ?? installerVersion; // normalize
-            installerVersionInfo = versions.find(v => v.version == installerVersion);
-        }
-        if (!installerVersionInfo) {
-            if (["earliest", "latest"].includes(installerVersion)) {
-                throw Error(`No compatible installers available for Obsidian ${appVersion} for ${platform}-${arch}`);
+            const installers = (await this.getVersions()).filter(v => !!this.getInstallerKey(v, {platform, arch}));
+            if (installerVersion == "latest") {
+                installerVersionInfo = _.findLast(installers, v => semver.lte(v.version, appVersionInfo.version));
+            } else if (installerVersion == "earliest") {
+                installerVersionInfo = installers.find(v =>
+                    semver.gte(v.version, appVersionInfo.minInstallerVersion!) &&
+                    semver.lte(v.version, appVersionInfo.version)
+                );
             } else {
-                throw Error(`No Obsidian installer ${installerVersion} found`);
+                installerVersionInfo = installers.find(v => v.version == installerVersion);
             }
-        }
-
-        if (
-            !appVersionInfo.minInstallerVersion || !appVersionInfo.maxInstallerVersion ||
-            semver.lt(installerVersionInfo.version, appVersionInfo.minInstallerVersion) ||
-            semver.gt(installerVersionInfo.version, appVersionInfo.maxInstallerVersion)
-        ) {
-            warnOnce(`incompatible-versions-${appVersionInfo.version}-${installerVersionInfo.version}`,
-                `App and installer versions are incompatible: app ${appVersionInfo.version} is compatible with ` +
-                `installer >=${appVersionInfo.minInstallerVersion} <=${appVersionInfo.maxInstallerVersion} but ` +
-                `${installerVersionInfo.version} specified.`
-            )
+            if (!installerVersionInfo) {
+                // we know there is a valid installer, so failure is only possible if an explicit installer was passed
+                throw Error(`No Obsidian installer ${installerVersion} found for ${platformName({platform, arch})}`);
+            }
+            if (
+                semver.lt(installerVersionInfo.version, appVersionInfo.minInstallerVersion!) ||
+                semver.gt(installerVersionInfo.version, appVersionInfo.maxInstallerVersion!)
+            ) {
+                warnOnce(`incompatible-versions-${appVersionInfo.version}-${installerVersionInfo.version}`,
+                    `App and installer versions are incompatible: app ${appVersionInfo.version} is compatible with ` +
+                    `installer >=${appVersionInfo.minInstallerVersion} <=${appVersionInfo.maxInstallerVersion} but ` +
+                    `${installerVersionInfo.version} specified.`
+                )
+            }
         }
 
         return [appVersionInfo.version, installerVersionInfo.version];
@@ -274,26 +320,16 @@ export class ObsidianLauncher {
      * @param appVersion Obsidian app version
      */
     async getVersionInfo(appVersion: string): Promise<ObsidianVersionInfo> {
-        const versions = await this.getVersions();
-        if (appVersion == "latest-beta") {
-            appVersion = versions.at(-1)!.version;
-        } else if (appVersion == "latest") {
-            appVersion = versions.filter(v => !v.isBeta).at(-1)!.version;
-        } else if (appVersion == "earliest") {
-            const manifest = await this.getRootManifest();
-            if (!manifest?.minAppVersion) {
-                throw Error('Unable to resolve Obsidian appVersion "earliest", no manifest.json or minAppVersion found.')
-            }
-            appVersion = manifest.minAppVersion;
-        } else {
-            // if invalid match won't be found and we'll throw error below
-            appVersion = semver.valid(appVersion) ?? appVersion;
+        appVersion = semver.valid(appVersion) ?? appVersion;
+        const allVersions = await this.getVersions();
+        if (['earliest', 'latest', 'latest-beta'].includes(appVersion)) {
+            appVersion = (await this.resolveVersion(appVersion, "latest"))[0];
+            // return explicit versions regardless of if they are available for current platform
         }
-        const versionInfo = versions.find(v => v.version == appVersion);
+        const versionInfo = allVersions.find(v => v.version == appVersion);
         if (!versionInfo) {
-            throw Error(`No Obsidian app version "${appVersion}" found`);
+            throw Error(`No Obsidian version "${appVersion}" found`);
         }
-
         return versionInfo;
     }
 
@@ -311,27 +347,28 @@ export class ObsidianLauncher {
      * See also: [Obsidian App vs Installer Versions](../README.md#obsidian-app-vs-installer-versions)
      * 
      * @param versions string to parse
+     * @param opts latest version can vary by platform (i.e. a mobile-only bugfix release). Defaults to host platform.
      * @returns [appVersion, installerVersion][] resolved to specific versions.
      */
-    async parseVersions(versions: string): Promise<[string, string][]> {
+    async parseVersions(versions: string, opts: ObsidianDistribution = {}): Promise<[string, string][]> {
         const parsedVersions = versions.split(/[ ,]/).filter(v => v).map((v) => {
             const [appVersion, installerVersion = 'earliest'] = v.split("/");
             return [appVersion, installerVersion] as [string, string];
         });
         const resolvedVersions: [string, string][] = [];
         for (const [appVersion, installerVersion] of parsedVersions) {
-            resolvedVersions.push(await this.resolveVersion(appVersion, installerVersion));
+            resolvedVersions.push(await this.resolveVersion(appVersion, installerVersion, opts));
         }
         return _.uniqBy(resolvedVersions, v => v.join('/'));
     }
 
     private getInstallerKey(
         installerVersionInfo: ObsidianVersionInfo,
-        opts: {platform?: NodeJS.Platform, arch?: NodeJS.Architecture} = {},
+        opts: ObsidianDistribution = {},
     ): keyof ObsidianVersionInfo['installers']|undefined {
-        const {platform, arch} = _.defaults({}, opts, currentPlatform);
-        const platformName = `${platform}-${arch}`;
-        const key = _.findKey(installerVersionInfo.installers, v => v && v.platforms.includes(platformName));
+        const key = _.findKey(installerVersionInfo.installers,
+            v => v && v.platforms.includes(platformName(opts))
+        );
         return key as keyof ObsidianVersionInfo['installers']|undefined;
     }
 
@@ -343,16 +380,17 @@ export class ObsidianLauncher {
      */
     async getInstallerInfo(
         installerVersion: string,
-        opts: {platform?: NodeJS.Platform, arch?: NodeJS.Architecture} = {},
+        opts: ObsidianDistribution = {},
     ): Promise<ObsidianInstallerInfo & {url: string}> {
-        const {platform, arch} = _.defaults({}, opts, currentPlatform);
+        // TODO: maybe shouldn't allow latest etc. here or resolve them as installer, but keeping for backwards compat
+        installerVersion = (await this.resolveVersion(installerVersion, 'latest', opts))[0]
         const versionInfo = await this.getVersionInfo(installerVersion);
-        const key = this.getInstallerKey(versionInfo, {platform, arch});
+        const key = this.getInstallerKey(versionInfo, opts)!;
         if (key) {
             return {...versionInfo.installers[key]!, url: versionInfo.downloads[key]!};
         } else {
             throw Error(
-                `No Obsidian installer for ${installerVersion} ${platform}-${arch}` +
+                `No Obsidian installer for ${installerVersion} ${platformName(opts)}` +
                 (versionInfo.isBeta ? ` (${installerVersion} is a beta version)` : '')
             );
         }
@@ -391,11 +429,10 @@ export class ObsidianLauncher {
      */
     async downloadInstaller(
         installerVersion: string,
-        opts: {platform?: NodeJS.Platform, arch?: NodeJS.Architecture} = {},
+        opts: ObsidianDistribution = {},
     ): Promise<string> {
-        const {platform, arch} = _.defaults({}, opts, currentPlatform);
-        const versionInfo = await this.getVersionInfo(installerVersion);
-        installerVersion = versionInfo.version;
+        const {platform, arch} = resolvePlatform(opts);
+        installerVersion = (await this.resolveVersion(installerVersion, 'latest', opts))[0]
         const installerInfo = await this.getInstallerInfo(installerVersion, {platform, arch});
         this.verifyUrl(installerInfo.url);
         const installerDir = path.join(this.cacheDir, `obsidian-installer/${platform}-${arch}/Obsidian-${installerVersion}`);
@@ -481,10 +518,10 @@ export class ObsidianLauncher {
      */
     async downloadChromedriver(
         installerVersion: string,
-        opts: {platform?: NodeJS.Platform, arch?: NodeJS.Architecture} = {},
+        opts: ObsidianDistribution = {},
     ): Promise<string> {
-        const {platform, arch} = _.defaults({}, opts, currentPlatform);
-        const installerInfo = await this.getInstallerInfo(installerVersion, {platform, arch});
+        const {platform, arch} = resolvePlatform(opts);
+        const installerInfo = await this.getInstallerInfo(installerVersion, opts);
         const chromedriverDir = path.join(this.cacheDir, `electron-chromedriver/${platform}-${arch}/${installerInfo.electron}`);
         let chromedriverPath: string;
         if (process.platform == "win32") {
@@ -510,6 +547,7 @@ export class ObsidianLauncher {
      * Downloads the Obsidian apk.
      */
     async downloadAndroid(version: string): Promise<string> {
+        version = (await this.resolveVersion(version, 'latest', {platform: 'android'}))[0]
         const versionInfo = await this.getVersionInfo(version);
         const apkUrl = versionInfo.downloads.apk;
         if (!apkUrl) {

@@ -169,12 +169,16 @@ export class ObsidianLauncherService implements Services.ServiceInstance {
                 );
 
                 let appVersion = cap.browserVersion ?? cap[OBSIDIAN_CAPABILITY_KEY]?.appVersion ?? "latest";
-                appVersion = (await this.obsidianLauncher.getVersionInfo(appVersion)).version;
-                if (semver.lt(appVersion, minSupportedObsidianVersion)) {
-                    throw Error(`Minimum supported Obsidian version is ${minSupportedObsidianVersion}`)
-                }
+                let installerVersion = obsidianOptions.installerVersion ?? "earliest";
 
                 if (isAppium(cap)) {
+                    appVersion = (await this.obsidianLauncher.resolveVersion(
+                        appVersion, 'latest', {platform: "android"},
+                    ))[0];
+                    if (semver.lt(appVersion, minSupportedObsidianVersion)) {
+                        throw Error(`Minimum supported Obsidian version is ${minSupportedObsidianVersion}`)
+                    }
+
                     let apk = getAppiumOptions(cap).app;
                     if (!apk) {
                         apk = await this.obsidianLauncher.downloadAndroid(appVersion);
@@ -215,9 +219,12 @@ export class ObsidianLauncherService implements Services.ServiceInstance {
                         log.warn("Note: For best performance set noReset to true, wdio-obsidian-service will handle resetting Obsidian between tests.")
                     }
                 } else {
-                    const [, installerVersion] = await this.obsidianLauncher.resolveVersion(
-                        appVersion, obsidianOptions.installerVersion ?? "earliest",
+                    [appVersion, installerVersion] = await this.obsidianLauncher.resolveVersion(
+                        appVersion, installerVersion,
                     );
+                    if (semver.lt(appVersion, minSupportedObsidianVersion)) {
+                        throw Error(`Minimum supported Obsidian version is ${minSupportedObsidianVersion}`)
+                    }
                     const installerInfo = await this.obsidianLauncher.getInstallerInfo(installerVersion);
 
                     let installerPath: string;

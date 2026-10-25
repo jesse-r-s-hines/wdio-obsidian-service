@@ -8,7 +8,7 @@
  * @categoryDescription Utilities
  * Browser commands and helper functions for writing tests.
  */
-import ObsidianLauncher from "obsidian-launcher";
+import ObsidianLauncher, { ObsidianDistribution } from "obsidian-launcher";
 import { deprecate } from "util";
 
 import { ObsidianLauncherService, ObsidianWorkerService } from "./service.js";
@@ -71,12 +71,14 @@ export const resolveObsidianVersions = deprecate(async function(
  * @category WDIO Helpers
  * @param versions string to parse
  * @param opts.cacheDir Obsidian cache dir, defaults to `.obsidian-cache`.
+ * @param opts.platform latest version can vary by platform/arch (i.e. a mobile-only bugfix release). Defaults to host platform.
+ * @param opts.arch latest version can vary by platform/arch (i.e. a mobile-only bugfix release). Defaults to host arch.
  * @returns [appVersion, installerVersion][] resolved to specific versions.
  */
-export async function parseObsidianVersions(
+export async function parseObsidianVersions( 
     versions: string,
-    opts: {cacheDir?: string} = {},
+    opts: {cacheDir?: string} & ObsidianDistribution = {},
 ): Promise<[string, string][]> {
     const launcher = new ObsidianLauncher({cacheDir: opts.cacheDir});
-    return launcher.parseVersions(versions);
+    return launcher.parseVersions(versions, {platform: opts.platform, arch: opts.arch});
 }

@@ -6,7 +6,7 @@ import { pathToFileURL } from "url";
 import semver from "semver";
 import { createDirectory } from "../helpers.js"
 import { ObsidianLauncher } from "../../src/launcher.js";
-import { ObsidianVersionInfo, obsidianVersionsSchemaVersion } from "../../src/types.js";
+import { ObsidianDistribution, ObsidianVersionInfo, obsidianVersionsSchemaVersion } from "../../src/types.js";
 import ChromeLocalStorage from "../../src/utils/chromeLocalStorage.js";
 
 
@@ -50,32 +50,22 @@ describe('ObsdianLauncher resolve versions', () => {
         process.chdir(originalCwd);
     })
 
-    const resolveVersionTests = [
-        [["latest", "latest"], ["1.7.7", "1.7.7"]],
-        [["latest-beta", "latest"], ["1.8.0", "1.7.7"]],
-    ];
-    if (process.platform == "win32" && process.arch == "arm64") {
+    const resolveVersionTests: [[string, string, ObsidianDistribution], [string, string]][] = [
+        [["latest", "latest", {}], ["1.7.7", "1.7.7"]],
+        [["latest-beta", "latest", {}], ["1.8.0", "1.7.7"]],
         // windows arm support was only added in 1.6.5
-        resolveVersionTests.push(
-            [["latest", "earliest"], ["1.7.7", "1.6.5"]],
-        )
-    } else {
-        resolveVersionTests.push(
-            [["latest", "earliest"], ["1.7.7", "1.4.13"]],
-            [["0.14.5", "latest"], ["0.14.5", "0.14.5"]],
-        )
-        if (process.platform == "linux" && process.arch == "arm64") {
-            // Linux arm support was added in 0.12.15
-            resolveVersionTests.push([["0.14.5", "earliest"], ["0.14.5", "0.12.15"]])
-        } else {
-            resolveVersionTests.push([["0.14.5", "earliest"], ["0.14.5", "0.11.0"]])
-        }
-    }
+        [["latest", "earliest", {platform: "win32", arch: "arm64"}], ["1.7.7", "1.6.5"]],
+        [["latest", "earliest", {platform: "linux", arch: "x64"}], ["1.7.7", "1.4.13"]],
+        [["0.14.5", "latest", {platform: "linux", arch: "x64"}], ["0.14.5", "0.14.5"]],
+        // Linux arm support was added in 0.12.15
+        [["0.14.5", "earliest", {platform: "linux", arch: "arm64"}], ["0.14.5", "0.12.15"]],
+        [["0.14.5", "earliest", {platform: "linux", arch: "x64"}], ["0.14.5", "0.11.0"]],
 
-    resolveVersionTests.forEach(([[appVersion, installerVersion], expected]) => {
-        it(`resolveVersion("${appVersion}", "${installerVersion}") == ${JSON.stringify(expected)}`, async () => {
+    ];
+    resolveVersionTests.forEach(([[appVersion, installerVersion, opts], expected]) => {
+        it(`resolveVersion("${appVersion}", "${installerVersion}, ${JSON.stringify(opts)}") == ${JSON.stringify(expected)}`, async () => {
             const [resolvedAppVersion, resolvedInstallerVersion] =
-                await launcher.resolveVersion(appVersion, installerVersion);
+                await launcher.resolveVersion(appVersion, installerVersion, opts);
             expect([resolvedAppVersion, resolvedInstallerVersion]).to.eql(expected);
         })
     })
@@ -114,22 +104,23 @@ describe('ObsdianLauncher resolve versions', () => {
     it('getVersionInfo missing', async () => {
         const result = await launcher.getVersionInfo("foo").catch(e => e);
         expect(result).to.be.instanceOf(Error);
-        expect(result.toString()).includes("No Obsidian app version");
+        expect(result.toString()).includes("No Obsidian version");
     });
 
-    const parseVersionsTests: [any, [string, string][]][] = [
-        ["", []],
-        ["latest/latest", [["1.7.7", "1.7.7"]]],
-        ["latest-beta/latest", [["1.8.0", "1.7.7"]]],
-        [" latest-beta/latest  latest-beta/latest ", [["1.8.0", "1.7.7"]]],
-        [" latest-beta/latest  latest-beta/1.7.0 ", [["1.8.0", "1.7.7"], ["1.8.0", "1.7.0"]]],
-        [",latest-beta/latest,latest-beta/1.7.0,", [["1.8.0", "1.7.7"], ["1.8.0", "1.7.0"]]],
-        ["latest", [["1.7.7", (process.platform == "win32" && process.arch == "arm64") ? "1.6.5" : "1.4.13"]]],
-        ["1.8.0/1.7.7", [["1.8.0", "1.7.7"]]],
+    const parseVersionsTests: [[string, ObsidianDistribution], [string, string][]][] = [
+            [["", {}], []],
+            [["latest/latest", {}], [["1.7.7", "1.7.7"]]],
+            [["latest-beta/latest", {}], [["1.8.0", "1.7.7"]]],
+            [[" latest-beta/latest  latest-beta/latest ", {}], [["1.8.0", "1.7.7"]]],
+            [[" latest-beta/latest  latest-beta/1.7.4 ", {}], [["1.8.0", "1.7.7"], ["1.8.0", "1.7.4"]]],
+            [[",latest-beta/latest,latest-beta/1.7.4,", {}], [["1.8.0", "1.7.7"], ["1.8.0", "1.7.4"]]],
+            [["latest", {platform: "win32", arch: "arm64"}], [["1.7.7", "1.6.5"]]],
+            [["latest", {platform: "win32", arch: "x64"}], [["1.7.7", "1.4.13"]]],
+            [["1.8.0/1.7.7", {}], [["1.8.0", "1.7.7"]]],
     ];
-    parseVersionsTests.forEach(([input, expected]) => {
+    parseVersionsTests.forEach(([[input, opts], expected]) => {
         it(`parseVersions(${JSON.stringify(input)}) == ${JSON.stringify(expected)}`, async function() {
-            const actual = await launcher.parseVersions(input);
+            const actual = await launcher.parseVersions(input, opts);
             expect(actual).to.eql(expected);
         })
     });

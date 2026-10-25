@@ -8,6 +8,6 @@ export default ObsidianLauncher;
 export { minSupportedObsidianVersion } from "./launcher.js"
 export type {
     ObsidianVersionList, ObsidianVersionInfo, ObsidianInstallerInfo, PluginEntry, DownloadedPluginEntry, ThemeEntry,
-    DownloadedThemeEntry,
+    DownloadedThemeEntry, ObsidianDistribution,
 } from "./types.js";
 export type { ObsidianCommunityPlugin, ObsidianCommunityTheme } from "./types.js";
