@@ -26,7 +26,6 @@ const BROKEN_VERSIONS = [
     "1.4.7", // broken download link
     "1.4.8", // broken download link
     "1.0.1",  // won't launch
-    "1.13.8", // mobile only version TODO: update logic to handle mobile only releases
 ];
 
 
@@ -262,7 +261,6 @@ export type CompatibilityResult = "error" | "warning" | "compatible";
 export async function checkCompatibility(
     launcher: ObsidianLauncher, appVersion: string, installerVersion: string,
 ): Promise<CompatibilityResult> {
-    [appVersion, installerVersion] = await launcher.resolveVersion(appVersion, installerVersion);
     consola.log(`Checking if app ${appVersion} and installer ${installerVersion} are compatible...`)
     // getCdpSession will download, but do it here first so we don't interpret network errors as launch failure
     await launcher.downloadApp(appVersion);

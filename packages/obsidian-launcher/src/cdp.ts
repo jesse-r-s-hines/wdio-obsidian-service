@@ -94,7 +94,7 @@ export async function getCdpSession(
         const expr = semver.gte(appVersion, '0.12.8') ? "!!window.obsidianLauncher" : "!!window.app.workspace";
         await until(
             () => client.Runtime.evaluate({expression: expr}).then(r => r.result.value),
-            {timeout: 5000},
+            {timeout: 60000, poll: 1000, attemptTimeout: 10000},
         );
 
         return {

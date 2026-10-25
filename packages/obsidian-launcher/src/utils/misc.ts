@@ -81,15 +81,16 @@ export async function maybe<T>(promise: Promise<T>): Promise<Maybe<T>> {
         .catch(e => ({success: false, result: undefined, error: e} as const));
 }
 
-export type UntilOpts = {timeout: number, poll?: number};
+export type UntilOpts = {timeout: number, poll?: number, attemptTimeout?: number};
 export async function until<T>(func: () => Promise<T>|T, opts: UntilOpts): Promise<T> {
-    const { timeout, poll = 100 } = opts;
-    let time = 0;
+    const { timeout, poll = 100, attemptTimeout = opts.timeout } = opts;
+    const funcWrapper = async () => func(); // normalize to promise
+    const start = performance.now();
     let result: any;
     let error: any;
-    while (!result && time < timeout) {
+    while (!result && performance.now() <= start + timeout) {
         try {
-            result = await func();
+            result = await withTimeout(funcWrapper(), attemptTimeout);
             error = undefined;
         } catch (e: any) {
             error = e
@@ -97,7 +98,6 @@ export async function until<T>(func: () => Promise<T>|T, opts: UntilOpts): Promi
         if (!result) {
             await sleep(poll);
         }
-        time += poll;
     }
     if (!result) {
         throw new Error("Timed out waiting for condition" + (error ? `: ${error}` : ''));

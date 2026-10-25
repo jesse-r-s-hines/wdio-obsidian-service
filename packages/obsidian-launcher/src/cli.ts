@@ -248,6 +248,7 @@ program
             const [appVersion, installerVersion] = await launcher.resolveVersion(
                 opts.version ?? "latest",
                 opts.installer ?? "earliest",
+                {platform: opts.platform, arch: opts.arch},
             );
             const installerPath = await launcher.downloadInstaller(installerVersion, {
                 platform: opts.platform, arch: opts.arch,

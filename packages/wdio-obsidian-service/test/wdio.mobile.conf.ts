@@ -33,6 +33,7 @@ if (process.env.OBSIDIAN_VERSIONS == "all") {
 
 export const config: WebdriverIO.Config = _.merge({}, sharedConfig, {
     maxInstances: 1,
+    autoXvfb: false,
 
     hostname: process.env.APPIUM_HOST || 'localhost',
     port: parseInt(process.env.APPIUM_PORT || "4723"),

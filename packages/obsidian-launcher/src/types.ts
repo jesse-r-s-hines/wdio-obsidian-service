@@ -252,3 +252,14 @@ export interface ObsidianDesktopRelease {
         signature: string,
     }
 }
+
+/**
+ * System information to specify which Obsidian distribution to download
+ * @inline
+ */
+export type ObsidianDistribution = {
+    /** Platform of the Obsidian distribution. E.g. linux, darwin, win32, android. Defaults to host platform. */
+    platform?: NodeJS.Platform,
+    /** CPU architecture of the Obsidian distribution. E.g. x64, arm64. Defaults to host architecture. */
+    arch?: NodeJS.Architecture,
+}
