@@ -183,3 +183,10 @@ Support Obsidian CLI in wdio tests!
 - Add getMainWindowHandle helper to ObsidianPage
 - Prefer x11 over wayland on linux systems to avoid issues with wayland not capturing focus
 - Fix executeObsidian not working when using the Obsidian settings window as the execution context
+
+## 3.4.0
+- Fix errors resolving Obsidian "latest" version on mobile-only or desktop-only releases like 1.13.8 and 1.14.5
+    - latest Obsidian version is now resolved based on the applicable platform.
+    - Note, if you are running appium android tests, and using `parseObsidianVersions` you should update `wdio.mobile.conf.mts` 
+      to pass platform like `parseObsidianVersions(env.OBSIDIAN_MOBILE_VERSIONS ?? defaultVersions, {cacheDir, platform: "android"})`
+- Add platform options to `parseObsidianVersions` and `ObsidianLauncher.resolveVersions`
