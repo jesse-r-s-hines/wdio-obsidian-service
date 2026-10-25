@@ -34,6 +34,9 @@ describe("Test custom browser commands", () => {
 
     it("getObsidianPage", async () => {
         const commandObsidianPage = browser.getObsidianPage();
-        expect(commandObsidianPage).toBeInstanceOf(obsidianPage.constructor);
+        // wdio-obsidian-service can get double loaded between direct imports and the loaded service. Meaning
+        // obsidianPage and getObsidianPage technically aren't the same class. This is harmless as ObsidianPage is
+        // stateless other than some cached properties.
+        expect(commandObsidianPage.constructor.name).toEqual(obsidianPage.constructor.name);
     })
 })
