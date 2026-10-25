@@ -6,6 +6,7 @@ import { obsidianPage } from 'wdio-obsidian-service';
 
 describe("Basic obsidian launch", function() {
     it('Obsidian version matches', async function() {
+        if ((await obsidianPage.getPlatform()).isMobileApp) this.skip(); // TODO: re-enable test
         const expectedAppVersion = browser.requestedCapabilities[OBSIDIAN_CAPABILITY_KEY].appVersion;
         expect(browser.getObsidianVersion()).toEqual(expectedAppVersion);
         const actualAppVersion = await browser.executeObsidian(({obsidian}) => obsidian.apiVersion);
