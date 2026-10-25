@@ -1071,16 +1071,21 @@ export class ObsidianLauncher {
             localStorage: params.localStorage,
         });
 
-        // Spawn child.
-        const proc = child_process.spawn(installerPath, [
+        const args = [
             `--user-data-dir=${configDir}`,
-            // Workaround for SUID issue on linux. See https://github.com/electron/electron/issues/42510
-            ...(process.platform == 'linux' ? ["--no-sandbox"] : []),
-            ...(params.args ?? []),
             '--tag=obsidian-launcher', // hack so we can identify obsidian-launcher processes when connecting the CLI
-        ], {
-            ...params.spawnOptions,
-        });
+        ]
+        // workaround for SUID issue on linux. See https://github.com/electron/electron/issues/42510
+        if (process.platform == 'linux') {
+            args.push("--no-sandbox");
+        }
+        // workaround for hang on GitHub windows runners on old electron versions
+        if (process.platform == "win32" && semver.lte(installerVersion, "0.13.24") && process.env.CI) {
+            args.push("--disable-gpu");
+        }
+        args.push(...(params.args ?? []));
+
+        const proc = child_process.spawn(installerPath, args, {...params.spawnOptions});
 
         return {proc, configDir, vault};
     }
