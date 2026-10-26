@@ -67,7 +67,7 @@ jobs:
           # - https://stackoverflow.com/questions/67550727 
           token: ${{ secrets.GH_PAT }}
       - if: ${{ steps.check.outputs.result == 'true' }}
-        uses: pnpm/setup@v2
+        uses: pnpm/setup@v3
         with:
           install: false
       - if: ${{ steps.check.outputs.result == 'true' }}
