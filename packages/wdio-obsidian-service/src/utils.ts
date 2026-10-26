@@ -77,7 +77,7 @@ export async function appiumUploadFiles(browser: WebdriverIO.Browser, opts: {
     await browser.pushFile(`${tmpDir}/${slug}-${String(i).padStart(6, '0')}.tar`, data);
 
     // extract the tar. `mobile: shell` does NOT escape arguments despite taking an argument array.
-    await browser.execute("mobile: shell", {command: "sh", args: ["-c", quote(`
+    await browser.execute("mobile: shell", {command: "sh", timeout: 60 * 1000, args: ["-c", quote(`
         mkdir -p ${quote(dest)};
         cat ${tmpDir}/${slug}-*.tar | tar -xz -C ${quote(dest)};
         rm ${tmpDir}/${slug}-*.tar;
