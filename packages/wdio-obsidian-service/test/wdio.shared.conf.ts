@@ -90,7 +90,7 @@ export const config: WebdriverIO.Config = {
     bail: 2,
     mochaOpts: {
         timeout: 5 * 60 * 1000,
-        bail: 2,
+        bail: true,
     },
 
     logLevel: "warn",

@@ -19,7 +19,7 @@ jobs:
           fetch-depth: 0
           ref: ${{ github.ref }}
 
-      - uses: pnpm/setup@v2
+      - uses: pnpm/setup@v3
         with:
           install: false
       - uses: actions/setup-node@v7

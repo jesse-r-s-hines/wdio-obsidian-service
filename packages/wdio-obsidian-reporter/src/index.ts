@@ -29,7 +29,8 @@ class ObsidianReporter extends SpecReporter {
                 combo = `obsidian v${appVersion} (installer: v${installerVersion}, platform: ${process.platform})`;
             }
         } else { // fall back to SpecReporter behavior
-            combo = this.getEnviromentCombo(runner.capabilities, undefined, runner.isMultiremote).trim()
+            // Fallback for wdio @9 compatability
+            combo = this.getEnviromentCombo(runner.capabilities, undefined, (runner as any).isMultiRemote ?? (runner as any).isMultiremote).trim()
         }
         
         // Spec file name and enviroment information
