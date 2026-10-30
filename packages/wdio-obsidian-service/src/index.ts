@@ -66,6 +66,11 @@ export const resolveObsidianVersions = deprecate(async function(
  * parseObsidianVersions("1.8.10/1.7.7 latest latest-beta/earliest")
  * ```
  * 
+ * For Appium/Android tests, pass android as the platform, e.g.
+ * ```js
+ * parseObsidianVersions("1.8.10/1.7.7 latest latest-beta/earliest", {platform: "android"})
+ * ```
+ * 
  * See also: [Obsidian App vs Installer Versions](../README.md#obsidian-app-vs-installer-versions)
  * 
  * @category WDIO Helpers
