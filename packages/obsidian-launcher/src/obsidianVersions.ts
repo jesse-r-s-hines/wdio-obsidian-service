@@ -153,10 +153,14 @@ export function parseObsidianChangelogRss(rss: string): {version: string, change
     });
     const entries = parser.parse(rss).feed.entry;
     return _(entries)
-        // only include desktop releases, and filter out "major.minor" summary changelogs
-        .filter(e => e.id.match(/-desktop-v(\d+\.\d+\.\d+)/))
+        // filter out "major.minor" summary changelogs
+        .filter(e => e.id.match(/-v(\d+\.\d+\.\d+)/))
+        // prefer desktop over mobile versions
         // prefer betas over public release logs, which typically summarize all beta versions before the release
-        .sortBy(e => +/early access/.test(e.title.toLowerCase()))
+        .sortBy(
+            e => +e.id.match(/-desktop-/),
+            e => +/early access/.test(e.title.toLowerCase()),
+        )
         .map(e => ({version: e.id.match(/-v(\d+\.\d+\.\d+)/)![1], changelogUrl: e.link.href}))
         .keyBy(e => e.version) // last duplicate wins
         .values()
