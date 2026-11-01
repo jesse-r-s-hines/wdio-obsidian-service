@@ -3,7 +3,7 @@
         "schemaVersion": "2.2.0",
         "commitDate": "2026-10-22T20:48:52Z",
         "commitSha": "2658231681dbe4d4d395343b6af703e63c6ca939",
-        "timestamp": "2026-10-25T15:07:17.608Z"
+        "timestamp": "2026-10-30T22:09:28.163Z"
     },
     "versions": [
         {
@@ -5267,6 +5267,7 @@
             "minRunnableInstallerVersion": "0.14.5",
             "maxInstallerVersion": "1.2.8",
             "isBeta": true,
+            "changelogUrl": "https://obsidian.md/changelog/2022-07-12-mobile-v1.3.0/",
             "downloads": {
                 "asar": "https://releases.obsidian.md/release/obsidian-1.3.0.asar.gz"
             },
@@ -9067,6 +9068,7 @@
         {
             "version": "1.13.8",
             "gitHubRelease": "https://github.com/obsidianmd/obsidian-releases/releases/tag/v1.13.8",
+            "changelogUrl": "https://obsidian.md/changelog/2026-08-20-mobile-v1.13.8/",
             "downloads": {
                 "apk": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.13.8/Obsidian-1.13.8.apk"
             },
