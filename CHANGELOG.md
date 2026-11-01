@@ -190,3 +190,6 @@ Support Obsidian CLI in wdio tests!
     - Note, if you are running appium android tests, and using `parseObsidianVersions` you should update `wdio.mobile.conf.mts` 
       to pass platform like `parseObsidianVersions(env.OBSIDIAN_MOBILE_VERSIONS ?? defaultVersions, {cacheDir, platform: "android"})`
 - Add platform options to `parseObsidianVersions` and `ObsidianLauncher.resolveVersions`
+
+## 3.5.0
+- Support Webdriverio 10
