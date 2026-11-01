@@ -46,7 +46,7 @@ export const config: WebdriverIO.Config = _.merge({}, sharedConfig, {
         'appium:noReset': true,
         'appium:appWaitDuration': 5 * 60 * 1000,
         'appium:androidInstallTimeout': 5 * 60 * 1000,
-        'appium:adbExecTimeout': 60 * 1000,
+        'appium:adbExecTimeout': 2 * 60 * 1000,
     })),
 
     services: [
