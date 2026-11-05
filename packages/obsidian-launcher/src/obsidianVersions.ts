@@ -153,15 +153,19 @@ export function parseObsidianChangelogRss(rss: string): {version: string, change
     });
     const entries = parser.parse(rss).feed.entry;
     return _(entries)
-        // filter out "major.minor" summary changelogs
-        .filter(e => e.id.match(/-v(\d+\.\d+\.\d+)/))
+        // filter out publish and other products
+        .filter(e => e.id.match(/-(desktop|mobile)-/))
         // prefer desktop over mobile versions
         // prefer betas over public release logs, which typically summarize all beta versions before the release
         .sortBy(
             e => +e.id.match(/-desktop-/),
             e => +/early access/.test(e.title.toLowerCase()),
         )
-        .map(e => ({version: e.id.match(/-v(\d+\.\d+\.\d+)/)![1], changelogUrl: e.link.href}))
+        .map(e => ({
+            version: e.id.match(/-v(\d+\.\d+\.\d+)/)?.[1] ?? e.title.match(/\d+\.\d+\.\d+/)?.[0],
+            changelogUrl: e.link.href,
+        }))
+        .filter(e => !!e.version)
         .keyBy(e => e.version) // last duplicate wins
         .values()
         .sort((a, b) => semver.compare(a.version, b.version))
