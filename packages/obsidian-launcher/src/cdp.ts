@@ -62,15 +62,21 @@ export async function getCdpSession(
             () => fs.rm(launchResult.configDir, {recursive: true, force: true}),
             {retries: 5, backoff: 200, retryIf: (e) => ["EBUSY", "EPERM", "ENOTEMPTY"].includes(e?.code)},
         ));
-        const procExit = new Promise<number>((resolve) => proc.on('close', (code) => resolve(code ?? -1)));
+        const procExit = new Promise<number>((resolve) => proc.once('exit', (code) => resolve(code ?? -1)));
         cleanup.push(async () => {
             proc.kill("SIGTERM");
             const timeout = await maybe(withTimeout(procExit, 5 * 1000));
             if (!timeout.success) {
                 consola.warn(`Stuck process ${proc.pid}, using SIGKILL`);
                 proc.kill("SIGKILL");
+                const forced = await maybe(withTimeout(procExit, 5 * 1000));
+                if (!forced.success) {
+                    consola.warn(`Process ${proc.pid} failed to exit`);
+                }
             }
-            await procExit;
+            proc.stdin?.destroy();
+            proc.stdout?.destroy();
+            proc.stderr?.destroy();
         });
 
         // Wait for the logs showing that Obsidian is ready, and pull the chosen DevTool Protocol port from it
