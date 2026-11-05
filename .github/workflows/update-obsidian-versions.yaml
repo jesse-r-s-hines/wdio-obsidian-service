@@ -10,12 +10,12 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  update-obsidian-versions:
-    runs-on: ubuntu-latest
-    timeout-minutes: 60
+  check:
+    runs-on: ubuntu-slim
     permissions:
-      contents: write
-      pull-requests: write
+      contents: read
+    outputs:
+      needs_update: ${{ steps.check.outputs.result }}
     steps:
       - name: "Check if update is needed"
         id: check
@@ -50,14 +50,22 @@ jobs:
                 // let it catch re-uploads of Obsidian assets or anything like that.
                 timeSinceLastUpdate >= 30 * 24 * 60 * 60 ||
                 // The desktop-releases.json can be updated a bit before the GitHub release is actually created, which
-                // could cause in obsidian-versions.json to be incomplete. So we'll re-run for a bit after an update to
+                // could cause obsidian-versions.json to be incomplete. So we'll re-run for a bit after an update to
                 // make sure we catch any changes to it
                 timeSinceLastUpdate <= 24 * 60 * 60
             );
             return needsUpdate ? 'true' : 'false';
 
-      - if: ${{ steps.check.outputs.result == 'true' }}
-        uses: actions/checkout@v7
+  update-obsidian-versions:
+    needs: [check]
+    if: ${{ needs.check.outputs.needs_update == 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v7
         with:
           # By default, GitHub won't trigger workflows from events created from a workflow, so the new commit won't
           # trigger the tests. The recommended workaround is to use a Personal Access Token instead of the default
@@ -66,17 +74,14 @@ jobs:
           # - https://docs.github.com/en/actions/writing-workflows/choosing-when-your-workflow-runs/triggering-a-workflow#triggering-a-workflow-from-a-workflow
           # - https://stackoverflow.com/questions/67550727 
           token: ${{ secrets.GH_PAT }}
-      - if: ${{ steps.check.outputs.result == 'true' }}
-        uses: pnpm/setup@v3
+      - uses: pnpm/setup@v3
         with:
           install: false
-      - if: ${{ steps.check.outputs.result == 'true' }}
-        uses: actions/setup-node@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: 24
           cache: 'pnpm'
-      - if: ${{ steps.check.outputs.result == 'true' }}
-        name: "Setup virtual graphics"
+      - name: "Setup virtual graphics"
         run: |
             # Some hacks to speed up apt install
             sudo rm -rf /etc/apt/sources.list.d/*.list
@@ -92,8 +97,7 @@ jobs:
             sleep 1
             herbstluftwm &
             sleep 1
-      - if: ${{ steps.check.outputs.result == 'true' }}
-        name: "Update obsidian-versions.json"
+      - name: "Update obsidian-versions.json"
         run: |
           pnpm install --frozen-lockfile
           pnpm run build
@@ -103,8 +107,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           OBSIDIAN_EMAIL: ${{ secrets.OBSIDIAN_EMAIL }}
           OBSIDIAN_PASSWORD: ${{ secrets.OBSIDIAN_PASSWORD }}
-      - if: ${{ steps.check.outputs.result == 'true' }}
-        name: "Run basic tests"
+      - name: "Run basic tests"
         run: |
           pnpm run test:unit
           pnpm run test:e2e
@@ -115,8 +118,7 @@ jobs:
           WDIO_MAX_INSTANCES: 2
           OBSIDIAN_EMAIL: ${{ secrets.OBSIDIAN_EMAIL }}
           OBSIDIAN_PASSWORD: ${{ secrets.OBSIDIAN_PASSWORD }}
-      - if: ${{ steps.check.outputs.result == 'true' }}
-        name: Commit
+      - name: Commit
         run: |
           git config --global user.name '${{github.repository_owner}}'
           git config --global user.email '${{github.repository_owner}}@users.noreply.github.com'
